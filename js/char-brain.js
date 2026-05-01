@@ -204,18 +204,16 @@ const CharBrain = (() => {
     const cooldownMap = {
       observe: 2, investigate: 2, socialize: 2, manipulate: 3,
       plan: 2, guard: 1, hide: 2, flee: 1, question: 2,
-      maintain_cover: 3, frame: 3, stalk: 2, trap: 3, sabotage: 3,
+      maintain_cover: 3, frame: 3, stalk: 3, trap: 3, sabotage: 3,
       confront: 2, accuse: 3, barricade: 3, sabotage_killer: 3, move: 1,
       coordinate_defense: 3, scout: 2, rally: 3, ambush: 3,
-      secure_exit: 3, betray: 3, distract: 3, divide: 3,
-      isolate: 3, eliminate: 2, strike: 2, share_clue: 2,
+      secure_exit: 3, betray: 3, distract: 3, divide: 4,
+      isolate: 4, eliminate: 3, strike: 3, share_clue: 2,
       trust_kill: 4,
       destroy_clue: 3, search_escape_clue: 2, attack_killer: 2
     };
     let cd = cooldownMap[type] || 1;
-    // Escalation: reduce cooldowns in chapters 8-10
-    const chapter = (typeof Engine !== 'undefined' && Engine.state) ? Engine.state.chapter : 0;
-    if (chapter >= 8) cd = Math.max(1, cd - 1);
+    // NO escalation reduction — keep consistent pacing
     mind.actionCooldowns[type] = cd;
   }
 
@@ -704,6 +702,13 @@ const CharBrain = (() => {
 
       // Update emotional state
       updateEmotion(mind, gameState);
+
+      // Killer pacing: 35% chance killer NPC skips this round (hesitation/planning)
+      // This slows down killer momentum significantly
+      const isNpcKiller = gameState.killers && gameState.killers.includes(name);
+      if (isNpcKiller && mind.emotion !== 'executing' && Math.random() < 0.35) {
+        return; // Killer hesitates — skips this round
+      }
 
       // Make decision
       const decision = makeDecision(mind, gameState, minds);
