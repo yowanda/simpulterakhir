@@ -977,25 +977,75 @@ const CharBrain = (() => {
       return null;
     }
 
-    let narrative = '<div class="npc-round-narrative">';
-    narrative += '<p class="narration"><em>Sementara itu...</em></p>';
+    const playerLoc = gameState.playerLocation || 'aula_utama';
+    const pc = gameState.playerCharacter || 'arin';
+    const minds = gameState.npcMinds || {};
+
+    // Determine which characters are at the player's location
+    const isNearPlayer = (charName) => {
+      if (charName === pc) return true;
+      const m = minds[charName];
+      return m && m.location === playerLoc;
+    };
+
+    // Check if an event involves a character near the player
+    const isLocalEvent = (event) => {
+      if (event.character && isNearPlayer(event.character)) return true;
+      if (event.target && isNearPlayer(event.target)) return true;
+      if (event.saboteur && isNearPlayer(event.saboteur)) return true;
+      if (event.victim && isNearPlayer(event.victim)) return true;
+      if (event.location === playerLoc) return true;
+      return false;
+    };
+
+    // Critical event types that should be hinted even if distant
+    const isCritical = (type) => ['death', 'encounter_death', 'killer_sabotage', 'tool_found'].includes(type);
 
     // Sort events by priority
     const sorted = roundResult.events.sort((a, b) => {
-      const priority = { death: 0, encounter_death: 0, attack_failed: 1, encounter_escape: 1, accusation: 2, alliance_formed: 3, alliance: 3, framed: 4, manipulation: 4, sabotage: 5, confrontation: 5, clue_found: 6 };
+      const priority = { death: 0, encounter_death: 0, killer_sabotage: 1, attack_failed: 1, encounter_escape: 1, tool_found: 2, accusation: 2, alliance_formed: 3, alliance: 3, framed: 4, manipulation: 4, sabotage: 5, confrontation: 5, clue_found: 6 };
       return (priority[a.type] || 10) - (priority[b.type] || 10);
     });
 
-    sorted.forEach(event => {
-      let cssClass = 'npc-event';
-      if (event.type === 'death' || event.type === 'encounter_death') cssClass += ' npc-event-death';
-      else if (event.type === 'attack_failed' || event.type === 'encounter_escape') cssClass += ' npc-event-danger';
-      else if (event.type === 'alliance_formed' || event.type === 'alliance') cssClass += ' npc-event-alliance';
-      else if (event.type === 'clue_found') cssClass += ' npc-event-clue';
-      else if (event.type === 'framed' || event.type === 'manipulation') cssClass += ' npc-event-manipulation';
+    const localEvents = sorted.filter(e => isLocalEvent(e));
+    const distantCritical = sorted.filter(e => !isLocalEvent(e) && isCritical(e.type));
 
-      narrative += `<p class="${cssClass}">${event.desc}</p>`;
-    });
+    if (localEvents.length === 0 && distantCritical.length === 0) return null;
+
+    let narrative = '<div class="npc-round-narrative">';
+
+    // Show local events with full detail
+    if (localEvents.length > 0) {
+      localEvents.forEach(event => {
+        let cssClass = 'npc-event';
+        if (event.type === 'death' || event.type === 'encounter_death') cssClass += ' npc-event-death';
+        else if (event.type === 'attack_failed' || event.type === 'encounter_escape') cssClass += ' npc-event-danger';
+        else if (event.type === 'alliance_formed' || event.type === 'alliance') cssClass += ' npc-event-alliance';
+        else if (event.type === 'clue_found') cssClass += ' npc-event-clue';
+        else if (event.type === 'framed' || event.type === 'manipulation') cssClass += ' npc-event-manipulation';
+        else if (event.type === 'killer_sabotage') cssClass += ' npc-event-death';
+        else if (event.type === 'tool_found') cssClass += ' npc-event-clue';
+
+        narrative += `<p class="${cssClass}">${event.desc}</p>`;
+      });
+    }
+
+    // Show distant critical events as brief hints
+    if (distantCritical.length > 0) {
+      narrative += '<p class="npc-event npc-event-distant"><em>Dari kejauhan...</em></p>';
+      distantCritical.forEach(event => {
+        let hint = '';
+        if (event.type === 'death' || event.type === 'encounter_death') {
+          const victimName = event.victim || event.target || event.character;
+          hint = `Terdengar teriakan dari tempat lain. ${victimName ? charName(victimName) + ' tidak lagi menjawab.' : 'Seseorang menghilang.'}`;
+        } else if (event.type === 'killer_sabotage') {
+          hint = 'Samar-samar terdengar pertengkaran di tempat lain...';
+        } else if (event.type === 'tool_found') {
+          hint = `Seseorang menemukan sesuatu di ${event.location ? locName(event.location) : 'suatu tempat'}.`;
+        }
+        if (hint) narrative += `<p class="npc-event npc-event-distant">${hint}</p>`;
+      });
+    }
 
     narrative += '</div>';
     return narrative;
