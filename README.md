@@ -24,7 +24,7 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 
 ### Gameplay & Cerita
 - **7 chapter** dengan percabangan kompleks (Prolog + Bab 1-7)
-- **27+ ending unik** dengan rating S / A / B / C / D / F
+- **30+ ending unik** dengan rating S / A / B / C / D / F
 - **Ending bisa trigger di chapter manapun** — keputusan menentukan kapan cerita berakhir
 - **3 tingkat kesulitan** yang mengubah jumlah killer:
   - **Mudah**: 1 killer (Lana)
@@ -64,11 +64,15 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - Clue yang sudah ditemukan
   - Aliansi dan musuh
 - **100+ Decision Node per Karakter** — setiap karakter punya pohon keputusan unik
-- **Sistem Win/Loss** — kamu bisa menang atau kalah sebagai killer maupun survivor:
-  - **Survivor Win**: Selamat + identifikasi semua killer
-  - **Survivor Loss**: Mati / gagal identifikasi killer
-  - **Killer Win**: Eliminasi target tanpa terekspos
-  - **Killer Loss**: Tertangkap / terbunuh / identitas terungkap
+- **Sistem Win/Loss (Baru!)** — kamu bisa menang atau kalah sebagai killer maupun survivor:
+  - **Survivor Win Path A**: Habisi SEMUA killer yang menyamar — eliminasi langsung
+  - **Survivor Win Path B**: Kumpulkan semua petunjuk pelarian → kabur dari mansion → killer otomatis mati terjebak
+  - **Survivor Loss**: Mati / tersisa sendirian tanpa bisa melawan
+  - **Killer Win Path A**: Habisi protagonis sehingga tersisa 1 orang
+  - **Killer Win Path B**: Hancurkan semua petunjuk pelarian agar survivor tidak bisa kabur
+  - **Killer Cooperation**: Killer bisa saling membantu untuk menghabisi protagonis
+  - **Killer Betrayal**: Jika identitas terancam terbongkar, killer bisa mengkhianati killer lain
+  - **Killer Loss**: Semua killer tereliminasi / terjebak saat mansion escape
 - **NPC Encounters** — NPC bertemu satu sama lain, membentuk aliansi, atau saling menyerang
 - **NPC Action Log** — panel real-time untuk melihat apa yang dilakukan setiap NPC
 - **Dynamic Choices** — pilihan baru muncul berdasarkan aksi NPC (tuduh, aliansi, serang, investigasi)
@@ -109,17 +113,41 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
   - **TERLUKA** — pemain terkena serangan
   - **ANCAMAN** — killer sedang memburu pemain
 - Tool yang dipegang ditampilkan di status bar
+- **Petunjuk Pelarian** — progress petunjuk ditemukan vs total
+- **Killer Dieliminasi** — jumlah killer yang sudah dikalahkan
+
+### Sistem Petunjuk Pelarian (Baru!)
+- **7 Petunjuk Pelarian** tersebar di mansion — cari semuanya untuk membuka jalan keluar
+- Jumlah petunjuk yang dibutuhkan berdasarkan difficulty:
+  - **Mudah**: 5 petunjuk
+  - **Normal**: 6 petunjuk
+  - **Sulit**: 7 petunjuk
+- **Lokasi Petunjuk**:
+  | Petunjuk | Lokasi | Deskripsi |
+  |----------|--------|-----------|
+  | Peta Rahasia Mansion | Perpustakaan | Peta tua jalur rahasia keluar |
+  | Kode Pintu Darurat | Basement | Kode untuk pintu darurat |
+  | Blueprint Terowongan | Bunker B-3 | Cetak biru terowongan bawah tanah |
+  | Frekuensi Radio Darurat | Menara | Frekuensi untuk panggil bantuan |
+  | Kunci Terowongan | Lorong Rahasia | Kunci pintu terowongan pelarian |
+  | Jurnal Pendiri | Ruang Penyimpanan | Catatan semua jalan keluar |
+  | Jalur Pelarian Atap | Atap | Tangga darurat tersembunyi |
+- **Killer bisa MENGHANCURKAN petunjuk** — NPC killer & player killer dapat menghancurkan petunjuk di lokasi mereka
+- **Progress ditampilkan** di status bar real-time
+- Saat semua petunjuk terkumpul → pilihan "KABUR DARI MANSION" muncul → killer otomatis terjebak dan mati
 
 ### Killer vs Killer
 - Killer bisa **menyabotase killer lain** untuk menyelamatkan diri sendiri (chapter 3+)
 - Lana bisa mengekspos Dimas/Niko, Dimas bisa mengkhianati Lana, Niko bisa mengaktifkan CCTV
 - Sistem chance 45% untuk sabotase antar killer — adil dan seimbang
+- Killer yang terancam terekspos bisa mengorbankan killer lain — game tetap lanjut
 - Membuat dinamika killer lebih menarik: tidak hanya melawan survivor
 
 ### Aliansi Kooperatif
 - Survivor otomatis **membentuk aliansi** saat death count meningkat
 - NPC bersenjata (punya tool) memberikan bonus pertahanan bersama
 - Pertahanan terkoordinasi di lokasi yang sama
+- Survivor NPC bisa menyerang killer yang terekspos
 
 ### Interactive Choice System (Baru!)
 - **15 kategori aksi** — setiap pilihan dikategorikan dengan ikon dan warna unik:
@@ -256,9 +284,15 @@ Antagonis utama: **Ragil Pramudya** alias **Sang Penenun** — pria tua yang hid
 4. Kenali 10 karakter
 5. Buat keputusan — setiap pilihan menentukan alur cerita DAN memicu aksi NPC
 6. Pantau NPC Brain Log (tombol gear di kanan atas) untuk melihat apa yang dilakukan NPC
-7. Sebagai **survivor**: kumpulkan bukti, bangun aliansi, ungkap killer, dan bertahan hidup
-8. Sebagai **killer**: eliminasi target, jaga cover, framing, dan sabotase
-9. Capai salah satu dari 27+ ending
+7. Sebagai **survivor**:
+   - Kumpulkan **petunjuk pelarian** untuk membuka jalan keluar mansion
+   - ATAU habisi semua killer yang menyamar
+   - Bangun aliansi, investigasi, dan bertahan hidup
+8. Sebagai **killer**:
+   - Habisi protagonis sampai tersisa 1
+   - ATAU hancurkan semua petunjuk pelarian agar survivor tidak bisa kabur
+   - Killer bisa saling membantu atau mengkhianati jika terancam
+9. Capai salah satu dari 30+ ending
 
 ---
 
@@ -288,7 +322,7 @@ simpul-terakhir/
     ├── story-ch5.js        # Bab 5: Wahyu
     ├── story-ch6.js        # Bab 6: Konfrontasi
     ├── story-ch7.js        # Bab 7: Simpul Terakhir
-    └── story-endings.js    # 27+ endings (S/A/B/C/D/F rating + win/loss endings)
+    └── story-endings.js    # 30+ endings (S/A/B/C/D/F rating + win/loss endings)
 ```
 
 ---

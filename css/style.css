@@ -1671,6 +1671,16 @@ body {
   font-size: 0.75rem;
   color: #c8a96e;
 }
+.ps-escape {
+  padding: 0.15rem 0.6rem;
+  background: rgba(52,152,219,0.15);
+  border: 1px solid rgba(52,152,219,0.3);
+  border-radius: 3px;
+  font-size: 0.72rem;
+  color: #3498db;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
 @keyframes psThrob {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
