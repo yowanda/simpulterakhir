@@ -173,6 +173,14 @@ body {
   min-width: 1.2rem;
   text-align: center;
 }
+.rules-hunter-intro {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  color: #ffd700;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+  font-style: italic;
+}
 .rules-back-btn {
   margin-top: 1.2rem;
   width: 100%;
@@ -2410,6 +2418,13 @@ body {
 .chat-system-msg .npc-event-alliance { color: #6fcf97; }
 .chat-system-msg .npc-event-clue { color: #53bdeb; }
 .chat-system-msg .npc-event-manipulation { color: #b39ddb; }
+
+/* Hunter kill event — golden justice */
+.chat-system-msg .npc-event-hunter {
+  color: #ffd700;
+  text-shadow: 0 0 8px rgba(255,215,0,0.5);
+  font-weight: 600;
+}
 
 /* Killer tracking/nearby alert — pulsing red warning */
 .chat-system-msg .npc-event-track {
