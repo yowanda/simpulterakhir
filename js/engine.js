@@ -276,7 +276,7 @@ const Engine = (() => {
     vira:  { clueSearch: 0, defense: 0, offense: 0, trust: 0, investigation: 0, flee: 0, accusation: 0, detection: 0, startClues: 2 },
     reza:  { clueSearch: 0, defense: 0, offense: 0, trust: 0, investigation: 0, flee: 0, accusation: 15, detection: 10 },
     kira:  { clueSearch: 0, defense: 0, offense: 0, trust: 0, investigation: 25, flee: 0, accusation: 0, detection: 0 },
-    farah: { clueSearch: 0, defense: 0, offense: 0, trust: 15, investigation: 0, flee: 0, accusation: 0, detection: 0, allianceBonus: 10 },
+    farah: { clueSearch: 0, defense: 10, offense: 0, trust: 15, investigation: 0, flee: 0, accusation: 0, detection: 0, allianceBonus: 12 },
     // Killer abilities
     lana:  { clueSearch: 0, defense: 0, offense: 0, trust: 0, investigation: 0, flee: 0, accusation: 0, detection: 0, framingBonus: 20, stealthBonus: 15 },
     dimas: { clueSearch: 0, defense: 0, offense: 15, trust: 0, investigation: 0, flee: 0, accusation: 0, detection: 0, silentKill: true }
@@ -825,17 +825,17 @@ const Engine = (() => {
       },
       courage: {
         arin: 50, niko: 70, sera: 30, juno: 55, vira: 40,
-        reza: 65, lana: 45, dimas: 35, kira: 40, farah: 25
+        reza: 65, lana: 45, dimas: 35, kira: 40, farah: 35
       },
       awareness: { arin: 10, niko: 15, sera: 25, juno: 10, vira: 5 },
       trust: {
         arin_niko: 60, arin_sera: 70, arin_juno: 65, arin_vira: 45,
-        arin_reza: 40, arin_lana: 35, arin_dimas: 30, arin_kira: 50, arin_farah: 30,
+        arin_reza: 40, arin_lana: 35, arin_dimas: 30, arin_kira: 50, arin_farah: 40,
         niko_sera: 40, niko_juno: 45, niko_vira: 55,
         niko_reza: 50, niko_lana: 35, niko_dimas: 40, niko_kira: 30, niko_farah: 60,
         sera_juno: 70, sera_vira: 35,
-        sera_reza: 45, sera_lana: 40, sera_dimas: 45, sera_kira: 50, sera_farah: 35,
-        juno_vira: 30, juno_reza: 40, juno_lana: 30, juno_dimas: 25, juno_kira: 55, juno_farah: 20,
+        sera_reza: 45, sera_lana: 40, sera_dimas: 45, sera_kira: 50, sera_farah: 45,
+        juno_vira: 30, juno_reza: 40, juno_lana: 30, juno_dimas: 25, juno_kira: 55, juno_farah: 30,
         vira_reza: 30, vira_lana: 50, vira_dimas: 35, vira_kira: 40, vira_farah: 30,
         reza_lana: 25, reza_dimas: 20, reza_kira: 45, reza_farah: 30,
         lana_dimas: 60, lana_kira: 30, lana_farah: 25,
@@ -879,10 +879,20 @@ const Engine = (() => {
     };
   }
 
-  // ---- Difficulty multiplier ----
+  // ---- Difficulty multipliers ----
+  // Positive effects (trust gain, danger reduction) scale UP on Easy
+  // Negative effects (trust loss, danger increase) scale DOWN on Easy
+  function diffMultPositive() {
+    if (!state.difficulty) return 1;
+    return [1.4, 1, 0.7][state.difficulty - 1] || 1;
+  }
+  function diffMultNegative() {
+    if (!state.difficulty) return 1;
+    return [0.6, 1, 1.4][state.difficulty - 1] || 1;
+  }
   function diffMult() {
     if (!state.difficulty) return 1;
-    return [0.6, 1, 1.5][state.difficulty - 1] || 1;
+    return [0.8, 1, 1.2][state.difficulty - 1] || 1;
   }
 
   // ---- Trust helpers ----
@@ -894,7 +904,8 @@ const Engine = (() => {
   function modTrust(a, b, delta) {
     const k = trustKey(a, b);
     const old = state.trust[k] || 50;
-    const adjusted = Math.round(delta * diffMult());
+    const mult = delta > 0 ? diffMultPositive() : diffMultNegative();
+    const adjusted = Math.round(delta * mult);
     state.trust[k] = Math.max(0, Math.min(100, old + adjusted));
     if (Math.abs(adjusted) >= 4) showRelChange(a, b, adjusted);
   }
@@ -908,7 +919,8 @@ const Engine = (() => {
 
   // ---- Danger level (replaces entity power) ----
   function modDanger(delta) {
-    const adjusted = Math.round(delta * diffMult());
+    const mult = delta > 0 ? diffMultNegative() : diffMultPositive();
+    const adjusted = Math.round(delta * mult);
     state.dangerLevel = Math.max(0, Math.min(100, state.dangerLevel + adjusted));
   }
 
@@ -974,9 +986,12 @@ const Engine = (() => {
     const pemburu = state.pemburu;
     const charName = typeof CharBrain !== 'undefined' ? CharBrain.charName : (n) => n;
 
-    // Find the highest suspicion target above 80%
+    // Threshold scales with difficulty: Easy 85%, Normal 80%, Hard 75%
+    const diff = state.difficulty || 2;
+    const pemburuThreshold = diff === 1 ? 85 : diff === 3 ? 75 : 80;
+
     let highestTarget = null;
-    let highestSusp = 80;
+    let highestSusp = pemburuThreshold;
     CHARACTERS.forEach(target => {
       if (!state.alive[target]) return;
       if (target === pemburu) return; // Pemburu can't execute themselves
@@ -1150,7 +1165,10 @@ const Engine = (() => {
   // Jika ditemukan, langsung selesai misi petunjuk pelarian
   function rollMasterKey() {
     if (state.masterKeyFound) return false;
-    if (Math.random() < 0.05) {
+    // Easy 6%, Normal 4%, Hard 3%
+    const diff = state.difficulty || 2;
+    const masterKeyChance = diff === 1 ? 0.06 : diff === 3 ? 0.03 : 0.04;
+    if (Math.random() < masterKeyChance) {
       state.masterKeyFound = true;
       return true;
     }
@@ -3827,6 +3845,7 @@ const Engine = (() => {
     GAME_TOOLS, ROLE_DESCRIPTIONS,
     get state() { return state; },
     get lang() { return lang; },
-    CHARACTERS, MAIN_CHARACTERS, SIDE_CHARACTERS, CHAR_DISPLAY, diffMult
+    CHARACTERS, MAIN_CHARACTERS, SIDE_CHARACTERS, CHAR_DISPLAY, diffMult,
+    getDifficulty: () => state.difficulty || 2
   };
 })();

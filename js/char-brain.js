@@ -189,6 +189,7 @@ const CharBrain = (() => {
     if (mind.actionHistory.length > 5) mind.actionHistory.shift(); // Keep last 5
 
     // Set cooldown: prevent same action type for 1-3 rounds
+    // Killer-specific actions have longer cooldowns on Easy
     const cooldownMap = {
       observe: 2, investigate: 2, socialize: 2, manipulate: 3,
       plan: 2, guard: 1, hide: 2, flee: 1, question: 2,
@@ -201,7 +202,14 @@ const CharBrain = (() => {
       destroy_clue: 3, search_escape_clue: 2, attack_killer: 2
     };
     let cd = cooldownMap[type] || 1;
-    // NO escalation reduction — keep consistent pacing
+    // Killer offensive actions get +1 cooldown on Easy, -1 on Hard
+    const killerActions = ['strike', 'eliminate', 'frame', 'divide', 'isolate', 'stalk', 'trap', 'destroy_clue'];
+    const isK = mind.actionHistory && killerActions.includes(type);
+    if (isK) {
+      const diff = (typeof Engine !== 'undefined' && Engine.getDifficulty) ? Engine.getDifficulty() : 2;
+      cd += diff === 1 ? 1 : diff === 3 ? -1 : 0;
+      cd = Math.max(1, cd);
+    }
     mind.actionCooldowns[type] = cd;
   }
 
@@ -375,24 +383,26 @@ const CharBrain = (() => {
     }
 
     // LOW TRUST KILL: If NPC trusts another NPC very little, may kill them out of distrust
+    // Threshold unified at ≤12 (between old 10/15 split) — requires enemy status
     if (!isAlone && canDo('trust_kill') && deathCount >= 1 && mind.tension >= 50) {
       const distrusted = nearby.find(n => {
-        if (gameState.killers.includes(n.name)) return false; // don't trigger trust-kill on actual killers (use attack_killer for that)
+        if (gameState.killers.includes(n.name)) return false;
         const tk = trustKeyFor(mind.name, n.name);
         const trust = gameState.trust[tk];
         if (trust === undefined) return false;
-        return trust <= 15 && mind.enemies.includes(n.name);
+        return trust <= 12 && mind.enemies.includes(n.name);
       });
       if (distrusted) {
         candidates.push({ type: 'trust_kill', desc: `${charName(mind.name)} tidak lagi mempercayai ${charName(distrusted.name)}. "Kau salah satunya!" — ${charName(mind.name)} menyerang!`, target: distrusted.name, priority: 93 });
       }
     }
 
-    // Search for escape clues (survivor priority action)
+    // Search for escape clues (survivor priority action — scales up with chapter and deaths)
     if (typeof Engine !== 'undefined' && Engine.getEscapeClueAtLocation && canDo('search_escape_clue')) {
       const escClue = Engine.getEscapeClueAtLocation(mind.location);
       if (escClue) {
-        candidates.push({ type: 'search_escape_clue', desc: `${charName(mind.name)} mencari petunjuk pelarian di ${locName(mind.location)}.`, clueId: escClue.id, priority: 82 });
+        const clueBoost = Math.min(10, deathCount * 3 + (gameState.chapter || 0) * 2);
+        candidates.push({ type: 'search_escape_clue', desc: `${charName(mind.name)} mencari petunjuk pelarian di ${locName(mind.location)}.`, clueId: escClue.id, priority: 85 + clueBoost });
       }
     }
 
@@ -574,11 +584,14 @@ const CharBrain = (() => {
       candidates.push({ type: 'manipulate', desc: `${charName(mind.name)} menanam ketidakpercayaan antar survivor — memecah belah dari dalam.`, priority: 82 });
     }
 
-    // Destroy escape clue if at a location with one (reduced priority for balance)
+    // Destroy escape clue — priority scales up with chapter and clues found by survivors
     if (typeof Engine !== 'undefined' && Engine.getEscapeClueAtLocation && canDo('destroy_clue')) {
       const escClue = Engine.getEscapeClueAtLocation(mind.location);
       if (escClue) {
-        candidates.push({ type: 'destroy_clue', desc: `${charName(mind.name)} menghancurkan ${escClue.name} di ${locName(mind.location)}.`, clueId: escClue.id, priority: 72 });
+        const found = (gameState.escapeClues || []).length;
+        const chapterBoost = Math.min(8, (gameState.chapter || 0) * 2);
+        const urgency = found >= 3 ? 12 : found >= 2 ? 6 : 0;
+        candidates.push({ type: 'destroy_clue', desc: `${charName(mind.name)} menghancurkan ${escClue.name} di ${locName(mind.location)}.`, clueId: escClue.id, priority: 72 + chapterBoost + urgency });
       }
     }
 
@@ -710,16 +723,19 @@ const CharBrain = (() => {
       // Update emotional state
       updateEmotion(mind, gameState);
 
-      // Killer pacing: 35% chance killer NPC skips this round (hesitation/planning)
-      // This slows down killer momentum significantly
+      // Killer pacing: hesitation chance scales with difficulty
+      // Easy 45%, Normal 35%, Hard 25% — killers are slower on easier modes
       const isNpcKiller = gameState.killers && gameState.killers.includes(name);
-      if (isNpcKiller && mind.emotion !== 'executing' && Math.random() < 0.35) {
-        return; // Killer hesitates — skips this round
+      const diff = gameState.difficulty || 2;
+      const hesitationChance = diff === 1 ? 0.45 : diff === 3 ? 0.25 : 0.35;
+      if (isNpcKiller && mind.emotion !== 'executing' && Math.random() < hesitationChance) {
+        return;
       }
 
-      // === KILLER PLAYER TRACKING: 30% chance killer locks onto player (only if player is protagonist) ===
+      // Killer tracking: Easy 20%, Normal 30%, Hard 40%
       const isPlayerProtagonist = !(gameState.killers && gameState.killers.includes(pc));
-      if (isNpcKiller && isPlayerProtagonist && Math.random() < 0.30) {
+      const trackChance = diff === 1 ? 0.20 : diff === 3 ? 0.40 : 0.30;
+      if (isNpcKiller && isPlayerProtagonist && Math.random() < trackChance) {
         const playerLoc = gameState.playerLocation || 'aula_utama';
         const killerLoc = mind.location;
         if (killerLoc !== playerLoc) {
@@ -796,10 +812,11 @@ const CharBrain = (() => {
     });
 
     // === PROTAGONIST ALLIANCE CAMPING: When player is killer, NPC survivors band together ===
+    // Alliance formation chance scales with difficulty
     const isPlayerKiller = gameState.killers && gameState.killers.includes(pc);
     if (isPlayerKiller) {
       const diff = gameState.difficulty || 2;
-      const campChance = diff >= 3 ? 0.45 : diff >= 2 ? 0.40 : 0.30;
+      const campChance = diff >= 3 ? 0.45 : diff >= 2 ? 0.40 : 0.35;
       const aliveProtagonists = Object.keys(minds).filter(n =>
         n !== pc && gameState.alive[n] && !gameState.killers.includes(n)
       );
@@ -1052,7 +1069,7 @@ const CharBrain = (() => {
       }
 
       case 'frame': {
-        // Redirect suspicion to someone else — chance-based with REAL consequences
+        // Redirect suspicion to someone else — chance-based, scaled by difficulty
         const aliveNonKillers = Object.keys(allMinds).filter(n =>
           gameState.alive[n] && !gameState.killers.includes(n) && n !== mind.name
         );
@@ -1060,33 +1077,42 @@ const CharBrain = (() => {
           const framed = aliveNonKillers[Math.floor(Math.random() * aliveNonKillers.length)];
           const frameChance = 0.45 - getKillerPenalty(gameState);
           if (Math.random() < frameChance) {
-            // Heavy suspicion increase on framed target
-            const suspIncrease = 18 + Math.floor(Math.random() * 12);
+            // Suspicion increase capped to prevent Pemburu cascade on Easy/Normal
+            const diff = gameState.difficulty || 2;
+            const suspBase = diff === 1 ? 12 : diff === 3 ? 20 : 15;
+            const suspRange = diff === 1 ? 6 : diff === 3 ? 12 : 8;
+            const suspIncrease = suspBase + Math.floor(Math.random() * suspRange);
             gameState.suspicion[framed] = Math.min(100, (gameState.suspicion[framed] || 0) + suspIncrease);
-            gameState.suspicion[mind.name] = Math.max(0, (gameState.suspicion[mind.name] || 0) - 10);
-            // Nearby NPCs: suspicion + trust drop + mark as enemy
+            const selfReduction = diff === 1 ? 6 : diff === 3 ? 12 : 8;
+            gameState.suspicion[mind.name] = Math.max(0, (gameState.suspicion[mind.name] || 0) - selfReduction);
+            // Nearby NPCs: suspicion + trust drop (scaled by difficulty)
             const affectedNpcs = [];
+            const npcSuspGain = diff === 1 ? 10 : diff === 3 ? 20 : 14;
+            const trustDrop = diff === 1 ? 12 : diff === 3 ? 22 : 16;
             Object.values(allMinds).forEach(m => {
               if (m.name !== mind.name && m.name !== framed && m.location === mind.location && gameState.alive[m.name]) {
-                m.suspicions[framed] = Math.min(100, (m.suspicions[framed] || 0) + 18);
-                // Trust between NPC and framed target drops hard
+                m.suspicions[framed] = Math.min(100, (m.suspicions[framed] || 0) + npcSuspGain);
                 const tk = trustKeyFor(m.name, framed);
                 if (gameState.trust[tk] !== undefined) {
-                  gameState.trust[tk] = Math.max(0, gameState.trust[tk] - 20);
+                  gameState.trust[tk] = Math.max(0, gameState.trust[tk] - trustDrop);
                 }
-                // If suspicion is high enough, mark as enemy → may trigger trust_kill later
-                if ((m.suspicions[framed] || 0) >= 50) {
+                // Enemy threshold raised: harder to instantly become enemy from one frame
+                if ((m.suspicions[framed] || 0) >= 60) {
                   if (!m.enemies.includes(framed)) m.enemies.push(framed);
                   affectedNpcs.push(charName(m.name));
                 }
-                // Remove framed from allies
-                m.allies = m.allies.filter(a => a !== framed);
+                // Framed keeps some allies on Easy — not total isolation
+                if (diff >= 2) {
+                  m.allies = m.allies.filter(a => a !== framed);
+                }
               }
             });
-            // Framed target also loses trust toward others (confusion/isolation)
+            // Framed target tension increase scaled
             if (allMinds[framed]) {
-              allMinds[framed].tension = Math.min(100, allMinds[framed].tension + 15);
-              allMinds[framed].allies = allMinds[framed].allies.filter(a => a === mind.name || gameState.killers.includes(a));
+              allMinds[framed].tension = Math.min(100, allMinds[framed].tension + (diff === 1 ? 8 : 15));
+              if (diff >= 2) {
+                allMinds[framed].allies = allMinds[framed].allies.filter(a => a === mind.name || gameState.killers.includes(a));
+              }
             }
             const enemyNote = affectedNpcs.length > 0
               ? ` ${affectedNpcs.join(', ')} sekarang MEMUSUHI ${charName(framed)}!`
@@ -1573,7 +1599,7 @@ const CharBrain = (() => {
           if (!a || !b) continue;
           const tk = trustKeyFor(a.name, b.name);
           const trust = gameState.trust[tk];
-          if (trust !== undefined && trust <= 10 && a.enemies.includes(b.name)) {
+          if (trust !== undefined && trust <= 12 && a.enemies.includes(b.name)) {
             if (Math.random() < 0.25) {
               const attacker = a.tension >= b.tension ? a : b;
               const victim = attacker === a ? b : a;
