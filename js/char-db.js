@@ -668,8 +668,8 @@ const CharDB = (() => {
       // === Koordinasi dengan Dimas ===
       { condition: { nearbyIncludes: 'dimas', emotion: 'stalking' }, action: { type: 'plan', desc: 'Lana memberi instruksi ke Dimas lewat kode. "Bab selanjutnya dimulai sekarang."' }, weight: 20 },
 
-      // === KILL: HANYA saat sendirian dengan 1 target ===
-      { condition: { emotion: 'executing', isAlone: false }, action: { type: 'eliminate', desc: 'Lana bergerak dengan presisi novelis yang mengeksekusi plot twist-nya sendiri. Sempurna. Mematikan.' }, weight: 30 },
+      // === KILL: HANYA saat hanya ada 1 target non-killer (isolasi) ===
+      { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Lana bergerak dengan presisi novelis yang mengeksekusi plot twist-nya sendiri. Sempurna. Mematikan.' }, weight: 30 },
 
       // === COVER UP ===
       { condition: { minDeaths: 1, isAlone: false }, action: { type: 'frame', desc: 'Lana "menemukan" bukti yang menunjuk ke orang lain. "Ya Tuhan, lihat ini..." Aktris terbaik.' }, weight: 25 },
@@ -682,12 +682,17 @@ const CharDB = (() => {
 
       // === LATE GAME: Fokus isolasi dan eksekusi ===
       { condition: { chapter: 5, minDeaths: 2, isAlone: false }, action: { type: 'divide', desc: 'Late game. Lana memecah kelompok survivor yang tersisa — isolasi sebelum eksekusi.' }, weight: 28 },
-      { condition: { chapter: 5, minDeaths: 2 }, action: { type: 'eliminate', desc: 'Final act. Lana mengeksekusi rencana besarnya. Karya agung sang penulis.' }, weight: 25 },
+      { condition: { chapter: 5, minDeaths: 2, isAlone: false }, action: { type: 'isolate', desc: 'Late game. Lana memisahkan survivor terakhir dari kelompok — eksekusi butuh kesendirian.' }, weight: 25 },
       { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Endgame. Lana memutuskan hanya satu yang boleh selamat — Dimas hanyalah bidak.', target: 'dimas' }, weight: 28 },
       { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Niko harus disingkirkan.', target: 'niko' }, weight: 28 },
 
       // === PENGHILANGAN PETUNJUK (prioritas tinggi) ===
-      { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Lana mencari dan menghancurkan petunjuk pelarian. Kalau survivor menemukan 8, semuanya tamat.' }, weight: 26 }
+      { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Lana mencari dan menghancurkan petunjuk pelarian. Kalau survivor menemukan 8, semuanya tamat.' }, weight: 26 },
+
+      // === SIASAT LANJUTAN: Cari target terisolasi ===
+      { condition: { emotion: 'stalking', isAlone: true }, action: { type: 'move', desc: 'Lana membuntuti survivor yang sendirian — predator sabar yang menunggu momen sempurna.' }, weight: 20 },
+      { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'manipulate', desc: '"Aku dengar suara aneh di sayap timur." Lana membuat alasan agar survivor berpencar.' }, weight: 22 },
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'distract', desc: 'Lana berpura-pura menemukan sesuatu penting. "LIHAT INI!" — mengalihkan perhatian dari rekan killernya.' }, weight: 20 }
     ],
 
     dimas: [
@@ -708,7 +713,7 @@ const CharDB = (() => {
       // === Target Sera: Isolasi (BUKAN strike di depan orang) ===
       { condition: { nearbyIncludes: 'sera', emotion: 'hunting' }, action: { type: 'isolate', desc: '"Sera, aku perlu bicarakan sesuatu secara private." Dimas mencoba memisahkan Sera.' }, weight: 25 },
 
-      // === KILL: HANYA saat sendirian dengan 1 target ===
+      // === KILL: HANYA saat hanya ada 1 target non-killer (isolasi) ===
       { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Dimas bergerak dengan presisi bedah. Tidak ada emosi. Tidak ada ragu. Hanya prosedur.' }, weight: 28 },
 
       // === COVER ===
@@ -724,12 +729,17 @@ const CharDB = (() => {
 
       // === LATE GAME ===
       { condition: { chapter: 5, minDeaths: 2, isAlone: false }, action: { type: 'divide', desc: 'Late game. Dimas memecah kelompok survivor — isolasi target untuk kill.' }, weight: 28 },
-      { condition: { chapter: 5, minDeaths: 2 }, action: { type: 'eliminate', desc: 'Dimas lepas dari kendali Lana. Dia membunuh bukan karena diperintah — tapi karena dia mau.' }, weight: 25 },
+      { condition: { chapter: 5, minDeaths: 2, isAlone: false }, action: { type: 'isolate', desc: 'Late game. Dimas mencari target yang bisa dipisahkan — harus sendirian untuk eksekusi.' }, weight: 25 },
       { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Lana demi keselamatannya sendiri.', target: 'lana' }, weight: 28 },
       { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Niko — hanya satu yang boleh menang.', target: 'niko' }, weight: 28 },
 
       // === PENGHILANGAN PETUNJUK ===
-      { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Dimas mencari dan membakar petunjuk pelarian dengan presisi klinis.' }, weight: 24 }
+      { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Dimas mencari dan membakar petunjuk pelarian dengan presisi klinis.' }, weight: 24 },
+
+      // === SIASAT LANJUTAN: Pisahkan kelompok, cari target sendirian ===
+      { condition: { emotion: 'stalking', isAlone: true }, action: { type: 'move', desc: 'Dimas bergerak diam-diam mencari survivor yang terpisah dari kelompok.' }, weight: 18 },
+      { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'distract', desc: 'Dimas berpura-pura mendengar sesuatu. "Ada suara dari basement..." — mengalihkan perhatian kelompok.' }, weight: 20 },
+      { condition: { isAlone: false, minDeaths: 1 }, action: { type: 'manipulate', desc: 'Dimas memanfaatkan rasa takut. "Siapa yang terakhir bersama korban? Kita perlu interogasi terpisah."' }, weight: 22 }
     ],
 
     niko: [
@@ -747,7 +757,7 @@ const CharDB = (() => {
       { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'isolate', desc: '"Vira, kita perlu bicara." Niko mencoba memisahkan seseorang — lebih mudah dibunuh sendirian.' }, weight: 24 },
       { condition: { emotion: 'hunting', isAlone: true }, action: { type: 'trap', desc: 'Niko mengaktifkan jebakan mansion yang hanya dia tahu. Tuan rumah punya keuntungan absolut.' }, weight: 20 },
 
-      // === KILL: HANYA saat sendirian dengan 1 target ===
+      // === KILL: HANYA saat hanya ada 1 target non-killer (isolasi) ===
       { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Niko menunjukkan wajah aslinya. Predator yang sudah merencanakan ini bertahun-tahun.' }, weight: 28 },
 
       // === COVER ===
@@ -761,12 +771,17 @@ const CharDB = (() => {
 
       // === LATE GAME ===
       { condition: { chapter: 6, minDeaths: 2, isAlone: false }, action: { type: 'divide', desc: 'Endgame. Niko menggunakan mansion untuk memisahkan survivor — matikan listrik, kunci pintu.' }, weight: 28 },
-      { condition: { chapter: 6, minDeaths: 2 }, action: { type: 'eliminate', desc: 'Endgame. Niko mengaktifkan trap terakhir mansion.' }, weight: 25 },
+      { condition: { chapter: 6, minDeaths: 2, isAlone: false }, action: { type: 'sabotage', desc: 'Endgame. Niko mematikan listrik sayap barat mansion — dalam kegelapan, kelompok terpisah.' }, weight: 25 },
       { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Niko mengorbankan Lana demi menjadi satu-satunya yang selamat.', target: 'lana' }, weight: 28 },
       { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Niko mengkhianati Dimas — mansion ini hanya untuk satu pemenang.', target: 'dimas' }, weight: 28 },
 
       // === PENGHILANGAN PETUNJUK ===
-      { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Niko menggunakan pengetahuan mansionnya untuk menemukan dan menghancurkan petunjuk pelarian.' }, weight: 26 }
+      { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Niko menggunakan pengetahuan mansionnya untuk menemukan dan menghancurkan petunjuk pelarian.' }, weight: 26 },
+
+      // === SIASAT LANJUTAN: Kontrol infrastruktur mansion ===
+      { condition: { emotion: 'stalking', isAlone: true }, action: { type: 'sabotage', desc: 'Niko mematikan lampu di koridor — dalam kegelapan, kelompok terpisah.' }, weight: 20 },
+      { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'distract', desc: '"ADA YANG MENCURIGAKAN DI SAYAP UTARA!" Niko mengarahkan kelompok ke arah berbeda.' }, weight: 22 },
+      { condition: { isAlone: false, minDeaths: 1 }, action: { type: 'manipulate', desc: 'Niko menggunakan otoritas tuan rumah. "Aku sarankan kita berpencar — aku tahu mansion ini." Jebakan sempurna.' }, weight: 24 }
     ]
   };
 

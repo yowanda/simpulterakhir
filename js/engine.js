@@ -11,7 +11,7 @@ const Engine = (() => {
   let brainActionCount = 0;
   let isBrainRevisit = false;
   let brainActionHistory = [];  // Track executed brain actions per node to prevent looping
-  const BRAIN_MAX_PER_NODE = 2; // Max brain actions before forcing story progression
+  const BRAIN_MAX_PER_NODE = 5; // Max brain actions per node — interactive gameplay first, plot supports ending
   const MAX_PLAYER_OPTIONS = 3; // Max choices shown to player per node
   let typingTimeout = null;
 
@@ -421,7 +421,17 @@ const Engine = (() => {
   // ---- Chance % System ----
   function rollChance(baseChance, charName, bonusType) {
     const toolBonus = getToolBonus(charName, bonusType);
-    const totalChance = Math.min(95, Math.max(5, baseChance + toolBonus));
+    // Difficulty-based protagonist advantage
+    let diffBonus = 0;
+    const isPlayerKiller = state.killers && state.killers.includes(charName);
+    if (!isPlayerKiller && (bonusType === 'intel' || bonusType === 'defense')) {
+      const diff = state.difficulty || 2;
+      diffBonus = diff === 1 ? 15 : diff === 2 ? 10 : 5;
+    } else if (isPlayerKiller && bonusType === 'offense') {
+      const diff = state.difficulty || 2;
+      diffBonus = diff === 1 ? -15 : diff === 2 ? -10 : -5;
+    }
+    const totalChance = Math.min(95, Math.max(5, baseChance + toolBonus + diffBonus));
     const roll = Math.random() * 100;
     return { success: roll < totalChance, chance: totalChance, roll: Math.round(roll) };
   }
@@ -882,10 +892,11 @@ const Engine = (() => {
       choicesContainer.innerHTML = '';
       const storyChoices = (node.choices || []).slice();
       const allChoices = storyChoices.slice();
-      if (state.npcMinds && state.chapter >= 1 && brainActionCount < BRAIN_MAX_PER_NODE) {
+      if (state.npcMinds && brainActionCount < BRAIN_MAX_PER_NODE) {
         const dynamicChoices = generateDynamicChoices(state);
         dynamicChoices.forEach(c => allChoices.push(c));
-      } else if (brainActionCount >= BRAIN_MAX_PER_NODE && storyChoices.length === 0) {
+      }
+      if (brainActionCount >= BRAIN_MAX_PER_NODE && storyChoices.length === 0) {
         const nextId = findNextStoryNode(nodeId);
         if (nextId) {
           allChoices.push({
@@ -958,7 +969,7 @@ const Engine = (() => {
       // Story choices first, then brain choices
       const storyChoices = (node.choices || []).slice();
       const allChoices = storyChoices.slice();
-      if (state.npcMinds && state.chapter >= 1 && brainActionCount < BRAIN_MAX_PER_NODE) {
+      if (state.npcMinds && brainActionCount < BRAIN_MAX_PER_NODE) {
         const dynamicChoices = generateDynamicChoices(state);
         dynamicChoices.forEach(c => allChoices.push(c));
       }
@@ -1425,7 +1436,7 @@ const Engine = (() => {
     const connections = CharBrain.LOCATION_CONNECTIONS[playerLoc] || [];
     if (connections.length > 0 && gameState.chapter >= 1) {
       const shuffled = connections.slice().sort(() => Math.random() - 0.5);
-      const moveDests = shuffled.slice(0, Math.min(2, shuffled.length));
+      const moveDests = shuffled.slice(0, Math.min(3, shuffled.length));
       moveDests.forEach(loc => {
         if (brainActionTaken('move_' + loc)) return; // Don't show move to same loc twice
         const npcsAtLoc = Object.keys(gameState.npcMinds || {}).filter(n =>

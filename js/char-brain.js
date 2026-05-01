@@ -781,7 +781,15 @@ const CharBrain = (() => {
   }
 
   // ---- Apply Action Consequences ----
+  // Killer action filter: killers cannot perform survivor-helping actions
+  const KILLER_BLOCKED_ACTIONS = ['protect', 'share_clue', 'coordinate_defense', 'rally', 'guard', 'rescue', 'secure_exit'];
+
   function applyAction(mind, action, gameState, allMinds) {
+    const isK = gameState.killers && gameState.killers.includes(mind.name);
+    if (isK && KILLER_BLOCKED_ACTIONS.includes(action.type)) {
+      return null; // Killers cannot help survivors
+    }
+
     switch (action.type) {
       case 'investigate': {
         // Chance to find clue
@@ -822,6 +830,25 @@ const CharBrain = (() => {
         const targetMind = allMinds[action.target];
         if (!targetMind || !gameState.alive[action.target]) return null;
 
+        // RULE: Killer CANNOT kill if 2+ non-killer survivors are in the same room
+        const isAttackerKiller = gameState.killers && gameState.killers.includes(mind.name);
+        if (isAttackerKiller) {
+          const nonKillerInRoom = Object.values(allMinds).filter(m =>
+            m !== mind && m.location === mind.location && gameState.alive[m.name] && !gameState.killers.includes(m.name)
+          );
+          if (nonKillerInRoom.length >= 2) {
+            // Killer outnumbered — survivors fight back, killer DIES
+            gameState.alive[mind.name] = false;
+            gameState.deathCount++;
+            if (!gameState.killersDead) gameState.killersDead = [];
+            if (!gameState.killersDead.includes(mind.name)) gameState.killersDead.push(mind.name);
+            if (!gameState.killerRevealed.includes(mind.name)) gameState.killerRevealed.push(mind.name);
+            const survivorNames = nonKillerInRoom.map(n => charName(n.name)).join(', ');
+            return { type: 'killer_eliminated', killer: mind.name, eliminatedBy: nonKillerInRoom.map(n => n.name),
+              desc: `${charName(mind.name)} mencoba menyerang di ruangan dengan ${survivorNames}! Tim survivor melawan — ${charName(mind.name)} TERELIMINASI!` };
+          }
+        }
+
         // Can the target defend? Tool bonus affects defense
         const defenseChance = calculateDefense(action.target, gameState, allMinds);
         if (Math.random() < defenseChance) {
@@ -843,25 +870,63 @@ const CharBrain = (() => {
         mind.killCount++;
         mind.memory.push({ type: 'killed', target: action.target, round: mind.roundsSurvived });
 
-        // Witnesses
+        // Witnesses — killer caught killing triggers hunt mechanic
         const witnesses = Object.values(allMinds).filter(m =>
           m !== mind && m.name !== action.target &&
           m.location === mind.location && gameState.alive[m.name]
         );
-        witnesses.forEach(w => {
-          w.memory.push({ type: 'witnessed_death', victim: action.target, killer: mind.name, round: mind.roundsSurvived });
-          w.suspicions[mind.name] = 100;
-          w.tension += 30;
-          gameState.suspicion[mind.name] = Math.min(100, (gameState.suspicion[mind.name] || 0) + 40);
+        if (witnesses.length > 0) {
+          // Add to witnessedKillers for active hunting
+          if (!gameState.witnessedKillers) gameState.witnessedKillers = [];
+          if (!gameState.witnessedKillers.includes(mind.name)) {
+            gameState.witnessedKillers.push(mind.name);
+          }
           if (!gameState.killerRevealed.includes(mind.name)) {
             gameState.killerRevealed.push(mind.name);
           }
           mind.killerExposed = true;
-        });
+
+          witnesses.forEach(w => {
+            w.memory.push({ type: 'witnessed_death', victim: action.target, killer: mind.name, round: mind.roundsSurvived });
+            w.suspicions[mind.name] = 100;
+            w.tension += 30;
+            if (!w.enemies.includes(mind.name)) w.enemies.push(mind.name);
+            gameState.suspicion[mind.name] = 100;
+          });
+
+          // ALL alive survivors become hunters
+          Object.values(allMinds).forEach(m => {
+            if (gameState.alive[m.name] && !gameState.killers.includes(m.name)) {
+              m.suspicions[mind.name] = 100;
+              if (!m.enemies.includes(mind.name)) m.enemies.push(mind.name);
+            }
+          });
+
+          // Killer with witnesses: if 2+ survivors present → killer DIES immediately
+          const nonKillerWitnesses = witnesses.filter(w => !gameState.killers.includes(w.name));
+          if (nonKillerWitnesses.length >= 2) {
+            gameState.alive[mind.name] = false;
+            gameState.deathCount++;
+            if (!gameState.killersDead) gameState.killersDead = [];
+            if (!gameState.killersDead.includes(mind.name)) gameState.killersDead.push(mind.name);
+            const hunterNames = nonKillerWitnesses.map(w => charName(w.name)).join(', ');
+            return { type: 'death', attacker: mind.name, victim: action.target,
+              witnessed: witnesses.map(w => w.name), killerDied: true,
+              desc: `${charName(mind.name)} membunuh ${charName(action.target)} di depan ${hunterNames}! Survivor melawan — ${charName(mind.name)} TERELIMINASI!` };
+          }
+
+          // Killer must flee — will be hunted
+          const fleeDest = pickNewLocation(mind);
+          if (fleeDest) mind.location = fleeDest;
+          mind.isHiding = true;
+          return { type: 'death', attacker: mind.name, victim: action.target,
+            witnessed: witnesses.map(w => w.name),
+            desc: `${charName(mind.name)} membunuh ${charName(action.target)}! SAKSI: ${witnesses.map(w => charName(w.name)).join(', ')} — ${charName(mind.name)} melarikan diri dan DIBURU semua survivor!` };
+        }
 
         return { type: 'death', attacker: mind.name, victim: action.target,
-          witnessed: witnesses.map(w => w.name),
-          desc: `${charName(action.target)} ditemukan tewas di ${locName(mind.location)}!` };
+          witnessed: [],
+          desc: `${charName(action.target)} ditemukan tewas di ${locName(mind.location)}...` };
       }
 
       case 'frame': {
@@ -1052,7 +1117,7 @@ const CharBrain = (() => {
 
       case 'destroy_clue': {
         if (!action.clueId || typeof Engine === 'undefined') return null;
-        const destroyChance = 0.55;
+        const destroyChance = 0.55 - getKillerPenalty(gameState);
         if (Math.random() < destroyChance) {
           Engine.destroyEscapeClue(action.clueId);
           return { type: 'clue_destroyed', character: mind.name, location: mind.location,
@@ -1064,7 +1129,7 @@ const CharBrain = (() => {
 
       case 'search_escape_clue': {
         if (!action.clueId || typeof Engine === 'undefined') return null;
-        const searchChance = 0.35 + (gameState.chapter * 0.05) + getEscalationBonus(gameState);
+        const searchChance = 0.35 + (gameState.chapter * 0.05) + getEscalationBonus(gameState) + getProtagonistBonus(gameState);
         if (Math.random() < searchChance) {
           Engine.findEscapeClue(action.clueId);
           gameState.cluesFound = (gameState.cluesFound || 0) + 1;
@@ -1078,7 +1143,7 @@ const CharBrain = (() => {
         if (!action.target) return null;
         const targetMind = allMinds[action.target];
         if (!targetMind || !gameState.alive[action.target]) return null;
-        const atkChance = 0.35 + getEscalationBonus(gameState);
+        const atkChance = 0.35 + getEscalationBonus(gameState) + getProtagonistBonus(gameState);
         if (Math.random() < atkChance) {
           gameState.alive[action.target] = false;
           gameState.deathCount++;
@@ -1097,7 +1162,8 @@ const CharBrain = (() => {
         if (!action.target) return null;
         const trustTarget = allMinds[action.target];
         if (!trustTarget || !gameState.alive[action.target]) return null;
-        const trustKillChance = 0.40 + getEscalationBonus(gameState);
+        const isKillerAttacker = gameState.killers && gameState.killers.includes(mind.name);
+        const trustKillChance = 0.40 + getEscalationBonus(gameState) - (isKillerAttacker ? getKillerPenalty(gameState) : 0);
         if (Math.random() < trustKillChance) {
           gameState.alive[action.target] = false;
           gameState.deathCount++;
@@ -1171,16 +1237,36 @@ const CharBrain = (() => {
     return 0;
   }
 
+  // ---- Difficulty-Based Protagonist Advantage ----
+  // Easy: +15% protagonist advantage, Normal: +10%, Hard: +5%
+  // This gives protagonists a fair edge since many situations favor killers
+  function getProtagonistBonus(gameState) {
+    const diff = gameState.difficulty || 2;
+    if (diff === 1) return 0.15;  // Easy: +15%
+    if (diff === 2) return 0.10;  // Normal: +10%
+    if (diff === 3) return 0.05;  // Hard: +5%
+    return 0.10;
+  }
+
+  function getKillerPenalty(gameState) {
+    const diff = gameState.difficulty || 2;
+    if (diff === 1) return 0.15;
+    if (diff === 2) return 0.10;
+    if (diff === 3) return 0.05;
+    return 0.10;
+  }
+
   // ---- Defense Calculation ----
   function calculateDefense(targetName, gameState, allMinds) {
+    const isTargetKiller = gameState.killers && gameState.killers.includes(targetName);
     let defense = 0.15; // Base 15% chance to survive
     // Escalation: defense decreases in later chapters (harder to survive)
-    defense -= getEscalationBonus(gameState) * 0.5; // -5% at ch8, -7.5% at ch9, -10% at ch10
-    defense = Math.max(0.03, defense); // Minimum 3% defense
+    defense -= getEscalationBonus(gameState) * 0.5;
+    defense = Math.max(0.03, defense);
 
     // Courage adds defense
     const courage = gameState.courage ? gameState.courage[targetName] || 30 : 30;
-    defense += courage / 500; // Max +20% from courage
+    defense += courage / 500;
 
     // Allies nearby add defense
     const targetMind = allMinds[targetName];
@@ -1193,7 +1279,6 @@ const CharBrain = (() => {
       );
       defense += nearbyAllies.length * 0.15;
 
-      // Guards nearby add defense
       const guards = Object.values(allMinds).filter(m =>
         m.location === targetMind.location &&
         m.lastAction && m.lastAction.type === 'guard' &&
@@ -1201,7 +1286,6 @@ const CharBrain = (() => {
       );
       defense += guards.length * 0.25;
 
-      // If target is hiding, harder to kill
       if (targetMind.isHiding) defense += 0.3;
     }
 
@@ -1210,10 +1294,12 @@ const CharBrain = (() => {
       defense += Engine.getToolBonus(targetName, 'defense') / 100;
     }
 
-    // Difficulty modifier
-    const diff = gameState.difficulty || 2;
-    if (diff === 1) defense += 0.15;
-    if (diff === 3) defense -= 0.1;
+    // Difficulty-based protagonist advantage
+    if (!isTargetKiller) {
+      defense += getProtagonistBonus(gameState);
+    } else {
+      defense -= getKillerPenalty(gameState);
+    }
 
     return Math.min(0.85, Math.max(0.05, defense));
   }
