@@ -1,6 +1,6 @@
 /* ============================================================
-   SIMPUL TERAKHIR — Game Engine
-   5 sahabat, 2 egois, 25 ending, 3 difficulty
+   SIMPUL TERAKHIR — Game Engine (Reworked)
+   10 karakter, killer system per difficulty, post-modern horror
    ============================================================ */
 
 const Engine = (() => {
@@ -11,46 +11,101 @@ const Engine = (() => {
   let typingTimeout = null;
   let endingsUnlocked = JSON.parse(localStorage.getItem('simpul_endings') || '{}');
 
-  const CHARACTERS = ['arin', 'niko', 'sera', 'juno', 'vira'];
-  const CHAR_DISPLAY = { arin: 'Arin', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira' };
-  const CHAR_PORTRAITS = { arin: 'img/arin.png', niko: 'img/niko.png', sera: 'img/sera.png', juno: 'img/juno.png', vira: 'img/vira.png' };
+  const MAIN_CHARACTERS = ['arin', 'niko', 'sera', 'juno', 'vira'];
+  const SIDE_CHARACTERS = ['reza', 'lana', 'dimas', 'kira', 'farah'];
+  const CHARACTERS = MAIN_CHARACTERS.concat(SIDE_CHARACTERS);
+
+  const CHAR_DISPLAY = {
+    arin: 'Arin', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira',
+    reza: 'Reza', lana: 'Lana', dimas: 'Dimas', kira: 'Kira', farah: 'Farah'
+  };
+
+  const CHAR_PORTRAITS = {
+    arin: 'img/arin.png', niko: 'img/niko.png', sera: 'img/sera.png',
+    juno: 'img/juno.png', vira: 'img/vira.png',
+    reza: null, lana: null, dimas: null, kira: null, farah: null
+  };
+
+  const CHAR_COLORS = {
+    arin: '#4a7c59', niko: '#2c2c2c', sera: '#c4956a', juno: '#c44d3d', vira: '#4a2d5c',
+    reza: '#5a4e3c', lana: '#8b0000', dimas: '#3a6b8c', kira: '#00b4d8', farah: '#b8860b'
+  };
+
+  const CHAR_INITIALS = {
+    reza: 'RH', lana: 'LM', dimas: 'DS', kira: 'KC', farah: 'FA'
+  };
+
   const CHAR_TAGLINES = {
-    arin: 'Protagonis — penjaga keseimbangan kelompok',
-    niko: 'Pemimpin ambisius — menyimpan rahasia warisan kakek',
-    sera: 'Sensitif & intuitif — merasakan kebenaran yang lain abaikan',
-    juno: 'Penyimpan rasa bersalah — topeng humornya menyembunyikan luka',
-    vira: 'Misterius — kembali dari hutan sebagai seseorang yang berbeda'
+    arin: 'Protagonis — podcaster true crime, pencari kebenaran',
+    niko: 'Tuan rumah — CEO muda dengan agenda tersembunyi',
+    sera: 'Psikolog forensik — membaca orang seperti buku terbuka',
+    juno: 'Street artist — pemberontak dengan luka tersembunyi',
+    vira: 'Enigma — kembali dari menghilang, berubah total',
+    reza: 'Ex-detektif — disewa sebagai keamanan, insting masih tajam',
+    lana: 'Novelis horor — bukunya terlalu mirip kenyataan',
+    dimas: 'Mahasiswa forensik — terlalu tenang di dekat kematian',
+    kira: 'Hacker — menemukan anomali digital di undangan',
+    farah: 'Pewaris — melindungi rahasia keluarga dengan nyawa'
+  };
+
+  // Killer assignments per difficulty
+  const KILLER_CONFIG = {
+    1: { killers: ['lana'], accomplices: [] },
+    2: { killers: ['lana', 'dimas'], accomplices: [] },
+    3: { killers: ['lana', 'dimas', 'niko'], accomplices: [] }
   };
 
   function defaultState(difficulty) {
+    const diff = difficulty || 2;
+    const killerConf = KILLER_CONFIG[diff] || KILLER_CONFIG[2];
     return {
       chapter: 0,
-      difficulty: difficulty || 2,
+      difficulty: diff,
       nodeHistory: [],
-      alive: { arin: true, niko: true, sera: true, juno: true, vira: true },
-      corruption: { arin: 0, niko: 15, sera: 0, juno: 5, vira: 40 },
-      courage: { arin: 50, niko: 70, sera: 30, juno: 45, vira: 60 },
-      awareness: { arin: 10, niko: 5, sera: 25, juno: 15, vira: 0 },
+      alive: {
+        arin: true, niko: true, sera: true, juno: true, vira: true,
+        reza: true, lana: true, dimas: true, kira: true, farah: true
+      },
+      suspicion: {
+        arin: 0, niko: 0, sera: 0, juno: 0, vira: 0,
+        reza: 0, lana: 0, dimas: 0, kira: 0, farah: 0
+      },
+      courage: {
+        arin: 50, niko: 70, sera: 30, juno: 55, vira: 40,
+        reza: 65, lana: 45, dimas: 35, kira: 40, farah: 25
+      },
+      awareness: { arin: 10, niko: 15, sera: 25, juno: 10, vira: 5 },
       trust: {
-        arin_niko: 65, arin_sera: 70, arin_juno: 60, arin_vira: 55,
-        niko_sera: 45, niko_juno: 55, niko_vira: 70,
-        sera_juno: 65, sera_vira: 35,
-        juno_vira: 30
+        arin_niko: 60, arin_sera: 70, arin_juno: 65, arin_vira: 45,
+        arin_reza: 40, arin_lana: 35, arin_dimas: 30, arin_kira: 50, arin_farah: 30,
+        niko_sera: 40, niko_juno: 45, niko_vira: 55,
+        niko_reza: 50, niko_lana: 35, niko_dimas: 40, niko_kira: 30, niko_farah: 60,
+        sera_juno: 70, sera_vira: 35,
+        sera_reza: 45, sera_lana: 40, sera_dimas: 45, sera_kira: 50, sera_farah: 35,
+        juno_vira: 30, juno_reza: 40, juno_lana: 30, juno_dimas: 25, juno_kira: 55, juno_farah: 20,
+        vira_reza: 30, vira_lana: 50, vira_dimas: 35, vira_kira: 40, vira_farah: 30,
+        reza_lana: 25, reza_dimas: 20, reza_kira: 45, reza_farah: 30,
+        lana_dimas: 60, lana_kira: 30, lana_farah: 25,
+        dimas_kira: 25, dimas_farah: 35,
+        kira_farah: 30
       },
       flags: {},
       items: [],
-      entityPower: 20,
+      killers: killerConf.killers.slice(),
+      killerRevealed: [],
+      dangerLevel: 10,
       moralScore: 0,
       keyChoices: [],
       deathCount: 0,
-      secretsFound: 0
+      cluesFound: 0,
+      alliances: []
     };
   }
 
   // ---- Difficulty multiplier ----
   function diffMult() {
     if (!state.difficulty) return 1;
-    return [0.6, 1, 1.6][state.difficulty - 1] || 1;
+    return [0.6, 1, 1.5][state.difficulty - 1] || 1;
   }
 
   // ---- Trust helpers ----
@@ -69,14 +124,25 @@ const Engine = (() => {
 
   // ---- Awareness helper ----
   function modAwareness(char, delta) {
-    const adjusted = Math.round(delta * (state.difficulty === 3 ? 0.6 : state.difficulty === 1 ? 1.4 : 1));
+    const mult = state.difficulty === 3 ? 0.5 : state.difficulty === 1 ? 1.5 : 1;
+    const adjusted = Math.round(delta * mult);
     state.awareness[char] = Math.max(0, Math.min(100, (state.awareness[char] || 0) + adjusted));
   }
 
-  // ---- Entity power ----
-  function modEntity(delta) {
+  // ---- Danger level (replaces entity power) ----
+  function modDanger(delta) {
     const adjusted = Math.round(delta * diffMult());
-    state.entityPower = Math.max(0, Math.min(100, state.entityPower + adjusted));
+    state.dangerLevel = Math.max(0, Math.min(100, state.dangerLevel + adjusted));
+  }
+
+  // ---- Suspicion system ----
+  function modSuspicion(char, delta) {
+    state.suspicion[char] = Math.max(0, Math.min(100, (state.suspicion[char] || 0) + delta));
+  }
+
+  // ---- Is this character a killer? ----
+  function isKiller(name) {
+    return state.killers && state.killers.includes(name);
   }
 
   // ---- Kill character ----
@@ -90,8 +156,22 @@ const Engine = (() => {
 
   // ---- Check if can die (difficulty gating) ----
   function canDie() {
-    if (state.difficulty === 1 && state.deathCount >= 1 && state.chapter < 3) return false;
+    if (state.difficulty === 1 && state.deathCount >= 2 && state.chapter < 3) return false;
+    if (state.difficulty === 2 && state.deathCount >= 4 && state.chapter < 3) return false;
     return true;
+  }
+
+  // ---- Get alive count ----
+  function aliveCount() {
+    return CHARACTERS.filter(c => state.alive[c]).length;
+  }
+  function aliveMainCount() {
+    return MAIN_CHARACTERS.filter(c => state.alive[c]).length;
+  }
+
+  // ---- Alliance system ----
+  function addAlliance(members) {
+    state.alliances.push({ members, strength: 50 });
   }
 
   // ---- i18n ----
@@ -124,10 +204,21 @@ const Engine = (() => {
     div.className = 'rel-change ' + (delta > 0 ? 'positive' : 'negative');
     const aName = CHAR_DISPLAY[a] || a;
     const bName = CHAR_DISPLAY[b] || b;
-    const symbol = delta > 0 ? '▲' : '▼';
+    const symbol = delta > 0 ? '\u25B2' : '\u25BC';
     div.textContent = `${aName} & ${bName} ${symbol}`;
     document.body.appendChild(div);
     setTimeout(() => div.remove(), 3000);
+  }
+
+  // ---- CSS Avatar for side characters ----
+  function getPortraitHTML(charName, cssClass) {
+    const cls = cssClass || 'speaker-portrait';
+    if (CHAR_PORTRAITS[charName]) {
+      return `<img class="${cls}" src="${CHAR_PORTRAITS[charName]}" alt="${charName}">`;
+    }
+    const initials = CHAR_INITIALS[charName] || charName.charAt(0).toUpperCase();
+    const color = CHAR_COLORS[charName] || '#666';
+    return `<span class="${cls} css-avatar" style="background:${color}">${initials}</span>`;
   }
 
   // ---- Horror Effects ----
@@ -176,15 +267,15 @@ const Engine = (() => {
       container.appendChild(p);
     }
   }
-  function updateEntityAmbient() {
+  function updateDangerAmbient() {
     let el = document.querySelector('.entity-ambient');
-    if (state.entityPower > 30) {
+    if (state.dangerLevel > 30) {
       if (!el) {
         el = document.createElement('div');
         el.className = 'entity-ambient';
         document.body.appendChild(el);
       }
-      el.style.opacity = Math.min(1, (state.entityPower - 30) / 70);
+      el.style.opacity = Math.min(1, (state.dangerLevel - 30) / 70);
     } else if (el) {
       el.remove();
     }
@@ -193,10 +284,9 @@ const Engine = (() => {
   // ---- Text Rendering ----
   function renderText(html, container, callback) {
     if (typingTimeout) { clearTimeout(typingTimeout); typingTimeout = null; }
-    // Inject character portrait thumbnails next to speaker names
     const enhancedHtml = html.replace(/<span class="speaker (\w+)">/g, (match, charName) => {
-      if (CHAR_PORTRAITS[charName]) {
-        return `<img class="speaker-portrait" src="${CHAR_PORTRAITS[charName]}" alt="${charName}"><span class="speaker ${charName}">`;
+      if (CHAR_DISPLAY[charName]) {
+        return getPortraitHTML(charName) + `<span class="speaker ${charName}">`;
       }
       return match;
     });
@@ -223,7 +313,7 @@ const Engine = (() => {
     if (node.shake) screenShake();
     if (node.blood) bloodDrip();
     if (node.glitch) glitch();
-    updateEntityAmbient();
+    updateDangerAmbient();
 
     const textContent = typeof node.text === 'function' ? node.text(state) : t(node.text);
     const storyText = $('story-text');
@@ -238,6 +328,7 @@ const Engine = (() => {
       }
       renderChoices(node.choices || []);
     });
+    saveGame();
   }
 
   function renderChoices(choices) {
@@ -263,7 +354,7 @@ const Engine = (() => {
         html += `<span class="choice-hint">${t(choice.hint)}</span>`;
       }
       if (choice.danger && state.difficulty === 1) {
-        html += `<span class="choice-danger">⚠ Berbahaya</span>`;
+        html += `<span class="choice-danger">\u26A0 Berbahaya</span>`;
       }
       btn.innerHTML = html;
 
@@ -280,8 +371,8 @@ const Engine = (() => {
   }
 
   const CHAPTERS = {
-    id: ['Prolog', 'Bab 1: Kabut Pertama', 'Bab 2: Retakan', 'Bab 3: Kebenaran', 'Bab 4: Simpul Terakhir'],
-    en: ['Prologue', 'Chapter 1: First Mist', 'Chapter 2: Fractures', 'Chapter 3: The Truth', 'Chapter 4: The Last Knot']
+    id: ['Prolog', 'Bab 1: Pameran Maut', 'Bab 2: Darah Pertama', 'Bab 3: Pecah Belah', 'Bab 4: Perburuan', 'Bab 5: Wahyu', 'Bab 6: Konfrontasi', 'Bab 7: Simpul Terakhir'],
+    en: ['Prologue', 'Chapter 1: The Death Exhibition', 'Chapter 2: First Blood', 'Chapter 3: Fractured', 'Chapter 4: The Hunt', 'Chapter 5: Revelation', 'Chapter 6: Confrontation', 'Chapter 7: The Last Knot']
   };
   function updateChapterIndicator() {
     $('chapter-indicator').textContent = (CHAPTERS[lang] || CHAPTERS.id)[state.chapter] || '';
@@ -291,17 +382,19 @@ const Engine = (() => {
     const container = $('character-list');
     container.innerHTML = '';
     CHARACTERS.forEach(name => {
+      if (!state.alive.hasOwnProperty(name)) return;
       const div = document.createElement('div');
       div.className = 'char-card';
       const displayName = CHAR_DISPLAY[name];
       const alive = state.alive[name];
-      const corr = state.corruption[name];
-      const statusClass = !alive ? 'dead' : corr > 60 ? 'corrupted' : '';
-      const statusLabel = !alive ? 'Tewas' : corr > 60 ? 'Terpengaruh' : 'Hidup';
+      const susp = state.suspicion[name] || 0;
+      const statusClass = !alive ? 'dead' : susp > 60 ? 'corrupted' : '';
+      const statusLabel = !alive ? 'Tewas' : susp > 60 ? 'Tersangka' : 'Hidup';
 
       let relHtml = '';
-      CHARACTERS.forEach(other => {
+      MAIN_CHARACTERS.forEach(other => {
         if (other === name) return;
+        if (!state.alive[other]) return;
         const tr = getTrust(name, other);
         const otherDisplay = CHAR_DISPLAY[other];
         const color = tr > 60 ? 'trust' : tr < 40 ? 'fear' : 'neutral';
@@ -310,11 +403,14 @@ const Engine = (() => {
 
       const awarenessBar = name === 'arin' ? `<div class="char-awareness">Kewaspadaan: ${state.awareness.arin}%<div class="char-rel-bar"><div class="char-rel-fill awareness" style="width:${state.awareness.arin}%"></div></div></div>` : '';
 
+      const portraitHtml = getPortraitHTML(name, 'char-portrait');
+      const isMainChar = MAIN_CHARACTERS.includes(name);
+
       div.innerHTML = `
         <div class="char-header">
-          <img class="char-portrait" src="${CHAR_PORTRAITS[name]}" alt="${displayName}" loading="lazy">
+          ${portraitHtml}
           <div class="char-info">
-            <div class="char-name speaker ${name}">${displayName}</div>
+            <div class="char-name speaker ${name}">${displayName}${isMainChar ? '' : ' <small>(side)</small>'}</div>
             <div class="char-status ${statusClass}">${statusLabel}</div>
           </div>
         </div>
@@ -324,15 +420,15 @@ const Engine = (() => {
       container.appendChild(div);
     });
 
-    // Entity power indicator
-    if (state.awareness.arin > 30) {
-      const entityDiv = document.createElement('div');
-      entityDiv.className = 'char-card entity-card';
-      entityDiv.innerHTML = `
-        <div class="char-name speaker entity">??? Entitas</div>
-        <div class="char-rel">Kekuatan: ${state.entityPower}%<div class="char-rel-bar"><div class="char-rel-fill entity-bar" style="width:${state.entityPower}%"></div></div></div>
+    // Danger level indicator
+    if (state.awareness.arin > 20) {
+      const dangerDiv = document.createElement('div');
+      dangerDiv.className = 'char-card entity-card';
+      dangerDiv.innerHTML = `
+        <div class="char-name speaker entity">Tingkat Bahaya</div>
+        <div class="char-rel">Ancaman: ${state.dangerLevel}%<div class="char-rel-bar"><div class="char-rel-fill entity-bar" style="width:${state.dangerLevel}%"></div></div></div>
       `;
-      container.appendChild(entityDiv);
+      container.appendChild(dangerDiv);
     }
   }
 
@@ -341,9 +437,8 @@ const Engine = (() => {
     const container = $('characters-grid');
     if (!container) return;
     container.innerHTML = '';
-    
+
     if (typeof CHARACTER_PROFILES === 'undefined') {
-      // fallback: skip to game
       showScreen('screen-game');
       updateChapterIndicator();
       initParticles();
@@ -352,25 +447,29 @@ const Engine = (() => {
     }
 
     let currentFocus = -1;
-    
+
     CHARACTERS.forEach((name, idx) => {
       const profile = CHARACTER_PROFILES[name];
       if (!profile) return;
-      
+
       const card = document.createElement('div');
-      card.className = 'char-intro-card';
-      card.style.animationDelay = (idx * 0.15) + 's';
+      card.className = 'char-intro-card' + (profile.isMain ? '' : ' char-side');
+      card.style.animationDelay = (idx * 0.1) + 's';
       card.dataset.char = name;
-      
+
+      const portraitContent = profile.portrait
+        ? `<img class="char-intro-portrait" src="${profile.portrait}" alt="${profile.name}" loading="lazy">`
+        : `<span class="char-intro-portrait css-avatar-large" style="background:${profile.color}">${profile.initials || profile.name.charAt(0)}</span>`;
+
       card.innerHTML = `
         <div class="char-intro-portrait-wrap">
-          <img class="char-intro-portrait" src="${profile.portrait}" alt="${profile.name}" loading="lazy">
+          ${portraitContent}
           <div class="char-intro-glow" style="background:${profile.color}"></div>
         </div>
         <div class="char-intro-name">${profile.name}</div>
         <div class="char-intro-role">${profile.role}</div>
       `;
-      
+
       card.addEventListener('click', () => {
         if (currentFocus === idx) {
           closeCharDetail();
@@ -380,7 +479,7 @@ const Engine = (() => {
         currentFocus = idx;
         showCharDetail(profile);
       });
-      
+
       container.appendChild(card);
     });
   }
@@ -393,17 +492,25 @@ const Engine = (() => {
       modal.className = 'char-detail-modal';
       document.body.appendChild(modal);
     }
-    
+
     const traitsHtml = profile.traits.map(t => `<span class="char-trait">${t}</span>`).join('');
-    
+
     let relHtml = '';
     if (profile.relationships) {
       Object.entries(profile.relationships).forEach(([key, desc]) => {
-        const relName = CHARACTER_PROFILES[key] ? CHARACTER_PROFILES[key].name : key;
-        const relPortrait = CHARACTER_PROFILES[key] ? CHARACTER_PROFILES[key].portrait : '';
+        const relProfile = CHARACTER_PROFILES[key];
+        const relName = relProfile ? relProfile.name : key;
+        let relPortraitHtml;
+        if (relProfile && relProfile.portrait) {
+          relPortraitHtml = `<img class="char-rel-portrait" src="${relProfile.portrait}" alt="${relName}">`;
+        } else if (relProfile) {
+          relPortraitHtml = `<span class="char-rel-portrait css-avatar" style="background:${relProfile.color}">${relProfile.initials || relName.charAt(0)}</span>`;
+        } else {
+          relPortraitHtml = `<span class="char-rel-portrait css-avatar">${relName.charAt(0)}</span>`;
+        }
         relHtml += `
           <div class="char-rel-entry">
-            <img class="char-rel-portrait" src="${relPortrait}" alt="${relName}">
+            ${relPortraitHtml}
             <div class="char-rel-detail">
               <strong>${relName}</strong>
               <p>${desc}</p>
@@ -412,12 +519,16 @@ const Engine = (() => {
         `;
       });
     }
-    
+
+    const portraitEl = profile.portrait
+      ? `<img class="char-detail-portrait" src="${profile.portrait}" alt="${profile.name}">`
+      : `<span class="char-detail-portrait css-avatar-xlarge" style="background:${profile.color}">${profile.initials || profile.name.charAt(0)}</span>`;
+
     modal.innerHTML = `
       <div class="char-detail-content" style="border-color:${profile.color}">
         <button class="char-detail-close" onclick="document.getElementById('char-detail-modal').classList.remove('active')">&times;</button>
         <div class="char-detail-header">
-          <img class="char-detail-portrait" src="${profile.portrait}" alt="${profile.name}">
+          ${portraitEl}
           <div class="char-detail-info">
             <h2 class="char-detail-name" style="color:${profile.color}">${profile.fullName}</h2>
             <div class="char-detail-role">${profile.role}</div>
@@ -451,7 +562,7 @@ const Engine = (() => {
         </div>
       </div>
     `;
-    
+
     modal.classList.add('active');
   }
 
@@ -475,18 +586,20 @@ const Engine = (() => {
     const fates = CHARACTERS.map(name => {
       const displayName = CHAR_DISPLAY[name];
       const alive = state.alive[name];
-      const corrupted = state.corruption[name] > 60;
+      const wasKiller = isKiller(name);
       let fateText = '';
       if (endingInfo.fates && endingInfo.fates[name]) {
         fateText = t(endingInfo.fates[name]);
       } else if (!alive) {
-        fateText = 'Tidak selamat';
-      } else if (corrupted) {
-        fateText = 'Terpengaruh entitas';
+        fateText = wasKiller ? 'Tewas (Pembunuh)' : 'Tidak selamat';
+      } else if (wasKiller && state.killerRevealed.includes(name)) {
+        fateText = 'Terungkap sebagai pembunuh';
+      } else if (wasKiller) {
+        fateText = 'Selamat (identitas tersembunyi)';
       } else {
         fateText = 'Selamat';
       }
-      return { name: displayName, alive, corrupted, text: fateText };
+      return { name: displayName, alive, wasKiller, text: fateText };
     });
 
     const data = { number: num, title: endingTitle, rating, text: endingText, fates };
@@ -506,7 +619,7 @@ const Engine = (() => {
 
     const fatesEl = $('ending-fates');
     fatesEl.innerHTML = data.fates.map(f => {
-      const cls = !f.alive ? 'fate-dead' : f.corrupted ? 'fate-corrupted' : 'fate-alive';
+      const cls = !f.alive ? 'fate-dead' : f.wasKiller ? 'fate-corrupted' : 'fate-alive';
       return `<div class="fate-item"><span class="fate-name ${cls}">${f.name}</span>: ${f.text}</div>`;
     }).join('');
 
@@ -526,7 +639,7 @@ const Engine = (() => {
         const ratingClass = endingsUnlocked[i].rating ? 'rating-' + endingsUnlocked[i].rating : '';
         item.innerHTML = `<div class="gi-number ${ratingClass}">#${i}</div><div class="gi-title">${endingsUnlocked[i].title}</div>`;
       } else {
-        item.innerHTML = `<div class="gi-number">#${i}</div><div class="gi-locked">🔒</div>`;
+        item.innerHTML = `<div class="gi-number">#${i}</div><div class="gi-locked">\uD83D\uDD12</div>`;
       }
       grid.appendChild(item);
     }
@@ -539,14 +652,13 @@ const Engine = (() => {
 
   // ---- Save / Load ----
   function saveGame() {
-    const saveData = { state, currentNodeId, lang, version: 2 };
+    const saveData = { state, currentNodeId, lang, version: 3 };
     localStorage.setItem('simpul_save', JSON.stringify(saveData));
-    notify('Game tersimpan');
   }
 
   function loadGame() {
     const data = JSON.parse(localStorage.getItem('simpul_save'));
-    if (!data || data.version < 2) { notify('Tidak ada save'); return false; }
+    if (!data || data.version < 3) { notify('Save lama tidak kompatibel. Mulai game baru.'); return false; }
     state = data.state;
     currentNodeId = data.currentNodeId;
     lang = data.lang || 'id';
@@ -556,7 +668,7 @@ const Engine = (() => {
   function hasSave() {
     const d = localStorage.getItem('simpul_save');
     if (!d) return false;
-    try { return JSON.parse(d).version >= 2; } catch(e) { return false; }
+    try { return JSON.parse(d).version >= 3; } catch(e) { return false; }
   }
 
   // ---- Panel Toggle ----
@@ -579,7 +691,6 @@ const Engine = (() => {
 
     if (hasSave()) $('btn-continue').style.display = '';
 
-    // Difficulty selection
     $('btn-new-game').addEventListener('click', () => {
       showScreen('screen-difficulty');
     });
@@ -623,7 +734,7 @@ const Engine = (() => {
       $('overlay').classList.remove('active');
     });
 
-    $('btn-save').addEventListener('click', () => { saveGame(); togglePanel('panel-menu'); });
+    $('btn-save').addEventListener('click', () => { saveGame(); notify('Game tersimpan'); togglePanel('panel-menu'); });
     $('btn-load').addEventListener('click', () => {
       if (loadGame()) { togglePanel('panel-menu'); renderNode(currentNodeId); }
     });
@@ -646,10 +757,12 @@ const Engine = (() => {
   }
 
   return {
-    init, t, getTrust, modTrust, modAwareness, modEntity, killChar, canDie,
-    screenShake, bloodDrip, glitch, deathFlash, showChapterTitle, notify, showDirectEnding, renderNode,
+    init, t, getTrust, modTrust, modAwareness, modDanger, modSuspicion,
+    killChar, canDie, isKiller, aliveCount, aliveMainCount, addAlliance,
+    screenShake, bloodDrip, glitch, deathFlash, showChapterTitle, notify,
+    showDirectEnding, renderNode, getPortraitHTML,
     get state() { return state; },
     get lang() { return lang; },
-    CHARACTERS, CHAR_DISPLAY, diffMult
+    CHARACTERS, MAIN_CHARACTERS, SIDE_CHARACTERS, CHAR_DISPLAY, diffMult
   };
 })();

@@ -158,6 +158,41 @@ body {
 .story-text .speaker.juno { color: #6aa84f; }
 .story-text .speaker.vira { color: #8e7cc3; }
 .story-text .speaker.entity { color: #00cc66; text-shadow: 0 0 10px rgba(0,204,102,0.5); }
+/* Side Characters */
+.story-text .speaker.reza { color: #a09070; }
+.story-text .speaker.lana { color: #e05050; }
+.story-text .speaker.dimas { color: #5a9bbc; }
+.story-text .speaker.kira { color: #00cce8; }
+.story-text .speaker.farah { color: #d8a620; }
+
+/* CSS Avatars for side characters */
+.css-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+}
+.css-avatar.reza { background: linear-gradient(135deg, #5a4e3c, #7a6e5c); }
+.css-avatar.lana { background: linear-gradient(135deg, #8b0000, #a02020); }
+.css-avatar.dimas { background: linear-gradient(135deg, #3a6b8c, #5a8bac); }
+.css-avatar.kira { background: linear-gradient(135deg, #006b8c, #00b4d8); }
+.css-avatar.farah { background: linear-gradient(135deg, #8b6b00, #b8860b); }
+
+/* Ending Rating Colors */
+.ending-s, .ending-rating-s { color: #ffd700; text-shadow: 0 0 15px rgba(255,215,0,0.5); }
+.ending-a, .ending-rating-a { color: #50c878; }
+.ending-b, .ending-rating-b { color: #5b9bd5; }
+.ending-c, .ending-rating-c { color: #d4a030; }
+.ending-d, .ending-rating-d { color: #c87040; }
+.ending-f, .ending-rating-f { color: #c8362d; }
 .story-text .narration { color: #8a8478; font-style: italic; }
 .story-text .horror { color: #c8362d; text-shadow: 0 0 5px rgba(200,54,45,0.3); }
 .story-text .whisper { color: #5a554e; font-style: italic; font-size: 0.95em; }

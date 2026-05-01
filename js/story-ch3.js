@@ -1,885 +1,848 @@
 /* ============================================================
-   SIMPUL TERAKHIR — BAB 3: Kebenaran & BAB 4: Simpul Terakhir
-   Klimaks. Ritual. Pilihan terakhir. Menuju 25 ending.
+   SIMPUL TERAKHIR — BAB 3: Pecah Belah
+   Kelompok terpecah. Aliansi bergeser. Kematian pertama terjadi.
+   Lantai 3 terungkap. Siapa Sang Penenun mulai terkuak.
    ============================================================ */
 
 const STORY_CH3 = {
 
-'ch3_pre_dawn': {
+'ch3_start': {
   chapter: 3,
   text: (s) => {
-    let situation = '<p>Fajar merambat di cakrawala timur. Langit berubah dari hitam ke ungu tua, lalu ke merah gelap — seperti memar yang perlahan menyembuh.</p>';
+    let text = `<p class="narration">Mansion Wardhana terasa semakin kecil setiap menitnya. Dinding-dinding mendekat. Bayangan-bayangan memanjang. Dan di antara sepuluh orang — atau berapa pun yang masih utuh — garis-garis kepercayaan mulai retak seperti kaca.</p>`;
+    text += `<p>Countdown: <strong>${s.flags.kiraTracking ? '02:30:00' : '03:30:00'}</strong></p>`;
 
-    const aliveCount = Engine.CHARACTERS.filter(c => s.alive[c]).length;
-
-    if (s.flags.nikoLost && !s.alive.niko) {
-      situation += `<p>Niko sudah tidak ada. Ditelan bumi di depan matamu. Tangannya yang terulur — jari-jarinya yang berteriak minta pertolongan — masih terbakar di ingatanmu.</p>`;
-    }
-    if (s.flags.junoLost && !s.alive.juno) {
-      situation += `<p>Juno pergi mencari Niko dan tidak kembali. Teriakannya terpotong oleh keheningan hutan yang rakus.</p>`;
+    if (s.flags.dimasLocked) {
+      text += `<p><span class="speaker dimas">Dimas</span> terkunci di kamar mandi lantai satu. Reza memasang kursi di depan pintu — improvisasi, tapi efektif. Dari dalam, tidak ada suara. Entah Dimas sedang merencanakan sesuatu, atau menunggu.</p>`;
     }
 
-    if (aliveCount <= 3) {
-      situation += `<p>Kalian yang tersisa — ${aliveCount} dari lima — duduk di beranda cabin. Terlalu sedikit. Terlalu rapuh. Tapi masih ada.</p>`;
-    } else {
-      situation += `<p>Kalian berkumpul di beranda cabin. Wajah-wajah lelah, mata merah, tapi masih bersama.</p>`;
-    }
+    text += `<p>Kelompok secara alami terpecah menjadi faksi:</p>`;
 
-    if (s.flags.arinVolunteered) {
-      situation += `<p>Kau sudah membuat keputusanmu. Kau yang akan tinggal. Rasanya seperti batu yang ditaruh di dada — berat, tapi <em>pasti</em>.</p>`;
-    }
+    let factions = '';
+    factions += `<p><strong>Faksi Investigasi:</strong> `;
+    let investigators = ['Arin'];
+    if (s.flags.seraAlliance) investigators.push('Sera');
+    if (s.flags.rezaAlliance || s.flags.rezaWarning) investigators.push('Reza');
+    if (s.flags.kiraAlliance) investigators.push('Kira');
+    factions += investigators.join(', ') + ` — mencari kebenaran dan jalan keluar.</p>`;
 
-    situation += `<p>Hutan menunggu. Pohon tua menunggu. Dan di suatu tempat di bawah akar-akarnya, Vira — Vira yang asli — menunggu untuk dibangunkan.</p>
-<p>Saatnya memutuskan: apa yang akan kalian lakukan saat matahari terbit?</p>`;
+    factions += `<p><strong>Faksi Survival:</strong> Juno, Farah`;
+    if (!s.flags.seraAlliance) factions += ', Sera';
+    factions += ` — prioritas: keluar hidup-hidup, tidak peduli misteri.</p>`;
 
-    return situation;
+    factions += `<p><strong>Tidak Terbaca:</strong> Vira, Niko`;
+    if (!s.flags.dimasLocked) factions += ', Lana, Dimas';
+    factions += ` — agenda mereka sendiri.</p>`;
+
+    text += factions;
+
+    text += `<p><span class="speaker juno">Juno</span> berdiri. "Gue udah cukup. Gue nggak mau main detective lagi. Gue mau KELUAR."</p>`;
+    text += `<p><span class="speaker sera">Sera</span>: "Juno—"</p>`;
+    text += `<p>"Nggak. Lo semua boleh stay dan solve mystery. Gue mau pecahin jendela, dobrak pintu, apapun. Siapa yang ikut?"</p>`;
+
+    return text;
   },
   choices: [
     {
-      text: "Lakukan ritual. Kembalikan batu ke altar.",
-      hint: "Lima tangan. Lima kebenaran. Satu simpul baru.",
-      next: 'ch3_ritual_start',
-      condition: (s) => {
-        const aliveCount = Engine.CHARACTERS.filter(c => s.alive[c]).length;
-        return aliveCount >= 3;
-      },
+      text: '"Juno, tunggu. Kalau kita pecah, kita lebih mudah ditarget."',
+      next: 'ch3_convince_juno',
       effect: (s) => {
-        s.flags.choseRitual = true;
-        s.keyChoices.push('chose_ritual');
+        Engine.modTrust('arin', 'juno', -3);
       }
     },
     {
-      text: "Tinggalkan hutan ini. Selamatkan yang masih hidup.",
-      hint: "Mungkin tidak semua bisa diselamatkan.",
-      next: 'ch3_escape',
+      text: '"Juno benar. Kita perlu exit strategy paralel. Juno cari jalan keluar, aku investigasi."',
+      next: 'ch3_split_plan',
       effect: (s) => {
-        s.flags.choseEscape = true;
-        s.keyChoices.push('chose_escape');
+        s.flags.splitPlan = true;
+        Engine.modTrust('arin', 'juno', 8);
       }
     },
     {
-      text: "Hancurkan batu itu. Putus simpul untuk selamanya.",
-      hint: "Dratis. Tidak bisa dibatalkan.",
-      danger: true,
-      next: 'ch3_destroy_stone',
-      condition: (s) => s.flags.arinHasStone || s.flags.nikoHasStone,
+      text: "Ikut Juno — dobrak jalan keluar adalah prioritas",
+      next: 'ch3_escape_attempt',
       effect: (s) => {
-        s.flags.choseDestroy = true;
-        s.keyChoices.push('chose_destroy');
-      }
-    },
-    {
-      text: "Bicara dengan entitas satu kali lagi. Cari jalan tengah.",
-      next: 'ch3_final_negotiation',
-      condition: (s) => !s.flags.entityBetrayed && !s.flags.entityGone,
-      effect: (s) => {
-        s.flags.finalNegotiation = true;
-        s.keyChoices.push('final_negotiation');
-      }
-    },
-    {
-      text: "Berikan batu pada Sera — biarkan kepekaannya yang memimpin",
-      hint: "Sera bisa merasakan simpul lebih dari siapapun.",
-      next: 'ch3_sera_leads',
-      condition: (s) => s.alive.sera && (s.flags.seraSensitive || s.flags.seraFeelsVira || s.flags.seraAlliance),
-      effect: (s) => {
-        s.flags.seraLeadsRitual = true;
-        s.keyChoices.push('sera_leads');
-      }
-    },
-    {
-      text: "Minta Juno untuk menebus dosanya — dia yang punya hubungan paling dalam dengan Vira",
-      next: 'ch3_juno_redemption',
-      condition: (s) => s.alive.juno && (s.flags.junoConfessed || s.flags.comfortedJunoDeeply),
-      effect: (s) => {
-        s.flags.junoRedemption = true;
-        s.keyChoices.push('juno_redemption');
-      }
-    }
-  ]
-},
-
-'ch3_sera_leads': {
-  chapter: 3,
-  text: `<div class="scene-art scene-ritual"></div>
-<p>Kau menyerahkan batu pada Sera. Saat jari-jarinya menutup di sekitar permukaan batu, matanya berubah — tidak hijau seperti entitas, tapi biru terang. Biru langit. Biru harapan.</p>
-<p><span class="speaker sera">Sera</span> menarik napas tajam.</p>
-<p>"Aku bisa merasakan semuanya. Simpul, entitas, Vira, empat jiwa yang lama... semuanya terhubung. Dan aku bisa melihat..." suaranya bergetar, "...aku bisa melihat <em>cara</em>-nya."</p>
-<p>"Kita tidak perlu mengorbankan siapapun. Yang dibutuhkan simpul bukan jiwa. Yang dibutuhkan simpul adalah <em>ingatan</em>. Ingatan tentang koneksi yang tulus."</p>
-<p>"Entitas mengambil jiwa karena tidak mengerti. Dia sendiri tidak pernah punya teman. Tidak pernah punya koneksi manusiawi. Dia hanya tahu mengambil."</p>
-<p>Sera menatapmu dengan air mata dan senyum bersamaan.</p>
-<p>"Kita harus <em>memberikan</em> ingatan kita padanya. Bukan jiwa. Tapi momen-momen ketika kita benar-benar terhubung."</p>`,
-  choices: [
-    {
-      text: '"Aku siap. Tunjukkan caranya, Sera."',
-      next: 'ch3_memory_ritual',
-      effect: (s) => {
-        s.flags.memoryRitual = true;
-        s.moralScore += 20;
-        s.keyChoices.push('memory_ritual');
-      }
-    },
-    {
-      text: '"Bagaimana kalau itu menghapus ingatan kita?"',
-      next: 'ch3_memory_cost',
-      effect: (s) => {
-        s.flags.askedMemoryCost = true;
-      }
-    }
-  ]
-},
-
-'ch3_memory_cost': {
-  text: `<p>Sera terdiam. Batu di tangannya berdenyut lebih pelan.</p>
-<p>"Ya," bisiknya. "Mungkin. Mungkin kita akan lupa. Lupa malam di atap. Lupa es krim setelah ujian. Lupa betapa dalamnya kita saling peduli."</p>
-<p>"Tapi Vira akan bangun. Entitas akan puas. Hutan akan hidup. Dan meskipun kita lupa..."</p>
-<p>Sera menatapmu dengan keyakinan yang menakjubkan.</p>
-<p>"...kita akan jatuh cinta lagi pada persahabatan ini. Karena bukan ingatan yang membuat kita teman. Bukan kebiasaan. Bukan waktu. Itu <em>pilihan</em>. Dan kita akan memilih satu sama lain. Lagi. Dan lagi."</p>`,
-  choices: [
-    {
-      text: '"Kau benar. Lakukan."',
-      next: 'ch3_memory_ritual',
-      effect: (s) => {
-        s.flags.acceptedMemoryLoss = true;
-        s.moralScore += 25;
-        s.keyChoices.push('accepted_memory_loss');
-      }
-    },
-    {
-      text: '"Aku tidak bisa. Ingatan ini terlalu berharga."',
-      next: 'ch3_ritual_start',
-      effect: (s) => {
-        s.flags.keptMemories = true;
-        s.moralScore -= 5;
-      }
-    }
-  ]
-},
-
-'ch3_memory_ritual': {
-  text: (s) => {
-    const aliveCount = Engine.CHARACTERS.filter(c => s.alive[c]).length;
-
-    return `<p>Sera memimpin. Kalian berdiri melingkari pohon tua. Batu ada di tangan Sera, ditekan ke kulit kayu.</p>
-<p>"Ingat," bisik Sera. "Ingat momen terbaik kalian bersama."</p>
-<p>Dan kalian ingat.</p>
-<p>Niko mengingat malam saat dia menangis setelah ayahnya pergi — dan empat teman yang datang ke rumahnya pukul dua pagi tanpa diminta.</p>
-<p>Juno mengingat konser pertamanya yang gagal total — dan empat orang di baris depan yang tetap bertepuk tangan.</p>
-<p>Sera mengingat hari saat dia menunjukkan lukisannya untuk pertama kali — dan Vira yang berkata, "Ini cara kau melihat dunia? Cantik sekali."</p>
-<p>Kau mengingat... semuanya. Semua momen kecil yang menumpuk menjadi sesuatu yang lebih besar dari jumlah bagiannya.</p>
-<p>Pohon bercahaya. Bukan hijau — <em>emas</em>. Cahaya hangat yang mengalir dari akar ke puncak. Langit berubah warna.</p>
-<p>Dan entitas — dari kedalaman — menangis. Bukan karena kesakitan. Karena akhirnya, untuk pertama kalinya dalam lima ratus tahun, seseorang <em>berbagi</em> dengannya.</p>
-${aliveCount >= 4 ? '<p>Simpul terbentuk. Sempurna. Utuh. Diikat oleh hal yang tidak bisa diambil paksa: cinta yang diberikan dengan sukarela.</p><p>Akar membuka. Vira muncul. Hidup. Menangis. <em>Pulang</em>.</p>' : '<p>Simpul terbentuk — tidak sempurna, retak di beberapa tempat — tapi cukup. Cukup untuk membawa Vira kembali, meski lemah.</p>'}`;
-  },
-  choices: [
-    {
-      text: "...",
-      next: 'ending_compute',
-      effect: (s) => {
-        s.flags.memoryRitualComplete = true;
-        s.flags.viraRescued = true;
-        if (s.flags.acceptedMemoryLoss) {
-          s.flags.memoriesLost = true;
-          s.moralScore += 15;
-        }
-        s.keyChoices.push('memory_ritual_complete');
-      }
-    }
-  ]
-},
-
-'ch3_juno_redemption': {
-  chapter: 3,
-  text: `<p><span class="speaker juno">Juno</span> menatapmu. Air mata yang selama ini ditahan akhirnya jatuh.</p>
-<p>"Aku yang meninggalkannya, Arin. Malam itu di Halimun. Aku melihat sesuatu menariknya ke bawah tanah dan aku lari. <em>Lari</em>."</p>
-<p>"Enam bulan aku hidup dengan mimpi buruk itu. Enam bulan aku bertanya — bagaimana kalau aku tidak lari? Bagaimana kalau aku meraih tangannya?"</p>
-<p>Juno berjalan ke tepi clearing. Ke arah pohon tua. Entitas mengamatinya.</p>
-<p>"Sekarang aku tahu jawabannya." Dia berbalik. Senyumnya — di balik air mata — adalah senyum paling tulus yang pernah kau lihat dari Juno.</p>
-<p>"Aku tidak lari lagi."</p>
-<p>Dia berlutut di depan pohon dan menempelkan kedua tangannya ke kulit kayu. Akar-akar bergerak mengelilingi tangannya — tapi tidak mengancam. Seperti jari yang saling menggenggam.</p>
-<p>"Vira, aku di sini. Maaf aku terlambat enam bulan. Tapi aku di sini sekarang."</p>
-<p>Dari bawah tanah, bisikan:</p>
-<p class="journal"><em>"Juno... aku tahu kau akan datang."</em></p>`,
-  choices: [
-    {
-      text: "Berdiri di samping Juno. Bantu dia.",
-      next: 'ch3_ritual_truths',
-      effect: (s) => {
-        Engine.modTrust('arin', 'juno', 20);
-        s.flags.junoRedeemed = true;
-        s.moralScore += 20;
-        s.keyChoices.push('juno_redeemed');
-      }
-    },
-    {
-      text: '"Juno, jangan sendirian. Kita semua harus melakukan ini bersama."',
-      next: 'ch3_ritual_start',
-      effect: (s) => {
+        s.flags.joinedJuno = true;
         Engine.modTrust('arin', 'juno', 10);
-        s.flags.junoNotAlone = true;
-        s.moralScore += 10;
+      }
+    },
+    {
+      text: "Abaikan debat — langsung naik ke lantai 3 selagi semua sibuk",
+      danger: true,
+      next: 'ch3_floor3',
+      effect: (s) => {
+        s.flags.wentToFloor3Alone = true;
+        Engine.modDanger(10);
+        Engine.modAwareness('arin', 10);
       }
     }
   ]
 },
 
-'ch3_entity_attack': {
+'ch3_convince_juno': {
+  text: `<p><span class="speaker juno">Juno</span> menggeram frustrasi.</p>
+<p>"Arin, lo denger gue nggak? Orang udah kena racun. Laptop Kira hancur. Dan kita masih di sini ngobrol soal 'clue' dan 'simpul'? Ini bukan game — ini HIDUP KITA."</p>
+<p><span class="speaker sera">Sera</span> menyentuh bahu Juno. "Dia benar soal satu hal, Arin. Kita perlu exit strategy."</p>
+<p><span class="speaker reza">Reza</span>: "Kompromi. Kita bagi dua tim. Satu cari jalan keluar fisik. Satu investigasi Sang Penenun. Komunikasi setiap lima belas menit."</p>
+<p>Proposal yang masuk akal. Juno masih tegang tapi mengangguk.</p>`,
+  choices: [
+    {
+      text: "Setuju — bagi tim. Aku pimpin investigasi.",
+      next: 'ch3_split_plan',
+      effect: (s) => {
+        s.flags.splitPlan = true;
+        Engine.modTrust('arin', 'juno', 5);
+      }
+    }
+  ]
+},
+
+'ch3_split_plan': {
+  text: (s) => {
+    let text = `<p>Tim terbentuk:</p>`;
+    text += `<p><strong>Tim Keluar (Juno pimpin):</strong> Juno, `;
+
+    let escapeTeam = ['Juno'];
+    if (!s.flags.dimasLocked) {
+      text += `Farah, dan siapapun yang mau ikut.</p>`;
+    } else {
+      text += `Farah.</p>`;
+    }
+
+    text += `<p><strong>Tim Investigasi (Arin pimpin):</strong> Arin, `;
+    let investigateTeam = ['Arin'];
+    if (s.flags.seraAlliance) { text += 'Sera, '; investigateTeam.push('Sera'); }
+    if (s.flags.rezaAlliance) { text += 'Reza, '; investigateTeam.push('Reza'); }
+    text += `dan Niko (dia tahu layout mansion).</p>`;
+
+    text += `<p><span class="speaker juno">Juno</span>: "Lima belas menit. Kalau nggak ada kabar, kita cari lo."</p>`;
+    text += `<p>Kelompok berpencar. Mansion menelan mereka.</p>`;
+
+    return text;
+  },
+  choices: [
+    {
+      text: "Naik ke lantai 3 — ruang kerja kakek Niko",
+      next: 'ch3_floor3',
+      effect: (s) => {
+        s.flags.headingToFloor3 = true;
+      }
+    },
+    {
+      text: "Basement dulu — server di B-2 mengontrol semua kunci",
+      condition: (s) => s.flags.hasMansionMap || s.flags.wentToBasement,
+      next: 'ch3_basement_b2',
+      effect: (s) => {
+        s.flags.headingToB2 = true;
+      }
+    }
+  ]
+},
+
+'ch3_escape_attempt': {
+  text: `<p>Kau, Juno, dan beberapa orang bergerak ke sayap timur — jendela terbesar mansion ada di sana.</p>
+<p><span class="speaker juno">Juno</span> mengambil kursi kayu dan menghantamkannya ke jendela.</p>
+<p>Kaca retak tapi tidak pecah. Jendela berlapis — kaca tempered di luar, film keamanan di dalam.</p>
+<p>Juno menghantam lagi. Lagi. Lagi. Berkeringat, frustasi. Kursi patah sebelum kaca menyerah.</p>
+<p>"SIAL!"</p>
+<p><span class="speaker reza">Reza</span>: "Kaca keamanan grade tinggi. Butuh alat potong khusus — atau banyak waktu."</p>
+<p>Speaker berderak: <em>"Merusak properti akan mempercepat countdown tiga puluh menit."</em></p>
+<p>Timer berubah. Tiga puluh menit hilang.</p>
+<p>Juno menendang dinding.</p>
+<p>Dari arah lain, <span class="speaker niko">Niko</span> berlari menghampiri. "Ada jalan lain. Wine cellar di basement — ada pintu darurat ke luar. Tapi..."</p>
+<p>"Tapi apa?"</p>
+<p>"Tapi harus melalui ruang server di B-2. Dan aku tidak punya aksesnya lagi."</p>`,
+  choices: [
+    {
+      text: "Ke basement — dobrak pintu server kalau perlu",
+      next: 'ch3_basement_b2',
+      effect: (s) => {
+        s.flags.forcingServerRoom = true;
+        Engine.modDanger(8);
+      }
+    },
+    {
+      text: "Bagi tim — Juno terus coba jendela, aku ke lantai 3",
+      next: 'ch3_floor3',
+      effect: (s) => {
+        s.flags.splitFromJuno = true;
+      }
+    }
+  ]
+},
+
+'ch3_floor3': {
   chapter: 3,
-  text: `<p>Entitas — tidak lagi berwujud Vira — mengembang menjadi sesuatu yang mengerikan. Bayangan raksasa dengan ratusan mata hijau yang berkedip di seluruh tubuhnya.</p>
-<p>Hutan bergerak bersamanya. Pohon-pohon bengkok ke dalam. Tanah bergelombang. Akar menjulur seperti tentakel.</p>
-<p>"LIMA RATUS TAHUN! LIMA RATUS TAHUN AKU MENUNGGU!"</p>
-<p>Suaranya seperti gempa — datang dari dalam tanah, dari udara, dari dalam kepalamu.</p>
-<p>"Dan kalian menyerahkan inti kekuatanku begitu saja? BODOH! Sekarang simpulnya di tanganku. Dan aku tidak butuh perjanjian. Aku butuh <em>makanan</em>."</p>
-<p>Akar-akar mengejar kalian. Niko menarikmu ke samping saat akar menghantam tempat kau berdiri.</p>
-<p><span class="speaker sera">Sera</span> berteriak saat akar melilit pergelangan kakinya.</p>`,
+  text: (s) => {
+    let text = `<p>Lantai tiga Mansion Wardhana.</p>`;
+
+    if (s.flags.followedViraUpstairs && s.flags.caughtVira) {
+      text += `<p>Kau sudah pernah di sini — saat mengikuti Vira. Tapi sekarang, tanpa kegelapan dan urgensi, kau bisa melihat lebih banyak.</p>`;
+    } else {
+      text += `<p>Tangga menuju lantai tiga berderit di bawah kakimu. Udara di sini berbeda — lebih tua, lebih berat, seperti bernapas melalui sejarah. Wallpaper Victorian yang terkelupas. Foto-foto keluarga Wardhana-Aldridge dari generasi ke generasi.</p>`;
+    }
+
+    text += `<p>Tiga ruangan: <em>Ruang Kerja</em>, <em>Kamar Tidur Tua</em>, dan ruangan yang hanya bertuliskan <em>"Privat"</em>.</p>`;
+
+    if (s.flags.hasHardDrive) {
+      text += `<p>Hard drive dari ruang kerja sudah ada padamu — tapi kau belum sempat membuka isinya.</p>`;
+    }
+
+    return text;
+  },
+  choices: [
+    {
+      text: "Masuk Ruang Kerja — pusat operasi kakek Niko",
+      next: 'ch3_study',
+      effect: (s) => {
+        Engine.modAwareness('arin', 8);
+      }
+    },
+    {
+      text: "Kamar Tidur Tua — siapa yang tidur di sini?",
+      next: 'ch3_bedroom',
+      effect: (s) => {
+        s.cluesFound++;
+      }
+    },
+    {
+      text: 'Ruangan "Privat" — yang paling misterius',
+      danger: true,
+      next: 'ch3_private_room',
+      effect: (s) => {
+        Engine.modDanger(10);
+        Engine.modAwareness('arin', 12);
+      }
+    }
+  ]
+},
+
+'ch3_study': {
+  text: (s) => {
+    let text = `<p>Ruang kerja Hendarto Wardhana — atau apa yang tersisa darinya.</p>`;
+    text += `<p>Meja besar mahogani. Rak buku floor-to-ceiling. Lukisan minyak di dinding — kakek Niko, muda, dengan mata yang sama tajamnya tapi lebih dingin. Di sampingnya, di foto yang sama — pria lain. Kakek Farah. Mereka berdiri di depan mansion yang baru setengah jadi.</p>`;
+
+    if (!s.flags.caughtVira) {
+      text += `<p>Di meja: laptop tua terbuka, hard drive external, dan tumpukan notes. Seseorang sudah di sini sebelumnya — laptop masih hangat.</p>`;
+    }
+
+    text += `<p>Di laci meja: folder bertuliskan "SIMPUL — PROTOKOL". Di dalamnya:</p>`;
+    text += `<p class="journal"><em>"Protokol Simpul Tahunan:<br>1. Undang 10 target — profil yang sudah ditentukan.<br>2. Fase 1: Observasi — biarkan mereka berinteraksi alami.<br>3. Fase 2: Provokasi — sebarkan informasi yang memecah kelompok.<br>4. Fase 3: Seleksi — tentukan simpul yang harus terputus.<br>5. Fase 4: Eksekusi — laksanakan dengan metode yang tidak menimbulkan kecurigaan luar.<br>6. Cleanup — satu korban selamat sebagai 'saksi' yang tidak dipercaya siapapun."</em></p>`;
+    text += `<p>Kau merasakan mual. Ini bukan sekadar horor — ini <em>operasi</em>. Terstruktur. Dipraktekkan. Diulang selama bertahun-tahun.</p>`;
+
+    if (s.difficulty >= 2) {
+      text += `<p>Di bawah protokol, notes tambahan dengan tulisan tangan berbeda — lebih muda, lebih rapi:</p>`;
+      text += `<p class="journal"><em>"Update tahun ini: Operator internal ditanam di antara tamu. Dua operator — Penulis dan Pemotong. Komando melalui walkie-talkie encrypted di frequency 462.5625 MHz."</em></p>`;
+      text += `<p>Penulis — Lana? Pemotong — Dimas?</p>`;
+    }
+
+    if (s.difficulty === 3) {
+      text += `<p>Dan satu notes lagi, paling bawah. Tulisan tangan ketiga — formal, seperti surat bisnis:</p>`;
+      text += `<p class="journal"><em>"Konfirmasi dari Pewaris Wardhana: akses penuh diberikan. Sistem keamanan dimutakhirkan per spesifikasi. Semua perlu berjalan lancar malam ini. Ini yang terakhir — setelah ini, utang lunas."</em></p>`;
+      text += `<p>Pewaris Wardhana — Niko? Niko memberikan akses?</p>`;
+    }
+
+    return text;
+  },
+  shake: true,
+  choices: [
+    {
+      text: "Ambil semua dokumen. Ini bukti yang cukup untuk menghancurkan siklus.",
+      next: 'ch3_study_aftermath',
+      effect: (s) => {
+        s.items.push('protocol_docs');
+        s.cluesFound += 3;
+        s.flags.hasProtocol = true;
+        s.keyChoices.push('found_protocol');
+      }
+    },
+    {
+      text: "Foto dokumen dan cek ruangan lain",
+      next: 'ch3_study_aftermath',
+      effect: (s) => {
+        s.items.push('protocol_photos');
+        s.cluesFound += 2;
+        s.flags.hasProtocolPhotos = true;
+      }
+    }
+  ]
+},
+
+'ch3_study_aftermath': {
+  text: (s) => {
+    let text = '';
+
+    if (s.difficulty >= 2) {
+      text += `<p>"Penulis dan Pemotong," kau bergumam. Lana menulis skenario. Dimas menyediakan metode. Mereka berdua operator Sang Penenun yang tertanam di antara tamu.</p>`;
+    }
+    if (s.difficulty === 3) {
+      text += `<p>Dan notes terakhir itu — "Pewaris Wardhana memberikan akses penuh". Apakah Niko... apakah Niko terlibat? Atau notes itu merujuk pada kakeknya?</p>`;
+      text += `<p>Kau perlu konfrontasi Niko. Tapi hati-hati.</p>`;
+    }
+
+    text += `<p>Suara langkah di tangga. Seseorang naik ke lantai tiga.</p>`;
+
+    return text;
+  },
+  choices: [
+    {
+      text: "Sembunyi dan lihat siapa yang datang",
+      next: 'ch3_floor3_visitor',
+      effect: (s) => {
+        s.flags.hidInStudy = true;
+      }
+    },
+    {
+      text: "Keluar dan hadapi — cukup bersembunyi",
+      next: 'ch3_floor3_visitor',
+      effect: (s) => {
+        s.flags.facedVisitor = true;
+      }
+    }
+  ]
+},
+
+'ch3_floor3_visitor': {
+  text: (s) => {
+    let text = '';
+
+    if (s.difficulty >= 3 && !s.flags.dimasLocked) {
+      text += `<p><span class="speaker niko">Niko</span> muncul di pintu. Di belakangnya: <span class="speaker lana">Lana</span>.</p>`;
+      text += `<p>Mereka berdua. Bersama. Niko dan salah satu "operator".</p>`;
+
+      if (s.flags.facedVisitor) {
+        text += `<p>Kau berdiri di tengah ruangan. "Niko. Lana. Menarik — kalian berdua datang bersama."</p>`;
+        text += `<p>Niko: "Arin, aku bisa jelaskan—"</p>`;
+        text += `<p>"Jelaskan apa? Bahwa kau memberikan akses penuh ke mansion ini kepada Sang Penenun? Aku menemukan notes-nya, Niko."</p>`;
+        text += `<p>Niko memucat. Lana diam — terlalu diam.</p>`;
+      } else {
+        text += `<p>Dari balik lemari, kau mendengar:</p>`;
+        text += `<p>Niko: "Lana, ini sudah di luar kendali. Aku tidak sign up untuk ini. Kau bilang tidak akan ada yang terluka."</p>`;
+        text += `<p>Lana: "Plans berubah, Niko. Kau tahu risikonya saat kau setuju."</p>`;
+        text += `<p>"Aku setuju untuk mengungkap dosa kakekku! Bukan untuk... ini!"</p>`;
+        text += `<p>"Mengungkap dosa memerlukan korban. Kau pikir kebenaran itu gratis?"</p>`;
+      }
+    } else {
+      text += `<p><span class="speaker niko">Niko</span> muncul sendirian.</p>`;
+      text += `<p>"Arin. Aku tahu kau akan ke sini." Dia terlihat hancur — bukan fisik, tapi sesuatu di dalamnya pecah.</p>`;
+      text += `<p>"Kau sudah baca protokolnya."</p>`;
+      text += `<p>"Ya."</p>`;
+      text += `<p>"Maka kau tahu. Keluargaku... kakekku... melakukan ini selama puluhan tahun. Setiap tahun, dia mengundang orang — dan beberapa dari mereka tidak pernah kembali."</p>`;
+      text += `<p>"Dan kau merencanakan malam ini untuk mengungkapnya?"</p>`;
+      text += `<p>"Aku merencanakan pameran dokumenter. Mengekspos dosa keluargaku. Tapi seseorang membajak rencana itu — seseorang yang INGIN siklus itu berlanjut, bukan berhenti."</p>`;
+    }
+
+    return text;
+  },
+  choices: [
+    {
+      text: '"Niko, aku butuh jawaban jujur. Apakah kau salah satu dari mereka?"',
+      next: 'ch3_niko_truth',
+      effect: (s) => {
+        s.flags.askedNikoDirectly = true;
+        Engine.modAwareness('arin', 10);
+      }
+    },
+    {
+      text: "Kita harus kembali ke bawah. SEKARANG. Sebelum event berikutnya.",
+      next: 'ch3_first_death',
+      effect: (s) => {
+        s.flags.rushDownstairs = true;
+      }
+    },
+    {
+      text: "Periksa ruangan 'Privat' sebelum turun",
+      condition: (s) => !s.flags.checkedPrivateRoom,
+      next: 'ch3_private_room',
+      effect: (s) => {
+        Engine.modDanger(8);
+      }
+    }
+  ]
+},
+
+'ch3_niko_truth': {
+  text: (s) => {
+    let text = '';
+
+    if (s.difficulty === 3) {
+      text += `<p><span class="speaker niko">Niko</span> menunduk.</p>`;
+      text += `<p>"Aku... ya. Sebagian. Aku memberikan akses. Aku mengundang orang-orang yang Lana minta. Aku pikir — aku pikir ini tentang menebus dosa kakekku. Lana bilang dia butuh bukti, saksi, orang-orang yang terhubung dengan kasus lama."</p>`;
+      text += `<p>"Tapi kau TAHU tentang kematian yang terjadi di acara-acara sebelumnya."</p>`;
+      text += `<p>"Aku tahu ada yang hilang! Tapi Lana bilang mereka pergi sendiri — relokasi, perlindungan saksi. Aku tidak tahu—" suaranya pecah, "—aku tidak tahu sampai malam ini."</p>`;
+      text += `<p>"Kau pembohong," kata Lana dingin, "atau kau naif. Pilih yang kau mau."</p>`;
+    } else {
+      text += `<p><span class="speaker niko">Niko</span> menatapmu. Matanya merah.</p>`;
+      text += `<p>"Bukan. Aku bersumpah. Aku merencanakan ini sebagai cara untuk mengakhiri siklus — bukan melanjutkannya. Tapi seseorang lebih pintar dariku. Seseorang yang sudah ada di dalam sistem ini jauh lebih lama."</p>`;
+      text += `<p>"Siapa?"</p>`;
+      text += `<p>"Aku tidak tahu pasti. Tapi kakekku punya partner. Bukan kakek Farah — orang lain. Seseorang yang dia sebut 'Sang Penenun' dalam jurnalnya. Dan orang itu... mungkin masih hidup."</p>`;
+    }
+
+    return text;
+  },
+  choices: [
+    {
+      text: "Turun ke bawah. Sekarang. Sebelum terlambat.",
+      next: 'ch3_first_death',
+      effect: (s) => {
+        s.flags.nikoTruthRevealed = true;
+        if (s.difficulty === 3) {
+          Engine.modSuspicion('niko', 30);
+          s.keyChoices.push('niko_complicit');
+        }
+      }
+    }
+  ]
+},
+
+'ch3_bedroom': {
+  text: `<p>Kamar tidur tua — tempat tidur empat tiang dengan kelambu berdebu, lemari pakaian besar, dan meja rias dengan cermin yang mengoksidasi sehingga refleksinya terdistorsi.</p>
+<p>Di atas tempat tidur: jurnal. Diary lama dengan kulit yang mulai hancur. Tulisan tangan — Hendarto Wardhana.</p>
+<p>Entri terakhir, bertanggal seminggu sebelum kematiannya:</p>
+<p class="journal"><em>"Sudah 48 tahun. 48 simpul. Aku tidak bisa lagi. Tubuhku menolak. Jiwaku — kalau masih ada — menolak. Tapi Penenun tidak mengizinkan berhenti. 'Satu simpul lagi,' katanya. Selalu satu lagi. Dan aku selalu menurut karena... karena dia tahu apa yang aku lakukan pada tahun pertama. Bukti itu ada padanya. Selamanya."</em></p>
+<p class="journal"><em>"Aku akan menyerahkan semuanya pada Niko. Bukan sebagai warisan — tapi sebagai pengakuan. Biarkan dia yang memutuskan: melanjutkan atau menghancurkan. Aku tidak cukup kuat untuk keduanya."</em></p>
+<p>Kau menutup jurnal. Hendarto Wardhana bukan mastermind — dia korban juga. Di-blackmail oleh Sang Penenun selama hampir setengah abad.</p>`,
+  choices: [
+    {
+      text: "Simpan jurnal. Kembali untuk cek ruangan lain.",
+      next: 'ch3_floor3',
+      effect: (s) => {
+        s.items.push('grandfather_journal');
+        s.cluesFound += 2;
+        s.flags.hasJournal = true;
+        s.keyChoices.push('found_journal');
+      }
+    }
+  ]
+},
+
+'ch3_private_room': {
+  text: (s) => {
+    let text = `<p>Ruangan "Privat".</p>`;
+    text += `<p>Pintu terkunci — tapi bukan elektronik. Gembok kombinasi lama. Empat digit.</p>`;
+
+    if (s.flags.hasJournal) {
+      text += `<p>Dalam jurnal kakek Niko, kau ingat satu detail: "48 tahun. 48 simpul." 1971 — tahun mansion dibangun.</p>`;
+      text += `<p>Kau memasukkan: 1-9-7-1.</p>`;
+      text += `<p>Klik.</p>`;
+    } else {
+      text += `<p>Kau mencoba beberapa kombinasi — tahun pembangunan mansion yang kau ingat dari cerita Lana: 1971.</p>`;
+      text += `<p>Klik.</p>`;
+    }
+
+    text += `<p>Ruangan di balik pintu bukan ruangan. Ini <em>shrine</em>.</p>`;
+    text += `<p>Dinding dipenuhi foto — puluhan, ratusan — semua orang yang pernah diundang ke mansion ini. Setiap foto punya label: nama, tanggal, dan satu kata: "SELAMAT" atau "TERPUTUS".</p>`;
+    text += `<p>Yang "TERPUTUS" jauh lebih banyak dari yang "SELAMAT".</p>`;
+    text += `<p>Di tengah ruangan: patung kecil dari kayu — figur tanpa wajah dengan tangan yang memegang benang-benang merah. Benang-benang itu terhubung ke setiap foto di dinding, membentuk web raksasa.</p>`;
+    text += `<p>Sang Penenun. Literal. Menenun jaringan korban selama setengah abad.</p>`;
+
+    text += `<p>Dan di dinding terakhir — yang paling baru — sepuluh foto. Foto kalian semua. Diambil minggu ini. Sembilan masih belum dilabeli. Satu sudah: foto Farah, dengan tulisan "TERPUTUS" dicoret dan diganti "TERTUNDA".</p>`;
+    text += `<p>Sang Penenun sudah merencanakan siapa yang mati malam ini. Tapi rencana itu berubah — karena kalian melawan.</p>`;
+
+    return text;
+  },
+  shake: true,
+  choices: [
+    {
+      text: "Foto semuanya. Hancurkan patung. Akhiri ini.",
+      next: 'ch3_destroy_shrine',
+      effect: (s) => {
+        s.flags.destroyedShrine = true;
+        s.items.push('shrine_photos');
+        s.cluesFound += 3;
+        s.moralScore += 10;
+        Engine.modDanger(15);
+        s.keyChoices.push('destroyed_shrine');
+      }
+    },
+    {
+      text: "Foto tapi jangan sentuh. Ini bukti untuk polisi.",
+      next: 'ch3_first_death',
+      effect: (s) => {
+        s.items.push('shrine_photos');
+        s.cluesFound += 3;
+        s.flags.preservedShrine = true;
+      }
+    }
+  ]
+},
+
+'ch3_destroy_shrine': {
+  text: `<p>Kau menghancurkan patung. Kayu tua pecah seperti tulang kering. Benang-benang merah jatuh seperti darah beku.</p>
+<p>Dan di dalam patung — sesuatu jatuh. Flash drive kecil. Tersembunyi di rongga kayu.</p>
+<p>Kau mengambilnya. Label kecil: "POLIS ASURANSI".</p>
+<p>Speaker berderak. Kali ini suaranya berbeda — bukan mekanis. <em>Marah</em>.</p>
+<p class="journal"><em>"Kau menghancurkan karya seni tujuh dekade. Apakah kau merasa jadi pahlawan, Arin? Setiap penghancuran memiliki harga. Cek lantai satu."</em></p>
+<p>Jantungmu berhenti sedetik.</p>
+<p>Kau berlari ke tangga.</p>`,
+  shake: true,
+  choices: [
+    {
+      text: "LARI ke lantai satu!",
+      next: 'ch3_first_death',
+      effect: (s) => {
+        s.items.push('insurance_flash_drive');
+        s.flags.hasInsuranceDrive = true;
+        s.flags.triggeredPenenunAnger = true;
+        Engine.modDanger(20);
+      }
+    }
+  ]
+},
+
+'ch3_basement_b2': {
+  text: (s) => {
+    let text = `<p>Basement B-1 — wine cellar. Kau melewati rak-rak botol berdebu menuju pintu baja B-2.</p>`;
+
+    if (s.flags.kiraAlliance && !s.flags.savedFarahDrink) {
+      text += `<p><span class="speaker kira">Kira</span> ada bersamamu, laptop di tangan. "Aku bisa coba brute force password dari sini."</p>`;
+      text += `<p>Tiga menit mengetik. Lima menit. Tujuh menit.</p>`;
+      text += `<p>"Got it." Suara klik magnetik. Pintu baja terbuka.</p>`;
+    } else {
+      text += `<p>Pintu baja. Kunci elektronik. Panel keypad di samping.</p>`;
+      if (s.flags.hasMansionMap) {
+        text += `<p>Dari diagram mansion yang kau temukan di dapur, ada catatan: kode backup B-2 adalah "71-SIMPUL".</p>`;
+        text += `<p>Kau memasukkan kode. Pintu terbuka.</p>`;
+      } else {
+        text += `<p>Kau mencoba beberapa kombinasi. Tidak berhasil. Panel menolak.</p>`;
+        text += `<p><span class="speaker niko">Niko</span>: "Coba 1971."</p>`;
+        text += `<p>Tidak berhasil.</p>`;
+        text += `<p><span class="speaker reza">Reza</span> menendang panel. Tidak bergerak. "Kita butuh Kira."</p>`;
+        text += `<p>Kau terjebak di depan pintu yang tidak bisa kau buka.</p>`;
+      }
+    }
+
+    text += `<p>Di balik pintu B-2:</p>`;
+    text += `<p>Ruangan server. Dingin, biru, dengan rak-rak server yang berkedip. Monitor-monitor menampilkan feed CCTV dari seluruh mansion. Countdown timer: angka merah besar. Dan — sebuah workstation dengan keyboard dan layar yang menampilkan interface kontrol.</p>`;
+    text += `<p>Dari sini, seseorang mengendalikan SEMUANYA. Lampu, kunci, speaker, kamera. Ini pusat komando Sang Penenun.</p>`;
+
+    return text;
+  },
+  choices: [
+    {
+      text: "Ambil alih sistem — buka semua kunci!",
+      next: 'ch3_takeover_system',
+      effect: (s) => {
+        s.flags.tookOverSystem = true;
+        s.keyChoices.push('system_takeover');
+      }
+    },
+    {
+      text: "Jangan sentuh — bisa jadi booby-trapped. Observasi dulu.",
+      next: 'ch3_observe_system',
+      effect: (s) => {
+        s.flags.observedSystem = true;
+        Engine.modAwareness('arin', 10);
+      }
+    }
+  ]
+},
+
+'ch3_takeover_system': {
+  text: `<p>Kau duduk di workstation. Interface-nya sederhana — terlalu sederhana. Seperti sengaja dirancang agar mudah digunakan.</p>
+<p>Opsi di layar:</p>
+<p>• UNLOCK ALL DOORS ✦ LOCKDOWN ALL DOORS ✦ ACTIVATE EVENT ✦ BROADCAST ✦ SHUTDOWN</p>
+<p>Kau menekan UNLOCK ALL DOORS.</p>
+<p>Layar berkedip: <em>"Konfirmasi diperlukan. Masukkan passphrase Penenun."</em></p>
+<p>Password. Tentu saja.</p>
+<p>Kau mencoba "simpul". Salah. "penenun". Salah. "1971". Salah.</p>
+<p>Tiga kali salah. Layar berubah merah:</p>
+<p class="journal"><em>"Akses ditolak. Failsafe aktif. Event darurat dimulai dalam 60 detik."</em></p>
+<p>Alarm berbunyi di seluruh mansion. Merah berkedip.</p>`,
+  shake: true,
+  glitch: true,
+  choices: [
+    {
+      text: "SHUTDOWN! Matikan semuanya!",
+      next: 'ch3_shutdown',
+      effect: (s) => {
+        s.flags.attemptedShutdown = true;
+        Engine.modDanger(15);
+      }
+    },
+    {
+      text: "LARI dari basement — event darurat bisa apa saja",
+      next: 'ch3_first_death',
+      effect: (s) => {
+        s.flags.fledBasement = true;
+        Engine.modDanger(10);
+      }
+    }
+  ]
+},
+
+'ch3_shutdown': {
+  text: `<p>Kau menekan SHUTDOWN. Layar berkedip.</p>
+<p><em>"Shutdown memerlukan passphrase level 2."</em></p>
+<p>Tidak bisa.</p>
+<p>Kau mencabut kabel power dari server utama. Layar mati. Feed CCTV mati. Lampu di seluruh mansion berkedip — lalu mati total.</p>
+<p>Gelap. Absolut. Generator di suatu tempat menyala — lampu darurat hijau berkedip lemah.</p>
+<p>Kau baru saja mematikan mata dan telinga Sang Penenun. Tapi juga mematikan semua kunci elektronik.</p>
+<p>Pintu-pintu di seluruh mansion berderak terbuka — kunci elektromagnetik memerlukan daya untuk tetap terkunci. Tanpa daya, semua pintu default ke posisi terbuka.</p>
+<p>Termasuk pintu keluar.</p>
+<p>Termasuk... pintu di mana Dimas dikunci.</p>
+<p>Dan termasuk pintu-pintu yang seharusnya menahan apapun yang ada di ruangan-ruangan yang belum kau jelajahi.</p>`,
+  shake: true,
+  glitch: true,
+  choices: [
+    {
+      text: "LARI ke atas — pintu keluar terbuka! Kumpulkan semua orang!",
+      next: 'ch3_first_death',
+      effect: (s) => {
+        s.flags.allDoorsOpen = true;
+        s.flags.dimasFreed = true;
+        Engine.modDanger(20);
+        s.keyChoices.push('killed_power');
+      }
+    }
+  ]
+},
+
+'ch3_observe_system': {
+  text: `<p>Kau tidak menyentuh apa-apa. Tapi kau mengamati.</p>
+<p>Di monitor CCTV, kau bisa melihat semua ruangan. Dan kau melihat sesuatu yang membuatmu gemetar:</p>
+<p>Feed dari lorong lantai satu — seseorang bergerak. Berpakaian gelap, wajah tertutup. Bukan salah satu dari sepuluh tamu. Orang ke-11.</p>
+<p>Orang itu bergerak dari arah dapur, membawa sesuatu — benda panjang, logam, berkilat.</p>
+<p>"Ada orang lain di mansion ini," bisikmu.</p>
+<p>Di monitor lain: <span class="speaker juno">Juno</span> berjalan sendirian di koridor lantai satu. Menuju arah yang sama dengan sosok gelap itu.</p>
+<p>Juno tidak tahu. Dia berjalan langsung menuju bahaya.</p>`,
+  shake: true,
+  choices: [
+    {
+      text: "BROADCAST melalui speaker: 'JUNO, LARI!'",
+      next: 'ch3_warn_juno',
+      effect: (s) => {
+        s.flags.warnedJunoFromBasement = true;
+        Engine.modTrust('arin', 'juno', 10);
+      }
+    },
+    {
+      text: "Lari ke atas secepat mungkin untuk menolong Juno!",
+      next: 'ch3_first_death',
+      effect: (s) => {
+        s.flags.racedToSaveJuno = true;
+        Engine.modDanger(10);
+      }
+    }
+  ]
+},
+
+'ch3_warn_juno': {
+  text: `<p>Kau menekan tombol BROADCAST.</p>
+<p>Suaramu mengisi seluruh mansion: "JUNO! LORONG LANTAI SATU! LARI!"</p>
+<p>Di monitor, Juno bereaksi — berhenti, menoleh, lalu berlari. Sosok gelap di belakangnya berhenti juga. Menoleh ke kamera terdekat — seolah TAHU kau menontonnya.</p>
+<p>Lalu sosok itu mundur. Menghilang ke bayangan.</p>
+<p>Kau menyelamatkan Juno — untuk sekarang. Tapi Sang Penenun tahu kau di ruang server. Dan dia tidak akan membiarkan kau tetap di sana.</p>
+<p>Lampu di ruang server berkedip. Monitor menampilkan pesan:</p>
+<p class="journal"><em>"Bukan giliranmu bermain sutradara, Arin. Keluar dari ruangan ini dalam 30 detik — atau gas dari ventilasi akan memastikan kau tidak keluar sama sekali."</em></p>`,
+  choices: [
+    {
+      text: "KELUAR! Sekarang!",
+      next: 'ch3_first_death',
+      effect: (s) => {
+        s.flags.escapedServerRoom = true;
+        s.flags.penenunKnowsArin = true;
+        Engine.modDanger(15);
+      }
+    }
+  ]
+},
+
+'ch3_first_death': {
+  chapter: 3,
+  text: (s) => {
+    let text = `<p class="narration">Dan kemudian — kematian pertama.</p>`;
+
+    if (s.flags.triggeredPenenunAnger || s.flags.allDoorsOpen) {
+      text += `<p>Kau mendengar teriakan dari lantai satu saat berlari turun. Tapi kau terlambat.</p>`;
+    } else {
+      text += `<p>Semua orang berkumpul saat speaker mengumumkan event ketiga. Tapi sebelum instruksi selesai — suara. Bukan dari speaker. Dari ruangan di sebelah.</p>`;
+    }
+
+    // Determine first death based on choices
+    let victim = 'reza';
+    if (s.flags.savedFarahDrink && !s.flags.guardingVictim) {
+      victim = 'kira';
+    } else if (s.flags.stoppedDimasTea && s.flags.dimasLocked) {
+      victim = 'farah';
+    } else if (s.flags.rezaAlliance && s.flags.guardingVictim) {
+      victim = 'lana';
+      if (Engine.isKiller('lana')) victim = 'farah';
+    }
+
+    if (victim === 'reza') {
+      text += `<p><span class="speaker reza">Reza</span> ditemukan di koridor sayap timur. Tergeletak. Tidak bergerak.</p>`;
+      text += `<p>Luka di kepalanya — trauma tumpul, dari belakang. Dia tidak melihat datang. Orang yang paling waspada di antara kalian... ditangkap dari titik buta.</p>`;
+      text += `<p><span class="speaker dimas">Dimas</span> — kalau dia tidak dikunci — berlari memeriksa. "Tidak ada nadi. Dia sudah—"</p>`;
+      text += `<p>"Jangan bilang." Suara <span class="speaker sera">Sera</span> pecah.</p>`;
+      text += `<p>Reza. Mantan detektif. Orang yang berjuang untuk kebenaran bahkan setelah sistem menolaknya. Mati di lorong gelap mansion terkutuk ini.</p>`;
+    } else if (victim === 'kira') {
+      text += `<p><span class="speaker kira">Kira</span> — yang sebelumnya terluka — ditemukan di kamar tempat dia diistirahatkan. Mesinnya mati total. Luka di kepalanya... diperburuk. Seseorang memastikan dia tidak bangun lagi.</p>`;
+      text += `<p>"Dia masih hidup setengah jam lalu," bisik <span class="speaker sera">Sera</span>. "Siapa yang berjaga?"</p>`;
+      text += `<p>Tidak ada yang menjawab. Semua saling melirik.</p>`;
+    } else if (victim === 'farah') {
+      text += `<p><span class="speaker farah">Farah</span>. Ditemukan di ruang makan — masih di kursinya, kepala bersandar ke meja. Seolah tertidur. Tapi tidur yang tidak pernah berakhir.</p>`;
+      text += `<p>"Racun," kata <span class="speaker dimas">Dimas</span> — kalau dia ada. "Dalam wine. Substansi yang memperlambat jantung sampai berhenti. Tanpa rasa, tanpa bau."</p>`;
+      text += `<p>Pewaris keluarga Aldridge. Mati oleh racun di rumah yang dibangun uang keluarganya.</p>`;
+    } else {
+      text += `<p>Yang ditemukan bukan yang kau duga. <span class="speaker lana">Lana</span> — penulis horor — tergeletak di perpustakaan. Ironi yang terlalu sempurna untuk tidak disengaja.</p>`;
+      text += `<p>Di tangannya: notes terakhir. Tulisan tangan yang makin tidak terbaca. Kata terakhir yang bisa kau baca: "...dia mengkhianati aku juga..."</p>`;
+      text += `<p>Bahkan operator Sang Penenun tidak aman dari tuannya sendiri.</p>`;
+    }
+
+    text += `<p>Speaker: <em>"Simpul pertama... terputus."</em></p>`;
+    text += `<p>Suara itu terdengar puas.</p>`;
+
+    return text;
+  },
   blood: true,
   shake: true,
-  choices: [
-    {
-      text: "Selamatkan Sera!",
-      next: 'ch3_save_sera_attack',
-      effect: (s) => {
-        s.courage.arin += 15;
-        s.flags.savedSeraAttack = true;
-      }
-    },
-    {
-      text: "Cari kelemahan entitas — dia terlalu percaya diri",
-      next: 'ch3_find_weakness',
-      effect: (s) => {
-        Engine.modAwareness('arin', 15);
-        s.flags.soughtWeakness = true;
-      }
+  glitch: true,
+  onEnter: (s) => {
+    let victim = 'reza';
+    if (s.flags.savedFarahDrink && !s.flags.guardingVictim) victim = 'kira';
+    else if (s.flags.stoppedDimasTea && s.flags.dimasLocked) victim = 'farah';
+    else if (s.flags.rezaAlliance && s.flags.guardingVictim) {
+      victim = 'lana';
+      if (s.killers && s.killers.includes('lana')) victim = 'farah';
     }
-  ]
-},
-
-'ch3_save_sera_attack': {
-  text: (s) => {
-    let result = `<p>Kau berlari ke Sera dan menarik tangannya. Akar itu kuat — seperti baja hidup — tapi kau tidak berhenti menarik.</p>`;
-
-    if (s.flags.basementMarked) {
-      result += `<p>Simbol di telapak tanganmu bercahaya — dan saat cahaya itu menyentuh akar, akar itu <em>mundur</em>. Terbakar.</p>
-<p>Kau tidak mengerti bagaimana, tapi tanda itu melindungimu.</p>`;
-    } else if (Engine.getTrust('arin', 'sera') >= 70) {
-      result += `<p>Sera menatap matamu. Kalian terhubung — dan dalam koneksi itu, ada kekuatan. Akar itu melonggar.</p>`;
-    }
-
-    result += `<p>Sera bebas. Kalian berlari ke balik pohon besar, berlindung.</p>
-<p>Entitas mengamuk — tapi ada pola dalam kemarahannya. Dia berpusat pada altar, pada batu. Dia tidak bisa terlalu jauh dari sana.</p>
-<p>"Dia terikat ke altar," bisik Niko. "Kalau kita bisa mengambil batu kembali—"</p>`;
-
-    return result;
+    Engine.killChar(victim);
   },
   choices: [
     {
-      text: "Buat rencana: alihkan perhatian entitas, rebut batu",
-      next: 'ch3_heist_plan',
+      text: "Panik mulai menyebar. Kau harus mengambil kendali.",
+      next: 'ch3_aftermath',
       effect: (s) => {
-        s.flags.heistPlan = true;
-      }
-    },
-    {
-      text: "Lari ke arah berlawanan dari altar",
-      next: 'ch3_escape',
-      effect: (s) => {
-        s.flags.ranFromAttack = true;
-      }
-    }
-  ]
-},
-
-'ch3_find_weakness': {
-  text: `<p>Kau mengamati entitas di tengah kekacauan. Dan kau melihatnya — di antara ratusan mata hijau, ada satu yang berbeda. Bukan hijau. <em>Cokelat</em>. Mata manusia. Mata Vira.</p>
-<p>Vira — Vira yang asli — masih ada <em>di dalam</em> entitas ini. Terjebak. Dan mata coklatnya... menangis.</p>
-<p>"Vira masih di sana!" teriakmu. "Dia masih di dalam!"</p>
-<p><span class="speaker sera">Sera</span> melihat ke arah yang kau tunjuk. Dia melihatnya juga.</p>
-<p>"VIRA! VIRA, KAU DENGAR AKU?"</p>
-<p>Entitas berhenti. Seluruh tubuhnya membeku. Mata-mata hijaunya berkedip tak sinkron. Dan mata cokelat itu — Vira — membuka lebih lebar.</p>
-<p>Dari dalam entitas, suara lemah:</p>
-<p>"S-Sera...? Arin...?"</p>
-<p>Entitas menggeliat kesakitan, menjerit.</p>
-<p>"DIAM! KAU MILIKKU SEKARANG!"</p>`,
-  choices: [
-    {
-      text: "Panggil nama Vira. Terus panggil. Bantu dia melawan.",
-      next: 'ch3_call_vira',
-      effect: (s) => {
-        s.flags.calledVira = true;
-        s.moralScore += 15;
-        s.keyChoices.push('called_vira');
-      }
-    },
-    {
-      text: "Ambil batu dari altar selagi entitas terganggu",
-      next: 'ch3_grab_stone',
-      effect: (s) => {
-        s.flags.grabbedStone = true;
-        s.keyChoices.push('grabbed_stone');
-      }
-    }
-  ]
-},
-
-'ch3_call_vira': {
-  text: (s) => {
-    let result = `<p>"VIRA! Kau ingat kami! Kau ingat malam-malam di atap rumah Sera, lihat bintang! Kau ingat es krim setelah ujian! Kau ingat janji kita — berlima selamanya!"</p>
-<p>Sera ikut berteriak. Juno — kalau masih ada — juga. Niko. Semua memanggil namanya.</p>
-<p>Entitas berteriak kesakitan. Tubuhnya retak — cahaya hijau bocor dari retakan. Dan dari dalam retakan itu, cahaya lain muncul. Hangat. Kuning. Manusiawi.</p>
-<p>Vira melawan dari dalam.</p>`;
-
-    if (Engine.getTrust('arin', 'sera') >= 60 && Engine.getTrust('arin', 'juno') >= 50) {
-      result += `<p>Ikatan kalian — meskipun terluka, meskipun retak — masih cukup kuat. Cukup kuat untuk menjangkaunya.</p>
-<p>Entitas berteriak satu kali terakhir — lalu <em>meledak</em>. Cahaya hijau menyebar ke segala arah. Dan di tempat entitas berdiri, Vira jatuh berlutut. Vira yang asli. Menangis. Hidup.</p>`;
-      s.flags.viraFreed = true;
-    } else {
-      result += `<p>Tapi ikatan kalian — terlalu banyak luka, terlalu banyak kebohongan — tidak cukup kuat. Vira hampir bebas, tapi entitas menariknya kembali.</p>
-<p>"Hampir." Entitas tersenyum di balik rasa sakit. "Tapi kalian tidak cukup <em>tulus</em>."</p>`;
-      s.flags.viraStillTrapped = true;
-    }
-
-    return result;
-  },
-  choices: [
-    {
-      text: (s) => s.flags.viraFreed ? "Peluk Vira. Dia kembali." : "Kita harus cari cara lain.",
-      next: (s) => s.flags.viraFreed ? 'ch3_vira_freed_attack' : 'ch3_heist_plan',
-      effect: (s) => {
-        if (s.flags.viraFreed) {
-          s.keyChoices.push('vira_freed_by_bonds');
-        }
-      }
-    }
-  ]
-},
-
-'ch3_vira_freed_attack': {
-  text: `<p>Vira menangis di pelukanmu. Tubuhnya kurus, kulitnya pucat, tapi dia <em>nyata</em>. Hangat. Manusia.</p>
-<p>"Arin... aku bermimpi. Mimpi yang sangat panjang. Dan dalam mimpi itu, aku mendengar suara kalian. Samar. Tapi tidak pernah berhenti."</p>
-<p>Entitas — yang sekarang terpisah dari Vira — mengecil. Tanpa host manusia, kekuatannya menyusut. Tapi masih memegang Inti Simpul.</p>
-<p>Suaranya lemah tapi berbisa.</p>
-<p>"Kalian membebaskan gadis itu. Bagus untuknya. Tapi aku masih punya ini." Batu berdenyut di tangannya. "Dan tanpa simpul yang utuh, hutan ini akan mati. Dan ketika hutan mati... <em>semuanya</em> mati."</p>
-<p>Pohon-pohon di sekeliling clearing mulai layu. Daun menguning dan jatuh. Tanah retak.</p>
-<p>"Serahkan batu itu," katamu.</p>
-<p>"Berikan aku pengganti. Seseorang yang bersedia menjadi jembatan baru."</p>`,
-  choices: [
-    {
-      text: '"Aku bersedia."',
-      next: 'ending_arin_sacrifice',
-      effect: (s) => {
-        s.flags.arinSacrificed = true;
-        s.moralScore += 30;
-        s.keyChoices.push('arin_sacrifice');
-      }
-    },
-    {
-      text: '"Tidak ada yang menjadi jembayanmu. Serahkan batu itu atau kita hancurkan bersama."',
-      next: 'ch3_final_standoff',
-      effect: (s) => {
-        s.flags.finalStandoff = true;
-        s.keyChoices.push('final_standoff');
-      }
-    },
-    {
-      text: "Lihat Niko. Dia yang memulai semua ini.",
-      next: 'ch3_niko_choice',
-      condition: (s) => s.alive.niko,
-      effect: (s) => {
-        s.flags.lookedAtNiko = true;
-      }
-    }
-  ]
-},
-
-'ch3_ritual_start': {
-  chapter: 4,
-  text: (s) => {
-    const alive = Engine.CHARACTERS.filter(c => s.alive[c]);
-    const aliveNames = alive.map(c => Engine.CHAR_DISPLAY[c]).join(', ');
-
-    return `<div class="scene-art scene-ritual"></div>
-<p class="narration">Bab 4: Simpul Terakhir</p>
-<p>Matahari terbit merah — merah seperti darah lama yang mengering.</p>
-<p>Kalian berjalan ke hutan. ${aliveNames}. ${alive.length < 5 ? 'Tidak lengkap. Tapi masih ada.' : 'Lima. Seperti yang dibutuhkan.'}</p>
-<p>Pohon tua menunggu. Altar di reruntuhan kuil menunggu. Cekungan untuk Inti Simpul terbuka seperti mulut yang kehausan.</p>
-<p>Entitas — dalam wujud cahaya hijau yang mengambang — menunggu di dekat altar.</p>
-<p>"Kalian datang." Ada sesuatu di suaranya — harapan? ketakutan? — yang membuatmu menyadari bahwa makhluk ini, seberapapun tuanya, sedang menghadapi momen yang menentukan hidupnya.</p>
-<p>"Letakkan batu di altar. Taruh tangan kalian di kulit pohon. Dan ucapkan kebenaran kalian — satu per satu."</p>
-<p>"Kebenaran yang paling menyakitkan. Yang paling kalian takuti untuk diucapkan."</p>`;
-  },
-  choices: [
-    {
-      text: "Mulai ritual",
-      next: 'ch3_ritual_truths',
-      effect: (s) => { s.flags.ritualStarted = true; }
-    }
-  ]
-},
-
-'ch3_ritual_truths': {
-  text: (s) => {
-    let truths = `<p>Batu diletakkan di altar. Cahaya hijau meluap — lembut, hangat, menunggu.</p>
-<p>Satu per satu, tangan menyentuh kulit pohon tua.</p>`;
-
-    if (s.alive.niko) {
-      truths += `<p><span class="speaker niko">Niko</span> pertama. Tangannya gemetar.</p>
-<p>"Kebenaran ku... aku membawa kalian ke sini karena egois. Aku ingin kekuatan. Aku ingin mengendalikan orang karena aku takut ditinggalkan." Air mata mengalir. "Maafkan aku."</p>`;
-    }
-    if (s.alive.sera) {
-      truths += `<p><span class="speaker sera">Sera</span> menyentuh pohon dengan kedua tangan.</p>
-<p>"Kebenaranku... aku tahu ada yang salah dengan Vira sejak hari pertama dia kembali. Tapi aku diam karena aku takut sendirian. Takut tidak ada yang percaya padaku." Dia terisak. "Aku memilih kenyamananku daripada keselamatan sahabatku."</p>`;
-    }
-    if (s.alive.juno) {
-      truths += `<p><span class="speaker juno">Juno</span> jatuh berlutut di depan pohon.</p>
-<p>"Kebenaranku... aku ada di Halimun bersama Vira. Aku melihat sesuatu mengambilnya. Dan aku lari." Suaranya hancur. "Aku meninggalkan orang yang paling aku pedulikan karena aku pengecut."</p>`;
-    }
-
-    truths += `<p>Giliranmu. Pohon menunggu. Entitas menunggu. Teman-temanmu menunggu.</p>
-<p>Apa kebenaranmu, Arin?</p>`;
-
-    return truths;
-  },
-  choices: [
-    {
-      text: '"Kebenaranku... aku selalu berdiri di tengah karena aku takut memihak. Takut kehilangan siapa pun."',
-      next: 'ch3_ritual_complete',
-      effect: (s) => {
-        s.moralScore += 15;
-        s.flags.arinTruth = 'fear_of_choosing';
-        s.keyChoices.push('truth_fear');
-      }
-    },
-    {
-      text: '"Kebenaranku... aku tahu ada yang salah dengan kita semua. Dan aku tetap diam karena lebih mudah."',
-      next: 'ch3_ritual_complete',
-      effect: (s) => {
-        s.moralScore += 20;
-        s.flags.arinTruth = 'complicity';
-        s.keyChoices.push('truth_complicity');
-      }
-    },
-    {
-      text: '"Kebenaranku... aku peduli pada kalian lebih dari apapun di dunia ini."',
-      next: 'ch3_ritual_complete',
-      effect: (s) => {
-        s.moralScore += 25;
-        s.flags.arinTruth = 'love';
-        s.keyChoices.push('truth_love');
-      }
-    }
-  ]
-},
-
-'ch3_ritual_complete': {
-  text: (s) => {
-    const aliveCount = Engine.CHARACTERS.filter(c => s.alive[c]).length;
-    const totalTrust = Object.values(s.trust).reduce((a, b) => a + b, 0);
-    const avgTrust = Math.round(totalTrust / Object.keys(s.trust).length);
-
-    if (aliveCount >= 4 && avgTrust >= 55 && s.moralScore >= 30) {
-      s.flags.perfectRitual = true;
-      return `<p>Pohon tua bercahaya. Bukan hanya hijau — semua warna. Pelangi yang mengalir di kulit kayunya, di akar-akarnya, di udara.</p>
-<p>Batu di altar berdenyut terakhir kali — lalu melebur ke dalam kayu. Menjadi satu dengan pohon. Kembali ke tempatnya.</p>
-<p>Tanah bergetar lembut. Akar-akar bergerak — bukan mengancam, tapi <em>memeluk</em>. Memeluk kalian semua.</p>
-<p>Dan dari dalam akar itu, seseorang muncul. Vira. Vira yang asli. Matanya terbuka, bingung, basah.</p>
-<p>"A-Arin...? Teman-teman...?"</p>
-<p>Entitas — sekarang bukan lagi bayangan menakutkan, tapi cahaya hangat yang melayang di udara — berbicara untuk terakhir kalinya:</p>
-<p>"Simpul baru sudah terikat. Lebih kuat dari yang lama. Karena yang lama dibuat dari perjanjian. Yang ini dibuat dari <em>kebenaran</em>."</p>
-<p>"Kalian bebas."</p>`;
-    }
-
-    if (aliveCount >= 3 && avgTrust >= 40) {
-      s.flags.imperfectRitual = true;
-      return `<p>Pohon tua bercahaya — tapi tidak rata. Bagian-bagian gelap tetap gelap. Simpul yang terbentuk kuat tapi tidak sempurna.</p>
-<p>Batu melebur ke altar. Vira muncul dari akar — hidup, tapi lemah. Pucat. Matanya tidak fokus.</p>
-<p>Entitas berbicara: "Simpul terikat. Tapi ada retakan. Ikatan kalian kuat... tapi tidak utuh."</p>
-<p>"Vira akan bangun. Tapi ingatan yang hilang — tiga minggu itu — tidak akan pernah kembali. Dan hutan ini... akan hidup, tapi tidak sepenuhnya."</p>
-<p>"Ini bukan ending yang sempurna. Tapi ini nyata."</p>`;
-    }
-
-    s.flags.failedRitual = true;
-    return `<p>Pohon tua menyerap cahaya batu — tapi menolaknya. Energi meluap keluar seperti darah dari luka yang terlalu dalam.</p>
-<p>Tanah bergetar. Retak. Akar-akar menggelepar kesakitan.</p>
-<p>Entitas menjerit.</p>
-<p>"TIDAK CUKUP! Ikatan kalian terlalu lemah! Terlalu banyak kebohongan! Terlalu banyak luka yang tidak disembuhkan!"</p>
-<p>Cahaya meledak. Putih menyilaukan. Kau terpental ke belakang.</p>
-<p>Ketika cahaya mereda, altar retak dua. Batu pecah menjadi serpihan. Dan pohon tua...</p>
-<p>Pohon tua mulai mati.</p>`;
-  },
-  shake: true,
-  choices: [
-    {
-      text: (s) => {
-        if (s.flags.perfectRitual) return "Peluk Vira. Pulang bersama.";
-        if (s.flags.imperfectRitual) return "Bantu Vira berdiri. Saatnya pulang.";
-        return "...apa yang sudah kami lakukan?";
-      },
-      next: (s) => {
-        if (s.flags.perfectRitual) return 'ending_compute';
-        if (s.flags.imperfectRitual) return 'ending_compute';
-        return 'ch3_failed_ritual';
-      }
-    }
-  ]
-},
-
-'ch3_failed_ritual': {
-  text: `<p>Hutan menangis. Bukan metafora — pohon-pohon mengeluarkan getah yang mengalir seperti air mata. Tanah merintih.</p>
-<p>Entitas mengecil. Cahayanya sekarat.</p>
-<p>"Simpul terputus. Selamanya."</p>
-<p>Kau mendengar suara dari dalam tanah — Vira, terperangkap, berteriak dalam mimpi yang berubah menjadi mimpi buruk tanpa akhir.</p>
-<p>"Dia... dia tidak bisa bangun lagi." Suara entitas hanya bisikan sekarang. "Maafkan aku. Aku tidak cukup kuat."</p>
-<p>Hutan mulai berubah. Warna memudar. Suara menghilang. Dunia menjadi datar, kosong, abu-abu.</p>`,
-  choices: [
-    {
-      text: "Gali tanah. Keluarkan Vira dengan tanganmu.",
-      next: 'ending_compute',
-      effect: (s) => {
-        s.flags.dugForVira = true;
-        s.moralScore += 10;
-        s.keyChoices.push('dug_for_vira');
-      }
-    },
-    {
-      text: "Pergi. Tidak ada lagi yang bisa kau lakukan.",
-      next: 'ending_compute',
-      effect: (s) => {
-        s.flags.leftVira = true;
-        s.moralScore -= 15;
-        s.keyChoices.push('left_vira');
-      }
-    }
-  ]
-},
-
-'ch3_escape': {
-  text: (s) => {
-    const alive = Engine.CHARACTERS.filter(c => s.alive[c]);
-
-    return `<div class="scene-art scene-dawn"></div>
-<p>"Kita pergi. Sekarang."</p>
-<p>Kalian berlari ke arah jalan setapak. Hutan — seolah mendengar keputusan kalian — bereaksi. Pohon-pohon bergeser, menutup jalan. Akar menjulur. Kabut naik dari tanah.</p>
-<p>Tapi kalian terus berlari. ${alive.length} jiwa yang menolak permainan hutan.</p>
-<p>Entitas — dari kedalaman — berbicara untuk terakhir kalinya:</p>
-<p class="journal"><em>"Kalian bisa pergi. Aku tidak akan menghentikan kalian. Tapi Vira tetap di sini. Dan simpul yang mengikat persahabatan kalian... akan perlahan membusuk."</em></p>
-<p>Cabang-cabang terbuka. Jalan setapak muncul. Cahaya pagi menerobos kanopi.</p>
-<p>Kalian keluar dari hutan. Mobil Niko masih di sana. Kunci masih di saku Niko — atau di mana pun dia meninggalkannya.</p>
-<p>Kalian meninggalkan hutan. Meninggalkan cabin. Meninggalkan Vira.</p>
-<p>Udara di luar hutan terasa berbeda. Lebih tipis. Lebih dingin. Seolah kalian meninggalkan sesuatu yang fundamental di dalam sana.</p>`;
-  },
-  choices: [
-    {
-      text: "Masuk mobil dan pergi",
-      next: 'ending_compute',
-      effect: (s) => {
-        s.flags.escaped = true;
-        s.keyChoices.push('escaped');
-      }
-    },
-    {
-      text: "Berhenti. Berbalik. Kembali ke hutan.",
-      next: 'ch3_return',
-      effect: (s) => {
-        s.flags.returned = true;
-        s.courage.arin += 20;
-        s.moralScore += 20;
-        s.keyChoices.push('returned');
-      }
-    }
-  ]
-},
-
-'ch3_return': {
-  text: `<div class="scene-art scene-dawn"></div>
-<p>"Tidak." Kau berhenti. "Aku tidak bisa."</p>
-<p>Sera menatapmu. "Arin..."</p>
-<p>"Vira masih di sana. Aku tidak bisa meninggalkannya. Kalian pergilah. Aku kembali."</p>
-<p>Keheningan. Lalu — satu per satu — mereka berbalik bersamamu.</p>
-<p>Sera. Pertama. Selalu pertama.</p>
-<p>Juno — kalau masih ada. Dengan air mata di pipi dan tekad di mata.</p>
-<p>Niko — kalau masih ada. Rahangnya kaku tapi langkahnya pasti.</p>
-<p>"Kita kembali," katamu. "Bersama."</p>
-<p>Hutan menyambutmu kembali. Dan kali ini, kau bisa bersumpah — pohon-pohon membuka jalan lebih lebar. Seolah hutan <em>menghargai</em> keputusan kalian.</p>`,
-  choices: [
-    {
-      text: "Kembali ke altar",
-      next: 'ch3_ritual_start',
-      effect: (s) => {
-        s.moralScore += 15;
-        s.flags.secondChance = true;
-        s.keyChoices.push('second_chance');
-      }
-    }
-  ]
-},
-
-'ch3_destroy_stone': {
-  text: `<p>Kau mengambil batu dari kotak. Cahaya hijaunya berdenyut — memohon, hampir.</p>
-<p>"Arin, apa yang kau—" Niko melihat matamu dan berhenti.</p>
-<p>"Kalau batu ini yang memulai semua ini — yang membuat hutan rakus, yang membuat Vira diambil — maka batu ini harus dihancurkan."</p>
-<p>Kau mengangkatnya tinggi. Entitas — dari dalam hutan — berteriak.</p>
-<p>"JANGAN! Kalau kau menghancurkan inti itu, simpul terputus selamanya! Hutan mati! Vira mati! AKU MATI!"</p>
-<p>Sera mencengkeram lenganmu. "Arin, tunggu — kalau Vira masih terikat—"</p>
-<p>Batu berdenyut di tanganmu. Hangat. Hidup. Dan dalam denyutnya, kau mendengar bisikan:</p>
-<p class="journal"><em>"Tolong. Jangan."</em></p>
-<p>Suara itu... suara Vira. Vira yang asli.</p>`,
-  choices: [
-    {
-      text: "Hancurkan batu itu. Akhiri siklusnya.",
-      next: 'ending_compute',
-      danger: true,
-      effect: (s) => {
-        s.flags.destroyedStone = true;
-        s.moralScore -= 20;
-        if (s.difficulty >= 2) Engine.killChar('vira');
-        s.keyChoices.push('destroyed_stone');
-      }
-    },
-    {
-      text: "Turunkan batu. Kau tidak bisa melakukan ini.",
-      next: 'ch3_ritual_start',
-      effect: (s) => {
-        s.flags.sparedStone = true;
-        s.moralScore += 10;
-        s.keyChoices.push('spared_stone');
-      }
-    }
-  ]
-},
-
-'ch3_final_negotiation': {
-  text: `<p>Kau berjalan ke tepi clearing sendirian. Hutan menyambutmu — lebih lembut sekarang. Lebih lelah.</p>
-<p>Entitas muncul. Bukan dalam wujud Vira lagi — dalam wujud aslinya. Cahaya hijau yang mengambang, tanpa bentuk pasti, tapi entah bagaimana terasa <em>tua</em> dan <em>sedih</em>.</p>
-<p>"Kau datang lagi."</p>
-<p>"Aku datang untuk menawarkan jalan ketiga."</p>
-<p>Entitas mendengarkan.</p>
-<p>"Kau butuh jembatan. Seseorang yang terikat pada hutan dan dunia manusia. Tapi kau tidak perlu <em>mengurung</em> seseorang untuk itu."</p>
-<p>"Bagaimana kalau... kita semua menjadi jembatan? Bukan satu orang yang tinggal. Lima orang yang <em>mengingat</em>. Yang datang kembali. Yang menjaga."</p>
-<p>Entitas terdiam lama.</p>
-<p>"Lima penjaga... bukan satu tawanan." Cahayanya berkedip. "Itu... itu bisa berhasil. Tapi itu berarti kalian terikat pada hutan ini. Selamanya. Kalian akan mendengar panggilannya di mimpi. Merasakan sakit saat pohon ditebang. Menangis saat musim kering."</p>
-<p>"Kalian bersedia menanggung itu?"</p>`,
-  choices: [
-    {
-      text: '"Ya. Kami bersedia."',
-      next: 'ch3_ritual_start',
-      effect: (s) => {
-        s.flags.fiveGuardians = true;
-        s.moralScore += 25;
-        s.keyChoices.push('five_guardians');
-      }
-    },
-    {
-      text: '"Aku perlu bicara dengan yang lain dulu."',
-      next: 'ch3_discuss_guardians',
-      effect: (s) => {
-        s.flags.discussedGuardians = true;
-      }
-    }
-  ]
-},
-
-'ch3_discuss_guardians': {
-  text: (s) => {
-    let reactions = `<p>Kau menceritakan tawaran entitas pada teman-temanmu.</p>`;
-
-    if (s.alive.sera) {
-      reactions += `<p><span class="speaker sera">Sera</span> mengangguk pelan. "Aku bersedia. Aku sudah bisa merasakan hutan ini sejak kita datang. Mungkin ini memang takdirku."</p>`;
-    }
-    if (s.alive.juno) {
-      reactions += `<p><span class="speaker juno">Juno</span> menarik napas. "Kalau ini cara menebus Vira... aku ikut. Apapun harganya."</p>`;
-    }
-    if (s.alive.niko) {
-      if (Engine.getTrust('arin', 'niko') >= 50) {
-        reactions += `<p><span class="speaker niko">Niko</span> diam lama. "Aku... aku ingin ini bukan tentang kekuasaan. Untuk pertama kalinya, aku ingin ini tentang <em>melayani</em>." Dia mengangguk. "Aku ikut."</p>`;
-      } else {
-        reactions += `<p><span class="speaker niko">Niko</span> menggeleng. "Terikat selamanya? Itu sama saja dengan penjara. Aku tidak mau."</p>`;
-        s.flags.nikoRefused = true;
-      }
-    }
-
-    return reactions;
-  },
-  choices: [
-    {
-      text: "Lakukan ritual dengan yang bersedia",
-      next: 'ch3_ritual_start',
-      effect: (s) => {
-        s.flags.fiveGuardians = !s.flags.nikoRefused;
-        s.moralScore += 15;
-      }
-    }
-  ]
-},
-
-'ch3_final_standoff': {
-  text: `<p>"Tidak ada yang menjadi jembayanmu. Kami menolak."</p>
-<p>Entitas menatapmu. Matanya — ratusan mata — berkedip bersamaan.</p>
-<p>"Kalau tidak ada jembatan... hutan mati. Aku mati. Vira mati."</p>
-<p>"Maka kita cari cara lain."</p>
-<p>Kau mengulurkan tanganmu ke arah entitas. Bukan untuk menyerang. Bukan untuk merebut. Untuk <em>menawarkan</em>.</p>
-<p>"Kau bilang kau kesepian. Lima ratus tahun sendirian. Aku mengerti itu. Tapi cara yang kau pilih — mengambil wujud orang lain, menculik, memaksa — itu bukan koneksi. Itu <em>kepemilikan</em>."</p>
-<p>"Koneksi yang nyata membutuhkan kerelaan. Kebebasan. Pilihan."</p>
-<p>Entitas menatap tanganmu yang terulur.</p>
-<p>"Kau... menawarkan tangan? Kepadaku?"</p>
-<p>"Ya."</p>
-<p>Keheningan panjang. Lalu, perlahan — cahaya hijau bergerak maju dan menyentuh jari-jarimu. Dingin. Tapi bukan dingin yang jahat. Dingin seperti air sungai di pagi hari.</p>
-<p>"Ini pertama kalinya... seseorang menyentuhku dengan sukarela."</p>`,
-  choices: [
-    {
-      text: '"Sekarang serahkan batu itu. Dan bebaskan Vira."',
-      next: 'ending_compute',
-      effect: (s) => {
-        s.flags.peacefulResolution = true;
-        s.moralScore += 30;
-        s.keyChoices.push('peaceful_resolution');
-      }
-    }
-  ]
-},
-
-'ch3_niko_choice': {
-  text: (s) => {
-    if (Engine.getTrust('arin', 'niko') >= 60) {
-      return `<p>Niko mengerti tatapanmu. Dan — mengejutkan semua orang — dia melangkah maju.</p>
-<p><span class="speaker niko">Niko</span></p>
-<p>"Aku yang mulai semua ini. Kakekku yang mengambil batu itu. Aku yang membawa kalian ke sini." Suaranya tenang — lebih tenang dari yang pernah kau dengar. "Biarkan aku yang menyelesaikannya."</p>
-<p>"Aku bersedia menjadi jembatan."</p>
-<p>Entitas menatapnya. "Kau yakin? Ini berarti kau terikat pada hutan ini. Selamanya."</p>
-<p>Niko tersenyum. Untuk pertama kalinya, senyum yang jujur.</p>
-<p>"Mungkin ini caraku berhenti egois."</p>`;
-    }
-
-    return `<p>Niko menatapmu balik. Matanya dingin.</p>
-<p><span class="speaker niko">Niko</span></p>
-<p>"Kau ingin aku yang mengorbankan diri? Tentu saja. Selalu Niko yang harus mengambil beban, kan?"</p>
-<p>"Tidak, Arin. Aku sudah memberikan cukup banyak."</p>
-<p>Dia berbalik dan berjalan menjauh.</p>`;
-  },
-  choices: [
-    {
-      text: (s) => Engine.getTrust('arin', 'niko') >= 60 ? '"Niko... terima kasih."' : '"Kalau bukan Niko, maka aku."',
-      next: 'ending_compute',
-      effect: (s) => {
-        if (Engine.getTrust('arin', 'niko') >= 60) {
-          s.flags.nikoSacrificed = true;
-          s.keyChoices.push('niko_sacrifice');
-        } else {
-          s.flags.arinSacrificed = true;
-          s.moralScore += 20;
-          s.keyChoices.push('arin_forced_sacrifice');
-        }
-      }
-    }
-  ]
-},
-
-'ch3_vira_awake': {
-  chapter: 3,
-  text: `<p>Vira membuka mata. Mata yang <em>benar</em> — cokelat hangat, bingung, takut, tapi manusiawi.</p>
-<p>"Di mana..." dia batuk. Suaranya serak, seperti tidak dipakai selama berminggu-minggu. "Di mana aku?"</p>
-<p>Sera berlutut di sampingnya, menangis. "Vira. Vira, kamu kembali."</p>
-<p>Juno berdiri di belakang, air mata mengalir tanpa suara, tangan menutupi mulutnya.</p>
-<p>"Aku... aku bermimpi. Mimpi yang sangat panjang tentang pohon dan cahaya hijau dan..." Vira melihat sekeliling. Hutan. Cabin. Wajah-wajah yang dia kenal tapi terasa jauh.</p>
-<p>"Berapa lama aku pergi?"</p>
-<p>"Enam bulan."</p>
-<p>Vira menutup matanya. Air mata mengalir.</p>
-<p>Tanpa entitas sebagai pemandu, kalian harus menyelesaikan ini sendiri. Batu masih ada. Altar masih ada. Tapi tidak ada yang tahu aturan ritualnya.</p>`,
-  choices: [
-    {
-      text: "Coba lakukan ritual sendiri — taruh batu di altar",
-      next: 'ch3_ritual_start',
-      effect: (s) => {
-        s.flags.blindRitual = true;
+        s.flags.tookControl = true;
         s.moralScore += 5;
       }
     },
     {
-      text: "Bawa Vira keluar hutan. Tinggalkan sisanya.",
-      next: 'ch3_escape',
+      text: "Diam. Biarkan kengerian meresap. Lalu bergerak.",
+      next: 'ch3_aftermath',
       effect: (s) => {
-        s.flags.rescuedViraOnly = true;
-        s.flags.viraRescued = true;
+        s.flags.processedGrief = true;
       }
     }
   ]
 },
 
-'ch3_heist_plan': {
-  text: `<p>Kalian bersembunyi di balik reruntuhan kuil, merencanakan.</p>
-<p>"Sera dan Juno, kalian alihkan perhatiannya dari sisi timur. Aku dan Niko dari barat ke altar."</p>
-<p>Entitas yang mengamuk — pohon menggelepar, tanah retak — terlalu sibuk dengan kemarahannya untuk memperhatikan taktik.</p>
-<p>Sera dan Juno berlari ke timur, berteriak, menarik perhatian. Entitas berbalik — akar-akar mengejar mereka.</p>
-<p>Kau dan Niko berlari ke altar. Batu ada di sana — berdenyut, menunggu.</p>
-<p><span class="speaker niko">Niko</span> meraih batu itu. Dan saat kulitnya menyentuh permukaan batu, matanya berubah — untuk sesaat — hijau. Kekuatan batu memanggilnya. Menjanjikan segalanya.</p>
-<p>"Niko! Jangan!"</p>
-<p>Niko tersentak. Kembali ke dirinya. Tangannya gemetar tapi memegang batu erat.</p>
-<p>"Aku... aku oke. Ayo."</p>`,
+'ch3_aftermath': {
+  text: (s) => {
+    let text = `<p>Semua berkumpul di hall. Korban dipindahkan ke ruangan terpisah dan ditutup selimut.</p>`;
+    text += `<p>Yang tersisa: `;
+
+    let aliveNames = [];
+    Engine.CHARACTERS.forEach(c => {
+      if (s.alive[c]) aliveNames.push(Engine.CHAR_DISPLAY[c]);
+    });
+    text += aliveNames.join(', ') + '.</p>';
+
+    text += `<p>${Engine.aliveCount()} orang. Dan setidaknya satu dari mereka adalah pembunuh.</p>`;
+
+    if (s.flags.allDoorsOpen) {
+      text += `<p>Pintu-pintu terbuka — tapi tanpa listrik, hutan di luar gelap total. Tidak ada jalan, tidak ada sinyal, tidak ada kendaraan yang bisa menyala (kunci elektronik mobil juga terpengaruh jammer).</p>`;
+      text += `<p>"Bebas tapi terjebak," gumam Juno. "Ironi yang indah."</p>`;
+    }
+
+    text += `<p><span class="speaker sera">Sera</span>: "Kita perlu memutuskan. Sekarang. Tidak ada waktu untuk berduka."</p>`;
+    text += `<p>Dia benar. Countdown masih berjalan. Dan Sang Penenun sudah menjanjikan tiga kematian.</p>`;
+
+    return text;
+  },
   choices: [
     {
-      text: "Lari keluar hutan dengan batu",
-      next: 'ending_compute',
+      text: "Presentasikan semua bukti yang kau kumpulkan — saatnya transparan",
+      condition: (s) => s.cluesFound >= 5,
+      next: 'ch4_start',
       effect: (s) => {
-        s.flags.stoleStoneback = true;
-        s.keyChoices.push('stole_stone_back');
+        s.flags.presentedEvidence = true;
+        s.keyChoices.push('evidence_presentation');
       }
     },
     {
-      text: "Taruh batu kembali di altar — selesaikan ritualnya sekarang",
-      next: 'ch3_ritual_truths',
+      text: "Voting — siapa yang paling dicurigai? Demokrasi dalam kegelapan.",
+      next: 'ch4_start',
       effect: (s) => {
-        s.flags.impromptuRitual = true;
-        s.keyChoices.push('impromptu_ritual');
-      }
-    }
-  ]
-},
-
-'ch3_grab_stone': {
-  text: `<p>Saat entitas bergelut dengan Vira di dalamnya, kau berlari ke altar dan meraih batu. Tanganmu menutup di sekelilingnya — panas, berdenyut, hidup.</p>
-<p>Entitas berputar ke arahmu. "TIDAK!"</p>
-<p>Tapi kau sudah berlari. Batu di tanganmu. Kekuatan mengalir — menggelitik, menggoda, menjanjikan. Kau bisa merasakan mengapa Niko menginginkannya. Mengapa kakeknya tidak bisa melepaskannya.</p>
-<p>Kau sampai di tepian clearing. Teman-temanmu ada di sana.</p>
-<p>"AKU PUNYA BATUNYA!" teriakmu. "APA YANG HARUS KITA LAKUKAN?"</p>`,
-  choices: [
-    {
-      text: "Hancurkan batu itu",
-      next: 'ending_compute',
-      effect: (s) => {
-        s.flags.destroyedStone = true;
-        s.moralScore -= 10;
-        s.keyChoices.push('destroyed_stone');
+        s.flags.heldVoting = true;
+        s.keyChoices.push('democratic_vote');
       }
     },
     {
-      text: "Kembalikan ke altar dengan ritual yang benar",
-      next: 'ch3_ritual_truths',
+      text: "Kabur ke hutan. Lebih baik kedinginan di luar daripada mati di dalam.",
+      condition: (s) => s.flags.allDoorsOpen,
+      next: 'ch3_forest_escape',
       effect: (s) => {
-        s.flags.returnedStone = true;
-        s.keyChoices.push('returned_stone');
+        s.flags.escapedToForest = true;
+        Engine.modDanger(10);
+      }
+    },
+    {
+      text: "Tidak ada lagi rencana. Temukan Sang Penenun dan akhiri ini.",
+      danger: true,
+      next: 'ch4_start',
+      effect: (s) => {
+        s.flags.huntMode = true;
+        Engine.modDanger(5);
+        s.keyChoices.push('hunter_mode');
       }
     }
   ]
 },
 
-'ending_arin_sacrifice': {
-  text: `<p>"Aku bersedia." Suaramu tidak bergetar. Kau tidak tahu dari mana ketenangan ini datang.</p>
-<p>Sera menangis. "Tidak. TIDAK! Arin, kamu tidak boleh—"</p>
-<p>"Sera." Kau memegang tangannya. "Jaga yang lain. Jaga Vira. Jaga Juno dan Niko."</p>
-<p>Juno memelukmu. Niko — bahkan Niko — menyeka matanya.</p>
-<p>Entitas menyerahkan batu. Kau berjalan ke pohon tua. Meletakkan batu di cekungan akar. Dan saat kau melakukannya, akar-akar mulai memelukmu — lembut, seperti selimut.</p>
-<p>"Tidak sakit," bisik entitas. "Aku berjanji."</p>
-<p>Yang terakhir kau lihat: empat wajah yang kau cintai, diterangi cahaya fajar pertama. Sera menangis. Juno mencoba tersenyum. Niko mengangguk — hormat yang tulus. Dan Vira — Vira asli — membuka mata untuk pertama kalinya.</p>
-<p>"Arin...?" suaranya bingung, lemah. "Arin, kenapa...?"</p>
-<p>Kau tersenyum. Dan hutan memelukmu pulang.</p>`,
+'ch3_forest_escape': {
+  chapter: 3,
+  text: (s) => {
+    let text = `<p>Kau berlari keluar. Udara malam menghantam — dingin, tajam, penuh bau pinus dan tanah basah.</p>`;
+    text += `<p>Gelap. Gelap seperti dasar lautan. Ponselmu — satu persen baterai — memberikan cahaya selemah lilin.</p>`;
+    text += `<p>Hutan pinus mengelilingi mansion seperti pagar hidup. Jalan masuk — jalan berbatu yang tadi kau lewati — ada di suatu tempat di kegelapan ini.</p>`;
+    text += `<p><span class="speaker juno">Juno</span> ada bersamamu. "Kita jalan ke arah jalan utama. Pasti ada."</p>`;
+    text += `<p>Kalian berjalan. Lima menit. Sepuluh. Dua puluh.</p>`;
+    text += `<p>Pohon-pohon semua terlihat sama. Tanah di bawah kaki berubah — dari keras ke berlumpur. Kau kehilangan arah.</p>`;
+    text += `<p>Dan kemudian — suara. Di belakang kalian. Langkah kaki. Mengikuti.</p>`;
+    text += `<p>Kau menoleh. Di antara pohon-pohon — siluet. Berdiri. Menunggu.</p>`;
+    text += `<p>"Kembali atau lanjut?" bisik Juno.</p>`;
+
+    return text;
+  },
   choices: [
     {
-      text: "...",
-      next: 'ending_compute',
+      text: "Lanjut ke hutan — pasti ada jalan keluar",
+      next: 'ch3_forest_deeper',
       effect: (s) => {
-        s.flags.arinBecameGuardian = true;
-        s.alive.arin = false;
-        s.moralScore += 30;
-        s.keyChoices.push('became_guardian');
+        Engine.modDanger(15);
+      }
+    },
+    {
+      text: "Kembali ke mansion. Lebih baik devil you know.",
+      next: 'ch4_start',
+      effect: (s) => {
+        s.flags.returnedFromForest = true;
+        s.flags.forestFailed = true;
+      }
+    }
+  ]
+},
+
+'ch3_forest_deeper': {
+  text: `<p>Kalian terus berjalan. Tapi hutan menjadi lebih tebal, lebih gelap. Dan langkah kaki di belakang — semakin dekat.</p>
+<p>Lalu kau melihatnya: pagar kawat setinggi tiga meter. Baru. Dipasang baru-baru ini. Melingkari seluruh area mansion seperti kandang.</p>
+<p>"Mereka memagar seluruh properti," bisik Juno. "Kita nggak bisa keluar bahkan kalau keluar dari mansion."</p>
+<p>Siluet di belakang kalian berhenti. Lalu berbalik. Tugas selesai — menggiring kalian ke pagar, membuktikan bahwa tidak ada jalan keluar.</p>
+<p>Juno menendang pagar. Kawat berdering.</p>
+<p>"Kembali," katamu. "Kita selesaikan ini di dalam."</p>`,
+  shake: true,
+  choices: [
+    {
+      text: "Kembali ke mansion dengan tekad baru",
+      next: 'ch4_start',
+      effect: (s) => {
+        s.flags.returnedFromForest = true;
+        s.flags.forestFailed = true;
+        s.flags.sawFence = true;
+        s.courage.arin += 10;
+        Engine.modDanger(5);
+        s.keyChoices.push('saw_fence');
       }
     }
   ]
