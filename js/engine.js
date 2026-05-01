@@ -711,7 +711,7 @@ const Engine = (() => {
     staggerTimers = [];
   }
 
-  const NARRATION_VISIBLE_MAX = 1;
+  const NARRATION_VISIBLE_MAX = 0;
 
   // Generate a fake in-game timestamp for chat messages
   let chatMinuteCounter = 0;
@@ -747,8 +747,7 @@ const Engine = (() => {
       }
 
       if (node.nodeType === 3) {
-        const txt = node.textContent.trim();
-        if (txt) items.push({ type: 'narration', html: txt, cls: '' });
+        // Skip loose text nodes entirely — fokus dialog only
         return;
       }
 
@@ -796,9 +795,15 @@ const Engine = (() => {
             return;
           }
 
-          let cls = '';
-          if (pClasses.includes('horror') || text.includes('class="horror"')) cls = ' chat-narration-horror';
-          items.push({ type: 'narration', html: text, cls });
+          // Horror narration stays visible, everything else is hidden
+          if (pClasses.includes('horror') || text.includes('class="horror"')) {
+            items.push({ type: 'narration', html: text, cls: ' chat-narration-horror' });
+          } else {
+            // Skip long narration entirely — only keep very short context (<80 chars)
+            const plainLen = node.textContent.trim().length;
+            if (plainLen > 80) return;
+            items.push({ type: 'narration', html: text, cls: '' });
+          }
         }
       }
     });
