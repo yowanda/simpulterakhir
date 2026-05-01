@@ -606,26 +606,29 @@ const Engine = (() => {
   }
 
   // ---- Chance % System ----
-  function rollChance(baseChance, charName, bonusType) {
+  // Preview what rollChance will compute (for UI display)
+  function previewChance(baseChance, charName, bonusType) {
     const toolBonus = getToolBonus(charName, bonusType);
-    // Difficulty-based protagonist advantage
     let diffBonus = 0;
-    const isPlayerKiller = state.killers && state.killers.includes(charName);
-    if (!isPlayerKiller && (bonusType === 'intel' || bonusType === 'defense')) {
+    const isKiller = state.killers && state.killers.includes(charName);
+    if (!isKiller && (bonusType === 'intel' || bonusType === 'defense')) {
       const diff = state.difficulty || 2;
       diffBonus = diff === 1 ? 15 : diff === 2 ? 10 : 5;
-    } else if (isPlayerKiller && bonusType === 'offense') {
+    } else if (isKiller && bonusType === 'offense') {
       const diff = state.difficulty || 2;
       diffBonus = diff === 1 ? -15 : diff === 2 ? -10 : -5;
     }
-    // Character ability bonus
     let abilityBonus = 0;
     if (charName === playerChar()) {
       if (bonusType === 'intel') abilityBonus += getCharAbility(charName, 'clueSearch') + getCharAbility(charName, 'investigation');
       if (bonusType === 'defense') abilityBonus += getCharAbility(charName, 'defense');
       if (bonusType === 'offense') abilityBonus += getCharAbility(charName, 'offense');
     }
-    const totalChance = Math.min(95, Math.max(5, baseChance + toolBonus + diffBonus + abilityBonus));
+    return Math.min(95, Math.max(5, baseChance + toolBonus + diffBonus + abilityBonus));
+  }
+
+  function rollChance(baseChance, charName, bonusType) {
+    const totalChance = previewChance(baseChance, charName, bonusType);
     const roll = Math.random() * 100;
     return { success: roll < totalChance, chance: totalChance, roll: Math.round(roll) };
   }
@@ -1634,22 +1637,30 @@ const Engine = (() => {
       const suspect = nearbyNpcs.find(n => (gameState.suspicion[n] || 0) > 30 && !brainActionTaken('accuse_' + n));
       if (suspect) {
         const suspLvl = gameState.suspicion[suspect] || 0;
-        const conf = suspLvl > 60 ? 'Bukti kuat' : 'Bukti menengah';
-        const accuseChance = Math.min(85, 30 + suspLvl + getCharAbility(pc, 'accusation'));
+        const conf = suspLvl > 75 ? 'Bukti sangat kuat' : suspLvl > 60 ? 'Bukti kuat' : suspLvl > 45 ? 'Bukti menengah' : 'Bukti lemah';
+        const baseAccuseChance = Math.min(85, 30 + suspLvl + getCharAbility(pc, 'accusation'));
+        const accuseChance = previewChance(baseAccuseChance, pc, 'offense');
+        // Allies present boost confidence — lower risk
+        const allyCount = nearbyNpcs.filter(n => !gameState.killers.includes(n) && gameState.npcMinds[n] && gameState.npcMinds[n].allies.includes(pc)).length;
+        const allyRiskReduction = Math.min(15, allyCount * 8);
+        const accuseRisk = Math.max(20, 80 - suspLvl - allyRiskReduction);
+        // Reward scales gradually with suspicion
+        const accuseReward = Math.min(95, 50 + Math.floor(suspLvl / 2));
         choices.push({
           text: `Tuduh ${CharBrain.charName(suspect)}: "Aku tahu apa yang kau lakukan."`,
           type: 'brain', category: 'accuse',
-          hint: `${conf} — kecurigaan ${suspLvl}%`,
-          risk: Math.max(40, 80 - suspLvl),
-          reward: suspLvl > 50 ? 90 : 60,
+          hint: `${conf} — kecurigaan ${suspLvl}%${allyCount > 0 ? ` | ${allyCount} sekutu mendukung` : ''}`,
+          risk: accuseRisk,
+          reward: accuseReward,
           successChance: accuseChance,
           effect: (s) => {
             recordBrainAction('accuse_' + suspect);
-            const result = rollChance(accuseChance, pc, 'offense');
+            const result = rollChance(baseAccuseChance, pc, 'offense');
             if (result.success) {
               CharBrain.playerAction('accuse', suspect, s);
-              Engine.modSuspicion(suspect, 15);
-              Engine.notify(`Tuduhan berhasil! (${result.chance}% chance, roll: ${result.roll})`);
+              const suspGain = 15 + (allyCount * 5);
+              Engine.modSuspicion(suspect, suspGain);
+              Engine.notify(`Tuduhan berhasil!${allyCount > 0 ? ` ${allyCount} sekutu menguatkan bukti! Suspicion +${suspGain}%` : ''} (${result.chance}% chance, roll: ${result.roll})`);
             } else {
               Engine.modSuspicion(suspect, 5);
               Engine.notify(`Tuduhanmu tidak meyakinkan. (${result.chance}% chance, roll: ${result.roll})`);
@@ -1662,17 +1673,25 @@ const Engine = (() => {
 
     // --- INVESTIGATE location (one-time per location per node) ---
     if (!brainActionTaken('investigate_' + playerLoc)) {
-      const invChance = 45 + (gameState.chapter * 8);
+      const baseInvChance = 45 + (gameState.chapter * 8);
+      const invChance = previewChance(baseInvChance, pc, 'intel');
+      // Risk scales with danger level and nearby NPCs
+      const invRisk = Math.min(60, (nearbyNpcs.length === 0 ? 10 : 20) + Math.floor((gameState.dangerLevel || 0) / 10));
+      // Reward scales with clues found progress (more valuable early)
+      const cluesFound = (gameState.escapeClues || []).length;
+      const invReward = Math.min(90, 60 + ((5 - cluesFound) * 6));
+      const aloneHint = nearbyNpcs.length === 0 ? 'Sendirian — lebih leluasa mencari' : `${nearbyNpcs.length} orang di sini — hati-hati`;
+      const dangerHint = (gameState.dangerLevel || 0) > 40 ? ` | Bahaya ${gameState.dangerLevel}%` : '';
       choices.push({
         text: `Periksa ${CharBrain.locName(playerLoc)} — cari petunjuk tersembunyi`,
         type: 'brain', category: 'investigate',
-        hint: nearbyNpcs.length === 0 ? 'Sendirian — lebih leluasa mencari' : `${nearbyNpcs.length} orang di sini — hati-hati`,
-        risk: nearbyNpcs.length === 0 ? 15 : 25,
-        reward: 70,
+        hint: `${aloneHint}${dangerHint}`,
+        risk: invRisk,
+        reward: invReward,
         successChance: invChance,
         effect: (s) => {
           recordBrainAction('investigate_' + playerLoc);
-          const result = rollChance(invChance, pc, 'intel');
+          const result = rollChance(baseInvChance, pc, 'intel');
           if (result.success) {
             CharBrain.playerAction('investigate_location', null, s);
             // Real reward: increase suspicion on actual killers and possibly find escape clue
@@ -1716,19 +1735,25 @@ const Engine = (() => {
     if (!isK && !brainActionTaken('escape_clue_' + playerLoc)) {
       const escClue = getEscapeClueAtLocation(playerLoc);
       if (escClue) {
-        const escChance = 55 + (gameState.chapter * 6);
+        const baseEscChance = 55 + (gameState.chapter * 6);
+        const escChance = previewChance(baseEscChance, pc, 'intel');
         const found = (gameState.escapeClues || []).length;
         const needed = gameState.cluesNeededToWin || 5;
         const total = gameState.totalEscapeClues || 8;
+        const remaining = needed - found;
         const peopleInfo = nearbyNpcs.length > 0
           ? ` | ${nearbyNpcs.length} orang di sekitar`
           : ' | Sendirian';
+        // Risk scales — more risky with NPCs and high danger
+        const escRisk = Math.min(50, (nearbyNpcs.length === 0 ? 5 : 20) + Math.floor((gameState.dangerLevel || 0) / 10));
+        // Reward scales with urgency — more rewarding when close to completing
+        const escReward = Math.min(100, 70 + (remaining <= 2 ? 25 : remaining <= 3 ? 15 : 0));
         choices.push({
           text: `Cari petunjuk pelarian di ${CharBrain.locName(playerLoc)}`,
           type: 'brain', category: 'investigate',
           hint: `Petunjuk: ${found}/${needed} dibutuhkan (${total} total)${peopleInfo} | 🔑 5% chance Kunci Room Master`,
-          risk: nearbyNpcs.length === 0 ? 10 : 30,
-          reward: 90,
+          risk: escRisk,
+          reward: escReward,
           successChance: escChance,
           effect: (s) => {
             recordBrainAction('escape_clue_' + playerLoc);
@@ -1740,7 +1765,7 @@ const Engine = (() => {
               }
               return;
             }
-            const result = rollChance(escChance, pc, 'intel');
+            const result = rollChance(baseEscChance, pc, 'intel');
             if (result.success) {
               findEscapeClue(escClue.id);
               s.cluesFound = (s.cluesFound || 0) + 1;
@@ -1784,20 +1809,27 @@ const Engine = (() => {
         !brainActionTaken('attack_killer_' + n)
       );
       if (revealedKiller) {
-        const atkChance = 35 + Math.min(30, (gameState.suspicion[revealedKiller] || 0) / 3);
+        // Allies in the room boost attack chance and lower risk
+        const allyCount = nearbyNpcs.filter(n => !gameState.killers.includes(n) && n !== revealedKiller && gameState.npcMinds[n] && gameState.npcMinds[n].allies.includes(pc)).length;
+        const suspOnKiller = gameState.suspicion[revealedKiller] || 0;
+        const baseAtkChance = 35 + Math.min(30, suspOnKiller / 3) + (allyCount * 8);
+        const atkChance = previewChance(baseAtkChance, pc, 'offense');
+        // Risk drops with more allies (safety in numbers)
+        const atkRisk = Math.max(30, 75 - (allyCount * 12) - (suspOnKiller > 80 ? 10 : 0));
+        const allyHint = allyCount > 0 ? ` | ${allyCount} sekutu siap membantu!` : ' | Kamu sendirian melawannya';
         choices.push({
           text: `Serang ${CharBrain.charName(revealedKiller)} — eliminasi killer!`,
           type: 'brain', category: 'confront',
-          hint: `Habisi killer yang terungkap! Chance: ${Math.round(atkChance)}%`,
-          risk: 75, reward: 95,
-          danger: true,
+          hint: `Habisi killer yang terungkap!${allyHint}`,
+          risk: atkRisk, reward: 95,
+          danger: allyCount === 0,
           successChance: Math.round(atkChance),
           effect: (s) => {
             recordBrainAction('attack_killer_' + revealedKiller);
-            const result = rollChance(atkChance, pc, 'offense');
+            const result = rollChance(baseAtkChance, pc, 'offense');
             if (result.success) {
               Engine.killChar(revealedKiller);
-              Engine.notify(`${CharBrain.charName(revealedKiller)} dieliminasi! (${result.chance}% chance, roll: ${result.roll})`);
+              Engine.notify(`${CharBrain.charName(revealedKiller)} dieliminasi!${allyCount > 0 ? ` Tim ${allyCount + 1} orang berhasil!` : ''} (${result.chance}% chance, roll: ${result.roll})`);
               if (allKillersDead()) {
                 Engine.notify('SEMUA KILLER TELAH DIELIMINASI! Protagonis menang!');
               }
@@ -1819,21 +1851,30 @@ const Engine = (() => {
         const mind = gameState.npcMinds[observeTarget];
         const detBonus = getCharAbility(pc, 'detection');
         const canReadEmotion = hasCharAbility(pc, 'emotionRead');
+        // Detection chance: base 40% + detection ability + chapter progression
+        const baseObserveChance = Math.min(85, 40 + detBonus + (gameState.chapter * 4) + (canReadEmotion ? 15 : 0));
+        const observeChance = previewChance(baseObserveChance, pc, 'intel');
         const emotionHint = canReadEmotion && mind
           ? `Emosi: ${mind.emotion} | Tension: ${mind.tension}% | Kecurigaan: ${Math.round(mind.suspicions[pc] || 0)}%`
           : (mind ? `Emosi: ${mind.emotion}` : 'Perhatikan perilakunya');
+        // Risk low but increases slightly with danger
+        const obsRisk = Math.min(25, 5 + Math.floor((gameState.dangerLevel || 0) / 15));
+        // Reward higher if target has high suspicion (more info to gain)
+        const targetSusp = gameState.suspicion[observeTarget] || 0;
+        const obsReward = Math.min(80, 40 + Math.floor(targetSusp / 4) + (canReadEmotion ? 15 : 0));
         choices.push({
           text: `Amati gerak-gerik ${CharBrain.charName(observeTarget)} secara diam-diam`,
           type: 'brain', category: 'observe',
           hint: emotionHint,
-          risk: 10, reward: 55,
+          risk: obsRisk, reward: obsReward,
+          successChance: observeChance,
           effect: (s) => {
             recordBrainAction('observe_' + observeTarget);
             const susp = s.suspicion[observeTarget] || 0;
             const isTarget = s.killers.includes(observeTarget);
-            const detectChance = 0.4 + (detBonus / 100);
+            const detectChance = 0.4 + (detBonus / 100) + (canReadEmotion ? 0.15 : 0);
             if (isTarget && Math.random() < detectChance) {
-              const suspGain = 10 + Math.floor(detBonus / 2);
+              const suspGain = 10 + Math.floor(detBonus / 2) + (canReadEmotion ? 5 : 0);
               s.suspicion[observeTarget] = Math.min(100, susp + suspGain);
               Engine.notify(`Kau menangkap gelagat mencurigakan dari ${CharBrain.charName(observeTarget)}! Kecurigaan +${suspGain}%.`);
             } else if (canReadEmotion && mind) {
@@ -1852,17 +1893,30 @@ const Engine = (() => {
       const talkTarget = nearbyNpcs.find(n => !brainActionTaken('talk_' + n));
       if (talkTarget) {
         const trustLvl = gameState.trust[trustKey(pc, talkTarget)] || 50;
+        const trustAbility = getCharAbility(pc, 'trust');
+        const trustGainPreview = 5 + Math.floor(trustAbility / 3);
+        // Risk: talking to someone who suspects you is risky
+        const theirSusp = gameState.npcMinds[talkTarget] ? (gameState.npcMinds[talkTarget].suspicions[pc] || 0) : 0;
+        const talkRisk = Math.min(40, 5 + Math.floor(theirSusp / 5));
+        // Reward: higher when trust is low (more to gain), or when target is a potential ally
+        const isKillerTarget = gameState.killers.includes(talkTarget);
+        const talkReward = Math.min(70, 30 + Math.floor((100 - trustLvl) / 4) + (trustAbility > 0 ? 10 : 0));
+        const suspHint = theirSusp > 30 ? ` | Dia curiga padamu (${Math.round(theirSusp)}%)` : '';
         choices.push({
           text: `Bicara dengan ${CharBrain.charName(talkTarget)} — bangun hubungan`,
           type: 'brain', category: 'social',
-          hint: `Kepercayaan saat ini: ${trustLvl}%`,
-          risk: 10, reward: 45,
+          hint: `Kepercayaan: ${trustLvl}% → +${trustGainPreview}%${suspHint}`,
+          risk: talkRisk, reward: talkReward,
           effect: (s) => {
             recordBrainAction('talk_' + talkTarget);
             const trustGain = 5 + Math.floor(getCharAbility(pc, 'trust') / 3);
             Engine.modTrust(pc, talkTarget, trustGain);
             const newTrust = s.trust[trustKey(pc, talkTarget)] || 55;
-            Engine.notify(`Hubunganmu dengan ${CharBrain.charName(talkTarget)} membaik. Trust: ${newTrust}%`);
+            // Talking also slightly reduces their suspicion of you
+            if (gameState.npcMinds[talkTarget] && theirSusp > 0) {
+              gameState.npcMinds[talkTarget].suspicions[pc] = Math.max(0, theirSusp - 5);
+            }
+            Engine.notify(`Hubunganmu dengan ${CharBrain.charName(talkTarget)} membaik. Trust: ${newTrust}%${theirSusp > 0 ? ' | Kecurigaan turun sedikit' : ''}`);
           },
           next: (s) => currentNodeId
         });
@@ -1879,18 +1933,33 @@ const Engine = (() => {
       );
       if (potential) {
         const trustVal = gameState.trust[trustKey(pc, potential)] || 50;
+        const allianceAbility = getCharAbility(pc, 'allianceBonus');
+        // Success chance based on trust + ability + danger (people ally more when scared)
+        const dangerBoost = Math.floor((gameState.dangerLevel || 0) / 10);
+        const allySuccessChance = Math.min(95, trustVal + allianceAbility + dangerBoost);
+        // Risk scales gradually with trust (not binary)
+        const allyRisk = Math.max(5, 40 - Math.floor(trustVal / 3) - Math.floor(allianceAbility / 2));
+        // Reward higher when few allies (first alliance is most valuable)
+        const currentAllyCount = gameState.npcMinds ? Object.values(gameState.npcMinds).filter(m => m.allies && m.allies.includes(pc)).length : 0;
+        const allyReward = Math.min(90, 75 + (currentAllyCount === 0 ? 15 : 0) - (currentAllyCount * 5));
+        const trustDesc = trustVal > 70 ? 'sangat percaya' : trustVal > 55 ? 'cukup percaya' : 'masih ragu';
         choices.push({
           text: `Ajak ${CharBrain.charName(potential)} membentuk aliansi`,
           type: 'brain', category: 'alliance',
-          hint: `Trust: ${trustVal}% — ${trustVal > 60 ? 'kemungkinan besar diterima' : 'mungkin butuh persuasi'}`,
-          risk: trustVal > 60 ? 10 : 30,
-          reward: 75,
+          hint: `Trust: ${trustVal}% (${trustDesc})${(gameState.dangerLevel || 0) > 40 ? ' | Bahaya tinggi — lebih mudah diajak' : ''}`,
+          risk: allyRisk,
+          reward: allyReward,
+          successChance: allySuccessChance,
           effect: (s) => {
             recordBrainAction('ally_' + potential);
-            CharBrain.playerAction('ally', potential, s);
-            const allyTrustGain = 10 + getCharAbility(pc, 'allianceBonus');
-            Engine.modTrust(pc, potential, allyTrustGain);
-            Engine.notify(`Aliansi terbentuk dengan ${CharBrain.charName(potential)}!`);
+            if (Math.random() * 100 < allySuccessChance) {
+              CharBrain.playerAction('ally', potential, s);
+              const allyTrustGain = 10 + allianceAbility;
+              Engine.modTrust(pc, potential, allyTrustGain);
+              Engine.notify(`Aliansi terbentuk dengan ${CharBrain.charName(potential)}! Trust +${allyTrustGain}%`);
+            } else {
+              Engine.notify(`${CharBrain.charName(potential)} menolak ajakan aliansimu. Mungkin perlu bangun kepercayaan dulu.`);
+            }
           },
           next: (s) => currentNodeId
         });
@@ -1899,15 +1968,21 @@ const Engine = (() => {
 
     // --- HIDE (one-time per location per node) ---
     if (gameState.dangerLevel > 30 && !isK && !brainActionTaken('hide_' + playerLoc)) {
+      // Reward scales with danger — hiding is more valuable when danger is high
+      const hideReward = Math.min(70, 15 + Math.floor(gameState.dangerLevel / 3));
+      // Risk very low when alone, slightly higher with NPCs
+      const hideRisk = nearbyNpcs.length === 0 ? 3 : Math.min(15, 5 + nearbyNpcs.length * 3);
+      const dangerDesc = gameState.dangerLevel > 70 ? 'SANGAT BERBAHAYA!' : gameState.dangerLevel > 50 ? 'berbahaya di luar' : 'waspada';
       choices.push({
         text: `Sembunyi di ${CharBrain.locName(playerLoc)} — tunggu bahaya berlalu`,
         type: 'brain', category: 'hide',
-        hint: `Danger level: ${gameState.dangerLevel}% — ${gameState.dangerLevel > 60 ? 'sangat berbahaya di luar!' : 'waspada'}`,
-        risk: 5, reward: 15,
+        hint: `Bahaya: ${gameState.dangerLevel}% — ${dangerDesc}${nearbyNpcs.length === 0 ? ' | Sendirian — aman' : ''}`,
+        risk: hideRisk, reward: hideReward,
         effect: (s) => {
           recordBrainAction('hide_' + playerLoc);
-          s.dangerLevel = Math.max(0, s.dangerLevel - 5);
-          Engine.notify('Kau bersembunyi dan menunggu. Tension turun sedikit.');
+          const dangerReduction = nearbyNpcs.length === 0 ? 8 : 5;
+          s.dangerLevel = Math.max(0, s.dangerLevel - dangerReduction);
+          Engine.notify(`Kau bersembunyi dan menunggu. Bahaya turun -${dangerReduction}%.`);
         },
         next: (s) => currentNodeId
       });
@@ -2201,15 +2276,25 @@ const Engine = (() => {
           gameState.alive[n] && gameState.npcMinds[n] && gameState.npcMinds[n].location === loc
         );
         const locNpcNames = npcsAtLoc.map(n => typeof CharBrain !== 'undefined' ? CharBrain.charName(n) : n);
-        const locInfo = npcsAtLoc.length > 0
+        // Check for killer threat at destination
+        const killerAtLoc = npcsAtLoc.some(n => gameState.killers.includes(n));
+        const hasEscClue = !isK && typeof getEscapeClueAtLocation === 'function' && getEscapeClueAtLocation(loc);
+        const hasToolAtLoc = !getCharTool(pc) && Object.values(GAME_TOOLS).some(t => t.triggerLoc === loc && isToolAvailable(Object.keys(GAME_TOOLS).find(k => GAME_TOOLS[k] === t)));
+        let locInfo = npcsAtLoc.length > 0
           ? `${npcsAtLoc.length} orang di sana: ${locNpcNames.join(', ')}`
           : 'Kosong — aman untuk eksplorasi';
+        if (hasEscClue) locInfo += ' | Petunjuk pelarian tersedia';
+        if (hasToolAtLoc) locInfo += ' | Ada alat tersedia';
+        // Risk: higher if killer is there, lower if empty
+        const moveRisk = killerAtLoc ? Math.min(50, 30 + Math.floor((gameState.dangerLevel || 0) / 10)) : (npcsAtLoc.length > 0 ? 15 : 5);
+        // Reward: higher if useful resources there, or if escaping danger
+        const moveReward = Math.min(60, 15 + (hasEscClue ? 25 : 0) + (hasToolAtLoc ? 20 : 0) + (npcsAtLoc.length === 0 && (gameState.dangerLevel || 0) > 40 ? 15 : 0));
         choices.push({
           text: `Pindah ke ${CharBrain.locName(loc)}`,
           type: 'brain', category: 'move',
           hint: locInfo,
-          risk: npcsAtLoc.length > 0 ? 25 : 10,
-          reward: 20,
+          risk: moveRisk,
+          reward: moveReward,
           effect: (s) => {
             recordBrainAction('move_' + loc);
             s.playerLocation = loc;
@@ -2339,10 +2424,18 @@ const Engine = (() => {
     const baseRisk = { killer: 90, confront: 60, accuse: 55, escape: 50, investigate: 30, hack: 35, move: 20, social: 15, alliance: 10, observe: 10, protect: 40, negotiate: 25, hide: 20, stealth: 35, story: 5 };
     let risk = baseRisk[cat] || 15;
     if (choice.danger) risk = Math.max(risk, 75);
-    if (state.dangerLevel > 50) risk += 10;
+    if (state.dangerLevel > 50) risk += Math.floor(state.dangerLevel / 10);
     // Role-aware risk adjustments
     const pc = playerChar();
     const isK = isPlayerKiller();
+    // Protagonist: allies nearby reduce risk for confrontation actions
+    if (!isK && ['confront', 'accuse', 'attack'].includes(cat) && state.npcMinds) {
+      const pcLoc = state.playerLocation || 'aula_utama';
+      const alliesNearby = Object.values(state.npcMinds).filter(m =>
+        m.location === pcLoc && state.alive[m.name] && m.allies && m.allies.includes(pc)
+      ).length;
+      if (alliesNearby > 0) risk = Math.max(10, risk - alliesNearby * 8);
+    }
     if (isK) {
       const mySusp = state.suspicion[pc] || 0;
       const revealed = (state.killerRevealed || []).includes(pc);
