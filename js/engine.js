@@ -547,36 +547,43 @@ const Engine = (() => {
       if (!state.killerRevealed.includes(target)) state.killerRevealed.push(target);
     }
 
-    // Pemburu is now revealed — everyone knows who the hunter is
-    state.pemburuRevealed = true;
-
-    // All survivors now know about the pemburu
-    if (state.npcMinds) {
-      Object.values(state.npcMinds).forEach(mind => {
-        if (state.alive[mind.name] && mind.name !== pemburu) {
-          mind.memory.push({
-            type: 'witnessed_execution',
-            pemburu: pemburu,
-            target: target,
-            round: state.roundCount || 0
-          });
-        }
-      });
+    // Pemburu revealed only on first execution — before that, identity is hidden
+    const firstReveal = !state.pemburuRevealed;
+    if (firstReveal) {
+      state.pemburuRevealed = true;
+      // All survivors learn pemburu identity on first execution
+      if (state.npcMinds) {
+        Object.values(state.npcMinds).forEach(mind => {
+          if (state.alive[mind.name] && mind.name !== pemburu) {
+            mind.memory.push({
+              type: 'pemburu_revealed',
+              pemburu: pemburu,
+              target: target,
+              round: state.roundCount || 0
+            });
+          }
+        });
+      }
     }
 
     const correctShot = isTargetKiller
       ? `Tembakan tepat! ${charName(target)} ternyata memang seorang KILLER!`
       : `SALAH SASARAN! ${charName(target)} ternyata bukan killer — seorang survivor tidak bersalah tewas!`;
 
+    const revealMsg = firstReveal
+      ? ` Identitas ${charName(pemburu)} sebagai Pemburu kini terungkap kepada semua survivor!`
+      : '';
+
     events.push({
       type: 'pemburu_execution',
       pemburu: pemburu,
       target: target,
       wasKiller: isTargetKiller,
-      desc: `🔫 EKSEKUSI PEMBURU! Kecurigaan terhadap ${charName(target)} mencapai ${susp}% — ${charName(pemburu)} bertindak sebagai Pemburu dan menembak ${charName(target)}! ${correctShot} Identitas ${charName(pemburu)} sebagai Pemburu kini terungkap kepada semua survivor.`
+      firstReveal: firstReveal,
+      desc: `🔫 EKSEKUSI PEMBURU! Kecurigaan terhadap ${charName(target)} mencapai ${susp}% — ${charName(pemburu)} menembak ${charName(target)}! ${correctShot}${revealMsg}`
     });
 
-    notify(`🔫 ${charName(pemburu)} mengeksekusi ${charName(target)} karena kecurigaan terlalu tinggi (${susp}%)! ${correctShot}`);
+    notify(`🔫 ${charName(pemburu)} mengeksekusi ${charName(target)} (suspicion ${susp}%)! ${correctShot}${revealMsg}`);
 
     return events;
   }
@@ -651,6 +658,8 @@ const Engine = (() => {
     if (wasEmpty && state.escapeClues.length === 1 && !state.pemburu) {
       assignPemburu();
     }
+    // Realtime UI update
+    updatePlayerStatus(state);
   }
 
   // Assign a random survivor as Pemburu when first clue is discovered
@@ -661,14 +670,16 @@ const Engine = (() => {
     if (aliveSurvivors.length < 2) return;
     const pemburu = aliveSurvivors[Math.floor(Math.random() * aliveSurvivors.length)];
     state.pemburu = pemburu;
-    const charName = typeof CharBrain !== 'undefined' ? CharBrain.charName : (n) => n;
-    notify(`Petunjuk pertama ditemukan! Seorang survivor diam-diam mengambil peran sebagai Pemburu...`);
+    state.pemburuRevealed = false;
+    notify(`Petunjuk pertama ditemukan! Seorang survivor diam-diam mengambil peran sebagai Pemburu... Identitasnya masih tersembunyi.`);
   }
   function destroyEscapeClue(clueId) {
     if (!state.destroyedClues) state.destroyedClues = [];
     if (!state.destroyedClues.includes(clueId)) {
       state.destroyedClues.push(clueId);
     }
+    // Realtime UI update
+    updatePlayerStatus(state);
   }
   function canEscape() {
     if (state.masterKeyFound) return true;
@@ -2196,6 +2207,17 @@ const Engine = (() => {
             successChance: lastStandChance,
             effect: (s) => {
               recordBrainAction('laststand_' + target);
+              // PEMBURU PROTECTION
+              if (s.pemburu && s.alive[s.pemburu]) {
+                const pemburuMind = s.npcMinds && s.npcMinds[s.pemburu];
+                const pemburuHere = pemburuMind && pemburuMind.location === (s.playerLocation || 'aula_utama');
+                if (target === s.pemburu || pemburuHere) {
+                  Engine.killChar(pc);
+                  if (!s.pemburuRevealed) s.pemburuRevealed = true;
+                  Engine.notify(`🔫 ${CharBrain.charName(s.pemburu)} mengungkap diri sebagai Pemburu dan menembakmu! Kau TEWAS.`);
+                  return;
+                }
+              }
               const result = rollChance(lastStandChance, pc, 'offense');
               if (result.success) {
                 Engine.killChar(target);
@@ -2232,10 +2254,24 @@ const Engine = (() => {
           successChance: strikeChance,
           effect: (s) => {
             recordBrainAction('strike_' + soloTarget);
+            // PEMBURU PROTECTION: target is pemburu OR pemburu nearby → killer dies
+            if (s.pemburu && s.alive[s.pemburu]) {
+              const pemburuMind = s.npcMinds && s.npcMinds[s.pemburu];
+              const pemburuHere = pemburuMind && pemburuMind.location === (s.playerLocation || 'aula_utama');
+              const targetIsPemburu = soloTarget === s.pemburu;
+              if (targetIsPemburu || pemburuHere) {
+                Engine.killChar(pc);
+                if (!s.pemburuRevealed) s.pemburuRevealed = true;
+                const reason = targetIsPemburu
+                  ? `Kau mencoba membunuh ${CharBrain.charName(s.pemburu)}!`
+                  : `Kau mencoba membunuh ${CharBrain.charName(soloTarget)} di hadapan Pemburu!`;
+                Engine.notify(`${reason} 🔫 ${CharBrain.charName(s.pemburu)} mengungkap diri sebagai Pemburu dan menembakmu! Kau TEWAS.`);
+                return;
+              }
+            }
             const result = rollChance(strikeChance, pc, 'offense');
             if (result.success) {
               Engine.killChar(soloTarget);
-              // Dimas's silent kill: less suspicion gain on successful kill
               if (isSilent && witnesses === 0) {
                 Engine.notify(`${CharBrain.charName(soloTarget)} dieliminasi tanpa jejak! (${result.chance}% chance, roll: ${result.roll})`);
               } else {

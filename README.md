@@ -138,12 +138,17 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 ### Pemburu Mechanic (Baru!)
 - **Trigger**: Saat petunjuk pelarian **pertama** ditemukan → random survivor ditunjuk sebagai **Pemburu**
 - **Pemburu persistent** — satu orang yang sama sepanjang game (`state.pemburu`)
+- **Identitas Tersembunyi** — role Pemburu TIDAK diketahui survivor lain sampai Pemburu melakukan eksekusi pertama
 - **Auto-Eksekusi**: Jika ada karakter (killer ATAU survivor) dengan suspicion >80% → Pemburu otomatis menembak target dengan suspicion tertinggi
 - **Berlaku untuk SEMUA** — killer dan survivor innocent bisa jadi korban pemburu
   - Jika target benar killer: "Tembakan tepat!"
   - Jika target innocent: "SALAH SASARAN!" — survivor tewas
-- **Pemburu Terungkap** — setelah eksekusi, identitas Pemburu diketahui semua survivor (`state.pemburuRevealed`)
-- **Strategis**: Killer harus hati-hati agar suspicion tidak >80%, survivor bisa memanfaatkan framing untuk memicu pemburu ke target yang salah
+- **Pemburu Terungkap** — identitas Pemburu baru terungkap kepada semua survivor saat Pemburu **pertama kali** melakukan eksekusi
+- **Pemburu Proteksi** — Pemburu melindungi survivor dari serangan killer:
+  - Killer menyerang survivor saat **Pemburu ada di lokasi yang sama** → killer MATI
+  - Killer mencoba membunuh **Pemburu langsung** → killer MATI
+  - Berlaku untuk NPC killer maupun player-as-killer
+- **Strategis**: Killer harus hati-hati agar suspicion tidak >80% dan menghindari lokasi Pemburu. Survivor bisa memanfaatkan framing untuk memicu pemburu ke target yang salah
 
 ### Anti-Looping System
 - **Player Action Tracking** — setiap brain action hanya bisa dilakukan **1x per target per node**
@@ -216,7 +221,8 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
   | Panel Rahasia Galeri | Galeri Timur | Panel dinding tersembunyi |
   | Celah Pagar Taman | Taman Dalam | Celah di pagar taman |
   | Dokumen Evakuasi | Aula Utama | Dokumen prosedur evakuasi |
-- **Progress ditampilkan** di status bar real-time (x/5 dibutuhkan, y/8 total)
+- **Progress Realtime** — petunjuk ditemukan & dihancurkan selalu update di status bar secara realtime. Setiap perubahan (clue found/destroyed) langsung ter-update di UI
+- **Petunjuk pertama → Pemburu aktif** — menemukan petunjuk pertama mengaktifkan mechanic Pemburu (random survivor ditunjuk)
 
 ### Killer vs Killer
 - Killer bisa **menyabotase killer lain** untuk menyelamatkan diri sendiri (chapter 2+)
