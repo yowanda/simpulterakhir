@@ -102,20 +102,21 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 - **Dynamic Choices** — pilihan baru muncul berdasarkan aksi NPC (tuduh, aliansi, serang, investigasi)
 - **Tidak pakai AI live** — semua diatur oleh branching database, bukan generative AI
 
-### Chatbox-Style UI
-- **Dialog sebagai Chat Bubble** — setiap dialog karakter ditampilkan sebagai bubble chat dengan avatar
-- **Player di Kanan** — pesan karakter yang dimainkan muncul di sisi kanan dengan tint hijau
-- **NPC di Kiri** — pesan NPC lain muncul di sisi kiri dengan background gelap
-- **Killer Bubble** — karakter killer punya bubble dengan tint merah dan glow effect menacing
-- **Staggered Message Reveal** — pesan muncul satu per satu dengan animasi fade-in smooth, seperti chat asli
-- **Scene Break Dividers** — pembatas visual (···) otomatis muncul di antara narasi panjang agar lebih mudah dibaca
+### WhatsApp-Style Chat UI
+- **Fokus Dialog** — cerita dibangun lewat percakapan antar karakter, bukan narasi panjang. Narasi dihilangkan/diminimalkan menjadi system message pendek
+- **WhatsApp Dark Mode** — tampilan gelap ala WhatsApp: background chat wallpaper, bubble hijau teal (player) dan abu-abu gelap (NPC)
+- **Player di Kanan** — pesan karakter yang dimainkan muncul di sisi kanan dengan bubble hijau WhatsApp (#005c4b)
+- **NPC di Kiri** — pesan NPC lain muncul di sisi kiri dengan bubble gelap (#202c33)
+- **Timestamp & Read Receipt** — setiap bubble punya timestamp dan tanda centang biru (player), seperti WhatsApp asli
+- **Killer Bubble** — karakter killer punya bubble dengan tint merah gelap yang menacing
+- **Location Header** — detail lokasi karakter dan siapa yang ada di sekitar ditampilkan di sub-header atas chatbox (mirip WhatsApp contact info)
+- **Staggered Message Reveal** — pesan muncul satu per satu dengan animasi fade-in smooth
+- **System Messages** — narasi singkat, sound effect, dan info lokasi muncul sebagai pill-shaped system message di tengah
+- **Auto-detect Dialog** — kalimat dialog tanpa tag speaker otomatis terdeteksi dan ditampilkan sebagai bubble player
+- **Choices di Bawah** — pilihan interaktif muncul di area bawah layar (fixed), seperti input area WhatsApp
 - **Click-to-Skip** — klik area cerita untuk langsung tampilkan semua teks
-- **Choices Fade-In** — pilihan muncul dengan animasi smooth setelah semua teks terlihat
-- **Horror Narration Glow** — narasi horor punya efek glow berdenyut (pulsing red)
-- **Hover Effects** — bubble dan avatar bereaksi saat di-hover
-- **Narasi Centered** — deskripsi dan narasi non-dialog muncul di tengah dengan garis dekoratif
-- **Location Context** — info lokasi tampil sebagai pill-shaped system message
-- **Responsive** — avatar dan font otomatis mengecil di mobile
+- **Horror Glow** — narasi horor punya efek glow merah berdenyut
+- **Responsive** — avatar, font, dan layout otomatis menyesuaikan di mobile
 
 ### Framing & Divide Mechanic
 - **Framing** — killer bisa menanamkan bukti palsu ke target (45% chance sukses):
@@ -154,13 +155,14 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
 - Killer mendapat penalty di difficulty lebih rendah untuk keseimbangan
 
 ### Realtime Player Status
-- Status bar real-time menampilkan kondisi karakter pemain:
+- Status bar WhatsApp-style menampilkan kondisi karakter pemain di sub-header:
   - **AMAN** — tidak ada ancaman terdeteksi
   - **TERDETEKSI** — killer tahu pemain menginvestigasi
   - **PANIK** — danger level tinggi atau terluka
   - **TERLUKA** — pemain terkena serangan
   - **ANCAMAN** — killer sedang memburu pemain
 - Tool yang dipegang ditampilkan di status bar
+- **Lokasi Karakter** — detail lokasi + siapa yang ada di sekitar (bersama/sendirian) ditampilkan seperti WhatsApp subtitle
 - **Petunjuk Pelarian** — progress petunjuk ditemukan vs total
 - **Killer Dieliminasi** — jumlah killer yang sudah dikalahkan
 - **Diburu** — jumlah killer yang sedang diburu (disaksikan membunuh)
