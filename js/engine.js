@@ -455,14 +455,130 @@ const Engine = (() => {
   // ---- Suspicion system ----
   function modSuspicion(char, delta) {
     let adjustedDelta = delta;
-    // Lana's stealth ability: gains less suspicion when caught
-    if (delta > 0 && char === playerChar()) {
-      const stealthBonus = getCharAbility(char, 'stealthBonus');
-      if (stealthBonus > 0) {
-        adjustedDelta = Math.max(1, Math.round(delta * (1 - stealthBonus / 100)));
+    const current = state.suspicion[char] || 0;
+
+    if (delta > 0) {
+      // Stealth ability: gains less suspicion when caught (Lana)
+      if (char === playerChar()) {
+        const stealthBonus = getCharAbility(char, 'stealthBonus');
+        if (stealthBonus > 0) {
+          adjustedDelta = Math.max(1, Math.round(delta * (1 - stealthBonus / 100)));
+        }
+      }
+      // Diminishing returns: harder to push suspicion higher when already high
+      if (current > 60) {
+        const diminish = 1 - ((current - 60) / 200); // 60%→1.0, 80%→0.9, 100%→0.8
+        adjustedDelta = Math.max(1, Math.round(adjustedDelta * diminish));
+      }
+      // Chapter scaling: early chapters = smaller suspicion gains (slower build-up)
+      const chapter = state.chapter || 0;
+      if (chapter <= 1) {
+        adjustedDelta = Math.max(1, Math.round(adjustedDelta * 0.7));
+      } else if (chapter === 2) {
+        adjustedDelta = Math.max(1, Math.round(adjustedDelta * 0.85));
+      }
+    } else if (delta < 0) {
+      // Suspicion reduction: slightly more effective at high levels (easier to calm down paranoia)
+      if (current > 70) {
+        adjustedDelta = Math.round(adjustedDelta * 1.2);
       }
     }
-    state.suspicion[char] = Math.max(0, Math.min(100, (state.suspicion[char] || 0) + adjustedDelta));
+    state.suspicion[char] = Math.max(0, Math.min(100, current + adjustedDelta));
+  }
+
+  // Natural suspicion decay — called each round to prevent infinite stacking
+  function decaySuspicion() {
+    if (!state.suspicion) return;
+    const witnessedKillers = [...(state.killerRevealed || []), ...(state.witnessedKillers || [])];
+    Object.keys(state.suspicion).forEach(char => {
+      if (!state.alive[char]) return;
+      const susp = state.suspicion[char] || 0;
+      if (susp <= 0) return;
+      // Witnessed/revealed killers don't decay — proof is permanent
+      if (witnessedKillers.includes(char)) return;
+      // Decay: 2-3 points per round (slow but prevents permanent stacking)
+      const decay = susp > 50 ? 3 : 2;
+      state.suspicion[char] = Math.max(0, susp - decay);
+    });
+  }
+
+  // ---- Pemburu Execution Mechanic ----
+  // If ANY character's suspicion exceeds 80%, a "pemburu" (hunter) among the survivors
+  // will automatically execute them. The pemburu is then revealed to all survivors.
+  function checkPemburuExecution() {
+    const events = [];
+    if (!state.suspicion || !state.npcMinds) return events;
+
+    const aliveSurvivors = CHARACTERS.filter(c =>
+      state.alive[c] && !(state.killers || []).includes(c)
+    );
+    if (aliveSurvivors.length < 2) return events; // Need at least 2 survivors for pemburu
+
+    // Check all alive characters (both killer AND survivor can be executed)
+    CHARACTERS.forEach(target => {
+      if (!state.alive[target]) return;
+      const susp = state.suspicion[target] || 0;
+      if (susp <= 80) return;
+      // Already revealed killers are handled by the HUNT mechanic, not pemburu
+      if ((state.killerRevealed || []).includes(target)) return;
+      if ((state.witnessedKillers || []).includes(target)) return;
+
+      // Pick a random survivor as the pemburu (not the target themselves)
+      const potentialHunters = aliveSurvivors.filter(s => s !== target);
+      if (potentialHunters.length === 0) return;
+      const pemburu = potentialHunters[Math.floor(Math.random() * potentialHunters.length)];
+
+      const isTargetKiller = (state.killers || []).includes(target);
+      const charName = typeof CharBrain !== 'undefined' ? CharBrain.charName : (n) => n;
+
+      // Execute the target
+      state.alive[target] = false;
+      state.deathCount++;
+
+      if (isTargetKiller) {
+        if (!state.killersDead) state.killersDead = [];
+        if (!state.killersDead.includes(target)) state.killersDead.push(target);
+        if (!state.killerRevealed) state.killerRevealed = [];
+        if (!state.killerRevealed.includes(target)) state.killerRevealed.push(target);
+      }
+
+      // Pemburu is now revealed — everyone knows who the hunter is
+      if (!state.pemburuRevealed) state.pemburuRevealed = [];
+      if (!state.pemburuRevealed.includes(pemburu)) state.pemburuRevealed.push(pemburu);
+
+      // All survivors now know about the pemburu
+      if (state.npcMinds) {
+        Object.values(state.npcMinds).forEach(mind => {
+          if (state.alive[mind.name] && mind.name !== pemburu) {
+            mind.memory.push({
+              type: 'witnessed_execution',
+              pemburu: pemburu,
+              target: target,
+              round: state.roundCount || 0
+            });
+          }
+        });
+      }
+
+      const correctShot = isTargetKiller
+        ? `Tembakan tepat! ${charName(target)} ternyata memang seorang KILLER!`
+        : `SALAH SASARAN! ${charName(target)} ternyata bukan killer — seorang survivor tidak bersalah tewas!`;
+
+      events.push({
+        type: 'pemburu_execution',
+        pemburu: pemburu,
+        target: target,
+        wasKiller: isTargetKiller,
+        desc: `🔫 EKSEKUSI PEMBURU! Kecurigaan terhadap ${charName(target)} mencapai ${susp}% — ${charName(pemburu)} bertindak sebagai Pemburu dan menembak ${charName(target)}! ${correctShot} Identitas ${charName(pemburu)} sebagai Pemburu kini terungkap kepada semua survivor.`
+      });
+
+      // Notify
+      if (typeof Engine !== 'undefined' && Engine.notify) {
+        Engine.notify(`🔫 ${charName(pemburu)} mengeksekusi ${charName(target)} karena kecurigaan terlalu tinggi (${susp}%)! ${correctShot}`);
+      }
+    });
+
+    return events;
   }
 
   // ---- Is this character a killer? ----
@@ -1165,6 +1281,14 @@ const Engine = (() => {
     const result = CharBrain.executeRound(state);
     if (result && result.events && result.events.length > 0) {
       state.npcActionLog.push({ round: state.roundCount, events: result.events });
+    }
+    // Natural suspicion decay each round
+    decaySuspicion();
+    // Pemburu mechanic: auto-execute anyone with suspicion >80%
+    const pemburuEvents = checkPemburuExecution();
+    if (pemburuEvents.length > 0 && result) {
+      if (!result.events) result.events = [];
+      pemburuEvents.forEach(ev => result.events.push(ev));
     }
     // Sync deaths from NPC actions to engine
     CHARACTERS.forEach(name => {
@@ -1874,8 +1998,8 @@ const Engine = (() => {
             const isTarget = s.killers.includes(observeTarget);
             const detectChance = 0.4 + (detBonus / 100) + (canReadEmotion ? 0.15 : 0);
             if (isTarget && Math.random() < detectChance) {
-              const suspGain = 10 + Math.floor(detBonus / 2) + (canReadEmotion ? 5 : 0);
-              s.suspicion[observeTarget] = Math.min(100, susp + suspGain);
+              const suspGain = 8 + Math.floor(detBonus / 3) + (canReadEmotion ? 4 : 0);
+              Engine.modSuspicion(observeTarget, suspGain);
               Engine.notify(`Kau menangkap gelagat mencurigakan dari ${CharBrain.charName(observeTarget)}! Kecurigaan +${suspGain}%.`);
             } else if (canReadEmotion && mind) {
               Engine.notify(`${CharBrain.charName(observeTarget)}: Emosi ${mind.emotion}, Tension ${mind.tension}%.${isTarget ? ' Ada yang tidak beres...' : ''}`);
@@ -1912,9 +2036,10 @@ const Engine = (() => {
             const trustGain = 5 + Math.floor(getCharAbility(pc, 'trust') / 3);
             Engine.modTrust(pc, talkTarget, trustGain);
             const newTrust = s.trust[trustKey(pc, talkTarget)] || 55;
-            // Talking also slightly reduces their suspicion of you
+            // Talking also reduces their suspicion of you (scaled with trust ability)
             if (gameState.npcMinds[talkTarget] && theirSusp > 0) {
-              gameState.npcMinds[talkTarget].suspicions[pc] = Math.max(0, theirSusp - 5);
+              const suspReduction = 4 + Math.floor(getCharAbility(pc, 'trust') / 5);
+              gameState.npcMinds[talkTarget].suspicions[pc] = Math.max(0, theirSusp - suspReduction);
             }
             Engine.notify(`Hubunganmu dengan ${CharBrain.charName(talkTarget)} membaik. Trust: ${newTrust}%${theirSusp > 0 ? ' | Kecurigaan turun sedikit' : ''}`);
           },
@@ -2060,7 +2185,7 @@ const Engine = (() => {
                 Engine.notify(`${CharBrain.charName(target)} dieliminasi dalam serangan putus asa! (${result.chance}%, roll: ${result.roll})`);
               } else {
                 // Failed last stand = player exposed badly
-                Engine.modSuspicion(pc, 30);
+                Engine.modSuspicion(pc, 25);
                 if (s.playerStatus) s.playerStatus.wounded = true;
                 Engine.notify(`Serangan gagal total! ${CharBrain.charName(target)} membalas dan melaporkanmu! Suspicion +30%! (${result.chance}%, roll: ${result.roll})`);
               }
@@ -2100,7 +2225,7 @@ const Engine = (() => {
                 Engine.notify(`${CharBrain.charName(soloTarget)} dieliminasi! (${result.chance}% chance, roll: ${result.roll})`);
               }
             } else {
-              const failSusp = isSilent ? 12 : 20;
+              const failSusp = isSilent ? 10 : 18;
               Engine.modSuspicion(pc, failSusp);
               Engine.notify(`Serangan gagal! ${CharBrain.charName(soloTarget)} berhasil lolos. (${result.chance}% chance, roll: ${result.roll})`);
             }
@@ -2131,10 +2256,10 @@ const Engine = (() => {
             recordBrainAction('sabotage_killer_' + rivalKiller);
             const result = rollChance(sabChance, pc, 'offense');
             if (result.success) {
-              Engine.modSuspicion(rivalKiller, 30);
+              Engine.modSuspicion(rivalKiller, 25);
               Engine.notify(`Kau berhasil membocorkan identitas ${CharBrain.charName(rivalKiller)} ke kelompok! (${result.chance}%)`);
             } else {
-              Engine.modSuspicion(pc, 15);
+              Engine.modSuspicion(pc, 12);
               Engine.notify(`Usaha sabotasemu ketahuan oleh ${CharBrain.charName(rivalKiller)}! (${result.chance}%)`);
             }
           },
@@ -2208,9 +2333,9 @@ const Engine = (() => {
               recordBrainAction('frame_' + frameTarget);
               const result = rollChance(frameChance, pc, 'offense');
               if (result.success) {
-                const frameSusp = 25 + Math.floor(getCharAbility(pc, 'framingBonus') / 2);
+                const frameSusp = 20 + Math.floor(getCharAbility(pc, 'framingBonus') / 2);
                 Engine.modSuspicion(frameTarget, frameSusp);
-                Engine.modSuspicion(pc, -15);
+                Engine.modSuspicion(pc, -10);
                 // REAL consequences: trust destroyed, enemies created, allies removed
                 const affectedNames = [];
                 if (s.npcMinds) {
@@ -2218,7 +2343,7 @@ const Engine = (() => {
                     const npc = s.npcMinds[npcName];
                     if (npc && npc.location === (s.playerLocation || 'aula_utama') && s.alive[npcName] && !s.killers.includes(npcName) && npcName !== frameTarget) {
                       // Suspicion spike on framed target
-                      npc.suspicions[frameTarget] = Math.min(100, (npc.suspicions[frameTarget] || 0) + 30);
+                      npc.suspicions[frameTarget] = Math.min(100, (npc.suspicions[frameTarget] || 0) + 22);
                       // Trust between NPC and framed target drops hard
                       const tk = CharBrain.trustKeyFor ? CharBrain.trustKeyFor(npcName, frameTarget) : [npcName, frameTarget].sort().join('_');
                       if (s.trust[tk] !== undefined) s.trust[tk] = Math.max(0, s.trust[tk] - 25);
@@ -2242,13 +2367,13 @@ const Engine = (() => {
                 const enemyMsg = affectedNames.length > 0 ? ` ${affectedNames.join(', ')} sekarang MEMUSUHI ${CharBrain.charName(frameTarget)}!` : '';
                 Engine.notify(`Framing berhasil! ${CharBrain.charName(frameTarget)} suspicion +${frameSusp}%, trust hancur, terisolasi.${enemyMsg} (${result.chance}%, roll: ${result.roll})`);
               } else {
-                Engine.modSuspicion(pc, 20);
+                Engine.modSuspicion(pc, 15);
                 // Failed framing: nearby NPCs get suspicious of YOU
                 if (s.npcMinds) {
                   Object.keys(s.npcMinds).forEach(npcName => {
                     const npc = s.npcMinds[npcName];
                     if (npc && npc.location === (s.playerLocation || 'aula_utama') && s.alive[npcName]) {
-                      npc.suspicions[pc] = Math.min(100, (npc.suspicions[pc] || 0) + 15);
+                      npc.suspicions[pc] = Math.min(100, (npc.suspicions[pc] || 0) + 12);
                     }
                   });
                 }
@@ -3148,7 +3273,7 @@ const Engine = (() => {
   }
 
   return {
-    init, t, getTrust, modTrust, modAwareness, modDanger, modSuspicion,
+    init, t, getTrust, modTrust, modAwareness, modDanger, modSuspicion, decaySuspicion, checkPemburuExecution,
     killChar, canDie, isKiller, aliveCount, aliveMainCount, addAlliance,
     screenShake, bloodDrip, glitch, deathFlash, showChapterTitle, notify,
     showDirectEnding, renderNode, getPortraitHTML,
