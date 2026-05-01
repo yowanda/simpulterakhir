@@ -7,7 +7,7 @@
 const STORY_CH6 = {
 
 'ch6_start': {
-  chapter: 6,
+  chapter: 4,
   text: (s) => {
     let text = `<p class="sound">— Countdown: <strong>00:30:00</strong>. Tiga puluh menit sebelum fajar. Tiga puluh menit yang akan menentukan apakah siklus ini berakhir — atau berlanjut. —</p>`;
     text += `<p><span class="speaker arin">Arin</span> Yang tersisa: `;

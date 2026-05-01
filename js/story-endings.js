@@ -11,7 +11,7 @@ const STORY_ENDINGS = {
 // ============================================================
 
 'ending_masterpiece': {
-  chapter: 7,
+  chapter: 4,
   isEnding: true,
   endingNumber: 1,
   title: 'Sang Penenun Terakhir',
@@ -75,7 +75,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_true_detective': {
-  chapter: 7,
+  chapter: 4,
   isEnding: true,
   endingNumber: 2,
   title: 'Detektif Sejati',
@@ -99,7 +99,7 @@ const STORY_ENDINGS = {
 // ============================================================
 
 'ending_good': {
-  chapter: 7,
+  chapter: 4,
   isEnding: true,
   endingNumber: 3,
   title: 'Fajar yang Cukup',
@@ -120,7 +120,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_sacrifice_hero': {
-  chapter: 7,
+  chapter: 4,
   isEnding: true,
   endingNumber: 4,
   title: 'Pengorbanan',
@@ -146,7 +146,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_survivor_testimony': {
-  chapter: 6,
+  chapter: 4,
   isEnding: true,
   endingNumber: 5,
   title: 'Kesaksian Terakhir',
@@ -168,7 +168,7 @@ const STORY_ENDINGS = {
 // ============================================================
 
 'ending_bittersweet': {
-  chapter: 7,
+  chapter: 4,
   isEnding: true,
   endingNumber: 6,
   title: 'Abu dan Fajar',
@@ -188,7 +188,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_broken_victory': {
-  chapter: 7,
+  chapter: 4,
   isEnding: true,
   endingNumber: 7,
   title: 'Kemenangan yang Pecah',
@@ -209,7 +209,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_lana_redemption': {
-  chapter: 6,
+  chapter: 4,
   isEnding: true,
   endingNumber: 8,
   title: 'Penebusan Penulis',
@@ -228,7 +228,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_vira_closure': {
-  chapter: 5,
+  chapter: 3,
   isEnding: true,
   endingNumber: 9,
   title: 'Lingkaran Vira',
@@ -253,7 +253,7 @@ const STORY_ENDINGS = {
 // ============================================================
 
 'ending_pyrrhic': {
-  chapter: 7,
+  chapter: 4,
   isEnding: true,
   endingNumber: 10,
   title: 'Kemenangan Pyrrhic',
@@ -272,7 +272,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_deal_with_devil': {
-  chapter: 6,
+  chapter: 4,
   isEnding: true,
   endingNumber: 11,
   title: 'Perjanjian dengan Iblis',
@@ -292,7 +292,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_split_group': {
-  chapter: 4,
+  chapter: 3,
   isEnding: true,
   endingNumber: 12,
   title: 'Perpecahan Fatal',
@@ -310,7 +310,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_niko_truth': {
-  chapter: 5,
+  chapter: 3,
   isEnding: true,
   endingNumber: 13,
   title: 'Warisan Wardhana',
@@ -354,7 +354,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_wrong_accusation': {
-  chapter: 4,
+  chapter: 3,
   isEnding: true,
   endingNumber: 15,
   title: 'Tuduhan Salah',
@@ -374,7 +374,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_penenun_wins': {
-  chapter: 6,
+  chapter: 4,
   isEnding: true,
   endingNumber: 16,
   title: 'Sang Penenun Menang',
@@ -396,7 +396,7 @@ const STORY_ENDINGS = {
 // Already defined in ch5: ending_incomplete_escape (C-rank, #19)
 
 'ending_dimas_betrayal': {
-  chapter: 4,
+  chapter: 3,
   isEnding: true,
   endingNumber: 17,
   title: 'Pengkhianatan Dokter',
@@ -419,7 +419,7 @@ const STORY_ENDINGS = {
 // ============================================================
 
 'ending_total_failure': {
-  chapter: 7,
+  chapter: 4,
   isEnding: true,
   endingNumber: 18,
   title: 'Simpul Terputus Total',
@@ -456,7 +456,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_arin_death_hero': {
-  chapter: 5,
+  chapter: 3,
   isEnding: true,
   endingNumber: 21,
   title: 'Pahlawan yang Jatuh',
@@ -497,7 +497,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_lana_double': {
-  chapter: 5,
+  chapter: 3,
   isEnding: true,
   endingNumber: 23,
   title: 'Plot Twist Penulis',
@@ -515,7 +515,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_sera_profile': {
-  chapter: 4,
+  chapter: 3,
   isEnding: true,
   endingNumber: 24,
   title: 'Profiler dan Subjek',
@@ -533,7 +533,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_silent_majority': {
-  chapter: 7,
+  chapter: 4,
   isEnding: true,
   endingNumber: 25,
   title: 'Mayoritas yang Diam',
@@ -560,7 +560,7 @@ const STORY_ENDINGS = {
 // ============================================================
 
 'ending_mansion_escape': {
-  chapter: 5,
+  chapter: 3,
   isEnding: true,
   endingNumber: 26,
   title: 'Pelarian dari Mansion',
@@ -568,7 +568,7 @@ const STORY_ENDINGS = {
   endingText: (s) => {
     const pc = s.playerCharacter || 'arin';
     let text = `<p class="sound">— ENDING #26: Pelarian dari Mansion —</p>`;
-    text += `<p><span class="speaker juno">Juno</span> Semua petunjuk terkumpul. Peta rahasia, kode pintu, blueprint terowongan, frekuensi radio, kunci berkarat, jurnal pendiri, dan jalur pelarian atap — semuanya membentuk satu gambaran utuh.</p>`;
+    text += `<p><span class="speaker juno">Juno</span> Semua petunjuk terkumpul. Peta rahasia, kode pintu, blueprint terowongan, frekuensi radio, kunci berkarat, jurnal pendiri, dan jalur pelarian menara — semuanya membentuk satu gambaran utuh.</p>`;
     text += `<p><span class="speaker juno">Juno</span> Jalan keluar ada di bawah basement — terowongan yang dibangun Hendarto Wardhana 50 tahun lalu sebagai rencana darurat. Terowongan yang sengaja disembunyikan oleh Sang Penenun.</p>`;
     text += `<p><span class="speaker juno">Juno</span> Saat pintu terowongan terbuka, mansion mengaktifkan protokol lockdown. Tapi lockdown itu bekerja dua arah — para killer terjebak di dalam, sementara protagonis berlari menuju kebebasan.</p>`;
     text += `<p><span class="speaker juno">Juno</span> Di ujung terowongan, cahaya fajar menyambut. Udara laut. Suara ombak. Dan di belakang — mansion yang perlahan menjadi kuburan bagi mereka yang menenun jaring kematian.</p>`;
@@ -596,7 +596,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_all_killers_dead': {
-  chapter: 4,
+  chapter: 3,
   isEnding: true,
   endingNumber: 27,
   title: 'Pembantai Pembunuh',
@@ -641,7 +641,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_killer_betrayal_victory': {
-  chapter: 5,
+  chapter: 3,
   isEnding: true,
   endingNumber: 28,
   title: 'Pengkhianatan Sempurna',
@@ -661,7 +661,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_clues_destroyed': {
-  chapter: 6,
+  chapter: 4,
   isEnding: true,
   endingNumber: 29,
   title: 'Jejak yang Terhapus',
@@ -680,7 +680,7 @@ const STORY_ENDINGS = {
 },
 
 'ending_last_standing': {
-  chapter: 6,
+  chapter: 4,
   isEnding: true,
   endingNumber: 30,
   title: 'Yang Terakhir Berdiri',

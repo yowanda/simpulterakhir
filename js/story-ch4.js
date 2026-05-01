@@ -7,7 +7,7 @@
 const STORY_CH4 = {
 
 'ch4_start': {
-  chapter: 4,
+  chapter: 3,
   text: (s) => {
     let text = `<p class="sound">— Mansion berubah. Bukan hanya metafora — secara literal, koridor-koridor yang tadi terbuka sekarang tertutup. Pintu-pintu baru muncul di tempat yang sebelumnya dinding solid. Seperti mansion ini hidup, bernapas, dan menyusun ulang dirinya sendiri. —</p>`;
 
@@ -644,7 +644,7 @@ const STORY_CH4 = {
 },
 
 'ending_coward_escape': {
-  chapter: 4,
+  chapter: 3,
   isEnding: true,
   endingNumber: 20,
   title: 'Pengecut yang Hidup',

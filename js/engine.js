@@ -152,7 +152,7 @@ const Engine = (() => {
   // Tools trigger based on events and provide support or execution abilities.
   const GAME_TOOLS = {
     pisau_dapur:    { name: 'Pisau Dapur', icon: '\uD83D\uDD2A', type: 'weapon', desc: 'Senjata jarak dekat. +40% chance kill, tapi meninggalkan bukti darah.', triggerLoc: 'dapur', offense: 40, defense: 10, evidence: true },
-    kunci_master:   { name: 'Kunci Master', icon: '\uD83D\uDD11', type: 'support', desc: 'Buka semua pintu di mansion. Akses ke lorong rahasia dan bunker.', triggerLoc: 'ruang_penyimpanan', offense: 0, defense: 20, unlocks: true },
+    kunci_master:   { name: 'Kunci Master', icon: '\uD83D\uDD11', type: 'support', desc: 'Buka semua pintu di mansion. Akses ke semua ruangan termasuk Bunker B-3.', triggerLoc: 'bunker_b3', offense: 0, defense: 20, unlocks: true },
     suntikan:       { name: 'Suntikan Obat Bius', icon: '\uD83D\uDC89', type: 'weapon', desc: 'Bius target tanpa suara. +50% chance eliminasi diam-diam, tanpa bukti.', triggerLoc: 'basement', offense: 50, defense: 0, silent: true },
     radio_portabel: { name: 'Radio Portabel', icon: '\uD83D\uDCFB', type: 'support', desc: 'Komunikasi jarak jauh. Bisa panggil bantuan atau koordinasi aliansi.', triggerLoc: 'menara', offense: 0, defense: 30, comms: true },
     tali_baja:      { name: 'Tali Baja', icon: '\u26D3\uFE0F', type: 'weapon', desc: 'Ikat atau jebak target. +35% chance tangkap, bisa untuk barricade.', triggerLoc: 'taman_dalam', offense: 35, defense: 15, trap: true },
@@ -394,8 +394,9 @@ const Engine = (() => {
       // Escape Clue System: survivors find clues to escape mansion
       escapeClues: [],           // Array of found escape clue IDs
       destroyedClues: [],        // Array of destroyed escape clue IDs (by killers)
-      totalEscapeClues: 15,            // 15 total clues in mansion
-      cluesNeededToWin: 8,             // Protagonist wins if 8 found before killers destroy them
+      totalEscapeClues: 8,             // 8 total clues in 8-room mansion
+      cluesNeededToWin: 5,             // Protagonist wins if 5 found before killers destroy them
+      masterKeyFound: false,           // Kunci Room Master — 5% chance, instant escape win
       alliances: [],
       npcMinds: null,
       roundCount: 0,
@@ -470,22 +471,16 @@ const Engine = (() => {
   }
 
   // ---- Escape Clue Locations ----
+  // ---- Escape Clue Locations (8 rooms, 8 clues, need 5 to win) ----
   const ESCAPE_CLUE_LOCATIONS = {
-    perpustakaan:      { id: 'esc_peta_mansion',     name: 'Peta Rahasia Mansion',     desc: 'Peta tua yang menunjukkan jalur rahasia keluar mansion.' },
-    basement:          { id: 'esc_kode_pintu',       name: 'Kode Pintu Darurat',       desc: 'Serangkaian angka yang tertulis di dinding — kode untuk pintu darurat.' },
-    bunker_b3:         { id: 'esc_blueprint',        name: 'Blueprint Terowongan',     desc: 'Cetak biru terowongan bawah tanah yang mengarah ke luar.' },
-    menara:            { id: 'esc_sinyal',           name: 'Frekuensi Radio Darurat',  desc: 'Frekuensi radio yang bisa memanggil bantuan dari luar.' },
-    lorong_rahasia:    { id: 'esc_kunci_terowongan', name: 'Kunci Terowongan',         desc: 'Kunci berkarat yang membuka pintu terowongan pelarian.' },
-    ruang_penyimpanan: { id: 'esc_jurnal_pendiri',   name: 'Jurnal Pendiri',           desc: 'Jurnal Hendarto Wardhana yang mencatat semua jalan keluar mansion.' },
-    atap:              { id: 'esc_jalur_atap',       name: 'Jalur Pelarian Atap',      desc: 'Tangga darurat tersembunyi di sisi atap yang mengarah ke tebing.' },
-    dapur:             { id: 'esc_pintu_dapur',      name: 'Pintu Belakang Dapur',     desc: 'Kunci cadangan pintu belakang dapur yang mengarah ke halaman.' },
-    galeri_timur:      { id: 'esc_panel_galeri',     name: 'Panel Rahasia Galeri',     desc: 'Panel dinding tersembunyi yang membuka lorong ke luar.' },
-    taman_dalam:       { id: 'esc_pagar_taman',      name: 'Celah Pagar Taman',        desc: 'Celah di pagar taman yang cukup besar untuk lewat.' },
-    koridor_selatan:   { id: 'esc_ventilasi',        name: 'Peta Ventilasi',           desc: 'Skema ventilasi mansion — jalur keluar tersembunyi.' },
-    aula_utama:        { id: 'esc_dokumen_aula',     name: 'Dokumen Evakuasi',         desc: 'Dokumen prosedur evakuasi darurat mansion yang sudah lama dilupakan.' },
-    kamar_tamu:        { id: 'esc_catatan_tamu',     name: 'Catatan Tamu Lama',        desc: 'Catatan tamu sebelumnya yang berisi petunjuk jalur pelarian.' },
-    ruang_musik:       { id: 'esc_partitur',         name: 'Partitur Tersembunyi',     desc: 'Partitur musik yang jika dimainkan membuka pintu rahasia.' },
-    gudang:            { id: 'esc_kunci_gudang',     name: 'Kunci Gudang Luar',        desc: 'Kunci yang membuka gudang di luar mansion — akses ke jalan kabur.' }
+    aula_utama:    { id: 'esc_dokumen_aula',   name: 'Dokumen Evakuasi',        desc: 'Dokumen prosedur evakuasi darurat mansion yang sudah lama dilupakan.' },
+    perpustakaan:  { id: 'esc_peta_mansion',   name: 'Peta Rahasia Mansion',    desc: 'Peta tua yang menunjukkan jalur rahasia keluar mansion.' },
+    dapur:         { id: 'esc_pintu_dapur',    name: 'Pintu Belakang Dapur',    desc: 'Kunci cadangan pintu belakang dapur yang mengarah ke halaman.' },
+    basement:      { id: 'esc_kode_pintu',     name: 'Kode Pintu Darurat',      desc: 'Serangkaian angka yang tertulis di dinding — kode untuk pintu darurat.' },
+    menara:        { id: 'esc_sinyal',         name: 'Frekuensi Radio Darurat', desc: 'Frekuensi radio yang bisa memanggil bantuan dari luar.' },
+    taman_dalam:   { id: 'esc_pagar_taman',    name: 'Celah Pagar Taman',       desc: 'Celah di pagar taman yang cukup besar untuk lewat.' },
+    galeri_timur:  { id: 'esc_panel_galeri',   name: 'Panel Rahasia Galeri',    desc: 'Panel dinding tersembunyi yang membuka lorong ke luar.' },
+    bunker_b3:     { id: 'esc_blueprint',      name: 'Blueprint Terowongan',    desc: 'Cetak biru terowongan bawah tanah yang mengarah ke luar.' }
   };
 
   // ---- Kill character ----
@@ -503,8 +498,8 @@ const Engine = (() => {
 
   // ---- Check if can die (difficulty gating) ----
   function canDie() {
-    if (state.difficulty === 1 && state.deathCount >= 2 && state.chapter < 3) return false;
-    if (state.difficulty === 2 && state.deathCount >= 4 && state.chapter < 3) return false;
+    if (state.difficulty === 1 && state.deathCount >= 2 && state.chapter < 2) return false;
+    if (state.difficulty === 2 && state.deathCount >= 4 && state.chapter < 2) return false;
     return true;
   }
 
@@ -543,11 +538,22 @@ const Engine = (() => {
     }
   }
   function canEscape() {
-    const needed = state.cluesNeededToWin || 8;
+    if (state.masterKeyFound) return true;
+    const needed = state.cluesNeededToWin || 5;
     return (state.escapeClues || []).length >= needed;
   }
+  // ---- Kunci Room Master (5% chance muncul di lokasi acak) ----
+  // Jika ditemukan, langsung selesai misi petunjuk pelarian
+  function rollMasterKey() {
+    if (state.masterKeyFound) return false;
+    if (Math.random() < 0.05) {
+      state.masterKeyFound = true;
+      return true;
+    }
+    return false;
+  }
   function triggerMansionEscape() {
-    // 8+ clues found → all killers revealed and executed
+    // 5+ clues found OR master key → all killers revealed and executed
     (state.killers || []).forEach(k => {
       if (!state.killerRevealed.includes(k)) state.killerRevealed.push(k);
       if (state.alive[k]) {
@@ -690,14 +696,15 @@ const Engine = (() => {
     // Escape clue progress
     const isK = state.killers && state.killers.includes(pc);
     const escFound = (state.escapeClues || []).length;
-    const escTotal = state.totalEscapeClues || 6;
+    const escTotal = state.totalEscapeClues || 8;
     const escDestroyed = (state.destroyedClues || []).length;
     const killersAlive = (state.killers || []).filter(k => state.alive[k]).length;
     const totalKillers = (state.killers || []).length;
     const witnessedCount = (state.witnessedKillers || []).filter(k => state.alive[k]).length;
-    const cluesNeeded = state.cluesNeededToWin || 8;
+    const cluesNeeded = state.cluesNeededToWin || 5;
     if (!isK) {
-      html += `<div class="ps-escape">Petunjuk: ${escFound}/${cluesNeeded} (${escTotal} total) | Killer: ${totalKillers - killersAlive}/${totalKillers}`;
+      const masterKeyStatus = state.masterKeyFound ? ' | 🔑 Kunci Master!' : '';
+      html += `<div class="ps-escape">Petunjuk: ${escFound}/${cluesNeeded} (${escTotal} total) | Killer: ${totalKillers - killersAlive}/${totalKillers}${masterKeyStatus}`;
       if (witnessedCount > 0) html += ` | Diburu: ${witnessedCount}`;
       html += `</div>`;
     } else {
@@ -721,6 +728,24 @@ const Engine = (() => {
       }
     }
     html += `<div class="ps-location"><span class="loc-icon">\uD83D\uDCCD</span>${locDisplayName}${nearbyInfo}</div>`;
+
+    // Team roster — show killers & survivors in sidebar for ALL modes
+    if (state.killers && state.killers.length > 0) {
+      const cn = (n) => typeof CharBrain !== 'undefined' ? CharBrain.charName(n) : n;
+      const killerNames = state.killers.map(k => {
+        const alive = state.alive[k];
+        return `<span class="${alive ? 'team-alive' : 'team-dead'}">${cn(k)}${alive ? '' : ' ✝'}</span>`;
+      });
+      const allChars = CHARACTERS || [];
+      const survivorNames = allChars.filter(c => !state.killers.includes(c)).map(c => {
+        const alive = state.alive[c];
+        return `<span class="${alive ? 'team-alive' : 'team-dead'}">${cn(c)}${alive ? '' : ' ✝'}</span>`;
+      });
+      html += `<div class="ps-team">`;
+      html += `<div class="ps-team-row"><span class="team-label">🔪 Killer:</span> ${killerNames.join(', ')}</div>`;
+      html += `<div class="ps-team-row"><span class="team-label">🛡️ Survivor:</span> ${survivorNames.join(', ')}</div>`;
+      html += `</div>`;
+    }
 
     bar.innerHTML = html;
     bar.style.display = 'flex';
@@ -1259,8 +1284,8 @@ const Engine = (() => {
       roundCount: state.roundCount,
       deathCount: state.deathCount,
       escapeClues: (state.escapeClues || []).length,
-      totalEscapeClues: state.totalEscapeClues || 15,
-      cluesNeeded: state.cluesNeededToWin || 8,
+      totalEscapeClues: state.totalEscapeClues || 8,
+      cluesNeeded: state.cluesNeededToWin || 5,
       destroyedClues: (state.destroyedClues || []).length,
       charFates,
       deadChars,
@@ -1616,7 +1641,7 @@ const Engine = (() => {
       choices.push({
         text: `Periksa ${CharBrain.locName(playerLoc)} — cari petunjuk tersembunyi`,
         type: 'brain', category: 'investigate',
-        hint: nearbyNpcs.length === 0 ? 'Sendirian — lebih leluasa mencari' : 'Hati-hati, ada orang lain di sini',
+        hint: nearbyNpcs.length === 0 ? 'Sendirian — lebih leluasa mencari' : `${nearbyNpcs.length} orang di sini — hati-hati`,
         risk: nearbyNpcs.length === 0 ? 15 : 25,
         reward: 70,
         successChance: invChance,
@@ -1634,16 +1659,21 @@ const Engine = (() => {
                   Engine.modSuspicion(n, 10);
                 }
               });
+              // Roll for Kunci Room Master (5% chance) during investigation
+              if (rollMasterKey()) {
+                Engine.notify('🔑 KUNCI ROOM MASTER DITEMUKAN saat investigasi! Misi petunjuk pelarian SELESAI!');
+                return;
+              }
               // Chance to also find an escape clue as bonus (30%)
               const escClue = getEscapeClueAtLocation(playerLoc);
               if (escClue && Math.random() < 0.30) {
                 findEscapeClue(escClue.id);
                 s.cluesFound = (s.cluesFound || 0) + 1;
                 const newFound = (s.escapeClues || []).length;
-                const total = s.totalEscapeClues || 15;
-                Engine.notify(`Petunjuk ditemukan! Bonus: ${escClue.name} juga terungkap! Pelarian: ${newFound}/${total} (${result.chance}% chance, roll: ${result.roll})`);
+                const needed = s.cluesNeededToWin || 5;
+                Engine.notify(`Petunjuk ditemukan! Bonus: ${escClue.name} juga terungkap! Pelarian: ${newFound}/${needed} (${result.chance}% chance, roll: ${result.roll})`);
                 if (canEscape()) {
-                  Engine.notify('SEMUA PETUNJUK TERKUMPUL! Jalan keluar mansion terbuka!');
+                  Engine.notify('PETUNJUK CUKUP TERKUMPUL! Jalan keluar mansion terbuka!');
                 }
                 return;
               }
@@ -1663,24 +1693,36 @@ const Engine = (() => {
       if (escClue) {
         const escChance = 55 + (gameState.chapter * 6);
         const found = (gameState.escapeClues || []).length;
-        const total = gameState.totalEscapeClues || 6;
+        const needed = gameState.cluesNeededToWin || 5;
+        const total = gameState.totalEscapeClues || 8;
+        const peopleInfo = nearbyNpcs.length > 0
+          ? ` | ${nearbyNpcs.length} orang di sekitar`
+          : ' | Sendirian';
         choices.push({
           text: `Cari petunjuk pelarian di ${CharBrain.locName(playerLoc)}`,
           type: 'brain', category: 'investigate',
-          hint: `Petunjuk pelarian: ${found}/${total} — temukan semua untuk membuka jalan keluar mansion`,
+          hint: `Petunjuk: ${found}/${needed} dibutuhkan (${total} total)${peopleInfo} | 🔑 5% chance Kunci Room Master`,
           risk: nearbyNpcs.length === 0 ? 10 : 30,
           reward: 90,
           successChance: escChance,
           effect: (s) => {
             recordBrainAction('escape_clue_' + playerLoc);
+            // Roll for Kunci Room Master (5% chance) — instant win
+            if (rollMasterKey()) {
+              Engine.notify('🔑 KUNCI ROOM MASTER DITEMUKAN! Jalan keluar mansion langsung terbuka! Misi petunjuk pelarian SELESAI!');
+              if (canEscape()) {
+                Engine.notify('SEMUA KILLER TERUNGKAP — mansion terbuka!');
+              }
+              return;
+            }
             const result = rollChance(escChance, pc, 'intel');
             if (result.success) {
               findEscapeClue(escClue.id);
               s.cluesFound = (s.cluesFound || 0) + 1;
               const newFound = (s.escapeClues || []).length;
-              Engine.notify(`${escClue.name} ditemukan! Petunjuk pelarian: ${newFound}/${total} (${result.chance}% chance, roll: ${result.roll})`);
+              Engine.notify(`${escClue.name} ditemukan! Petunjuk pelarian: ${newFound}/${needed} (${result.chance}% chance, roll: ${result.roll})`);
               if (canEscape()) {
-                Engine.notify('SEMUA PETUNJUK TERKUMPUL! Jalan keluar mansion terbuka!');
+                Engine.notify('PETUNJUK CUKUP TERKUMPUL! Jalan keluar mansion terbuka!');
               }
             } else {
               Engine.notify(`Tidak menemukan petunjuk pelarian. (${result.chance}% chance, roll: ${result.roll})`);
@@ -1886,7 +1928,7 @@ const Engine = (() => {
 
       // Sabotage other killer (killer vs killer self-preservation)
       const otherKillers = nearbyNpcs.filter(n => gameState.killers.includes(n) && n !== pc && !brainActionTaken('sabotage_killer_' + n));
-      if (otherKillers.length > 0 && gameState.chapter >= 3) {
+      if (otherKillers.length > 0 && gameState.chapter >= 2) {
         const rivalKiller = otherKillers[0];
         const sabChance = 50;
         choices.push({
@@ -2036,8 +2078,9 @@ const Engine = (() => {
         const npcsAtLoc = Object.keys(gameState.npcMinds || {}).filter(n =>
           gameState.alive[n] && gameState.npcMinds[n] && gameState.npcMinds[n].location === loc
         );
+        const locNpcNames = npcsAtLoc.map(n => typeof CharBrain !== 'undefined' ? CharBrain.charName(n) : n);
         const locInfo = npcsAtLoc.length > 0
-          ? `${npcsAtLoc.length} orang di sana`
+          ? `${npcsAtLoc.length} orang di sana: ${locNpcNames.join(', ')}`
           : 'Kosong — aman untuk eksplorasi';
         choices.push({
           text: `Pindah ke ${CharBrain.locName(loc)}`,
@@ -2292,8 +2335,8 @@ const Engine = (() => {
   }
 
   const CHAPTERS = {
-    id: ['Prolog', 'Bab 1: Pameran Maut', 'Bab 2: Darah Pertama', 'Bab 3: Pecah Belah', 'Bab 4: Perburuan', 'Bab 5: Wahyu', 'Bab 6: Konfrontasi', 'Bab 7: Simpul Terakhir', 'Bab 8: Titik Balik', 'Bab 9: Terakhir Berdiri', 'Bab 10: Fajar Berdarah'],
-    en: ['Prologue', 'Chapter 1: The Death Exhibition', 'Chapter 2: First Blood', 'Chapter 3: Fractured', 'Chapter 4: The Hunt', 'Chapter 5: Revelation', 'Chapter 6: Confrontation', 'Chapter 7: The Last Knot', 'Chapter 8: Turning Point', 'Chapter 9: Last Standing', 'Chapter 10: Bloody Dawn']
+    id: ['Prolog', 'Bab 1: Pameran Maut', 'Bab 2: Darah Pertama', 'Bab 3: Perburuan', 'Bab 4: Konfrontasi', 'Bab 5: Fajar Terakhir'],
+    en: ['Prologue', 'Chapter 1: The Death Exhibition', 'Chapter 2: First Blood', 'Chapter 3: The Hunt', 'Chapter 4: Confrontation', 'Chapter 5: Bloody Dawn']
   };
   function updateChapterIndicator() {
     $('chapter-indicator').textContent = (CHAPTERS[lang] || CHAPTERS.id)[state.chapter] || '';
@@ -2832,7 +2875,7 @@ const Engine = (() => {
     pickupTool, getCharTool, getToolOwner, isToolAvailable, npcPickupTool,
     getToolBonus, rollChance, updatePlayerStatus,
     // Escape system
-    getEscapeClueAtLocation, findEscapeClue, destroyEscapeClue, canEscape,
+    getEscapeClueAtLocation, findEscapeClue, destroyEscapeClue, canEscape, rollMasterKey,
     triggerMansionEscape, allKillersDead, aliveKillerCount, aliveSurvivorCount,
     ESCAPE_CLUE_LOCATIONS,
     GAME_TOOLS, ROLE_DESCRIPTIONS,

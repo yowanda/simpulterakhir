@@ -23,8 +23,8 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 ## Fitur
 
 ### Gameplay & Cerita
-- **10 chapter** dengan percabangan kompleks (Prolog + Bab 1-10)
-- **Escalation System (Bab 8-10)** — endgame lebih intens dengan pacing yang seimbang
+- **6 chapter** dengan percabangan kompleks (Prolog + Bab 1-5)
+- **Escalation System (Bab 4-5)** — endgame lebih intens dengan pacing cepat
 - **Hasil akhir dinamis** — bukan ending pre-scripted, tapi berdasarkan hasil permainan sebenarnya
 - **Ringkasan game otomatis** — tampilkan siapa yang tereliminasi, siapa yang menang, dan statistik permainan
 - **Auto-simulasi** — jika player mati, NPC melanjutkan permainan sampai ada pemenang
@@ -73,14 +73,14 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 - **NPC Bertindak Mandiri** — setiap ronde, NPC membuat keputusan sendiri berdasarkan:
   - Kepribadian (aggression, caution, loyalty, cunning, empathy, impulsiveness)
   - Emosi saat ini dan level tension
-  - Lokasi di mansion (15 lokasi yang terhubung)
+  - Lokasi di mansion (8 lokasi yang terhubung)
   - Siapa yang ada di dekat mereka
   - Clue yang sudah ditemukan
   - Aliansi dan musuh
-- **505 Decision Entries** — 40-60+ keputusan per karakter (termasuk chapters 7-10 endgame) dengan weighted random selection + catch-all fallbacks
+- **500+ Decision Entries** — 40-60+ keputusan per karakter (termasuk chapters 4-5 endgame) dengan weighted random selection + catch-all fallbacks
 - **Sistem Win/Loss Dinamis** — hasil ditentukan oleh aksi NPC, bukan ending pre-scripted:
-  - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan **8 dari 15 petunjuk** → semua killer terungkap & dieksekusi
-  - **Killer Menang**: Eliminasi protagonis hingga tersisa 1 ATAU hancurkan cukup petunjuk agar protagonist tak bisa capai 8
+  - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan **5 dari 8 petunjuk** → semua killer terungkap & dieksekusi ATAU temukan **Kunci Master** (5% chance muncul di lokasi acak) → misi petunjuk langsung selesai
+  - **Killer Menang**: Eliminasi protagonis hingga tersisa 1 ATAU hancurkan cukup petunjuk agar protagonist tak bisa capai 5
   - **Killer Kalah**: Semua killer tereliminasi
     - **Saksi + Buru + Eksekusi**: Jika killer ketahuan membunuh (ada saksi), killer langsung DIBURU oleh SEMUA survivor. Jika ditemukan di ruangan dengan 2+ survivor → DIEKSEKUSI. Killer hanya selamat jika berhasil kabur dan sembunyi SENDIRIAN.
   - **Survivor Melawan**: Jika killer menyerang di ruangan dengan 2+ survivor → killer MATI (survivor fight back). Berlaku juga saat killer mencoba kill di room penuh.
@@ -142,7 +142,7 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
 | Alat | Lokasi | Tipe | Efek |
 |------|--------|------|------|
 | 🔪 Pisau Dapur | Dapur | Weapon | +40% kill, tapi tinggalkan bukti |
-| 🔑 Kunci Master | Ruang Penyimpanan | Support | Buka semua pintu, +20% defense |
+| 🔑 Kunci Master | Bunker B-3 | Support | Buka semua pintu, +20% defense |
 | 💉 Suntikan Obat Bius | Basement | Weapon | +50% eliminasi diam-diam, tanpa bukti |
 | 📻 Radio Portabel | Menara | Support | Komunikasi jarak jauh, +30% defense |
 | ⛓️ Tali Baja | Taman Dalam | Weapon | +35% tangkap, bisa barricade |
@@ -165,36 +165,31 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
   - **ANCAMAN** — killer sedang memburu pemain
 - Tool yang dipegang ditampilkan di status bar
 - **Lokasi Karakter** — detail lokasi + siapa yang ada di sekitar (bersama/sendirian) ditampilkan seperti WhatsApp subtitle
+- **Info Tim** — daftar lengkap tim Killer dan Survivor ditampilkan di sidebar (semua mode), dengan tanda hidup/mati
 - **Petunjuk Pelarian** — progress petunjuk ditemukan vs total
 - **Killer Dieliminasi** — jumlah killer yang sudah dikalahkan
 - **Diburu** — jumlah killer yang sedang diburu (disaksikan membunuh)
 
 ### Sistem Petunjuk Pelarian
-- **15 Petunjuk Pelarian** tersebar di seluruh mansion — kumpulkan **8 petunjuk** untuk mengungkap identitas semua killer
-- **Jika 8 petunjuk terkumpul** → semua killer langsung terungkap dan dieksekusi oleh tim protagonis!
-- **Killer bisa MENGHANCURKAN petunjuk** — jika sisa petunjuk < 8, killer menang karena protagonist tak bisa mengungkap identitas mereka
-- **15 Lokasi Petunjuk**:
+- **8 Petunjuk Pelarian** tersebar di 8 ruangan mansion — kumpulkan **5 petunjuk** untuk mengungkap identitas semua killer
+- **Jika 5 petunjuk terkumpul** → semua killer langsung terungkap dan dieksekusi oleh tim protagonis!
+- **Kunci Master** — 5% chance muncul di lokasi acak saat investigasi. Jika ditemukan → misi petunjuk pelarian langsung selesai!
+- **Killer bisa MENGHANCURKAN petunjuk** — jika sisa petunjuk < 5, killer menang karena protagonist tak bisa mengungkap identitas mereka
+- **8 Lokasi Petunjuk**:
   | Petunjuk | Lokasi | Deskripsi |
   |----------|--------|-----------|
   | Peta Rahasia Mansion | Perpustakaan | Peta tua jalur rahasia keluar |
   | Kode Pintu Darurat | Basement | Kode untuk pintu darurat |
   | Blueprint Terowongan | Bunker B-3 | Cetak biru terowongan bawah tanah |
   | Frekuensi Radio Darurat | Menara | Frekuensi untuk panggil bantuan |
-  | Kunci Terowongan | Lorong Rahasia | Kunci pintu terowongan pelarian |
-  | Jurnal Pendiri | Ruang Penyimpanan | Catatan semua jalan keluar |
-  | Jalur Pelarian Atap | Atap | Tangga darurat tersembunyi |
   | Pintu Belakang Dapur | Dapur | Kunci cadangan pintu belakang |
   | Panel Rahasia Galeri | Galeri Timur | Panel dinding tersembunyi |
   | Celah Pagar Taman | Taman Dalam | Celah di pagar taman |
-  | Peta Ventilasi | Koridor Selatan | Skema ventilasi mansion |
   | Dokumen Evakuasi | Aula Utama | Dokumen prosedur evakuasi |
-  | Catatan Tamu Lama | Kamar Tamu | Catatan tamu sebelumnya |
-  | Partitur Tersembunyi | Ruang Musik | Partitur yang membuka pintu rahasia |
-  | Kunci Gudang Luar | Gudang | Kunci gudang luar mansion |
-- **Progress ditampilkan** di status bar real-time (x/8 dibutuhkan, y/15 total)
+- **Progress ditampilkan** di status bar real-time (x/5 dibutuhkan, y/8 total)
 
 ### Killer vs Killer
-- Killer bisa **menyabotase killer lain** untuk menyelamatkan diri sendiri (chapter 3+)
+- Killer bisa **menyabotase killer lain** untuk menyelamatkan diri sendiri (chapter 2+)
 - Lana bisa mengekspos Dimas/Niko, Dimas bisa mengkhianati Lana, Niko bisa mengaktifkan CCTV
 - Sistem chance 45% untuk sabotase antar killer — adil dan seimbang
 - Killer yang terancam terekspos bisa mengorbankan killer lain — game tetap lanjut
@@ -295,18 +290,16 @@ Seniman jalanan dengan temper pendek dan loyalitas tanpa batas. Pendekatan langs
 
 ---
 
-## Struktur Cerita (7 Chapter)
+## Struktur Cerita (6 Chapter)
 
 | Chapter | Judul | Fokus |
 |---------|-------|-------|
 | Prolog | **Undangan** | Kedatangan, perkenalan 10 karakter, atmosphere setup |
 | Bab 1 | **Pameran Maut** | Pameran dimulai, sistem simpul terungkap, bukti pertama |
-| Bab 2 | **Darah Pertama** | Truth-or-lie game, racun Farah, hard drive ditemukan |
-| Bab 3 | **Pecah Belah** | Kelompok terpecah, lantai 3 terungkap, kematian pertama |
-| Bab 4 | **Perburuan** | Pemburu vs mangsa, kunci master, jebakan untuk Penenun |
-| Bab 5 | **Wahyu** | Identitas Sang Penenun terungkap, B-3 ditemukan |
-| Bab 6 | **Konfrontasi** | Pertempuran final — bakar, broadcast, atau konfrontasi |
-| Bab 7 | **Simpul Terakhir** | Fajar, resolusi, dan konsekuensi dari setiap pilihan |
+| Bab 2 | **Darah Pertama** | Truth-or-lie game, aliansi terbentuk, kematian pertama |
+| Bab 3 | **Perburuan** | Pemburu vs mangsa, kunci master, wahyu terungkap |
+| Bab 4 | **Konfrontasi** | Pertempuran final, titik balik, simpul terakhir |
+| Bab 5 | **Fajar Terakhir** | Endgame — siapa yang selamat, fajar berdarah |
 
 ---
 
@@ -342,7 +335,7 @@ Antagonis utama: **Ragil Pramudya** alias **Sang Penenun** — pria tua yang hid
 5. Buat keputusan — setiap pilihan menentukan alur cerita DAN memicu aksi NPC
 6. Pantau NPC Brain Log (tombol gear di kanan atas) untuk melihat apa yang dilakukan NPC
 7. Sebagai **survivor**:
-   - Kumpulkan **8 dari 15 petunjuk** untuk mengungkap identitas semua killer — mereka akan dieksekusi!
+   - Kumpulkan **5 dari 8 petunjuk** untuk mengungkap identitas semua killer — atau temukan Kunci Master (5% chance)!
    - ATAU habisi semua killer yang menyamar
    - Bangun aliansi, investigasi, dan bertahan hidup
    - Jika kamu menyaksikan pembunuhan, killer akan DIBURU oleh tim protagonis
@@ -376,16 +369,16 @@ simpul-terakhir/
     ├── char-db.js          # Character behavior database (100+ nodes per character)
     ├── engine.js           # Game engine (trust, moral, danger, killer, NPC integration)
     ├── story-prolog.js     # Prolog: Undangan
-    ├── story-ch1.js        # Bab 1: Pameran Maut
-    ├── story-ch2.js        # Bab 2: Darah Pertama
-    ├── story-ch3.js        # Bab 3: Pecah Belah
-    ├── story-ch4.js        # Bab 4: Perburuan
-    ├── story-ch5.js        # Bab 5: Wahyu
-    ├── story-ch6.js        # Bab 6: Konfrontasi
-    ├── story-ch7.js        # Bab 7: Simpul Terakhir
-    ├── story-ch8.js        # Bab 8: Titik Balik (escalation begins)
-    ├── story-ch9.js        # Bab 9: Terakhir Berdiri (endgame)
-    ├── story-ch10.js       # Bab 10: Fajar Berdarah (final chapter)
+    ├── story-ch1.js        # Bab 1: Pameran Maut (chapter 1)
+    ├── story-ch2.js        # Bab 2: Darah Pertama (chapter 2)
+    ├── story-ch3.js        # Bab 2 lanjutan: Pecah Belah
+    ├── story-ch4.js        # Bab 3: Perburuan (chapter 3)
+    ├── story-ch5.js        # Bab 3 lanjutan: Wahyu
+    ├── story-ch6.js        # Bab 4: Konfrontasi (chapter 4)
+    ├── story-ch7.js        # Bab 4 lanjutan: Simpul Terakhir
+    ├── story-ch8.js        # Bab 4 lanjutan: Titik Balik
+    ├── story-ch9.js        # Bab 5: Terakhir Berdiri (chapter 5)
+    ├── story-ch10.js       # Bab 5 lanjutan: Fajar Berdarah
     └── story-endings.js    # Story endings + dynamic game result system
 ```
 
