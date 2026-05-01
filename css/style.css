@@ -195,7 +195,7 @@ body {
   max-width: 100%;
   width: 100%;
   margin: 0 auto;
-  padding: 0.6rem 0.8rem 50vh;
+  padding: 0.6rem 0.8rem 160px;
   overflow-y: auto;
   position: relative;
   z-index: 1;
@@ -1568,7 +1568,7 @@ body {
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 480px) {
-  .story-area { padding: 1rem 1rem 55vh; }
+  .story-area { padding: 1rem 1rem 160px; }
   .choice-btn { padding: 0; }
   .choice-inner { flex-wrap: wrap; }
   .choice-icon-wrap { min-width: 40px; }
@@ -1590,7 +1590,7 @@ body {
   .characters-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (min-width: 768px) {
-  .story-area { padding: 2rem 2rem 50vh; }
+  .story-area { padding: 2rem 2rem 160px; }
 }
 
 /* ========== NPC BRAIN SYSTEM STYLES ========== */
@@ -2334,7 +2334,7 @@ body {
   .chat-narration { font-size: 0.68rem; max-width: 90%; }
   .chat-typing-indicator { padding: 0.35rem 0.6rem; margin-left: 36px; }
   .choices-container { padding: 0.4rem 0.5rem 0.5rem; max-height: 50vh; }
-  .story-area { padding: 0.4rem 0.6rem 55vh; }
+  .story-area { padding: 0.4rem 0.6rem 160px; }
   .wa-group-name { font-size: 0.82rem; }
   .wa-group-members { font-size: 0.6rem; }
   .wa-encrypted-notice { font-size: 0.55rem; max-width: 92%; }
