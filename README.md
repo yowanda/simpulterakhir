@@ -23,7 +23,8 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 ## Fitur
 
 ### Gameplay & Cerita
-- **7 chapter** dengan percabangan kompleks (Prolog + Bab 1-7)
+- **10 chapter** dengan percabangan kompleks (Prolog + Bab 1-10)
+- **Escalation System (Bab 8-10)** — kill/search chance naik 10-20%, cooldown turun, endgame lebih intens
 - **Hasil akhir dinamis** — bukan ending pre-scripted, tapi berdasarkan hasil permainan sebenarnya
 - **Ringkasan game otomatis** — tampilkan siapa yang tereliminasi, siapa yang menang, dan statistik permainan
 - **Auto-simulasi** — jika player mati, NPC melanjutkan permainan sampai ada pemenang
@@ -335,6 +336,9 @@ simpul-terakhir/
     ├── story-ch5.js        # Bab 5: Wahyu
     ├── story-ch6.js        # Bab 6: Konfrontasi
     ├── story-ch7.js        # Bab 7: Simpul Terakhir
+    ├── story-ch8.js        # Bab 8: Titik Balik (escalation begins)
+    ├── story-ch9.js        # Bab 9: Terakhir Berdiri (endgame)
+    ├── story-ch10.js       # Bab 10: Fajar Berdarah (final chapter)
     └── story-endings.js    # Story endings + dynamic game result system
 ```
 

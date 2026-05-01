@@ -1669,8 +1669,8 @@ const Engine = (() => {
   }
 
   const CHAPTERS = {
-    id: ['Prolog', 'Bab 1: Pameran Maut', 'Bab 2: Darah Pertama', 'Bab 3: Pecah Belah', 'Bab 4: Perburuan', 'Bab 5: Wahyu', 'Bab 6: Konfrontasi', 'Bab 7: Simpul Terakhir'],
-    en: ['Prologue', 'Chapter 1: The Death Exhibition', 'Chapter 2: First Blood', 'Chapter 3: Fractured', 'Chapter 4: The Hunt', 'Chapter 5: Revelation', 'Chapter 6: Confrontation', 'Chapter 7: The Last Knot']
+    id: ['Prolog', 'Bab 1: Pameran Maut', 'Bab 2: Darah Pertama', 'Bab 3: Pecah Belah', 'Bab 4: Perburuan', 'Bab 5: Wahyu', 'Bab 6: Konfrontasi', 'Bab 7: Simpul Terakhir', 'Bab 8: Titik Balik', 'Bab 9: Terakhir Berdiri', 'Bab 10: Fajar Berdarah'],
+    en: ['Prologue', 'Chapter 1: The Death Exhibition', 'Chapter 2: First Blood', 'Chapter 3: Fractured', 'Chapter 4: The Hunt', 'Chapter 5: Revelation', 'Chapter 6: Confrontation', 'Chapter 7: The Last Knot', 'Chapter 8: Turning Point', 'Chapter 9: Last Standing', 'Chapter 10: Bloody Dawn']
   };
   function updateChapterIndicator() {
     $('chapter-indicator').textContent = (CHAPTERS[lang] || CHAPTERS.id)[state.chapter] || '';
