@@ -66,12 +66,17 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - Aliansi dan musuh
 - **100+ Decision Node per Karakter** — setiap karakter punya pohon keputusan unik
 - **Sistem Win/Loss Dinamis** — hasil ditentukan oleh aksi NPC, bukan ending pre-scripted:
-  - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan petunjuk pelarian untuk kabur dari mansion
-  - **Killer Menang**: Eliminasi protagonis hingga tersisa 1 ATAU hancurkan semua petunjuk pelarian
+  - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan **8 dari 15 petunjuk** → semua killer terungkap & dieksekusi
+  - **Killer Menang**: Eliminasi protagonis hingga tersisa 1 ATAU hancurkan cukup petunjuk agar protagonist tak bisa capai 8
   - **Killer Kalah**: Semua killer tereliminasi
   - **Saksi Pembunuhan**: Jika NPC menyaksikan killer membunuh, killer langsung DIBURU oleh tim protagonis
   - **Auto-Simulasi**: Jika player tereliminasi, NPC brain melanjutkan sampai ada pemenang
   - **Ringkasan Akhir**: Tampilkan semua karakter — siapa hidup, siapa mati, role masing-masing
+- **Trust-Kill Mechanic** — NPC bisa membunuh NPC lain karena ketidakpercayaan:
+  - Jika trust antar NPC sangat rendah (≤15) dan salah satunya sudah jadi enemy, NPC bisa menyerang
+  - Memecah belah tim protagonis — konflik internal berbahaya saat killer masih hidup
+  - Setiap karakter punya gaya trust-kill unik (Juno impulsif, Sera analitis, Niko kalkulatif, dll)
+  - Saksi trust-kill kehilangan kepercayaan ke penyerang — spiral ketidakpercayaan
 - **NPC Encounters** — NPC bertemu satu sama lain, membentuk aliansi, atau saling menyerang
 - **NPC Action Log** — panel real-time untuk melihat apa yang dilakukan setiap NPC
 - **Dynamic Choices** — pilihan baru muncul berdasarkan aksi NPC (tuduh, aliansi, serang, investigasi)
@@ -116,13 +121,11 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
 - **Killer Dieliminasi** — jumlah killer yang sudah dikalahkan
 - **Diburu** — jumlah killer yang sedang diburu (disaksikan membunuh)
 
-### Sistem Petunjuk Pelarian (Baru!)
-- **7 Petunjuk Pelarian** tersebar di mansion — cari semuanya untuk membuka jalan keluar
-- Jumlah petunjuk yang dibutuhkan berdasarkan difficulty:
-  - **Mudah**: 5 petunjuk
-  - **Normal**: 6 petunjuk
-  - **Sulit**: 7 petunjuk
-- **Lokasi Petunjuk**:
+### Sistem Petunjuk Pelarian
+- **15 Petunjuk Pelarian** tersebar di seluruh mansion — kumpulkan **8 petunjuk** untuk mengungkap identitas semua killer
+- **Jika 8 petunjuk terkumpul** → semua killer langsung terungkap dan dieksekusi oleh tim protagonis!
+- **Killer bisa MENGHANCURKAN petunjuk** — jika sisa petunjuk < 8, killer menang karena protagonist tak bisa mengungkap identitas mereka
+- **15 Lokasi Petunjuk**:
   | Petunjuk | Lokasi | Deskripsi |
   |----------|--------|-----------|
   | Peta Rahasia Mansion | Perpustakaan | Peta tua jalur rahasia keluar |
@@ -132,9 +135,15 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
   | Kunci Terowongan | Lorong Rahasia | Kunci pintu terowongan pelarian |
   | Jurnal Pendiri | Ruang Penyimpanan | Catatan semua jalan keluar |
   | Jalur Pelarian Atap | Atap | Tangga darurat tersembunyi |
-- **Killer bisa MENGHANCURKAN petunjuk** — NPC killer & player killer dapat menghancurkan petunjuk di lokasi mereka
-- **Progress ditampilkan** di status bar real-time
-- Saat semua petunjuk terkumpul → pilihan "KABUR DARI MANSION" muncul → killer otomatis terjebak dan mati
+  | Pintu Belakang Dapur | Dapur | Kunci cadangan pintu belakang |
+  | Panel Rahasia Galeri | Galeri Timur | Panel dinding tersembunyi |
+  | Celah Pagar Taman | Taman Dalam | Celah di pagar taman |
+  | Peta Ventilasi | Koridor Selatan | Skema ventilasi mansion |
+  | Dokumen Evakuasi | Aula Utama | Dokumen prosedur evakuasi |
+  | Catatan Tamu Lama | Kamar Tamu | Catatan tamu sebelumnya |
+  | Partitur Tersembunyi | Ruang Musik | Partitur yang membuka pintu rahasia |
+  | Kunci Gudang Luar | Gudang | Kunci gudang luar mansion |
+- **Progress ditampilkan** di status bar real-time (x/8 dibutuhkan, y/15 total)
 
 ### Killer vs Killer
 - Killer bisa **menyabotase killer lain** untuk menyelamatkan diri sendiri (chapter 3+)
@@ -285,13 +294,14 @@ Antagonis utama: **Ragil Pramudya** alias **Sang Penenun** — pria tua yang hid
 5. Buat keputusan — setiap pilihan menentukan alur cerita DAN memicu aksi NPC
 6. Pantau NPC Brain Log (tombol gear di kanan atas) untuk melihat apa yang dilakukan NPC
 7. Sebagai **survivor**:
-   - Kumpulkan **petunjuk pelarian** untuk membuka jalan keluar mansion
+   - Kumpulkan **8 dari 15 petunjuk** untuk mengungkap identitas semua killer — mereka akan dieksekusi!
    - ATAU habisi semua killer yang menyamar
    - Bangun aliansi, investigasi, dan bertahan hidup
    - Jika kamu menyaksikan pembunuhan, killer akan DIBURU oleh tim protagonis
+   - Hati-hati dengan trust rendah — NPC bisa saling membunuh karena ketidakpercayaan!
 8. Sebagai **killer**:
    - Habisi protagonis sampai tersisa 1
-   - ATAU hancurkan semua petunjuk pelarian agar survivor tidak bisa kabur
+   - ATAU hancurkan petunjuk agar tersisa < 8 (protagonist tidak bisa mengungkap identitasmu)
    - Killer bisa saling membantu atau mengkhianati jika terancam
    - Hati-hati membunuh di depan saksi — kamu akan diburu!
 9. Jika kamu tereliminasi, NPC melanjutkan permainan sampai ada pemenang
