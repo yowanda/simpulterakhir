@@ -15,13 +15,45 @@ const STORY_CH6 = {
     Engine.CHARACTERS.forEach(c => { if (s.alive[c]) aliveNames.push(Engine.CHAR_DISPLAY[c]); });
     text += aliveNames.join(', ') + `.</p>`;
 
+    // Player-specific ch6 perspective
+    const pc = s.playerCharacter || 'arin';
+    if (pc === 'lana') {
+      text += `<p class="journal"><em>Momen keputusan. Kau bisa menyelesaikan tugasmu untuk Sang Penenun — atau kau bisa membalik skenarionya. Dalang yang menulis ending yang berbeda.</em></p>`;
+    } else if (pc === 'dimas') {
+      text += `<p class="journal"><em>Instruksi terakhir Lana: "Kalau ada yang turun — pastikan mereka tidak kembali." Tapi tanganmu menolak memegang pisau. Sera mengubahmu tanpa menyentuhmu.</em></p>`;
+    } else if (pc === 'niko') {
+      text += `<p class="journal"><em>Ini mansionmu. Dosa kakekmu. Dan sekarang — satu-satunya cara menebusnya adalah turun ke bawah dan menghadapi monster yang kakekmu ciptakan.</em></p>`;
+    } else if (pc === 'vira') {
+      text += `<p class="journal"><em>Terakhir kali kau turun ke sana, kau hampir tidak kembali. Tapi kali ini berbeda. Kali ini kau tidak sendirian. Kali ini kau punya sesuatu untuk diperjuangkan.</em></p>`;
+    }
+
     text += `<p>Kau sudah tahu semuanya. Ragil Pramudya — Sang Penenun — hidup di bawah mansion. Operator-operatornya bermain ganda. Sistem ini beroperasi selama setengah abad. Dan malam ini bisa jadi yang terakhir — jika kau bisa menghancurkannya.</p>`;
-    text += `<p>Tiga puluh menit. Dan dalam tiga puluh menit itu, setiap orang di ruangan ini menunjukkan siapa mereka sebenarnya — bukan topeng, bukan persona, tapi kebenaran yang mentah:</p>`;
-    text += `<p><span class="speaker sera">Sera</span> menarikmu ke samping. Tangannya di wajahmu — gesture yang tidak profesional, tidak objektif, dan sangat jujur. "Arin, jangan turun ke sana sendirian." Matanya merah. Psikolog yang akhirnya mengakui bahwa dia tidak bisa profesional tentang orang yang dia cintai. "Kalau kau mati di bawah sana, aku—" Suaranya pecah. Dan kau melihat Sera — benar-benar melihatnya — untuk pertama kalinya malam ini tanpa filter analisis.</p>`;
-    text += `<p><span class="speaker niko">Niko</span> berdiri. Dalang yang akhirnya memilih untuk menjadi manusia. "Ini salahku. Mansion ini, undangan ini, semua ini — tanggung jawabku. Aku yang turun." Egonya masih di sana — tapi untuk pertama kalinya, egonya mendorongnya ke arah yang benar. Vira menatapnya dengan ekspresi yang kau tidak bisa baca — campuran cinta, marah, dan respek yang menyakitkan.</p>`;
-    text += `<p><span class="speaker juno">Juno</span> mengambil pipa besi dari tumpukan puing. "Gue ikut." Ceroboh. Impulsif. Tapi berani sampai ke tulang. Reza berdiri di belakangnya — tidak menghentikan, tapi memastikan dia tidak sendiri. Negosiator yang akhirnya memilih tindakan.</p>`;
-    text += `<p><span class="speaker farah">Farah</span> menelan ludah. "Aku... aku akan menjaga yang di atas." Egoisme? Atau realistis? Sulit dibedakan. Tapi ada air mata di matanya — pertama kalinya malam ini.</p>`;
-    text += `<p><span class="speaker kira">Kira</span> sudah menghubungkan laptopnya ke sistem. "Gue bisa shut down sistem dari sini. Remote. Kalau lo turun, gue cover dari atas." Eksentrik tapi reliable. Wildcard yang akhirnya menemukan tempatnya.</p>`;
+    text += `<p>Tiga puluh menit. Dan dalam tiga puluh menit itu, setiap orang di ruangan ini menunjukkan siapa mereka sebenarnya:</p>`;
+
+    if (pc !== 'sera') {
+      text += `<p><span class="speaker sera">Sera</span> menarikmu ke samping. "${pc === 'arin' ? 'Arin' : Engine.playerName()}, jangan turun ke sana sendirian." Matanya merah. Psikolog yang akhirnya mengakui bahwa dia tidak bisa profesional malam ini.</p>`;
+    } else {
+      text += `<p>Kau menarik Arin ke samping. "Jangan turun ke sana sendirian." Matamu merah — dan untuk pertama kalinya dalam kariermu, kau tidak berusaha menyembunyikannya.</p>`;
+    }
+
+    if (pc !== 'niko') {
+      text += `<p><span class="speaker niko">Niko</span> berdiri. "Ini salahku. Aku yang turun." Egonya masih di sana — tapi untuk pertama kalinya, mendorongnya ke arah yang benar.</p>`;
+    }
+    if (pc !== 'juno') {
+      text += `<p><span class="speaker juno">Juno</span> mengambil pipa besi. "Gue ikut." Ceroboh. Impulsif. Tapi berani sampai ke tulang.</p>`;
+    } else {
+      text += `<p>Lo ambil pipa besi dari tumpukan puing. "Gue ikut." Lo nggak peduli rencana — lo cuma tahu lo nggak bisa diam.</p>`;
+    }
+    if (pc !== 'farah') {
+      text += `<p><span class="speaker farah">Farah</span>: "Aku akan menjaga yang di atas." Ada air mata di matanya — pertama kalinya malam ini.</p>`;
+    } else {
+      text += `<p>"Aku akan menjaga yang di atas," katamu. Egoisme? Tidak. Strategi. Seseorang harus memastikan pintu keluar tetap ada.</p>`;
+    }
+    if (pc !== 'kira') {
+      text += `<p><span class="speaker kira">Kira</span> sudah menghubungkan laptopnya ke sistem. "Gue bisa shut down sistem dari sini. Kalau lo turun, gue cover dari atas."</p>`;
+    } else {
+      text += `<p>Lo hubungkan laptop ke sistem. "Gue bisa shut down semuanya dari sini." Jari-jarimu sudah nge-map seluruh arsitektur digital mansion. Sekarang tinggal eksekusi.</p>`;
+    }
 
     if (s.flags.confrontedPenenun || s.flags.listenedToPenenun) {
       text += `<p>Kau sudah bertemu Ragil. Sudah melihat wajah monster di balik simpul. Sekarang pertanyaannya: bagaimana mengakhiri?</p>`;

@@ -12,6 +12,17 @@ const STORY_CH2 = {
     let text = `<p class="narration">Satu jam berlalu. Satu jam yang terasa seperti satu tahun.</p>`;
     text += `<p>Speaker berderak:</p>`;
     text += `<p class="journal"><em>"Event kedua dimulai. Tema: Kepercayaan. Lokasi: Sayap Barat — Ruang Makan. Semua tamu diharapkan hadir. Ketidakhadiran akan... diperhitungkan."</em></p>`;
+    // Player perspective
+    const pc = s.playerCharacter || 'arin';
+    if (pc === 'sera') text += `<p class="journal"><em>Kepercayaan. Tema yang tepat — karena kau bisa melihat bahwa setidaknya empat orang di ruangan ini tidak mempercayai siapapun. Termasuk dirimu sendiri.</em></p>`;
+    else if (pc === 'lana') text += `<p class="journal"><em>Bab 2: Kepercayaan. Kau menulisnya sendiri. Amplop-amplop itu berisi informasi yang kau kumpulkan selama berbulan-bulan. Sekarang, tonton mereka saling menghancurkan.</em></p>`;
+    else if (pc === 'niko') text += `<p class="journal"><em>Ruang makan keluargamu. Meja tempat kakekmu makan malam dengan orang-orang yang kemudian menghilang. Dan sekarang kau duduk di sini — mewarisi dosa itu.</em></p>`;
+    else if (pc === 'juno') text += `<p class="journal"><em>"Permainan kepercayaan." Lo mau muntah. Lo bukan tipe orang yang main game — lo tipe orang yang balik meja.</em></p>`;
+    else if (pc === 'reza') text += `<p class="journal"><em>Interogasi terselubung. Kau mengenali formatnya — berbeda kemasan, tapi tekniknya sama: pisahkan tersangka, beri informasi parsial, tonton siapa yang bohong.</em></p>`;
+    else if (pc === 'kira') text += `<p class="journal"><em>Hologram itu pakai tech projection mapping. Lo bisa trace hardware-nya kalau lo bisa akses panel kontrol di balik dinding.</em></p>`;
+    else if (pc === 'farah') text += `<p class="journal"><em>Rahasia. Di meja ini ada rahasiamu — dan rahasiamu bisa menghancurkan segalanya. Kau harus mengendalikan narasi. Kau harus bernegosiasi.</em></p>`;
+    else if (pc === 'vira') text += `<p class="journal"><em>Permainan ini... kau sudah pernah memainkannya. Enam bulan lalu. Dan hasilnya — seseorang mati.</em></p>`;
+
     text += `<p>Kau menatap kelompokmu. Raut wajah mereka campuran antara takut dan determinasi. Semua orang bergerak ke Sayap Barat — bahkan yang paling ketakutan. Ancaman "diperhitungkan" cukup efektif.</p>`;
     text += `<p>Ruang Makan Wardhana adalah mimpi buruk aristokrat. Meja panjang kayu gelap, sepuluh kursi, chandelier yang lebih kecil dari yang di hall tapi entah kenapa lebih menakutkan. Di tengah meja: sepuluh gelas kristal terisi cairan gelap — wine? — dan sepuluh piring tertutup cloche perak.</p>`;
 

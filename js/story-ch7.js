@@ -29,22 +29,56 @@ const STORY_CH7 = {
     text += `<p>Countdown: <strong>00:00:00</strong>.</p>`;
     text += `<p>Malam sudah berakhir. Tapi cerita belum.</p>`;
 
-    text += `<p>Dan di cahaya fajar itu, kau melihat mereka semua — bukan sebagai tersangka, bukan sebagai korban, bukan sebagai karakter dalam misteri yang harus dipecahkan. Tapi sebagai manusia yang rusak dan indah:</p>`;
+    // Player character dawn moment
+    const pc = s.playerCharacter || 'arin';
+    if (pc === 'lana') {
+      text += `<p class="journal"><em>Kau berdiri di antara mereka — orang-orang yang seharusnya kau hancurkan. Tapi malam ini mengubah segalanya. Kau bukan lagi operator. Kau bukan lagi dalang. Kau hanya... manusia. Dan itu terasa lebih menakutkan dari apapun yang pernah kau tulis.</em></p>`;
+    } else if (pc === 'dimas') {
+      text += `<p class="journal"><em>Fajar. Kau tidak menyangka kau akan melihatnya — bukan karena bahaya, tapi karena kau sudah merencanakan untuk menghilang sebelum matahari terbit. Rencana berubah. Sera mengubahnya. Kau tidak tahu harus merasa apa tentang itu.</em></p>`;
+    }
+
+    text += `<p>Dan di cahaya fajar itu, kau melihat mereka semua — bukan sebagai tersangka, bukan sebagai korban. Tapi sebagai manusia yang rusak dan indah:</p>`;
 
     if (s.alive.sera) {
-      text += `<p><span class="speaker sera">Sera</span> berdiri di sampingmu. Tangannya menggenggam tanganmu — tidak sembunyi-sembunyi lagi, tidak di bawah meja, tidak tertutup kegelapan. Di cahaya fajar, genggaman itu terlihat oleh semua orang. Dan tidak ada lagi yang peduli. "Kita berhasil," bisiknya. Kau mau mengoreksinya — belum berakhir — tapi suaranya begitu pelan, begitu rapuh, begitu penuh harapan, bahwa kau hanya mengangguk dan menggenggam lebih erat.</p>`;
+      if (pc === 'arin') {
+        text += `<p><span class="speaker sera">Sera</span> berdiri di sampingmu. Tangannya menggenggam tanganmu — tidak sembunyi-sembunyi lagi. Di cahaya fajar, genggaman itu terlihat oleh semua orang. "Kita berhasil," bisiknya.</p>`;
+      } else if (pc === 'sera') {
+        text += `<p>Arin berdiri di sampingmu. Kau menggenggam tangannya — tidak sembunyi-sembunyi lagi. "Kita berhasil," bisikmu. Dan untuk pertama kalinya, kau tidak menganalisis perasaanmu. Kau hanya membiarkannya ada.</p>`;
+      } else {
+        text += `<p><span class="speaker sera">Sera</span> dan <span class="speaker arin">Arin</span> berdiri bergandengan tangan. Cahaya fajar menerpa mereka. Tidak ada yang berkomentar.</p>`;
+      }
     }
     if (s.alive.niko && s.alive.vira) {
-      text += `<p><span class="speaker niko">Niko</span> dan <span class="speaker vira">Vira</span> duduk bersebelahan di tangga depan mansion. Bahu mereka tidak bersentuhan — masih ada jarak, masih ada luka. Tapi mereka duduk bersama. Dan kadang, penyembuhan dimulai dari sekedar duduk bersama di dekat orang yang pernah menyakitimu.</p>`;
+      if (pc === 'niko') {
+        text += `<p>Vira duduk di sampingmu di tangga. Bahu kalian tidak bersentuhan — masih ada jarak. Tapi kalian duduk bersama. Dan untuk sekarang, itu cukup.</p>`;
+      } else if (pc === 'vira') {
+        text += `<p>Kau duduk di samping Niko di tangga. Kalian tidak bicara. Tidak perlu. Kadang penyembuhan dimulai dari sekedar berada di dekat orang yang pernah menyakitimu — dan memilih untuk tetap di sana.</p>`;
+      } else {
+        text += `<p><span class="speaker niko">Niko</span> dan <span class="speaker vira">Vira</span> duduk bersebelahan di tangga. Bahu tidak bersentuhan — tapi mereka bersama. Penyembuhan dimulai dari sekedar duduk bersama.</p>`;
+      }
     }
     if (s.alive.juno && s.alive.reza) {
-      text += `<p><span class="speaker juno">Juno</span> merokok — rokok Reza. <span class="speaker reza">Reza</span> duduk di sampingnya, flask tersimpan. Dua orang yang menemukan ketenangan di satu sama lain di malam paling kacau. "Lo kayak bokap gue," kata Juno pelan. "Cuma versi yang nggak ninggalin." Reza diam lama. "Aku tidak akan pergi, Juno."</p>`;
+      if (pc === 'juno') {
+        text += `<p>Lo merokok — rokok Reza. Dia duduk di samping lo, flask tersimpan. "Lo kayak bokap gue," lo bilang pelan. "Cuma versi yang nggak ninggalin." Reza diam lama. "Aku tidak akan pergi, Juno." Dan lo percaya.</p>`;
+      } else if (pc === 'reza') {
+        text += `<p>Juno merokok — rokokmu. Kau duduk di sampingnya, flask tersimpan di saku paling dalam. "Lo kayak bokap gue," katanya. "Cuma versi yang nggak ninggalin." Kau diam lama. "Aku tidak akan pergi, Juno." Dan kau sungguh-sungguh.</p>`;
+      } else {
+        text += `<p><span class="speaker juno">Juno</span> merokok. <span class="speaker reza">Reza</span> di sampingnya, flask tersimpan. "Lo kayak bokap gue. Cuma versi yang nggak ninggalin." Reza: "Aku tidak akan pergi."</p>`;
+      }
     }
     if (s.alive.farah) {
-      text += `<p><span class="speaker farah">Farah</span> melepas jam tangan mahalnya dan meletakkannya di tanah. Egoisme pewaris, armor privilege, negosiasi tanpa akhir — semuanya terasa tidak berarti di depan fajar setelah malam di mana uang tidak bisa membeli keselamatan siapapun.</p>`;
+      if (pc === 'farah') {
+        text += `<p>Kau melepas jam tangan mahalmu dan meletakkannya di tanah. Semua privilege, semua negosiasi — tidak berarti di depan fajar setelah malam di mana uang tidak bisa membeli keselamatan.</p>`;
+      } else {
+        text += `<p><span class="speaker farah">Farah</span> melepas jam tangan mahalnya. Di fajar ini, privilege tidak berarti apa-apa.</p>`;
+      }
     }
     if (s.alive.kira) {
-      text += `<p><span class="speaker kira">Kira</span> tertidur dengan laptop masih terbuka di pangkuannya. Eksentrik sampai di ujung — bahkan di fajar setelah mimpi buruk, dia masih coding. Di layarnya, upload 97%: semua bukti digital ke lima server berbeda di tiga negara. Paranoia yang menyelamatkan.</p>`;
+      if (pc === 'kira') {
+        text += `<p>Lo masih coding. Upload 97% — semua bukti digital ke lima server berbeda di tiga negara. Paranoia? Lo menyebutnya asuransi. Lo tersenyum untuk pertama kalinya malam ini.</p>`;
+      } else {
+        text += `<p><span class="speaker kira">Kira</span> tertidur dengan laptop terbuka. Di layarnya: upload 97%. Semua bukti digital tersimpan aman.</p>`;
+      }
     }
 
     return text;
