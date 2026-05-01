@@ -672,16 +672,100 @@ const Engine = (() => {
     }
   }
 
-  // ---- Text Rendering ----
+  // ---- Text Rendering (Chatbox Style) ----
+  function getChatAvatarHTML(charKey) {
+    if (CHAR_PORTRAITS[charKey]) {
+      return `<img class="chat-avatar" src="${CHAR_PORTRAITS[charKey]}" alt="${charKey}">`;
+    }
+    const initials = CHAR_INITIALS[charKey] || charKey.charAt(0).toUpperCase();
+    const color = CHAR_COLORS[charKey] || '#666';
+    return `<span class="chat-avatar css-avatar" style="background:${color}">${initials}</span>`;
+  }
+
+  const KILLER_CHARS = ['lana', 'dimas', 'niko'];
+
+  function convertToChatbox(html) {
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    let chatHtml = '';
+    const pc = playerChar();
+
+    // Process each top-level element
+    Array.from(temp.childNodes).forEach(node => {
+      // Skip empty text nodes
+      if (node.nodeType === 3 && !node.textContent.trim()) return;
+
+      // Preserve non-<p> elements (divs like location-context, npc-round-narrative, wl-alert, etc.)
+      if (node.nodeType === 1 && node.tagName !== 'P') {
+        chatHtml += node.outerHTML;
+        return;
+      }
+
+      // Text nodes outside <p> — treat as narration
+      if (node.nodeType === 3) {
+        const txt = node.textContent.trim();
+        if (txt) chatHtml += `<div class="chat-narration">${txt}</div>`;
+        return;
+      }
+
+      // Process <p> elements
+      if (node.nodeType === 1 && node.tagName === 'P') {
+        const speakerEl = node.querySelector('.speaker');
+
+        if (speakerEl) {
+          // This is a dialogue <p> — extract character and convert to chat bubble
+          const charClasses = Array.from(speakerEl.classList).filter(c => c !== 'speaker');
+          const charKey = charClasses[0] || '';
+          const charDisplayName = CHAR_DISPLAY[charKey] || speakerEl.textContent.trim();
+
+          // Get the message text (everything after the speaker tag)
+          const msgContent = node.innerHTML
+            .replace(/<img[^>]*class="speaker-portrait"[^>]*>/g, '')  // remove old portrait
+            .replace(/<span class="speaker [^"]*">[^<]*<\/span>/g, '') // remove speaker tag
+            .trim();
+
+          // Determine bubble side — player char = right, others = left
+          const isPlayer = charKey === pc;
+          const isKiller = KILLER_CHARS.includes(charKey);
+          const isEntity = charKey === 'entity';
+          const side = isPlayer ? 'right' : 'left';
+          let bubbleClass = `chat-bubble chat-bubble-${side}`;
+          if (isKiller) bubbleClass += ' chat-bubble-killer';
+          if (isEntity) bubbleClass += ' chat-bubble-entity';
+
+          const avatar = charKey ? getChatAvatarHTML(charKey) : '';
+          chatHtml += `<div class="${bubbleClass}">`;
+          chatHtml += avatar;
+          chatHtml += `<div class="chat-content">`;
+          chatHtml += `<div class="chat-name ${charKey}">${charDisplayName}</div>`;
+          chatHtml += `<div class="chat-msg">${msgContent}</div>`;
+          chatHtml += `</div></div>`;
+        } else {
+          // No speaker — narration/system message
+          const text = node.innerHTML.trim();
+          if (!text) return;
+
+          // Check for special CSS classes
+          const pClasses = Array.from(node.classList);
+          let narrationClass = 'chat-narration';
+          if (pClasses.includes('horror') || text.includes('class="horror"')) narrationClass += ' chat-narration-horror';
+          if (pClasses.includes('sound') || node.querySelector('.sound')) {
+            chatHtml += `<div class="chat-sound">${text}</div>`;
+            return;
+          }
+
+          chatHtml += `<div class="${narrationClass}">${text}</div>`;
+        }
+      }
+    });
+
+    return chatHtml;
+  }
+
   function renderText(html, container, callback) {
     if (typingTimeout) { clearTimeout(typingTimeout); typingTimeout = null; }
-    const enhancedHtml = html.replace(/<span class="speaker (\w+)">/g, (match, charName) => {
-      if (CHAR_DISPLAY[charName]) {
-        return getPortraitHTML(charName) + `<span class="speaker ${charName}">`;
-      }
-      return match;
-    });
-    container.innerHTML = enhancedHtml;
+    const chatboxHtml = convertToChatbox(html);
+    container.innerHTML = chatboxHtml;
     if (callback) callback();
   }
 
