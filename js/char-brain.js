@@ -112,7 +112,6 @@ const CharBrain = (() => {
       isTrapped: false,
       roundsSurvived: 0,
       killCount: 0,
-      betrayals: 0,
       timesHelped: 0
     };
   }
@@ -364,10 +363,12 @@ const CharBrain = (() => {
         candidates.push({ type: 'secure_exit', desc: `${charName(mind.name)} mengamankan jalur evakuasi.`, priority: 90 });
       }
       if (nearby.some(n => mind.enemies.includes(n.name)) && canDo('flee')) {
-        candidates.push({ type: 'flee', desc: fleeTo(mind), priority: 92 });
+        const flee = fleeTo(mind);
+        candidates.push({ type: 'flee', desc: flee.desc, moveTo: flee.moveTo, priority: 92 });
       }
       if (isAlone && canDo('flee')) {
-        candidates.push({ type: 'flee', desc: fleeTo(mind), priority: 85 });
+        const flee = fleeTo(mind);
+        candidates.push({ type: 'flee', desc: flee.desc, moveTo: flee.moveTo, priority: 85 });
       }
       if (canDo('barricade') && !isAlone) {
         candidates.push({ type: 'barricade', desc: `${charName(mind.name)} memblokir pintu ${locName(mind.location)}.`, priority: 80 });
@@ -557,8 +558,7 @@ const CharBrain = (() => {
     const connections = LOCATION_CONNECTIONS[mind.location] || [];
     const safeLoc = connections[Math.floor(Math.random() * connections.length)] || 'aula_utama';
     const name = charName(mind.name);
-    mind.location = safeLoc;
-    return `${name} lari ke ${locName(safeLoc)}!`;
+    return { desc: `${name} lari ke ${locName(safeLoc)}!`, moveTo: safeLoc };
   }
 
   // ---- Execute NPC Actions for a Round ----

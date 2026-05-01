@@ -656,7 +656,8 @@ const CharDB = (() => {
 
       // === LATE GAME: Eksekusi atau khianat ===
       { condition: { chapter: 5, minDeaths: 2 }, action: { type: 'eliminate', desc: 'Final act. Lana mengeksekusi rencana besarnya. Karya agung sang penulis.' }, weight: 25 },
-      { condition: { chapter: 6, minTension: 50 }, action: { type: 'sabotage_killer', desc: 'Endgame. Lana memutuskan hanya satu yang boleh selamat — dan itu harus dirinya. Semua rekan hanyalah bidak.' }, weight: 28 }
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Endgame. Lana memutuskan hanya satu yang boleh selamat — dan itu harus dirinya. Dimas hanyalah bidak.', target: 'dimas' }, weight: 28 },
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Lana memutuskan hanya satu yang boleh selamat — Niko harus disingkirkan.', target: 'niko' }, weight: 28 }
     ],
 
     dimas: [
@@ -691,7 +692,8 @@ const CharDB = (() => {
 
       // === LATE GAME: Lepas kendali ===
       { condition: { chapter: 5, minDeaths: 2 }, action: { type: 'eliminate', desc: 'Dimas lepas dari kendali Lana. Dia membunuh bukan karena diperintah — tapi karena dia mau.' }, weight: 25 },
-      { condition: { chapter: 6, minTension: 50 }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas memutuskan untuk mengkhianati semua rekan killer demi keselamatannya.' }, weight: 28 }
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Lana demi keselamatannya sendiri.', target: 'lana' }, weight: 28 },
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Niko — hanya satu yang boleh menang.', target: 'niko' }, weight: 28 }
     ],
 
     niko: [
@@ -722,7 +724,8 @@ const CharDB = (() => {
 
       // === LATE GAME ===
       { condition: { chapter: 6, minDeaths: 2 }, action: { type: 'eliminate', desc: 'Endgame. Niko mengaktifkan trap terakhir mansion.' }, weight: 25 },
-      { condition: { chapter: 6, minTension: 50 }, action: { type: 'sabotage_killer', desc: 'Di akhir permainan, Niko mengorbankan semua sekutu demi menjadi satu-satunya yang selamat.' }, weight: 28 }
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Di akhir permainan, Niko mengorbankan Lana demi menjadi satu-satunya yang selamat.', target: 'lana' }, weight: 28 },
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Di akhir permainan, Niko mengkhianati Dimas — mansion ini hanya untuk satu pemenang.', target: 'dimas' }, weight: 28 }
     ]
   };
 
