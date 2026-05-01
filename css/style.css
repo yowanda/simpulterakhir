@@ -1103,10 +1103,13 @@ body {
   margin-bottom: 2rem;
 }
 .role-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
   margin-bottom: 2rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .role-card {
   background: rgba(30, 25, 20, 0.8);
@@ -1181,6 +1184,34 @@ body {
   border-radius: 4px;
   border: 1px solid rgba(200, 54, 45, 0.3);
 }
+.role-card-survivor {
+  border-color: rgba(74, 124, 89, 0.3);
+}
+.role-card-survivor:hover {
+  border-color: #4a7c59;
+  box-shadow: 0 4px 20px rgba(74, 124, 89, 0.25);
+}
+.role-card-killer {
+  border-color: rgba(200, 54, 45, 0.2);
+}
+.role-card-killer:hover {
+  border-color: #c8362d;
+  box-shadow: 0 4px 20px rgba(200, 54, 45, 0.25);
+}
+.role-survivor-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+.role-survivor-chip {
+  font-size: 0.7rem;
+  color: #c8a96e;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid;
+  border-radius: 12px;
+  white-space: nowrap;
+}
 .player-tag {
   color: #c8a96e;
   font-weight: 600;
@@ -1189,7 +1220,6 @@ body {
   letter-spacing: 0.05em;
 }
 @media (max-width: 700px) {
-  .role-grid { grid-template-columns: 1fr; }
   .role-portrait { width: 48px; height: 48px; }
   .role-desc { font-size: 0.8rem; }
 }

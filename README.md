@@ -33,11 +33,23 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - **Normal**: 2 killers (Lana + Dimas)
   - **Sulit**: 3 killers (Lana + Dimas + Niko)
 - **10 karakter** (5 main + 5 side) dengan profil mendalam dan hubungan kompleks
-- **Sistem pemilihan peran (roleplay)** — mainkan sebagai salah satu dari 10 karakter:
-  - Setiap karakter punya perspektif, dialog, dan inner monologue unik
-  - Pilihan eksklusif berdasarkan keahlian karakter (hacking, profiling, manipulasi, dll)
-  - Ending berubah sesuai perspektif karakter yang dimainkan
-  - Bermain sebagai killer (Lana/Dimas) memberikan pengalaman antagonist yang berbeda total
+- **Sistem pemilihan peran** — pilih Killer (karakter spesifik) atau Survivor (karakter acak):
+  - **Killer**: Pilih Lana, Dimas, atau Niko (tergantung difficulty) — pengalaman antagonist
+  - **Survivor**: Dapat salah satu dari 7-9 protagonist secara acak
+  - Setiap karakter punya **kemampuan pasif unik** yang seimbang:
+
+| Karakter | Role | Kemampuan Pasif |
+|----------|------|-----------------|
+| Arin | Investigator | +20% pencarian petunjuk |
+| Sera | Profiler | Lihat emosi & tension NPC dengan presisi |
+| Niko | Tuan Rumah | +1 jalur gerakan ekstra (jalan rahasia) |
+| Juno | Pemberontak | +20% defense, +15% flee |
+| Vira | Saksi Selamat | Mulai dengan 2 lokasi clue diketahui |
+| Reza | Detektif | +15% akurasi tuduhan, +10% deteksi |
+| Kira | Hacker | +25% investigasi digital |
+| Farah | Pewaris | +15% trust gain, +10% aliansi |
+| Lana | Dalang (Killer) | +20% framing, -15% kecurigaan |
+| Dimas | Operator (Killer) | +15% kill, silent elimination |
 - **Layer emosional mendalam:**
   - **Percintaan** — Arin↔Sera (unspoken love), Niko↔Vira (toxic ex), Juno↔Reza (unexpected connection), Dimas→Sera (obsesi), Lana↔Niko (seductive manipulation)
   - **Egoisme** — self-preservation vs group survival, setiap karakter punya harga
