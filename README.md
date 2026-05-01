@@ -24,7 +24,7 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 
 ### Gameplay & Cerita
 - **7 chapter** dengan percabangan kompleks (Prolog + Bab 1-7)
-- **25 ending unik** dengan rating S / A / B / C / D / F
+- **27+ ending unik** dengan rating S / A / B / C / D / F
 - **Ending bisa trigger di chapter manapun** — keputusan menentukan kapan cerita berakhir
 - **3 tingkat kesulitan** yang mengubah jumlah killer:
   - **Mudah**: 1 killer (Lana)
@@ -51,6 +51,28 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 - **Sistem danger** — level bahaya meningkat berdasarkan keputusan berisiko
 - **Karakter bisa mati** — keputusan salah punya konsekuensi permanen
 - **Auto-save** — progress tersimpan otomatis di browser
+
+### NPC Brain System (Baru!)
+- **Character AI Database** — setiap NPC punya "otak" sendiri dengan decision tree berbasis database
+- **State Machine Emosional** — NPC berubah state: calm → wary → suspicious → panicked → hostile
+- **Killer AI** — killer NPC punya state khusus: stalking → hunting → executing
+- **NPC Bertindak Mandiri** — setiap ronde, NPC membuat keputusan sendiri berdasarkan:
+  - Kepribadian (aggression, caution, loyalty, cunning, empathy, impulsiveness)
+  - Emosi saat ini dan level tension
+  - Lokasi di mansion (15 lokasi yang terhubung)
+  - Siapa yang ada di dekat mereka
+  - Clue yang sudah ditemukan
+  - Aliansi dan musuh
+- **100+ Decision Node per Karakter** — setiap karakter punya pohon keputusan unik
+- **Sistem Win/Loss** — kamu bisa menang atau kalah sebagai killer maupun survivor:
+  - **Survivor Win**: Selamat + identifikasi semua killer
+  - **Survivor Loss**: Mati / gagal identifikasi killer
+  - **Killer Win**: Eliminasi target tanpa terekspos
+  - **Killer Loss**: Tertangkap / terbunuh / identitas terungkap
+- **NPC Encounters** — NPC bertemu satu sama lain, membentuk aliansi, atau saling menyerang
+- **NPC Action Log** — panel real-time untuk melihat apa yang dilakukan setiap NPC
+- **Dynamic Choices** — pilihan baru muncul berdasarkan aksi NPC (tuduh, aliansi, serang, investigasi)
+- **Tidak pakai AI live** — semua diatur oleh branching database, bukan generative AI
 
 ---
 
@@ -167,10 +189,13 @@ Antagonis utama: **Ragil Pramudya** alias **Sang Penenun** — pria tua yang hid
 
 1. Buka `index.html` di browser
 2. Pilih tingkat kesulitan
-3. Kenali 10 karakter
-4. Buat keputusan — setiap pilihan menentukan alur cerita
-5. Kumpulkan bukti, bangun aliansi, dan ungkap identitas Sang Penenun
-6. Capai salah satu dari 25 ending
+3. Pilih peranmu — mainkan sebagai salah satu dari 10 karakter
+4. Kenali 10 karakter
+5. Buat keputusan — setiap pilihan menentukan alur cerita DAN memicu aksi NPC
+6. Pantau NPC Brain Log (tombol gear di kanan atas) untuk melihat apa yang dilakukan NPC
+7. Sebagai **survivor**: kumpulkan bukti, bangun aliansi, ungkap killer, dan bertahan hidup
+8. Sebagai **killer**: eliminasi target, jaga cover, framing, dan sabotase
+9. Capai salah satu dari 27+ ending
 
 ---
 
@@ -189,7 +214,9 @@ simpul-terakhir/
 │   └── vira.png
 └── js/
     ├── characters.js       # 10 karakter (profil, traits, relationships)
-    ├── engine.js           # Game engine (trust, moral, danger, killer system)
+    ├── char-brain.js       # NPC behavior engine (state machine, decision tree, actions)
+    ├── char-db.js          # Character behavior database (100+ nodes per character)
+    ├── engine.js           # Game engine (trust, moral, danger, killer, NPC integration)
     ├── story-prolog.js     # Prolog: Undangan
     ├── story-ch1.js        # Bab 1: Pameran Maut
     ├── story-ch2.js        # Bab 2: Darah Pertama
@@ -198,7 +225,7 @@ simpul-terakhir/
     ├── story-ch5.js        # Bab 5: Wahyu
     ├── story-ch6.js        # Bab 6: Konfrontasi
     ├── story-ch7.js        # Bab 7: Simpul Terakhir
-    └── story-endings.js    # 25 endings (S/A/B/C/D/F rating)
+    └── story-endings.js    # 27+ endings (S/A/B/C/D/F rating + win/loss endings)
 ```
 
 ---
