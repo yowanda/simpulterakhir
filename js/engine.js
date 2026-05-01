@@ -555,40 +555,81 @@ const Engine = (() => {
       gameState.alive[name] && gameState.npcMinds[name].location === playerLoc
     );
 
-    // Accuse someone nearby (survivor)
+    // --- ACCUSE suspect ---
     if (!isK && nearbyNpcs.length > 0 && gameState.deathCount >= 1) {
       const suspect = nearbyNpcs.find(n => (gameState.suspicion[n] || 0) > 30);
       if (suspect) {
+        const suspLvl = gameState.suspicion[suspect] || 0;
+        const conf = suspLvl > 60 ? 'Bukti kuat' : 'Bukti menengah';
         choices.push({
-          text: `[BRAIN] Tuduh ${CharBrain.charName(suspect)}: "Aku tahu apa yang kau lakukan."`,
-          type: 'brain',
-          hint: 'Kecurigaan tinggi — konfrontasi langsung',
-          effect: (s) => {
-            CharBrain.playerAction('accuse', suspect, s);
-            Engine.modSuspicion(suspect, 15);
-          },
-          next: (s) => currentNodeId // Stay at same node, trigger new round
+          text: `Tuduh ${CharBrain.charName(suspect)}: "Aku tahu apa yang kau lakukan."`,
+          type: 'brain', category: 'accuse',
+          hint: `${conf} — kecurigaan ${suspLvl}%`,
+          risk: Math.max(40, 80 - suspLvl),
+          reward: suspLvl > 50 ? 90 : 60,
+          effect: (s) => { CharBrain.playerAction('accuse', suspect, s); Engine.modSuspicion(suspect, 15); },
+          next: (s) => currentNodeId
         });
       }
     }
 
-    // Investigate location (both roles)
-    if (nearbyNpcs.length === 0) {
+    // --- INVESTIGATE location ---
+    choices.push({
+      text: `Periksa ${CharBrain.locName(playerLoc)} — cari petunjuk tersembunyi`,
+      type: 'brain', category: 'investigate',
+      hint: nearbyNpcs.length === 0 ? 'Sendirian — lebih leluasa mencari' : 'Hati-hati, ada orang lain di sini',
+      risk: nearbyNpcs.length === 0 ? 15 : 25,
+      reward: 70,
+      effect: (s) => {
+        const result = CharBrain.playerAction('investigate_location', null, s);
+        if (result && result.found) Engine.notify(result.desc);
+        else Engine.notify('Kau memeriksa area ini tapi tidak menemukan hal baru.');
+      },
+      next: (s) => currentNodeId
+    });
+
+    // --- OBSERVE nearby NPCs ---
+    if (nearbyNpcs.length > 0) {
+      const observeTarget = nearbyNpcs[Math.floor(Math.random() * nearbyNpcs.length)];
+      const mind = gameState.npcMinds[observeTarget];
       choices.push({
-        text: `[BRAIN] Periksa ${CharBrain.locName(playerLoc)} lebih detail`,
-        type: 'brain',
-        hint: 'Mungkin ada petunjuk tersembunyi',
+        text: `Amati gerak-gerik ${CharBrain.charName(observeTarget)} secara diam-diam`,
+        type: 'brain', category: 'observe',
+        hint: mind ? `Emosi: ${mind.emotion} — mungkin bisa membaca niatnya` : 'Perhatikan perilakunya',
+        risk: 10, reward: 55,
         effect: (s) => {
-          const result = CharBrain.playerAction('investigate_location', null, s);
-          if (result && result.found) {
-            Engine.notify(result.desc);
+          const susp = s.suspicion[observeTarget] || 0;
+          const isTarget = s.killers.includes(observeTarget);
+          if (isTarget && Math.random() < 0.4) {
+            s.suspicion[observeTarget] = Math.min(100, susp + 10);
+            Engine.notify(`Kau menangkap gelagat mencurigakan dari ${CharBrain.charName(observeTarget)}! Kecurigaan naik.`);
+          } else {
+            Engine.notify(`${CharBrain.charName(observeTarget)} tampak ${isTarget ? 'terlalu tenang...' : 'normal.'}`);
           }
         },
         next: (s) => currentNodeId
       });
     }
 
-    // Form alliance (survivor)
+    // --- TALK to NPC ---
+    if (nearbyNpcs.length > 0) {
+      const talkTarget = nearbyNpcs[nearbyNpcs.length > 1 ? 1 : 0];
+      const trustLvl = gameState.trust[trustKey(pc, talkTarget)] || 50;
+      choices.push({
+        text: `Bicara dengan ${CharBrain.charName(talkTarget)} — bangun hubungan`,
+        type: 'brain', category: 'social',
+        hint: `Kepercayaan saat ini: ${trustLvl}%`,
+        risk: 10, reward: 45,
+        effect: (s) => {
+          Engine.modTrust(pc, talkTarget, 5);
+          const newTrust = s.trust[trustKey(pc, talkTarget)] || 55;
+          Engine.notify(`Hubunganmu dengan ${CharBrain.charName(talkTarget)} membaik. Trust: ${newTrust}%`);
+        },
+        next: (s) => currentNodeId
+      });
+    }
+
+    // --- FORM ALLIANCE (survivor) ---
     if (!isK && nearbyNpcs.length > 0 && gameState.deathCount >= 1) {
       const potential = nearbyNpcs.find(n =>
         !gameState.killers.includes(n) &&
@@ -596,10 +637,13 @@ const Engine = (() => {
         (!gameState.npcMinds[n] || !gameState.npcMinds[n].allies.includes(pc))
       );
       if (potential) {
+        const trustVal = gameState.trust[trustKey(pc, potential)] || 50;
         choices.push({
-          text: `[BRAIN] Ajak ${CharBrain.charName(potential)} beraliansi`,
-          type: 'brain',
-          hint: 'Bertahan bersama lebih aman',
+          text: `Ajak ${CharBrain.charName(potential)} membentuk aliansi`,
+          type: 'brain', category: 'alliance',
+          hint: `Trust: ${trustVal}% — ${trustVal > 60 ? 'kemungkinan besar diterima' : 'mungkin butuh persuasi'}`,
+          risk: trustVal > 60 ? 10 : 30,
+          reward: 75,
           effect: (s) => {
             CharBrain.playerAction('ally', potential, s);
             Engine.modTrust(pc, potential, 10);
@@ -610,42 +654,104 @@ const Engine = (() => {
       }
     }
 
-    // Killer strike (if player is killer)
-    if (isK && nearbyNpcs.length === 1 && !gameState.killers.includes(nearbyNpcs[0])) {
-      const target = nearbyNpcs[0];
+    // --- HIDE (when danger is high) ---
+    if (gameState.dangerLevel > 30 && !isK) {
       choices.push({
-        text: `[BRAIN] Serang ${CharBrain.charName(target)} — kau sendirian dengannya...`,
-        type: 'brain-killer',
-        danger: true,
-        hint: 'Risiko tinggi — bisa ketahuan jika gagal',
+        text: `Sembunyi di ${CharBrain.locName(playerLoc)} — tunggu bahaya berlalu`,
+        type: 'brain', category: 'hide',
+        hint: `Danger level: ${gameState.dangerLevel}% — ${gameState.dangerLevel > 60 ? 'sangat berbahaya di luar!' : 'waspada'}`,
+        risk: 5, reward: 15,
         effect: (s) => {
-          const result = CharBrain.playerAction('killer_strike', target, s);
-          if (result) {
-            if (result.success) {
-              Engine.killChar(target);
-              Engine.notify(result.desc);
-            } else {
-              Engine.notify(result.desc);
-            }
-          }
+          s.dangerLevel = Math.max(0, s.dangerLevel - 5);
+          Engine.notify('Kau bersembunyi dan menunggu. Tension turun sedikit.');
         },
         next: (s) => currentNodeId
       });
     }
 
-    // Move to adjacent location
+    // --- KILLER ACTIONS ---
+    if (isK) {
+      // Strike target
+      const soloTarget = nearbyNpcs.find(n => !gameState.killers.includes(n));
+      if (soloTarget && nearbyNpcs.filter(n => !gameState.killers.includes(n)).length <= 2) {
+        const witnesses = nearbyNpcs.filter(n => n !== soloTarget && !gameState.killers.includes(n)).length;
+        choices.push({
+          text: `Serang ${CharBrain.charName(soloTarget)}${witnesses === 0 ? ' — tidak ada saksi...' : ' — ada risiko saksi!'}`,
+          type: 'brain-killer', category: 'killer',
+          danger: witnesses > 0,
+          hint: witnesses === 0 ? 'Sendirian — kesempatan emas' : `${witnesses} saksi potensial — sangat berisiko!`,
+          risk: witnesses === 0 ? 45 : 85,
+          reward: 90,
+          effect: (s) => {
+            const result = CharBrain.playerAction('killer_strike', soloTarget, s);
+            if (result) {
+              if (result.success) { Engine.killChar(soloTarget); Engine.notify(result.desc); }
+              else Engine.notify(result.desc);
+            }
+          },
+          next: (s) => currentNodeId
+        });
+      }
+
+      // Sabotage
+      if (nearbyNpcs.length === 0) {
+        choices.push({
+          text: `Sabotase ${CharBrain.locName(playerLoc)} — buat perangkap`,
+          type: 'brain-killer', category: 'stealth',
+          hint: 'Siapkan jebakan untuk korban berikutnya',
+          risk: 30, reward: 65,
+          effect: (s) => {
+            s.dangerLevel = Math.min(100, s.dangerLevel + 5);
+            Engine.notify('Kau menyiapkan perangkap dengan hati-hati. Area ini sekarang berbahaya bagi orang lain.');
+          },
+          next: (s) => currentNodeId
+        });
+      }
+
+      // Manipulate/Frame
+      if (nearbyNpcs.length > 0) {
+        const frameTarget = nearbyNpcs.find(n => !gameState.killers.includes(n));
+        if (frameTarget) {
+          choices.push({
+            text: `Arahkan kecurigaan ke ${CharBrain.charName(frameTarget)} — framing`,
+            type: 'brain-killer', category: 'stealth',
+            hint: 'Buat orang lain terlihat mencurigakan',
+            risk: 35, reward: 70,
+            effect: (s) => {
+              Engine.modSuspicion(frameTarget, 15);
+              Engine.notify(`Kau diam-diam menanamkan bukti palsu yang mengarah ke ${CharBrain.charName(frameTarget)}.`);
+            },
+            next: (s) => currentNodeId
+          });
+        }
+      }
+    }
+
+    // --- MOVE to adjacent location ---
     const connections = CharBrain.LOCATION_CONNECTIONS[playerLoc] || [];
     if (connections.length > 0 && gameState.chapter >= 1) {
-      const moveLoc = connections[Math.floor(Math.random() * connections.length)];
-      choices.push({
-        text: `[BRAIN] Pindah ke ${CharBrain.locName(moveLoc)}`,
-        type: 'brain',
-        hint: 'Ubah posisimu di mansion',
-        effect: (s) => {
-          s.playerLocation = moveLoc;
-          Engine.notify(`Kau berpindah ke ${CharBrain.locName(moveLoc)}.`);
-        },
-        next: (s) => currentNodeId
+      // Show up to 2 movement options
+      const shuffled = connections.slice().sort(() => Math.random() - 0.5);
+      const moveDests = shuffled.slice(0, Math.min(2, shuffled.length));
+      moveDests.forEach(loc => {
+        const npcsAtLoc = Object.keys(gameState.npcMinds || {}).filter(n =>
+          gameState.alive[n] && gameState.npcMinds[n] && gameState.npcMinds[n].location === loc
+        );
+        const locInfo = npcsAtLoc.length > 0
+          ? `${npcsAtLoc.length} orang di sana`
+          : 'Kosong — aman untuk eksplorasi';
+        choices.push({
+          text: `Pindah ke ${CharBrain.locName(loc)}`,
+          type: 'brain', category: 'move',
+          hint: locInfo,
+          risk: npcsAtLoc.length > 0 ? 25 : 10,
+          reward: 20,
+          effect: (s) => {
+            s.playerLocation = loc;
+            Engine.notify(`Kau berpindah ke ${CharBrain.locName(loc)}.${npcsAtLoc.length > 0 ? ' Kau melihat ' + npcsAtLoc.map(n => CharBrain.charName(n)).join(', ') + ' di sini.' : ''}`);
+          },
+          next: (s) => currentNodeId
+        });
       });
     }
 
@@ -689,6 +795,63 @@ const Engine = (() => {
     });
   }
 
+  // ---- Action Category System ----
+  const ACTION_CATEGORIES = {
+    investigate:  { icon: '\uD83D\uDD0D', label: 'Investigasi', color: '#c8a96e' },
+    confront:     { icon: '\u2694\uFE0F', label: 'Konfrontasi', color: '#e63946' },
+    social:       { icon: '\uD83E\uDD1D', label: 'Sosial', color: '#4ecdc4' },
+    move:         { icon: '\uD83D\uDEB6', label: 'Pindah', color: '#7f8c8d' },
+    stealth:      { icon: '\uD83D\uDC41\uFE0F', label: 'Siluman', color: '#9b59b6' },
+    protect:      { icon: '\uD83D\uDEE1\uFE0F', label: 'Lindungi', color: '#2ecc71' },
+    killer:       { icon: '\uD83D\uDDE1\uFE0F', label: 'Serang', color: '#8b0000' },
+    escape:       { icon: '\uD83C\uDFC3', label: 'Kabur', color: '#f39c12' },
+    alliance:     { icon: '\u2B50', label: 'Aliansi', color: '#3498db' },
+    accuse:       { icon: '\u261D\uFE0F', label: 'Tuduh', color: '#e74c3c' },
+    hack:         { icon: '\uD83D\uDCBB', label: 'Hack', color: '#00d2ff' },
+    negotiate:    { icon: '\uD83D\uDCAC', label: 'Negosiasi', color: '#f1c40f' },
+    observe:      { icon: '\uD83D\uDC40', label: 'Amati', color: '#bdc3c7' },
+    hide:         { icon: '\uD83E\uDD10', label: 'Sembunyi', color: '#636e72' },
+    story:        { icon: '\uD83D\uDCD6', label: 'Cerita', color: '#dfe6e9' }
+  };
+
+  function detectCategory(choice) {
+    if (choice.category) return choice.category;
+    const t = (typeof choice.text === 'function' ? choice.text(state) : choice.text || '').toLowerCase();
+    if (choice.type === 'brain-killer') return 'killer';
+    if (t.includes('tuduh') || t.includes('accuse') || t.includes('[brain] tuduh')) return 'accuse';
+    if (t.includes('aliansi') || t.includes('ajak')) return 'alliance';
+    if (t.includes('pindah') || t.includes('pergi') || t.includes('menuju')) return 'move';
+    if (t.includes('periksa') || t.includes('investigasi') || t.includes('cek') || t.includes('teliti') || t.includes('buka') || t.includes('rekam')) return 'investigate';
+    if (t.includes('hadapi') || t.includes('konfrontasi') || t.includes('dorong') || t.includes('paksa')) return 'confront';
+    if (t.includes('sera') || t.includes('bicara') || t.includes('hampiri') || t.includes('dekati') || t.includes('bergabung') || t.includes('tanya')) return 'social';
+    if (t.includes('sembunyi') || t.includes('diam') || t.includes('menyelinap')) return 'hide';
+    if (t.includes('kabur') || t.includes('lari') || t.includes('keluar') || t.includes('escape')) return 'escape';
+    if (t.includes('lindungi') || t.includes('jaga') || t.includes('pertahan')) return 'protect';
+    if (t.includes('hack') || t.includes('komputer') || t.includes('sistem')) return 'hack';
+    if (t.includes('negosiasi') || t.includes('tawar') || t.includes('bayar')) return 'negotiate';
+    if (t.includes('observasi') || t.includes('amati') || t.includes('perhatikan')) return 'observe';
+    if (t.includes('serang') || t.includes('bunuh') || t.includes('strike')) return 'killer';
+    if (t.includes('telepon') || t.includes('hubungi')) return 'social';
+    return 'story';
+  }
+
+  function calcRisk(choice) {
+    if (choice.risk !== undefined) return choice.risk;
+    const cat = detectCategory(choice);
+    const baseRisk = { killer: 90, confront: 60, accuse: 55, escape: 50, investigate: 30, hack: 35, move: 20, social: 15, alliance: 10, observe: 10, protect: 40, negotiate: 25, hide: 20, stealth: 35, story: 5 };
+    let risk = baseRisk[cat] || 15;
+    if (choice.danger) risk = Math.max(risk, 75);
+    if (state.dangerLevel > 50) risk += 10;
+    return Math.min(risk, 100);
+  }
+
+  function calcReward(choice) {
+    if (choice.reward !== undefined) return choice.reward;
+    const cat = detectCategory(choice);
+    const baseReward = { investigate: 80, accuse: 85, hack: 75, confront: 70, alliance: 65, social: 50, observe: 55, negotiate: 60, protect: 45, killer: 90, escape: 30, move: 20, hide: 15, stealth: 40, story: 35 };
+    return baseReward[cat] || 35;
+  }
+
   function renderChoices(choices) {
     const container = $('choices-container');
     container.innerHTML = '';
@@ -706,28 +869,65 @@ const Engine = (() => {
 
     available.forEach((choice, i) => {
       const btn = document.createElement('button');
-      btn.className = 'choice-btn';
+      const cat = detectCategory(choice);
+      const catInfo = ACTION_CATEGORIES[cat] || ACTION_CATEGORIES.story;
+      const risk = calcRisk(choice);
+      const reward = calcReward(choice);
+      const isBrain = choice.type === 'brain' || choice.type === 'brain-killer';
+
+      btn.className = 'choice-btn choice-cat-' + cat;
       if (choice.type) btn.classList.add('choice-' + choice.type);
+      if (choice.danger) btn.classList.add('choice-dangerous');
+      if (isBrain) btn.classList.add('choice-interactive');
 
       const choiceText = typeof choice.text === 'function' ? choice.text(state) : t(choice.text);
-      let html = choiceText;
+      const cleanText = choiceText.replace(/^\[BRAIN\]\s*/, '');
+
+      let html = `<div class="choice-inner">`;
+      html += `<div class="choice-icon-wrap" style="--cat-color:${catInfo.color}">`;
+      html += `<span class="choice-icon">${catInfo.icon}</span>`;
+      html += `</div>`;
+      html += `<div class="choice-content">`;
+      html += `<div class="choice-label">${catInfo.label}</div>`;
+      html += `<div class="choice-text-main">${cleanText}</div>`;
+
       if (choice.hint && state.difficulty <= 2) {
         const hintText = typeof choice.hint === 'function' ? choice.hint(state) : t(choice.hint);
         html += `<span class="choice-hint">${hintText}</span>`;
       }
-      if (choice.danger && state.difficulty === 1) {
-        html += `<span class="choice-danger">\u26A0 Berbahaya</span>`;
+      html += `</div>`;
+
+      // Risk/Reward meter
+      if (state.chapter >= 1) {
+        html += `<div class="choice-meters">`;
+        const riskClass = risk > 65 ? 'meter-high' : risk > 35 ? 'meter-mid' : 'meter-low';
+        const rewardClass = reward > 65 ? 'meter-high' : reward > 35 ? 'meter-mid' : 'meter-low';
+        html += `<div class="choice-meter"><span class="meter-label">Risiko</span><div class="meter-bar"><div class="meter-fill ${riskClass}" style="width:${risk}%"></div></div></div>`;
+        html += `<div class="choice-meter"><span class="meter-label">Hasil</span><div class="meter-bar"><div class="meter-fill reward-fill ${rewardClass}" style="width:${reward}%"></div></div></div>`;
+        html += `</div>`;
       }
+
+      if (choice.danger) {
+        html += `<div class="choice-danger-badge">\u26A0 BAHAYA</div>`;
+      }
+
+      html += `</div>`;
       btn.innerHTML = html;
 
       btn.addEventListener('click', () => {
-        if (choice.effect) choice.effect(state);
-        if (choice.key) state.keyChoices.push(choice.key);
-        const next = typeof choice.next === 'function' ? choice.next(state) : choice.next;
-        if (next) renderNode(next);
+        btn.classList.add('choice-selected');
+        container.querySelectorAll('.choice-btn').forEach(b => {
+          if (b !== btn) b.classList.add('choice-fading');
+        });
+        setTimeout(() => {
+          if (choice.effect) choice.effect(state);
+          if (choice.key) state.keyChoices.push(choice.key);
+          const next = typeof choice.next === 'function' ? choice.next(state) : choice.next;
+          if (next) renderNode(next);
+        }, 400);
       });
 
-      btn.style.animationDelay = (i * 0.12) + 's';
+      btn.style.animationDelay = (i * 0.15) + 's';
       container.appendChild(btn);
     });
   }
