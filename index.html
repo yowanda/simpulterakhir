@@ -72,16 +72,24 @@
 
   <!-- GAME SCREEN -->
   <div id="screen-game" class="screen">
-    <!-- Top Bar -->
-    <div class="top-bar">
+    <!-- Top Bar (WhatsApp-style group chat header) -->
+    <div class="top-bar wa-header">
       <button class="icon-btn" id="btn-menu" title="Menu">&#9776;</button>
-      <div class="chapter-indicator" id="chapter-indicator">Prolog</div>
+      <div class="wa-header-info">
+        <div class="wa-group-name" id="chapter-indicator">Prolog</div>
+        <div class="wa-group-members" id="wa-members">Mansion Wardhana</div>
+      </div>
       <button class="icon-btn" id="btn-status" title="Karakter">&#9829;</button>
       <button class="icon-btn" id="btn-npc-log" title="NPC Log">&#9881;</button>
     </div>
 
     <!-- Player Realtime Status Bar -->
     <div class="player-status-bar" id="player-status-bar" style="display:none;"></div>
+
+    <!-- Encrypted Notice (WhatsApp-style) -->
+    <div class="wa-encrypted-notice" id="wa-encrypted-notice">
+      <span class="wa-lock-icon">&#128274;</span> Pesan terenkripsi end-to-end. Tidak ada pihak luar yang bisa membaca.
+    </div>
 
     <!-- Story Area -->
     <div class="story-area" id="story-area">

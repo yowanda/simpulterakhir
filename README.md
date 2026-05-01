@@ -102,20 +102,22 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 - **Dynamic Choices** — pilihan baru muncul berdasarkan aksi NPC (tuduh, aliansi, serang, investigasi)
 - **Tidak pakai AI live** — semua diatur oleh branching database, bukan generative AI
 
-### WhatsApp-Style Chat UI
-- **Fokus Dialog** — cerita dibangun lewat percakapan antar karakter, bukan narasi panjang. Narasi dihilangkan/diminimalkan menjadi system message pendek
+### WhatsApp-Style Chat UI (Dialog-Only Mode)
+- **100% Dialog-Focused** — cerita dibangun SEPENUHNYA lewat percakapan antar karakter. Narasi panjang dihilangkan total. Plot berkembang lewat dialog, bukan novel
+- **Group Chat Header** — header ala WhatsApp group chat: nama chapter sebagai nama grup, daftar member yang masih hidup di bawahnya
+- **Encrypted Notice** — pesan "terenkripsi end-to-end" seperti WhatsApp asli di awal chat
 - **WhatsApp Dark Mode** — tampilan gelap ala WhatsApp: background chat wallpaper, bubble hijau teal (player) dan abu-abu gelap (NPC)
 - **Player di Kanan** — pesan karakter yang dimainkan muncul di sisi kanan dengan bubble hijau WhatsApp (#005c4b)
 - **NPC di Kiri** — pesan NPC lain muncul di sisi kiri dengan bubble gelap (#202c33)
 - **Timestamp & Read Receipt** — setiap bubble punya timestamp dan tanda centang biru (player), seperti WhatsApp asli
 - **Killer Bubble** — karakter killer punya bubble dengan tint merah gelap yang menacing
-- **Location Header** — detail lokasi karakter dan siapa yang ada di sekitar ditampilkan di sub-header atas chatbox (mirip WhatsApp contact info)
+- **Action Messages** — aksi singkat karakter (tanpa dialog) ditampilkan sebagai teks italic di tengah, seperti status WhatsApp
+- **System Messages** — event NPC (kematian, aliansi, penemuan clue) ditampilkan sebagai notifikasi grup dengan emoji kontekstual (💀☠️🤝🔍🎭💣)
+- **Location Header** — detail lokasi karakter dan siapa yang ada di sekitar ditampilkan sebagai system pill
 - **Staggered Message Reveal** — pesan muncul satu per satu dengan animasi fade-in smooth
-- **System Messages** — narasi singkat, sound effect, dan info lokasi muncul sebagai pill-shaped system message di tengah
 - **Auto-detect Dialog** — kalimat dialog tanpa tag speaker otomatis terdeteksi dan ditampilkan sebagai bubble player
 - **Choices di Bawah** — pilihan interaktif muncul di area bawah layar (fixed), seperti input area WhatsApp
 - **Click-to-Skip** — klik area cerita untuk langsung tampilkan semua teks
-- **Horror Glow** — narasi horor punya efek glow merah berdenyut
 - **Responsive** — avatar, font, dan layout otomatis menyesuaikan di mobile
 
 ### Framing & Divide Mechanic
