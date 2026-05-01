@@ -150,7 +150,7 @@ body {
   max-width: 100%;
   width: 100%;
   margin: 0 auto;
-  padding: 0.6rem 0.8rem 6rem;
+  padding: 0.6rem 0.8rem 50vh;
   overflow-y: auto;
   position: relative;
   z-index: 1;
@@ -1523,7 +1523,7 @@ body {
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 480px) {
-  .story-area { padding: 1rem 1rem 2rem; }
+  .story-area { padding: 1rem 1rem 55vh; }
   .choice-btn { padding: 0; }
   .choice-inner { flex-wrap: wrap; }
   .choice-icon-wrap { min-width: 40px; }
@@ -1545,7 +1545,7 @@ body {
   .characters-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (min-width: 768px) {
-  .story-area { padding: 2rem 2rem 4rem; }
+  .story-area { padding: 2rem 2rem 50vh; }
 }
 
 /* ========== NPC BRAIN SYSTEM STYLES ========== */
@@ -1907,6 +1907,7 @@ body {
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+  scroll-margin-bottom: 50vh;
 }
 .story-text .chat-item.chat-visible {
   opacity: 1;
@@ -2251,5 +2252,5 @@ body {
   .chat-narration { font-size: 0.68rem; max-width: 90%; }
   .chat-typing-indicator { padding: 0.35rem 0.6rem; margin-left: 36px; }
   .choices-container { padding: 0.4rem 0.5rem 0.5rem; max-height: 50vh; }
-  .story-area { padding: 0.4rem 0.6rem 5.5rem; }
+  .story-area { padding: 0.4rem 0.6rem 55vh; }
 }
