@@ -77,7 +77,7 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - Siapa yang ada di dekat mereka
   - Clue yang sudah ditemukan
   - Aliansi dan musuh
-- **100+ Decision Node per Karakter** — setiap karakter punya pohon keputusan unik
+- **418 Decision Entries** — 40+ keputusan per karakter dengan weighted random selection + catch-all fallbacks
 - **Sistem Win/Loss Dinamis** — hasil ditentukan oleh aksi NPC, bukan ending pre-scripted:
   - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan **8 dari 15 petunjuk** → semua killer terungkap & dieksekusi
   - **Killer Menang**: Eliminasi protagonis hingga tersisa 1 ATAU hancurkan cukup petunjuk agar protagonist tak bisa capai 8
@@ -108,7 +108,7 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 - **NPC Cooldown System** — setiap tipe aksi NPC punya cooldown 1-3 ronde
 - **Escalation Mechanism** — jika semua aksi on cooldown, NPC otomatis pindah lokasi
 - **Location-Based Reset** — pindah ke lokasi baru me-reset aksi spesifik lokasi
-- **Max 3 Opsi** — player hanya melihat 3 pilihan terbaik per node, mempercepat plot
+- **Max 6 Opsi** — player melihat 6 pilihan per node (brain interactive prioritas, 1 story max), shuffled setiap game
 
 ### 7 Alat Unik
 Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat event terpicu di lokasi tertentu.
