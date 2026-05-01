@@ -8,6 +8,8 @@ const Engine = (() => {
   let state = {};
   let storyNodes = {};
   let currentNodeId = null;
+  let brainActionCount = 0;
+  let isBrainRevisit = false;
   let typingTimeout = null;
   let endingsUnlocked = JSON.parse(localStorage.getItem('simpul_endings') || '{}');
 
@@ -466,15 +468,20 @@ const Engine = (() => {
   function renderNode(nodeId) {
     const node = storyNodes[nodeId];
     if (!node) { console.error('Node not found:', nodeId); return; }
+    const revisit = isBrainRevisit;
+    isBrainRevisit = false;
     currentNodeId = nodeId;
-    state.nodeHistory.push(nodeId);
+    if (!revisit) {
+      state.nodeHistory.push(nodeId);
+      brainActionCount = 0;
+    }
 
     // Initialize NPC minds on first story node
     if (!state.npcMinds && state.chapter >= 0 && typeof CharBrain !== 'undefined') {
       initNpcMinds();
     }
 
-    if (node.onEnter) node.onEnter(state);
+    if (!revisit && node.onEnter) node.onEnter(state);
     if (node.chapter !== undefined && node.chapter !== state.chapter) {
       state.chapter = node.chapter;
       updateChapterIndicator();
@@ -488,6 +495,32 @@ const Engine = (() => {
     if (node.blood) bloodDrip();
     if (node.glitch) glitch();
     updateDangerAmbient();
+
+    const storyText = $('story-text');
+    const choicesContainer = $('choices-container');
+
+    // On brain revisit: skip re-rendering story text, just update choices
+    if (revisit) {
+      choicesContainer.innerHTML = '';
+      const storyChoices = (node.choices || []).slice();
+      const allChoices = storyChoices.slice();
+      if (state.npcMinds && state.chapter >= 1 && brainActionCount < 3) {
+        const dynamicChoices = generateDynamicChoices(state);
+        dynamicChoices.forEach(c => allChoices.push(c));
+      } else if (brainActionCount >= 3 && storyChoices.length === 0) {
+        const nextId = findNextStoryNode(nodeId);
+        if (nextId) {
+          allChoices.push({
+            text: 'Lanjutkan cerita...', category: 'story',
+            hint: 'Sudah cukup mengeksplorasi — saatnya melanjutkan',
+            next: nextId
+          });
+        }
+      }
+      renderChoices(allChoices);
+      updateNpcLogPanel();
+      return;
+    }
 
     let textContent = typeof node.text === 'function' ? node.text(state) : t(node.text);
 
@@ -509,9 +542,6 @@ const Engine = (() => {
       }
     }
 
-    const storyText = $('story-text');
-    const choicesContainer = $('choices-container');
-
     renderText(textContent, storyText, () => {
       $('story-area').scrollTop = 0;
 
@@ -528,8 +558,9 @@ const Engine = (() => {
         return;
       }
 
-      // Add NPC-driven dynamic choices
-      const allChoices = (node.choices || []).slice();
+      // Story choices first, then brain choices
+      const storyChoices = (node.choices || []).slice();
+      const allChoices = storyChoices.slice();
       if (state.npcMinds && state.chapter >= 1) {
         const dynamicChoices = generateDynamicChoices(state);
         dynamicChoices.forEach(c => allChoices.push(c));
@@ -539,6 +570,29 @@ const Engine = (() => {
 
     updateNpcLogPanel();
     saveGame();
+  }
+
+  // ---- Find next story node for forced progression ----
+  function findNextStoryNode(fromId) {
+    const node = storyNodes[fromId];
+    if (!node) return null;
+    // Try to get the first story choice's next
+    if (node.choices && node.choices.length > 0) {
+      for (const c of node.choices) {
+        const n = typeof c.next === 'function' ? c.next(state) : c.next;
+        if (n && n !== fromId) return n;
+      }
+    }
+    // Try common node naming patterns
+    const parts = fromId.split('_');
+    const chPrefix = parts[0]; // e.g. 'ch1', 'prolog'
+    // Try incrementing the last number
+    const match = fromId.match(/^(.+?)(\d+)$/);
+    if (match) {
+      const next = match[1] + (parseInt(match[2]) + 1);
+      if (storyNodes[next]) return next;
+    }
+    return null;
   }
 
   // ---- Dynamic Choices based on NPC brain state ----
@@ -923,7 +977,16 @@ const Engine = (() => {
           if (choice.effect) choice.effect(state);
           if (choice.key) state.keyChoices.push(choice.key);
           const next = typeof choice.next === 'function' ? choice.next(state) : choice.next;
-          if (next) renderNode(next);
+          if (next) {
+            // If brain choice loops back to same node, mark as revisit
+            if (isBrain && next === currentNodeId) {
+              brainActionCount++;
+              isBrainRevisit = true;
+            } else {
+              brainActionCount = 0;
+            }
+            renderNode(next);
+          }
         }, 400);
       });
 
