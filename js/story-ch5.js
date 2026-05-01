@@ -12,10 +12,35 @@ const STORY_CH5 = {
     let text = `<p class="narration">Countdown: <strong>01:00:00</strong>. Satu jam sebelum fajar. Dan kebenaran — seperti fajar itu sendiri — mulai menyingsing melalui kegelapan.</p>`;
 
     text += `<p>Yang tersisa berkumpul di perpustakaan — ruangan paling aman yang bisa dibarricade dari dalam. Kau berdiri di tengah, bukti-bukti tersebar di meja panjang seperti peta operasi perang.</p>`;
-    text += `<p>Sera duduk di sebelahmu. Tidak ada lagi pretense profesional — tangannya menggenggam tanganmu di bawah meja, dan kau menggenggam balik. Kalau ini malam terakhir, setidaknya kalian tidak harus melewatinya sendiri.</p>`;
-    text += `<p>"Arin." Suara Sera berbisik, hanya untukmu. "Apapun yang terjadi setelah ini — aku ingin kau tahu bahwa aku..." Dia berhenti. Psikolog yang bisa membaca jiwa semua orang tapi tidak bisa mengucapkan tiga kata kepada satu orang. "...aku akan ada di sini."</p>`;
-    text += `<p>Di sudut ruangan, drama lain: <span class="speaker niko">Niko</span> duduk sendirian, kepala di tangan. Dalang yang topengnya retak. <span class="speaker vira">Vira</span> berjalan ke arahnya — pelan, seperti mendekati binatang yang terluka. "Niko." Suaranya lembut — pertama kalinya malam ini. Niko mendongak. Dan di antara dua orang yang saling menyakiti dengan cara paling toxic, ada momen kerentanan yang jujur. "Aku minta maaf," bisik Niko. "Atas semuanya." Vira tidak menjawab. Tapi dia duduk di sampingnya.</p>`;
-    text += `<p><span class="speaker reza">Reza</span> mengeluarkan flask-nya. Tangannya gemetar. <span class="speaker juno">Juno</span> mengambil flask itu dari tangannya — pelan, tegas. "Nggak sekarang." Reza menatapnya — dan tidak melawan. Dua orang rusak yang mulai menyembuhkan satu sama lain di malam yang paling gelap.</p>`;
+
+    // Player-specific ch5 perspective
+    const pc = s.playerCharacter || 'arin';
+    if (pc === 'arin') {
+      text += `<p>Sera duduk di sebelahmu. Tidak ada lagi pretense profesional — tangannya menggenggam tanganmu di bawah meja, dan kau menggenggam balik. Kalau ini malam terakhir, setidaknya kalian tidak harus melewatinya sendiri.</p>`;
+      text += `<p>"Arin." Suara Sera berbisik, hanya untukmu. "Apapun yang terjadi setelah ini — aku ingin kau tahu bahwa aku..." Dia berhenti. Psikolog yang bisa membaca jiwa semua orang tapi tidak bisa mengucapkan tiga kata kepada satu orang. "...aku akan ada di sini."</p>`;
+    } else if (pc === 'sera') {
+      text += `<p>Arin berdiri di tengah ruangan, menyusun bukti. Kau duduk di sebelahnya — dan tanganmu menggenggam tangannya di bawah meja. Bukan sebagai kolega. Bukan sebagai psikolog. Sebagai seseorang yang akhirnya berhenti menganalisis perasaannya dan hanya membiarkannya ada.</p>`;
+      text += `<p>"Arin," bisikmu. "Apapun yang terjadi setelah ini—" Kau berhenti. Kau yang selalu bisa membaca jiwa orang — tidak bisa mengucapkan tiga kata kepada satu orang. "...aku akan ada di sini."</p>`;
+    } else if (pc === 'niko') {
+      text += `<p>Kau duduk di sudut. Kepala di tangan. Dalang yang topengnya hancur. Semua ini — mansion, undangan, permainan — tanggung jawabmu. Dan Vira berjalan ke arahmu.</p>`;
+      text += `<p>"Niko." Suaranya lembut. Kau mendongak. "Aku minta maaf," bisikmu. "Atas semuanya." Dia tidak menjawab. Tapi dia duduk di sampingmu. Dan itu — momen kecil itu — lebih berarti dari semua rencana besar yang pernah kau buat.</p>`;
+    } else if (pc === 'juno') {
+      text += `<p>Reza mengeluarkan flask-nya. Tangannya gemetar. Lo ambil flask itu — pelan, tegas. "Nggak sekarang." Dia menatapmu. Dan lo menatap balik. Dua orang rusak yang entah gimana menemukan sesuatu yang utuh di satu sama lain.</p>`;
+    } else if (pc === 'reza') {
+      text += `<p>Tanganmu gemetar. Flask di saku terasa seperti magnet. Juno mengambilnya dari tanganmu — pelan tapi tidak bisa dilawan. "Nggak sekarang." Dan kau membiarkannya. Karena suara Juno adalah satu-satunya hal yang lebih kuat dari panggilan alkohol malam ini.</p>`;
+    } else if (pc === 'lana') {
+      text += `<p>Kau duduk di sudut, mengamati. Operator yang mulai meragukan operasinya. Mereka berkumpul di sini, menggenggam tangan satu sama lain, mencari kenyamanan di kegelapan. Dan kau — kau seharusnya menjadi bagian dari kegelapan itu. Tapi entah kenapa, malam ini, kau ingin menjadi cahaya.</p>`;
+    } else if (pc === 'vira') {
+      text += `<p>Kau berjalan ke arah Niko. Pelan. Seperti mendekati binatang yang terluka — karena memang itu yang dia sekarang. "Niko." Dia mendongak. Dan di matanya, kau melihat sesuatu yang belum pernah kau lihat: kejujuran. "Aku minta maaf," bisiknya. Kau tidak menjawab. Tapi kau duduk di sampingnya.</p>`;
+    } else {
+      text += `<p>Di sekeliling ruangan, drama-drama kecil bermain: Sera dan Arin duduk berdekatan, tangan bertemu di bawah meja. Niko dan Vira dalam percakapan bisik yang penuh sejarah. Juno mengambil flask dari tangan Reza yang gemetar.</p>`;
+    }
+    if (pc !== 'niko' && pc !== 'vira') {
+      text += `<p>Di sudut ruangan: <span class="speaker niko">Niko</span> duduk sendirian, kepala di tangan. <span class="speaker vira">Vira</span> berjalan ke arahnya — pelan, lembut. "Aku minta maaf," bisik Niko. Vira tidak menjawab. Tapi dia duduk di sampingnya.</p>`;
+    }
+    if (pc !== 'reza' && pc !== 'juno') {
+      text += `<p><span class="speaker reza">Reza</span> mengeluarkan flask-nya. <span class="speaker juno">Juno</span> mengambilnya — pelan, tegas. "Nggak sekarang." Dua orang rusak yang mulai menyembuhkan satu sama lain.</p>`;
+    }
 
     let evidenceList = [];
     if (s.flags.hasProtocol || s.flags.hasProtocolPhotos) evidenceList.push('Protokol Simpul');

@@ -21,13 +21,42 @@ const STORY_CH1 = {
       text += `<p class="journal"><em>"Selamat malam, para tamu. Selamat datang di Pameran Simpul Terakhir. Dalam enam jam, pintu akan terbuka. Tapi sebelum itu — setiap jam, sebuah 'karya seni' baru akan terungkap. Karya pertama dimulai dalam tiga menit. Silakan menuju Galeri Timur."</em></p>`;
     }
 
+    // Player-specific perspective insert
+    const pc = s.playerCharacter || 'arin';
+    if (pc === 'sera') {
+      text += `<p class="journal"><em>Kau membaca ruangan. Sembilan wajah, sembilan set micro-expression. Dan setidaknya tiga orang di sini sedang berbohong.</em></p>`;
+    } else if (pc === 'lana') {
+      text += `<p class="journal"><em>Sempurna. Semuanya berjalan sesuai naskah. Sekarang, bab selanjutnya: ketakutan.</em></p>`;
+    } else if (pc === 'reza') {
+      text += `<p class="journal"><em>Dua puluh tahun pengalaman bilang: ini bukan acara seni. Ini crime scene yang belum terjadi.</em></p>`;
+    } else if (pc === 'kira') {
+      text += `<p class="journal"><em>Speaker itu pakai protokol encrypted. Siapapun dalangnya, dia punya akses ke tech yang serius.</em></p>`;
+    } else if (pc === 'vira') {
+      text += `<p class="journal"><em>Suara itu. Kau mengenalnya. Diproses, ya — tapi intonasinya... sama seperti enam bulan lalu. Dia masih di sini.</em></p>`;
+    } else if (pc === 'niko') {
+      text += `<p class="journal"><em>Ini bukan bagian dari rencanamu. Seseorang membajak acaramu. Dan kau harus mencari tahu siapa sebelum terlambat.</em></p>`;
+    } else if (pc === 'dimas' && s.difficulty >= 2) {
+      text += `<p class="journal"><em>Lana mengangguk pelan padamu dari seberang ruangan. Kode: semuanya berjalan lancar. Tapi perasaan aneh di perutmu — itu baru.</em></p>`;
+    }
+
     text += `<p>Reaksi berantai di ruangan — dan setiap reaksi menceritakan lebih banyak dari yang dimaksudkan:</p>`;
-    text += `<p><span class="speaker farah">Farah</span> mencengkeram lengan sofa. "Aku tidak mau ke mana-mana." Egoisme survival — instingnya sebagai pewaris yang terbiasa mengirim orang lain ke zona bahaya sementara dia menunggu di tempat aman.</p>`;
-    text += `<p><span class="speaker lana">Lana</span> sudah berjalan ke arah Galeri Timur, tumit stiletto-nya berdetak seperti metronom. "Aku ingin lihat." Matanya berkilat — bukan ketakutan, tapi ketertarikan. Dalang yang menikmati pertunjukan bahkan saat pertunjukan itu miliknya sendiri.</p>`;
-    text += `<p><span class="speaker dimas">Dimas</span> mengikuti Lana tanpa kata — patuh, otomatis. Seperti anjing yang sudah terlatih oleh satu tuan. Tapi matanya sempat bergeser ke Sera selama satu detik penuh — dan ada sesuatu di sana yang membuat perutmu melilit.</p>`;
-    text += `<p><span class="speaker juno">Juno</span> menatapmu. "Arin, ini trap yang obvious banget. Kita nggak harus ikut." Di belakangnya, Reza berdiri diam — dan kau menangkap momen kecil: Juno menyentuh siku Reza tanpa sadar, dan Reza... tidak menolak. Dua orang yang rusak, menemukan sesuatu yang stabil di satu sama lain tanpa menyadarinya.</p>`;
-    text += `<p><span class="speaker niko">Niko</span>: "Atau justru di situlah jawabannya." Niko melirik Vira saat mengatakannya — pesan ganda yang hanya bisa ditangkap oleh seseorang yang pernah berbagi bantal dengannya. Vira membalas tatapannya. Dan di antara mereka, listrik lama yang seharusnya sudah mati — berderak hidup lagi.</p>`;
-    text += `<p><span class="speaker kira">Kira</span> sudah mengeluarkan laptopnya. "Gue nge-trace frekuensi audio dari speaker itu. Kalau ini dikendalikan remote, gue bisa..." Jarinya menari di keyboard dengan kecepatan eksentrik. "...trace IP-nya. Atau setidaknya tahu apakah si suara ini di dalam mansion atau di luar."</p>`;
+    if (!Engine.isPlayer('farah')) text += `<p><span class="speaker farah">Farah</span> mencengkeram lengan sofa. "Aku tidak mau ke mana-mana." Egoisme survival — instingnya sebagai pewaris yang terbiasa mengirim orang lain ke zona bahaya sementara dia menunggu di tempat aman.</p>`;
+    else text += `<p>Kau mencengkeram lengan sofa. Tidak. Kau tidak akan menjadi yang pertama masuk ke perangkap.</p>`;
+
+    if (!Engine.isPlayer('lana')) text += `<p><span class="speaker lana">Lana</span> sudah berjalan ke arah Galeri Timur, tumit stiletto-nya berdetak seperti metronom. "Aku ingin lihat." Matanya berkilat — bukan ketakutan, tapi ketertarikan. Dalang yang menikmati pertunjukan bahkan saat pertunjukan itu miliknya sendiri.</p>`;
+    else text += `<p>Kau berjalan ke arah Galeri Timur. Tumit stiletto-mu berdetak seperti metronom. "Aku ingin lihat," katamu — dan kau memang ingin. Ini karyamu, setelah semua.</p>`;
+
+    if (!Engine.isPlayer('dimas')) text += `<p><span class="speaker dimas">Dimas</span> mengikuti Lana tanpa kata — patuh, otomatis. Seperti anjing yang sudah terlatih oleh satu tuan. Tapi matanya sempat bergeser ke Sera selama satu detik penuh — dan ada sesuatu di sana yang membuat perutmu melilit.</p>`;
+    else text += `<p>Kau mengikuti Lana. Seperti biasa. Tapi malam ini, matamu bergeser ke Sera — dan sesuatu yang bukan bagian dari instruksi Lana bergerak di dadamu.</p>`;
+
+    if (!Engine.isPlayer('juno')) text += `<p><span class="speaker juno">Juno</span> menatap kelompok. "${Engine.isPlayer('arin') ? 'Arin' : Engine.playerName()}, ini trap yang obvious banget. Kita nggak harus ikut." Di belakangnya, Reza berdiri diam — dan kau menangkap momen kecil: Juno menyentuh siku Reza tanpa sadar, dan Reza... tidak menolak. Dua orang yang rusak, menemukan sesuatu yang stabil di satu sama lain tanpa menyadarinya.</p>`;
+    else text += `<p>"Ini trap yang obvious banget," katamu keras. Lo nggak peduli siapa yang setuju. Di belakangmu, Reza berdiri — dan entah kenapa, kehadirannya bikin lo sedikit lebih tenang. Sedikit.</p>`;
+
+    if (!Engine.isPlayer('niko')) text += `<p><span class="speaker niko">Niko</span>: "Atau justru di situlah jawabannya." Niko melirik Vira saat mengatakannya — pesan ganda yang hanya bisa ditangkap oleh seseorang yang pernah berbagi bantal dengannya. Vira membalas tatapannya. Dan di antara mereka, listrik lama yang seharusnya sudah mati — berderak hidup lagi.</p>`;
+    else text += `<p>"Atau justru di situlah jawabannya," katamu. Matamu bergeser ke Vira tanpa izin otakmu. Dia menatap balik. Dan di dadamu, sesuatu yang seharusnya sudah mati — berderak hidup.</p>`;
+
+    if (!Engine.isPlayer('kira')) text += `<p><span class="speaker kira">Kira</span> sudah mengeluarkan laptopnya. "Gue nge-trace frekuensi audio dari speaker itu. Kalau ini dikendalikan remote, gue bisa..." Jarinya menari di keyboard dengan kecepatan eksentrik. "...trace IP-nya. Atau setidaknya tahu apakah si suara ini di dalam mansion atau di luar."</p>`;
+    else text += `<p>Lo buka laptop. Jari-jari lo sudah nge-trace frekuensi audio dari speaker sebelum otak lo selesai panik. "Gue bisa trace IP-nya," gumammu. Data nggak bohong. Data nggak manipulasi. Data adalah satu-satunya hal yang lo percaya malam ini.</p>`;
 
     return text;
   },
@@ -68,6 +97,108 @@ const STORY_CH1 = {
         s.flags.wentToBasement = true;
         Engine.modTrust('arin', 'reza', 5);
         Engine.modDanger(10);
+      }
+    },
+    {
+      text: (s) => {
+        const pc = s.playerCharacter || 'arin';
+        if (pc === 'sera') return '"Semua orang menunjukkan micro-expression ketakutan kecuali dua orang..." — Profile mereka';
+        if (pc === 'kira') return 'Hack speaker system — trace sumber audio ke controller';
+        if (pc === 'lana') return 'Pergi ke Galeri Timur duluan — kau sudah tahu apa yang ada di sana';
+        if (pc === 'niko') return 'Buka panel rahasia di belakang lukisan kakek — ada sesuatu di sana';
+        if (pc === 'vira') return '"Aku pernah ke sini. Ikuti aku — ada rute yang tidak mereka tahu"';
+        if (pc === 'reza') return 'Periksa semua exit point — kebiasaan assessment dari kepolisian';
+        if (pc === 'farah') return '"Mansion ini dibangun keluargaku. Aku tahu di mana safe room-nya"';
+        return null;
+      },
+      condition: (s) => {
+        const pc = s.playerCharacter || 'arin';
+        return ['sera', 'kira', 'lana', 'niko', 'vira', 'reza', 'farah'].includes(pc);
+      },
+      hint: (s) => {
+        const pc = s.playerCharacter || 'arin';
+        if (pc === 'sera') return 'Keahlian profiling-mu membuka perspektif baru.';
+        if (pc === 'kira') return 'Skill hacking-mu bisa mengungkap infrastruktur mansion.';
+        if (pc === 'lana') return 'Kau tahu skenarionya. Gunakan itu.';
+        if (pc === 'niko') return 'Pengetahuan mansion membuka area tersembunyi.';
+        if (pc === 'vira') return 'Pengalaman sebelumnya membuka jalan rahasia.';
+        return 'Keahlian unikmu memberi pilihan tambahan.';
+      },
+      next: 'ch1_character_special',
+      type: 'special',
+      effect: (s) => {
+        const pc = s.playerCharacter || 'arin';
+        s.flags.usedCharacterAbility = true;
+        s.flags.characterSpecialCh1 = pc;
+        Engine.modAwareness('arin', 12);
+        s.cluesFound += 2;
+        if (pc === 'kira') { s.flags.kiraHackedSpeakers = true; }
+        if (pc === 'niko') { s.flags.nikoSecretPanel = true; }
+        if (pc === 'vira') { s.flags.viraSecretRoute = true; }
+        if (pc === 'reza') { s.flags.rezaExitAssessment = true; }
+        if (pc === 'farah') { s.flags.farahSafeRoom = true; }
+      }
+    }
+  ]
+},
+
+'ch1_character_special': {
+  chapter: 1,
+  text: (s) => {
+    const pc = s.playerCharacter || 'arin';
+    let text = '';
+    if (pc === 'sera') {
+      text = `<p>Kau berdiri di tengah ruangan dan membaca setiap wajah. Sembilan set micro-expression — dan dua orang yang tidak menunjukkan ketakutan yang wajar.</p>`;
+      text += `<p><span class="speaker lana">Lana</span>: pupil tidak melebar. Bibir sedikit terangkat di sudut kanan — contempt microexpression. Dia tidak takut. Dia <em>menikmati</em>.</p>`;
+      text += `<p><span class="speaker dimas">Dimas</span>: detak jantung terlihat di leher — normal. Tidak ada fight-or-flight response. Dia tenang. Terlalu tenang untuk mahasiswa yang harusnya panik.</p>`;
+      text += `<p class="journal"><em>Dua orang yang tidak takut di situasi yang seharusnya menakutkan. Ini bukan data biasa. Ini profil predator.</em></p>`;
+    } else if (pc === 'kira') {
+      text = `<p>Lo buka terminal di laptop. Speaker system mansion pakai protokol ZigBee — IoT standard. Lo nge-trace signal-nya dalam 30 detik.</p>`;
+      text += `<p>Source: device di sublevel B-2. Bukan lantai 1, bukan lantai 2. <em>Bawah</em>.</p>`;
+      text += `<p>Dan lo menemukan sesuatu lain — ada 4 device lain yang aktif di jaringan yang seharusnya cuma punya 1 router. Empat camera tersembunyi. Seseorang menonton.</p>`;
+      text += `<p class="journal"><em>Network map lengkap. Empat kamera. Satu controller di basement. Dan sebuah encrypted channel yang masih lo coba crack.</em></p>`;
+    } else if (pc === 'lana') {
+      text = `<p>Kau berjalan ke Galeri Timur duluan. Kau sudah tahu apa yang akan muncul di layar — karena kau yang menulis skenarionya.</p>`;
+      text += `<p>Tapi ada sesuatu yang berbeda. Layar ketiga dari kiri — itu bukan bagian dari naskahmu. Seseorang menambahkan konten tanpa sepengetahuanmu.</p>`;
+      text += `<p class="journal"><em>Sang Penenun mengubah naskahmu tanpa izin. Kau bukan satu-satunya dalang di permainan ini.</em></p>`;
+    } else if (pc === 'niko') {
+      text = `<p>Kau menarik lukisan kakekmu — potret Hendarto Wardhana — dan di baliknya ada panel rahasia. Kau sudah tahu ada sesuatu di sini sejak kecil.</p>`;
+      text += `<p>Di balik panel: jurnal kakekmu. Tulisan tangan, pudar oleh waktu. Dan satu halaman yang membuatmu berhenti bernapas — daftar nama. Sepuluh nama. Dan namamu ada di sana.</p>`;
+      text += `<p class="journal"><em>Kakekmu sudah merencanakan ini. Bahkan kau — cucunya sendiri — adalah bagian dari permainan.</em></p>`;
+    } else if (pc === 'vira') {
+      text = `<p>Kau tahu rute ini. Lorong servis di balik dinding timur — tersembunyi di balik panel kayu. Kau menemukannya enam bulan lalu, saat lari dari hal yang sama.</p>`;
+      text += `<p>Lorong membawamu ke observasi — jendela satu arah yang menghadap ke Galeri Timur. Dari sini, kau bisa melihat tanpa terlihat.</p>`;
+      text += `<p>Dan kau melihat sesuatu: <span class="speaker dimas">Dimas</span> mengambil sesuatu dari kantong — syringe kecil. Dia menyembunyikannya di balik jas. Tidak ada yang melihat. Kecuali kau.</p>`;
+      text += `<p class="journal"><em>Dimas membawa syringe. Dan kau tahu — dari pengalaman — bahwa syringe itu bukan untuk pertolongan pertama.</em></p>`;
+    } else if (pc === 'reza') {
+      text = `<p>Assessment perimeter. Kebiasaan lama. Kau memeriksa setiap pintu, setiap jendela, setiap exit point.</p>`;
+      text += `<p>Hasilnya menakutkan: semua jendela lantai 1 dikunci dari luar dengan baut — bukan kunci standar. Pintu utama: deadbolt elektronik, butuh kode. Pintu belakang dapur: dilas. Dilas.</p>`;
+      text += `<p>Ini bukan mansion. Ini penjara.</p>`;
+      text += `<p class="journal"><em>Zero exit points kecuali pintu utama yang controlled electronically. Siapapun yang mendesain ini — dia tidak ingin ada yang keluar sebelum waktunya.</em></p>`;
+    } else if (pc === 'farah') {
+      text = `<p>Safe room. Kakekmu — Aldridge yang mendanai pembangunan mansion ini — meminta safe room dibangun di lantai 2, sayap utara. Kau tahu kodenya.</p>`;
+      text += `<p>Kau berjalan ke sana. Dan menemukan safe room — utuh, terkunci, dengan supply untuk 48 jam. Tapi di dalam... sudah ada tanda-tanda penggunaan baru. Selimut, botol air, dan sebuah monitor yang menampilkan feed dari empat kamera tersembunyi di seluruh mansion.</p>`;
+      text += `<p class="journal"><em>Seseorang sudah menggunakan safe room keluargamu sebagai pusat kontrol. Kau tahu siapa yang punya akses — dan itu mempersempit tersangka.</em></p>`;
+    } else {
+      text = `<p>Kau menggunakan keahlianmu untuk mencari tahu lebih banyak tentang mansion ini. Hasilnya: clue baru yang membuka jalan investigasi baru.</p>`;
+    }
+    return text;
+  },
+  choices: [
+    {
+      text: "Kembali ke kelompok dan bagikan apa yang kau temukan",
+      next: 'ch1_gallery_east',
+      effect: (s) => {
+        s.flags.sharedCharacterIntel = true;
+        s.moralScore += 5;
+      }
+    },
+    {
+      text: "Simpan informasi ini untuk dirimu sendiri — belum waktunya",
+      next: 'ch1_gallery_east',
+      effect: (s) => {
+        s.flags.keptCharacterSecret = true;
+        Engine.modAwareness('arin', 5);
       }
     }
   ]

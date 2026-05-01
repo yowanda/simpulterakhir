@@ -31,6 +31,11 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - **Normal**: 2 killers (Lana + Dimas)
   - **Sulit**: 3 killers (Lana + Dimas + Niko)
 - **10 karakter** (5 main + 5 side) dengan profil mendalam dan hubungan kompleks
+- **Sistem pemilihan peran (roleplay)** — mainkan sebagai salah satu dari 10 karakter:
+  - Setiap karakter punya perspektif, dialog, dan inner monologue unik
+  - Pilihan eksklusif berdasarkan keahlian karakter (hacking, profiling, manipulasi, dll)
+  - Ending berubah sesuai perspektif karakter yang dimainkan
+  - Bermain sebagai killer (Lana/Dimas) memberikan pengalaman antagonist yang berbeda total
 - **Layer emosional mendalam:**
   - **Percintaan** — Arin↔Sera (unspoken love), Niko↔Vira (toxic ex), Juno↔Reza (unexpected connection), Dimas→Sera (obsesi), Lana↔Niko (seductive manipulation)
   - **Egoisme** — self-preservation vs group survival, setiap karakter punya harga
@@ -58,7 +63,7 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 
 > *"Setiap cerita punya kebenaran. Dan kebenaran tidak peduli apakah kau siap mendengarnya."*
 
-Protagonis — kamu. Host podcast investigasi "Thread by Thread". Diundang ke mansion karena episodenya tentang orang hilang yang terhubung dengan keluarga Wardhana. Insting jurnalisnya adalah kekuatan terbesar — dan target terbesar Sang Penenun.
+Investigator default. Host podcast investigasi "Thread by Thread". Diundang ke mansion karena episodenya tentang orang hilang yang terhubung dengan keluarga Wardhana. Insting jurnalisnya adalah kekuatan terbesar — dan target terbesar Sang Penenun. *Sebagai pemain: clue ekstra dan insting jurnalis tajam.*
 
 **Sifat:** Investigatif | Berani | Idealis | Kadang Keras Kepala
 
