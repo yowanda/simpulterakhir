@@ -938,6 +938,38 @@ const CharBrain = (() => {
           }
         }
 
+        // === PEMBURU PROTECTION: Killer tries to kill pemburu OR kill survivor with pemburu nearby → killer DIES ===
+        if (isAttackerKiller && gameState.pemburu && gameState.alive[gameState.pemburu]) {
+          const pemburu = gameState.pemburu;
+          const pemburuMind = allMinds[pemburu];
+          const pemburuHere = pemburuMind && pemburuMind.location === mind.location;
+          const targetIsPemburu = action.target === pemburu;
+
+          if (targetIsPemburu || pemburuHere) {
+            // Killer dies — pemburu protects
+            gameState.alive[mind.name] = false;
+            gameState.deathCount++;
+            if (!gameState.killersDead) gameState.killersDead = [];
+            if (!gameState.killersDead.includes(mind.name)) gameState.killersDead.push(mind.name);
+            if (!gameState.killerRevealed.includes(mind.name)) gameState.killerRevealed.push(mind.name);
+            // Pemburu revealed on first execution
+            if (!gameState.pemburuRevealed) {
+              gameState.pemburuRevealed = true;
+              // All survivors learn pemburu identity
+              Object.values(allMinds).forEach(m => {
+                if (gameState.alive[m.name] && m.name !== pemburu) {
+                  m.memory.push({ type: 'pemburu_revealed', pemburu: pemburu, round: mind.roundsSurvived });
+                }
+              });
+            }
+            const reason = targetIsPemburu
+              ? `${charName(mind.name)} mencoba membunuh ${charName(pemburu)}!`
+              : `${charName(mind.name)} mencoba membunuh ${charName(action.target)} di hadapan Pemburu!`;
+            return { type: 'pemburu_defense', pemburu: pemburu, killer: mind.name, target: action.target,
+              desc: `${reason} 🔫 ${charName(pemburu)} mengungkap diri sebagai Pemburu dan menembak ${charName(mind.name)}! ${charName(mind.name)} TEWAS. Identitas Pemburu kini diketahui semua survivor.` };
+          }
+        }
+
         // Can the target defend? Tool bonus affects defense
         const defenseChance = calculateDefense(action.target, gameState, allMinds);
         if (Math.random() < defenseChance) {
@@ -949,27 +981,6 @@ const CharBrain = (() => {
             targetMind.enemies.push(mind.name);
           }
           gameState.suspicion[mind.name] = Math.min(100, (gameState.suspicion[mind.name] || 0) + 22);
-
-          // === PEMBURU MECHANIC: If killer fails AND >1 protagonists alive → hunter eliminates killer ===
-          if (isAttackerKiller) {
-            const aliveProtags = Object.keys(allMinds).filter(n =>
-              n !== mind.name && gameState.alive[n] && !gameState.killers.includes(n)
-            );
-            if (aliveProtags.length > 1) {
-              // Pick random protagonist as hunter
-              const hunterName = aliveProtags[Math.floor(Math.random() * aliveProtags.length)];
-              // Hunter eliminates killer with pistol
-              gameState.alive[mind.name] = false;
-              gameState.deathCount++;
-              if (!gameState.killersDead) gameState.killersDead = [];
-              if (!gameState.killersDead.includes(mind.name)) gameState.killersDead.push(mind.name);
-              if (!gameState.killerRevealed.includes(mind.name)) gameState.killerRevealed.push(mind.name);
-              // Move hunter to killer's location
-              if (allMinds[hunterName]) allMinds[hunterName].location = mind.location;
-              return { type: 'hunter_kill', hunter: hunterName, killer: mind.name, target: action.target,
-                desc: `${charName(mind.name)} gagal membunuh ${charName(action.target)}! 🔫 ${charName(hunterName)} muncul sebagai Pemburu — menembak ${charName(mind.name)} dengan pistol! ${charName(mind.name)} TEWAS.` };
-            }
-          }
 
           return { type: 'attack_failed', attacker: mind.name, target: action.target,
             desc: `${charName(mind.name)} menyerang ${charName(action.target)}, tapi ${charName(action.target)} berhasil bertahan!` };
@@ -1841,6 +1852,19 @@ const CharBrain = (() => {
         if (!gameState.killers.includes(pc)) return { success: false };
         const targetMind = gameState.npcMinds[targetName];
         if (!targetMind || !gameState.alive[targetName]) return { success: false };
+        // PEMBURU PROTECTION: target is pemburu OR pemburu nearby → killer dies
+        if (gameState.pemburu && gameState.alive[gameState.pemburu]) {
+          const pemburuMind = gameState.npcMinds[gameState.pemburu];
+          const playerLoc = gameState.playerLocation || 'aula_utama';
+          const pemburuHere = pemburuMind && pemburuMind.location === playerLoc;
+          if (targetName === gameState.pemburu || pemburuHere) {
+            gameState.alive[pc] = false;
+            gameState.deathCount++;
+            if (!gameState.pemburuRevealed) gameState.pemburuRevealed = true;
+            return { success: false, pemburuKill: true,
+              desc: `🔫 ${charName(gameState.pemburu)} mengungkap diri sebagai Pemburu dan menembakmu! Kau TEWAS.` };
+          }
+        }
         const defense = calculateDefense(targetName, gameState, gameState.npcMinds);
         if (Math.random() < defense) {
           targetMind.suspicions[pc] = 100;
