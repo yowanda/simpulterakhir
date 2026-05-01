@@ -666,6 +666,25 @@ const CharBrain = (() => {
   }
 
   // ---- Pick a new location to move to (anti-loop: avoid current location) ----
+  // BFS distance between two locations
+  function bfsDistance(from, to) {
+    if (from === to) return 0;
+    const visited = new Set([from]);
+    const queue = [[from, 0]];
+    while (queue.length > 0) {
+      const [loc, dist] = queue.shift();
+      const neighbors = LOCATION_CONNECTIONS[loc] || [];
+      for (const n of neighbors) {
+        if (n === to) return dist + 1;
+        if (!visited.has(n)) {
+          visited.add(n);
+          queue.push([n, dist + 1]);
+        }
+      }
+    }
+    return Infinity;
+  }
+
   function pickNewLocation(mind) {
     const connections = LOCATION_CONNECTIONS[mind.location] || [];
     if (connections.length === 0) return null;
@@ -708,6 +727,53 @@ const CharBrain = (() => {
       const isNpcKiller = gameState.killers && gameState.killers.includes(name);
       if (isNpcKiller && mind.emotion !== 'executing' && Math.random() < 0.35) {
         return; // Killer hesitates — skips this round
+      }
+
+      // === KILLER PLAYER TRACKING: 30% chance killer locks onto player ===
+      if (isNpcKiller && Math.random() < 0.30) {
+        const playerLoc = gameState.playerLocation || 'aula_utama';
+        const killerLoc = mind.location;
+        if (killerLoc !== playerLoc) {
+          // Find path toward player
+          const connections = LOCATION_CONNECTIONS[killerLoc] || [];
+          // Pick the connected location closest to player (simple BFS step)
+          let bestMove = null;
+          let bestDist = Infinity;
+          connections.forEach(conn => {
+            const dist = bfsDistance(conn, playerLoc);
+            if (dist < bestDist) { bestDist = dist; bestMove = conn; }
+          });
+          if (bestMove) {
+            mind.target = pc;
+            const trackDecision = {
+              type: 'track_player',
+              desc: `${charName(name)} merasakan keberadaan ${charName(pc)} dan bergerak mendekat...`,
+              moveTo: bestMove,
+              target: pc,
+              priority: 90
+            };
+            recordAction(mind, trackDecision);
+            mind.lastAction = trackDecision;
+            actions.push({ character: name, action: trackDecision });
+            events.push({
+              type: 'track_player',
+              character: name,
+              desc: `${charName(name)} sedang memburu ${charName(pc)}... langkah kaki terdengar mendekat.`
+            });
+            return; // Skip normal decision — killer is tracking player
+          }
+        } else {
+          // Killer already at player location — escalate tension
+          if (mind.emotion === 'stalking') {
+            mind.emotion = 'hunting';
+            mind.tension = Math.max(mind.tension, 60);
+          }
+          events.push({
+            type: 'killer_nearby',
+            character: name,
+            desc: `Kamu merasakan hawa dingin... ${charName(name)} ada di dekatmu.`
+          });
+        }
       }
 
       // Make decision
@@ -1634,6 +1700,8 @@ const CharBrain = (() => {
       else if (event.type === 'killer_sabotage' || event.type === 'sabotage') icon = '\uD83D\uDCA3';
       else if (event.type === 'accusation') icon = '\u261D\uFE0F';
       else if (event.type === 'confrontation') icon = '\u26A1';
+      else if (event.type === 'track_player') icon = '\uD83D\uDC63';
+      else if (event.type === 'killer_nearby') icon = '\uD83D\uDE28';
 
       let cssClass = 'npc-event';
       if (event.type === 'death' || event.type === 'encounter_death') cssClass += ' npc-event-death';
@@ -1643,6 +1711,8 @@ const CharBrain = (() => {
       else if (event.type === 'framed' || event.type === 'manipulation') cssClass += ' npc-event-manipulation';
       else if (event.type === 'killer_sabotage') cssClass += ' npc-event-death';
       else if (event.type === 'tool_found') cssClass += ' npc-event-clue';
+      else if (event.type === 'track_player') cssClass += ' npc-event-track';
+      else if (event.type === 'killer_nearby') cssClass += ' npc-event-track';
 
       narrative += `<p class="${cssClass}">${icon} ${event.desc}</p>`;
     });
