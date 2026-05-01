@@ -1915,12 +1915,95 @@ const Engine = (() => {
 
     // --- KILLER ACTIONS (one-time per target per node) ---
     if (isK) {
+      const mySusp = gameState.suspicion[pc] || 0;
+      const isRevealed = (gameState.killerRevealed || []).includes(pc);
+      const nonKillerNearby = nearbyNpcs.filter(n => !gameState.killers.includes(n));
+
+      // === REVEALED KILLER: Priority flee/hide/desperate actions ===
+      if (isRevealed) {
+        // Flee to safety (highest priority when revealed)
+        if (nonKillerNearby.length >= 2 && !brainActionTaken('flee_revealed')) {
+          const connections = CharBrain.LOCATION_CONNECTIONS[playerLoc] || [];
+          const safeLoc = connections.find(loc => {
+            const npcsAtLoc = Object.keys(gameState.npcMinds || {}).filter(n =>
+              gameState.alive[n] && gameState.npcMinds[n] && gameState.npcMinds[n].location === loc && !gameState.killers.includes(n)
+            );
+            return npcsAtLoc.length === 0;
+          });
+          if (safeLoc) {
+            choices.push({
+              text: `KABUR ke ${CharBrain.locName(safeLoc)} — terlalu banyak survivor di sini!`,
+              type: 'brain-killer', category: 'escape',
+              danger: true,
+              hint: `Identitasmu terungkap! ${nonKillerNearby.length} survivor di sini — kamu akan dieksekusi jika tetap di sini!`,
+              risk: 15, reward: 95,
+              successChance: 90,
+              effect: (s) => {
+                recordBrainAction('flee_revealed');
+                s.playerLocation = safeLoc;
+                brainActionHistory = brainActionHistory.filter(a => !a.startsWith('investigate_') && !a.startsWith('hide_'));
+                Engine.notify(`Kau melarikan diri ke ${CharBrain.locName(safeLoc)}! Identitasmu sudah terungkap — bersembunyi adalah satu-satunya cara bertahan.`);
+              },
+              next: (s) => currentNodeId
+            });
+          }
+        }
+
+        // Hide when revealed and alone
+        if (nonKillerNearby.length === 0 && !brainActionTaken('hide_revealed_' + playerLoc)) {
+          choices.push({
+            text: `Bersembunyi di ${CharBrain.locName(playerLoc)} — tunggu kesempatan`,
+            type: 'brain-killer', category: 'hide',
+            hint: 'Identitasmu terungkap — bersembunyi sendirian satu-satunya pilihan aman',
+            risk: 5, reward: 60,
+            effect: (s) => {
+              recordBrainAction('hide_revealed_' + playerLoc);
+              s.dangerLevel = Math.max(0, s.dangerLevel - 5);
+              Engine.modSuspicion(pc, -5);
+              Engine.notify('Kau bersembunyi dalam kegelapan. Suspicion turun sedikit — tapi mereka masih memburumu.');
+            },
+            next: (s) => currentNodeId
+          });
+        }
+
+        // Last stand attack — desperate, high risk, only when alone with 1 target
+        if (nonKillerNearby.length === 1 && !brainActionTaken('laststand_' + nonKillerNearby[0])) {
+          const target = nonKillerNearby[0];
+          const lastStandChance = 30; // Much lower chance when revealed
+          choices.push({
+            text: `Serangan terakhir — habisi ${CharBrain.charName(target)} sebelum mereka melapor!`,
+            type: 'brain-killer', category: 'killer',
+            danger: true,
+            hint: `Serangan putus asa! Chance rendah (${lastStandChance}%) — gagal = kamu dieliminasi!`,
+            risk: 90, reward: 85,
+            successChance: lastStandChance,
+            effect: (s) => {
+              recordBrainAction('laststand_' + target);
+              const result = rollChance(lastStandChance, pc, 'offense');
+              if (result.success) {
+                Engine.killChar(target);
+                Engine.notify(`${CharBrain.charName(target)} dieliminasi dalam serangan putus asa! (${result.chance}%, roll: ${result.roll})`);
+              } else {
+                // Failed last stand = player exposed badly
+                Engine.modSuspicion(pc, 30);
+                if (s.playerStatus) s.playerStatus.wounded = true;
+                Engine.notify(`Serangan gagal total! ${CharBrain.charName(target)} membalas dan melaporkanmu! Suspicion +30%! (${result.chance}%, roll: ${result.roll})`);
+              }
+            },
+            next: (s) => currentNodeId
+          });
+        }
+      }
+
+      // === NORMAL KILLER ACTIONS (not revealed) ===
       // Strike target
-      const soloTarget = nearbyNpcs.find(n => !gameState.killers.includes(n) && !brainActionTaken('strike_' + n));
+      const soloTarget = !isRevealed ? nearbyNpcs.find(n => !gameState.killers.includes(n) && !brainActionTaken('strike_' + n)) : null;
       if (soloTarget && nearbyNpcs.filter(n => !gameState.killers.includes(n)).length <= 2) {
         const witnesses = nearbyNpcs.filter(n => n !== soloTarget && !gameState.killers.includes(n)).length;
         const isSilent = hasCharAbility(pc, 'silentKill');
-        const strikeChance = witnesses === 0 ? 50 : 25;
+        let strikeChance = witnesses === 0 ? 50 : 25;
+        // High suspicion reduces strike effectiveness
+        if (mySusp > 40) strikeChance = Math.max(10, strikeChance - Math.floor(mySusp / 10));
         const silentLabel = isSilent ? ' (silent kill)' : '';
         choices.push({
           text: `Serang ${CharBrain.charName(soloTarget)}${witnesses === 0 ? ' — tidak ada saksi...' + silentLabel : ' — ada risiko saksi!'}`,
@@ -1952,16 +2035,22 @@ const Engine = (() => {
       }
 
       // Sabotage other killer (killer vs killer self-preservation)
+      // More effective when revealed — betraying another killer diverts attention
       const otherKillers = nearbyNpcs.filter(n => gameState.killers.includes(n) && n !== pc && !brainActionTaken('sabotage_killer_' + n));
       if (otherKillers.length > 0 && gameState.chapter >= 2) {
         const rivalKiller = otherKillers[0];
-        const sabChance = 50;
+        const sabChance = isRevealed ? 65 : 50; // Higher chance when desperate
+        const sabRisk = isRevealed ? 40 : 70; // Lower risk when already exposed
+        const sabReward = isRevealed ? 95 : 85; // Higher reward — redirects heat
+        const sabHint = isRevealed
+          ? `Identitasmu sudah terungkap — korbankan ${CharBrain.charName(rivalKiller)} untuk mengalihkan perhatian!`
+          : 'Khianati killer lain agar kau satu-satunya yang selamat';
         choices.push({
           text: `Sabotase ${CharBrain.charName(rivalKiller)} — selamatkan diri sendiri`,
           type: 'brain-killer', category: 'stealth',
-          danger: true,
-          hint: 'Khianati killer lain agar kau satu-satunya yang selamat',
-          risk: 70, reward: 85,
+          danger: !isRevealed,
+          hint: sabHint,
+          risk: sabRisk, reward: sabReward,
           successChance: sabChance,
           effect: (s) => {
             recordBrainAction('sabotage_killer_' + rivalKiller);
@@ -2022,15 +2111,23 @@ const Engine = (() => {
       }
 
       // Manipulate/Frame (one-time per target) — chance-based with REAL consequences
-      if (nearbyNpcs.length > 0) {
+      // Revealed killers CANNOT frame (everyone already knows who you are)
+      if (nearbyNpcs.length > 0 && !isRevealed) {
         const frameTarget = nearbyNpcs.find(n => !gameState.killers.includes(n) && !brainActionTaken('frame_' + n));
         if (frameTarget) {
-          const frameChance = 45 + Math.floor(getCharAbility(pc, 'framingBonus') / 2);
+          // Frame chance degrades with suspicion — harder to frame when people already suspect you
+          let frameChance = 45 + Math.floor(getCharAbility(pc, 'framingBonus') / 2);
+          if (mySusp > 30) frameChance = Math.max(10, frameChance - Math.floor(mySusp / 4));
+          // Risk increases with suspicion — more likely to backfire
+          const frameRisk = Math.min(90, 50 + Math.floor(mySusp / 5));
+          // Reward decreases with suspicion — less effective when you're already suspected
+          const frameReward = Math.max(20, 70 - Math.floor(mySusp / 4));
+          const suspHint = mySusp > 50 ? ` | Kecurigaan tinggi (${mySusp}%) — framing berisiko gagal!` : '';
           choices.push({
             text: `Arahkan kecurigaan ke ${CharBrain.charName(frameTarget)} — framing`,
             type: 'brain-killer', category: 'stealth',
-            hint: `Chance: ${frameChance}% — target jadi musuh semua NPC, trust hancur, bisa di-trust-kill. Gagal = kamu yang dicurigai!`,
-            risk: 50, reward: 70,
+            hint: `Chance: ${frameChance}% — target jadi musuh semua NPC, trust hancur. Gagal = kamu yang dicurigai!${suspHint}`,
+            risk: frameRisk, reward: frameReward,
             successChance: frameChance,
             effect: (s) => {
               recordBrainAction('frame_' + frameTarget);
@@ -2220,20 +2317,88 @@ const Engine = (() => {
   }
 
   function calcRisk(choice) {
-    if (choice.risk !== undefined) return choice.risk;
+    if (choice.risk !== undefined) {
+      // Even explicit risk values get adjusted by role state
+      let risk = choice.risk;
+      const pc = playerChar();
+      const isK = isPlayerKiller();
+      const mySusp = state.suspicion[pc] || 0;
+      const revealed = isK && (state.killerRevealed || []).includes(pc);
+      const cat = detectCategory(choice);
+      // Revealed killer: all offensive actions become much riskier
+      if (revealed && ['killer', 'stealth', 'confront'].includes(cat)) {
+        risk = Math.min(100, risk + 20);
+      }
+      // High suspicion: stealth/frame actions get riskier
+      if (isK && mySusp > 50 && ['stealth', 'killer'].includes(cat)) {
+        risk = Math.min(100, risk + Math.floor(mySusp / 10));
+      }
+      return Math.min(risk, 100);
+    }
     const cat = detectCategory(choice);
     const baseRisk = { killer: 90, confront: 60, accuse: 55, escape: 50, investigate: 30, hack: 35, move: 20, social: 15, alliance: 10, observe: 10, protect: 40, negotiate: 25, hide: 20, stealth: 35, story: 5 };
     let risk = baseRisk[cat] || 15;
     if (choice.danger) risk = Math.max(risk, 75);
     if (state.dangerLevel > 50) risk += 10;
+    // Role-aware risk adjustments
+    const pc = playerChar();
+    const isK = isPlayerKiller();
+    if (isK) {
+      const mySusp = state.suspicion[pc] || 0;
+      const revealed = (state.killerRevealed || []).includes(pc);
+      // Revealed killer: offensive actions extremely risky
+      if (revealed && ['killer', 'stealth', 'confront'].includes(cat)) {
+        risk = Math.min(100, risk + 25);
+      } else if (mySusp > 50 && ['killer', 'stealth'].includes(cat)) {
+        risk = Math.min(100, risk + Math.floor(mySusp / 8));
+      }
+      // Defensive actions (flee, hide) become lower risk for exposed killers
+      if (revealed && ['hide', 'move', 'escape'].includes(cat)) {
+        risk = Math.max(5, risk - 10);
+      }
+    }
     return Math.min(risk, 100);
   }
 
   function calcReward(choice) {
-    if (choice.reward !== undefined) return choice.reward;
+    if (choice.reward !== undefined) {
+      let reward = choice.reward;
+      const pc = playerChar();
+      const isK = isPlayerKiller();
+      const mySusp = state.suspicion[pc] || 0;
+      const revealed = isK && (state.killerRevealed || []).includes(pc);
+      const cat = detectCategory(choice);
+      // Revealed killer: offensive actions less rewarding (everyone knows you)
+      if (revealed && ['stealth'].includes(cat)) {
+        reward = Math.max(10, reward - 25);
+      }
+      // High suspicion: framing less effective (people already suspicious of you)
+      if (isK && mySusp > 40 && cat === 'stealth') {
+        reward = Math.max(10, reward - Math.floor(mySusp / 5));
+      }
+      // Defensive actions more rewarding when exposed
+      if (revealed && ['hide', 'move', 'escape'].includes(cat)) {
+        reward = Math.min(100, reward + 20);
+      }
+      return reward;
+    }
     const cat = detectCategory(choice);
     const baseReward = { investigate: 80, accuse: 85, hack: 75, confront: 70, alliance: 65, social: 50, observe: 55, negotiate: 60, protect: 45, killer: 90, escape: 30, move: 20, hide: 15, stealth: 40, story: 35 };
-    return baseReward[cat] || 35;
+    let reward = baseReward[cat] || 35;
+    const pc = playerChar();
+    const isK = isPlayerKiller();
+    if (isK) {
+      const mySusp = state.suspicion[pc] || 0;
+      const revealed = (state.killerRevealed || []).includes(pc);
+      // Revealed: offensive is futile, defensive is smart
+      if (revealed) {
+        if (['stealth', 'killer'].includes(cat)) reward = Math.max(10, reward - 30);
+        if (['hide', 'move', 'escape'].includes(cat)) reward = Math.min(100, reward + 25);
+      } else if (mySusp > 40) {
+        if (cat === 'stealth') reward = Math.max(15, reward - Math.floor(mySusp / 5));
+      }
+    }
+    return reward;
   }
 
   function renderChoices(choices) {
