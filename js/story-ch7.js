@@ -1,6 +1,6 @@
 /* ============================================================
    SIMPUL TERAKHIR — BAB 7: Simpul Terakhir
-   Fajar menyingsing. Resolusi. Konsekuensi. Akhir.
+   Konfrontasi terakhir. Tapi malam belum berakhir.
    ============================================================ */
 
 const STORY_CH7 = {
@@ -8,8 +8,8 @@ const STORY_CH7 = {
 'ch7_start': {
   chapter: 7,
   text: (s) => {
-    let text = `<p class="narration">Fajar.</p>`;
-    text += `<p class="narration">Garis tipis merah di timur — seperti luka di kulit langit. Perlahan melebar, membasahi hutan pinus dengan cahaya yang terasa terlalu biasa untuk apa yang baru saja terjadi.</p>`;
+    let text = `<p class="narration">Tengah malam lewat.</p>`;
+    text += `<p class="narration">Jam dinding besar di aula berhenti berdentang. Keheningan yang tersisa lebih mengerikan dari suara apapun malam ini.</p>`;
 
     if (s.flags.outsideMansion) {
       if (s.flags.mansionBurned) {
@@ -26,8 +26,8 @@ const STORY_CH7 = {
     Engine.CHARACTERS.forEach(c => { if (s.alive[c]) survivors.push(Engine.CHAR_DISPLAY[c]); });
     text += survivors.join(', ') + `. ${survivors.length} jiwa dari sepuluh.</p>`;
 
-    text += `<p>Countdown: <strong>00:00:00</strong>.</p>`;
-    text += `<p>Malam sudah berakhir. Tapi cerita belum.</p>`;
+    text += `<p>Countdown: <strong>03:00:00</strong>.</p>`;
+    text += `<p>Tiga jam lagi sebelum fajar. Malam belum berakhir.</p>`;
 
     // Player character dawn moment
     const pc = s.playerCharacter || 'arin';
@@ -196,42 +196,20 @@ const STORY_CH7 = {
 'ch7_resolution': {
   chapter: 7,
   text: (s) => {
-    let text = `<p class="narration">Dan begitulah malam di Mansion Wardhana berakhir.</p>`;
-    text += `<p class="narration">Bukan dengan twist terakhir. Bukan dengan monster yang muncul di detik terakhir. Tapi dengan sinar matahari — biasa, sederhana, memalukan dalam normalitasnya — yang menerangi kekacauan yang ditinggalkan manusia.</p>`;
+    let text = `<p class="narration">Konfrontasi besar telah terjadi. Tapi malam belum berakhir.</p>`;
+    text += `<p class="narration">Di luar, langit masih gelap. Masih ada waktu. Masih ada darah yang harus ditumpahkan — atau nyawa yang harus diselamatkan.</p>`;
 
-    // Calculate final score
-    let score = 0;
-    score += s.moralScore;
-    score += s.cluesFound * 5;
-    let aliveCount = 0;
-    Engine.CHARACTERS.forEach(c => { if (s.alive[c]) aliveCount++; });
-    score += aliveCount * 15;
-    if (s.flags.broadcastSuccess) score += 30;
-    if (s.flags.capturedRagil) score += 25;
-    if (s.flags.hasCouncilData) score += 20;
-    if (s.flags.mansionBurned) score += 10;
-    s.finalScore = score;
+    let survivors = [];
+    Engine.CHARACTERS.forEach(c => { if (s.alive[c]) survivors.push(Engine.CHAR_DISPLAY[c]); });
+    text += `<p>Yang tersisa: ${survivors.join(', ')}. ${survivors.length} dari sepuluh.</p>`;
+    text += `<p>Permainan belum selesai. Tiga jam lagi sebelum fajar.</p>`;
 
-    // Route to appropriate ending
-    if (score >= 180) {
-      return text + `<p>Simpul terakhir — bukan simpul kematian. Tapi simpul yang mengikat keadilan.</p>`;
-    } else if (score >= 130) {
-      return text + `<p>Simpul terakhir — tidak sempurna. Tapi cukup kuat untuk menahan.</p>`;
-    } else if (score >= 80) {
-      return text + `<p>Simpul terakhir — rapuh. Mungkin cukup. Mungkin tidak.</p>`;
-    } else {
-      return text + `<p>Simpul terakhir — terlalu longgar. Dan simpul yang longgar... bisa terurai.</p>`;
-    }
+    return text;
   },
   choices: [
     {
-      text: "Lihat ending...",
-      next: (s) => {
-        if (s.finalScore >= 180) return 'ending_masterpiece';
-        if (s.finalScore >= 130) return 'ending_good';
-        if (s.finalScore >= 80) return 'ending_bittersweet';
-        return 'ending_pyrrhic';
-      }
+      text: "Lanjutkan ke fase berikutnya...",
+      next: 'ch8_start'
     }
   ]
 }

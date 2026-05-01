@@ -212,7 +212,11 @@ const CharBrain = (() => {
       trust_kill: 4,
       destroy_clue: 2, search_escape_clue: 2, attack_killer: 2
     };
-    mind.actionCooldowns[type] = cooldownMap[type] || 1;
+    let cd = cooldownMap[type] || 1;
+    // Escalation: reduce cooldowns in chapters 8-10
+    const chapter = (typeof Engine !== 'undefined' && Engine.state) ? Engine.state.chapter : 0;
+    if (chapter >= 8) cd = Math.max(1, cd - 1);
+    mind.actionCooldowns[type] = cd;
   }
 
   // ---- Anti-Looping: tick cooldowns each round ----
@@ -986,7 +990,7 @@ const CharBrain = (() => {
 
       case 'search_escape_clue': {
         if (!action.clueId || typeof Engine === 'undefined') return null;
-        const searchChance = 0.35 + (gameState.chapter * 0.05);
+        const searchChance = 0.35 + (gameState.chapter * 0.05) + getEscalationBonus(gameState);
         if (Math.random() < searchChance) {
           Engine.findEscapeClue(action.clueId);
           gameState.cluesFound = (gameState.cluesFound || 0) + 1;
@@ -1000,7 +1004,7 @@ const CharBrain = (() => {
         if (!action.target) return null;
         const targetMind = allMinds[action.target];
         if (!targetMind || !gameState.alive[action.target]) return null;
-        const atkChance = 0.35;
+        const atkChance = 0.35 + getEscalationBonus(gameState);
         if (Math.random() < atkChance) {
           gameState.alive[action.target] = false;
           gameState.deathCount++;
@@ -1019,7 +1023,7 @@ const CharBrain = (() => {
         if (!action.target) return null;
         const trustTarget = allMinds[action.target];
         if (!trustTarget || !gameState.alive[action.target]) return null;
-        const trustKillChance = 0.40;
+        const trustKillChance = 0.40 + getEscalationBonus(gameState);
         if (Math.random() < trustKillChance) {
           gameState.alive[action.target] = false;
           gameState.deathCount++;
@@ -1071,9 +1075,21 @@ const CharBrain = (() => {
     }
   }
 
+  // ---- Escalation Bonus (chapters 8-10) ----
+  function getEscalationBonus(gameState) {
+    const ch = gameState.chapter || 0;
+    if (ch >= 10) return 0.20;  // +20% kill/search in chapter 10
+    if (ch >= 9) return 0.15;   // +15% in chapter 9
+    if (ch >= 8) return 0.10;   // +10% in chapter 8
+    return 0;
+  }
+
   // ---- Defense Calculation ----
   function calculateDefense(targetName, gameState, allMinds) {
     let defense = 0.15; // Base 15% chance to survive
+    // Escalation: defense decreases in later chapters (harder to survive)
+    defense -= getEscalationBonus(gameState) * 0.5; // -5% at ch8, -7.5% at ch9, -10% at ch10
+    defense = Math.max(0.03, defense); // Minimum 3% defense
 
     // Courage adds defense
     const courage = gameState.courage ? gameState.courage[targetName] || 30 : 30;
@@ -1312,8 +1328,8 @@ const CharBrain = (() => {
       return result;
     }
 
-    // Dawn reached (chapter 7+) — game ends with current state
-    if (gameState.chapter >= 7) {
+    // Dawn reached (chapter 10+) — game ends with current state
+    if (gameState.chapter >= 10) {
       result.ended = true;
       result.type = allKillersDead ? 'win' : 'partial_win';
       result.reason = 'dawn_reached';
