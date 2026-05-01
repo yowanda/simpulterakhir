@@ -209,6 +209,7 @@ const CharBrain = (() => {
       coordinate_defense: 3, scout: 2, rally: 3, ambush: 3,
       secure_exit: 3, betray: 3, distract: 3, divide: 3,
       isolate: 2, eliminate: 1, strike: 1, share_clue: 2,
+      trust_kill: 4,
       destroy_clue: 2, search_escape_clue: 2, attack_killer: 2
     };
     mind.actionCooldowns[type] = cooldownMap[type] || 1;
@@ -380,6 +381,20 @@ const CharBrain = (() => {
       // Desperate betrayal
       if (deathCount >= 4 && canDo('betray') && !isAlone) {
         candidates.push({ type: 'betray', desc: `${charName(mind.name)} mempertimbangkan pengkhianatan demi survival.`, priority: 70 });
+      }
+    }
+
+    // LOW TRUST KILL: If NPC trusts another NPC very little, may kill them out of distrust
+    if (!isAlone && canDo('trust_kill') && deathCount >= 1 && mind.tension >= 50) {
+      const distrusted = nearby.find(n => {
+        if (gameState.killers.includes(n.name)) return false; // don't trigger trust-kill on actual killers (use attack_killer for that)
+        const tk = trustKeyFor(mind.name, n.name);
+        const trust = gameState.trust[tk];
+        if (trust === undefined) return false;
+        return trust <= 15 && mind.enemies.includes(n.name);
+      });
+      if (distrusted) {
+        candidates.push({ type: 'trust_kill', desc: `${charName(mind.name)} tidak lagi mempercayai ${charName(distrusted.name)}. "Kau salah satunya!" — ${charName(mind.name)} menyerang!`, target: distrusted.name, priority: 93 });
       }
     }
 
@@ -1000,6 +1015,40 @@ const CharBrain = (() => {
           desc: `${charName(mind.name)} menyerang ${charName(action.target)} tapi gagal!` };
       }
 
+      case 'trust_kill': {
+        if (!action.target) return null;
+        const trustTarget = allMinds[action.target];
+        if (!trustTarget || !gameState.alive[action.target]) return null;
+        const trustKillChance = 0.40;
+        if (Math.random() < trustKillChance) {
+          gameState.alive[action.target] = false;
+          gameState.deathCount++;
+          mind.killCount = (mind.killCount || 0) + 1;
+          // All nearby NPCs lose trust in the attacker
+          Object.values(allMinds).filter(m =>
+            m !== mind && m.location === mind.location && gameState.alive[m.name]
+          ).forEach(witness => {
+            const tk = trustKeyFor(mind.name, witness.name);
+            if (gameState.trust[tk] !== undefined) {
+              gameState.trust[tk] = Math.max(0, gameState.trust[tk] - 30);
+            }
+            witness.tension = Math.min(100, witness.tension + 25);
+          });
+          return { type: 'trust_kill', attacker: mind.name, victim: action.target,
+            desc: `${charName(mind.name)} menyerang ${charName(action.target)} karena ketidakpercayaan! "${charName(action.target)} pasti salah satu pembunuh!" — tapi ${charName(action.target)} bukan killer. Konflik memecah belah tim protagonis!` };
+        }
+        // Failed — tension rises, trust drops further
+        mind.tension += 20;
+        const failTk = trustKeyFor(mind.name, action.target);
+        if (gameState.trust[failTk] !== undefined) {
+          gameState.trust[failTk] = Math.max(0, gameState.trust[failTk] - 15);
+        }
+        trustTarget.tension += 20;
+        if (!trustTarget.enemies.includes(mind.name)) trustTarget.enemies.push(mind.name);
+        return { type: 'trust_conflict', attacker: mind.name, target: action.target,
+          desc: `${charName(mind.name)} mencoba menyerang ${charName(action.target)} karena curiga! ${charName(action.target)} berhasil menghindar — tapi kepercayaan hancur!` };
+      }
+
       case 'plan': {
         return null;
       }
@@ -1142,6 +1191,39 @@ const CharBrain = (() => {
       }
     }
 
+    // Trust-kill encounter: two survivors with very low trust may fight
+    if (killers.length === 0 && survivors.length >= 2 && gameState.deathCount >= 2) {
+      for (let i = 0; i < survivors.length; i++) {
+        for (let j = i + 1; j < survivors.length; j++) {
+          const a = allMinds[survivors[i]];
+          const b = allMinds[survivors[j]];
+          if (!a || !b) continue;
+          const tk = trustKeyFor(a.name, b.name);
+          const trust = gameState.trust[tk];
+          if (trust !== undefined && trust <= 10 && a.enemies.includes(b.name)) {
+            if (Math.random() < 0.25) {
+              const attacker = a.tension >= b.tension ? a : b;
+              const victim = attacker === a ? b : a;
+              const atkChance = 0.35;
+              if (Math.random() < atkChance) {
+                gameState.alive[victim.name] = false;
+                gameState.deathCount++;
+                attacker.killCount = (attacker.killCount || 0) + 1;
+                return { type: 'trust_kill', attacker: attacker.name, victim: victim.name,
+                  location, desc: `${charName(attacker.name)} menyerang ${charName(victim.name)} di ${locName(location)}! "AKU TIDAK PERCAYA KAU!" — konflik internal memecah belah tim protagonis!` };
+              } else {
+                attacker.tension += 15;
+                victim.tension += 15;
+                if (!victim.enemies.includes(attacker.name)) victim.enemies.push(attacker.name);
+                return { type: 'trust_conflict', attacker: attacker.name, target: victim.name,
+                  location, desc: `${charName(attacker.name)} dan ${charName(victim.name)} nyaris saling membunuh di ${locName(location)}! Ketidakpercayaan memecah belah kelompok!` };
+              }
+            }
+          }
+        }
+      }
+    }
+
     // Two survivors form alliance
     if (killers.length === 0 && survivors.length === 2 && gameState.deathCount > 0) {
       const a = allMinds[survivors[0]];
@@ -1193,13 +1275,13 @@ const CharBrain = (() => {
       return result;
     }
 
-    // Mansion escape triggered
+    // 8 clues found → all killers revealed & executed
     if (typeof Engine !== 'undefined' && Engine.canEscape && Engine.canEscape()) {
       result.ended = true;
       result.type = 'win';
       result.reason = 'mansion_escape';
-      result.title = 'Pelarian dari Mansion';
-      result.desc = 'Semua petunjuk terkumpul! Protagonis melarikan diri — killer terjebak di mansion.';
+      result.title = 'Petunjuk Terkumpul — Killer Terungkap!';
+      result.desc = '8 petunjuk ditemukan! Identitas semua killer terungkap — mereka dieksekusi oleh tim protagonis!';
       return result;
     }
 
@@ -1215,17 +1297,18 @@ const CharBrain = (() => {
       return result;
     }
 
-    // All escape clues destroyed → killer advantage
-    const totalClues = gameState.totalEscapeClues || 6;
+    // Killer destroyed/hid enough clues that protagonist can't reach 8
+    const totalClues = gameState.totalEscapeClues || 15;
     const destroyed = (gameState.destroyedClues || []).length;
     const found = (gameState.escapeClues || []).length;
-    const remaining = totalClues - destroyed - found;
-    if (remaining <= 0 && destroyed > 0 && found < totalClues && gameState.chapter >= 3) {
+    const cluesNeeded = gameState.cluesNeededToWin || 8;
+    const available = totalClues - destroyed;
+    if (available < cluesNeeded && found < cluesNeeded && gameState.chapter >= 3) {
       result.ended = true;
       result.type = isPlayerK ? 'win' : 'loss';
       result.reason = 'killer_clues_destroyed';
-      result.title = 'Petunjuk Dihancurkan';
-      result.desc = 'Semua petunjuk pelarian telah dihancurkan. Tidak ada jalan keluar dari mansion.';
+      result.title = 'Petunjuk Tidak Cukup';
+      result.desc = `Killer menghancurkan terlalu banyak petunjuk. Hanya ${available} tersisa — tidak cukup untuk mengungkap identitas killer.`;
       return result;
     }
 
@@ -1272,7 +1355,7 @@ const CharBrain = (() => {
 
     // Sort events by priority
     const sorted = roundResult.events.sort((a, b) => {
-      const priority = { death: 0, encounter_death: 0, witnessed_murder: 0, killer_eliminated: 0, witnessed_attack: 1, killer_sabotage: 1, attack_failed: 1, encounter_escape: 1, clue_destroyed: 1, escape_clue_found: 1, tool_found: 2, accusation: 2, alliance_formed: 3, alliance: 3, framed: 4, manipulation: 4, sabotage: 5, confrontation: 5, clue_found: 6 };
+      const priority = { death: 0, encounter_death: 0, witnessed_murder: 0, trust_kill: 0, killer_eliminated: 0, witnessed_attack: 1, trust_conflict: 1, killer_sabotage: 1, attack_failed: 1, encounter_escape: 1, clue_destroyed: 1, escape_clue_found: 1, tool_found: 2, accusation: 2, alliance_formed: 3, alliance: 3, framed: 4, manipulation: 4, sabotage: 5, confrontation: 5, clue_found: 6 };
       return (priority[a.type] || 10) - (priority[b.type] || 10);
     });
 

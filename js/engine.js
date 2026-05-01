@@ -221,7 +221,8 @@ const Engine = (() => {
       // Escape Clue System: survivors find clues to escape mansion
       escapeClues: [],           // Array of found escape clue IDs
       destroyedClues: [],        // Array of destroyed escape clue IDs (by killers)
-      totalEscapeClues: diff === 1 ? 5 : diff === 2 ? 6 : 7,  // Total needed to escape
+      totalEscapeClues: 15,            // 15 total clues in mansion
+      cluesNeededToWin: 8,             // Protagonist wins if 8 found before killers destroy them
       alliances: [],
       npcMinds: null,
       roundCount: 0,
@@ -289,13 +290,21 @@ const Engine = (() => {
 
   // ---- Escape Clue Locations ----
   const ESCAPE_CLUE_LOCATIONS = {
-    perpustakaan:      { id: 'esc_peta_mansion',    name: 'Peta Rahasia Mansion',    desc: 'Peta tua yang menunjukkan jalur rahasia keluar mansion.' },
-    basement:          { id: 'esc_kode_pintu',      name: 'Kode Pintu Darurat',      desc: 'Serangkaian angka yang tertulis di dinding — kode untuk pintu darurat.' },
-    bunker_b3:         { id: 'esc_blueprint',       name: 'Blueprint Terowongan',    desc: 'Cetak biru terowongan bawah tanah yang mengarah ke luar.' },
-    menara:            { id: 'esc_sinyal',          name: 'Frekuensi Radio Darurat', desc: 'Frekuensi radio yang bisa memanggil bantuan dari luar.' },
-    lorong_rahasia:    { id: 'esc_kunci_terowongan', name: 'Kunci Terowongan',       desc: 'Kunci berkarat yang membuka pintu terowongan pelarian.' },
-    ruang_penyimpanan: { id: 'esc_jurnal_pendiri',  name: 'Jurnal Pendiri',          desc: 'Jurnal Hendarto Wardhana yang mencatat semua jalan keluar mansion.' },
-    atap:              { id: 'esc_jalur_atap',      name: 'Jalur Pelarian Atap',     desc: 'Tangga darurat tersembunyi di sisi atap yang mengarah ke tebing.' }
+    perpustakaan:      { id: 'esc_peta_mansion',     name: 'Peta Rahasia Mansion',     desc: 'Peta tua yang menunjukkan jalur rahasia keluar mansion.' },
+    basement:          { id: 'esc_kode_pintu',       name: 'Kode Pintu Darurat',       desc: 'Serangkaian angka yang tertulis di dinding — kode untuk pintu darurat.' },
+    bunker_b3:         { id: 'esc_blueprint',        name: 'Blueprint Terowongan',     desc: 'Cetak biru terowongan bawah tanah yang mengarah ke luar.' },
+    menara:            { id: 'esc_sinyal',           name: 'Frekuensi Radio Darurat',  desc: 'Frekuensi radio yang bisa memanggil bantuan dari luar.' },
+    lorong_rahasia:    { id: 'esc_kunci_terowongan', name: 'Kunci Terowongan',         desc: 'Kunci berkarat yang membuka pintu terowongan pelarian.' },
+    ruang_penyimpanan: { id: 'esc_jurnal_pendiri',   name: 'Jurnal Pendiri',           desc: 'Jurnal Hendarto Wardhana yang mencatat semua jalan keluar mansion.' },
+    atap:              { id: 'esc_jalur_atap',       name: 'Jalur Pelarian Atap',      desc: 'Tangga darurat tersembunyi di sisi atap yang mengarah ke tebing.' },
+    dapur:             { id: 'esc_pintu_dapur',      name: 'Pintu Belakang Dapur',     desc: 'Kunci cadangan pintu belakang dapur yang mengarah ke halaman.' },
+    galeri_timur:      { id: 'esc_panel_galeri',     name: 'Panel Rahasia Galeri',     desc: 'Panel dinding tersembunyi yang membuka lorong ke luar.' },
+    taman_dalam:       { id: 'esc_pagar_taman',      name: 'Celah Pagar Taman',        desc: 'Celah di pagar taman yang cukup besar untuk lewat.' },
+    koridor_selatan:   { id: 'esc_ventilasi',        name: 'Peta Ventilasi',           desc: 'Skema ventilasi mansion — jalur keluar tersembunyi.' },
+    aula_utama:        { id: 'esc_dokumen_aula',     name: 'Dokumen Evakuasi',         desc: 'Dokumen prosedur evakuasi darurat mansion yang sudah lama dilupakan.' },
+    kamar_tamu:        { id: 'esc_catatan_tamu',     name: 'Catatan Tamu Lama',        desc: 'Catatan tamu sebelumnya yang berisi petunjuk jalur pelarian.' },
+    ruang_musik:       { id: 'esc_partitur',         name: 'Partitur Tersembunyi',     desc: 'Partitur musik yang jika dimainkan membuka pintu rahasia.' },
+    gudang:            { id: 'esc_kunci_gudang',     name: 'Kunci Gudang Luar',        desc: 'Kunci yang membuka gudang di luar mansion — akses ke jalan kabur.' }
   };
 
   // ---- Kill character ----
@@ -353,12 +362,13 @@ const Engine = (() => {
     }
   }
   function canEscape() {
-    const needed = state.totalEscapeClues || 6;
+    const needed = state.cluesNeededToWin || 8;
     return (state.escapeClues || []).length >= needed;
   }
   function triggerMansionEscape() {
-    // All killers auto-die when survivors escape
+    // 8+ clues found → all killers revealed and executed
     (state.killers || []).forEach(k => {
+      if (!state.killerRevealed.includes(k)) state.killerRevealed.push(k);
       if (state.alive[k]) {
         state.alive[k] = false;
         state.deathCount++;
@@ -487,8 +497,9 @@ const Engine = (() => {
     const killersAlive = (state.killers || []).filter(k => state.alive[k]).length;
     const totalKillers = (state.killers || []).length;
     const witnessedCount = (state.witnessedKillers || []).filter(k => state.alive[k]).length;
+    const cluesNeeded = state.cluesNeededToWin || 8;
     if (!isK) {
-      html += `<div class="ps-escape">Petunjuk: ${escFound}/${escTotal} | Killer: ${totalKillers - killersAlive}/${totalKillers}`;
+      html += `<div class="ps-escape">Petunjuk: ${escFound}/${cluesNeeded} (${escTotal} total) | Killer: ${totalKillers - killersAlive}/${totalKillers}`;
       if (witnessedCount > 0) html += ` | Diburu: ${witnessedCount}`;
       html += `</div>`;
     } else {
@@ -719,9 +730,9 @@ const Engine = (() => {
       winDesc = aliveSurvivors.length === 0
         ? 'Tim Killer menang! Tidak ada protagonis yang tersisa.'
         : `Tim Killer menang! Hanya ${CharBrain.charName(aliveSurvivors[0])} yang tersisa.`;
-    } else if (typeof Engine !== 'undefined' && canEscape && canEscape()) {
+    } else if (canEscape && canEscape()) {
       winner = 'protagonist';
-      winDesc = 'Tim Protagonis menang! Berhasil melarikan diri dari mansion — killer terjebak.';
+      winDesc = 'Tim Protagonis menang! 8 petunjuk ditemukan — semua killer terungkap dan dieksekusi!';
     } else {
       winner = result && result.type === 'win' ? (isK ? 'killer' : 'protagonist') : 'unresolved';
       winDesc = result ? result.desc : 'Permainan berakhir tanpa pemenang yang jelas.';
@@ -754,7 +765,8 @@ const Engine = (() => {
       roundCount: state.roundCount,
       deathCount: state.deathCount,
       escapeClues: (state.escapeClues || []).length,
-      totalEscapeClues: state.totalEscapeClues || 6,
+      totalEscapeClues: state.totalEscapeClues || 15,
+      cluesNeeded: state.cluesNeededToWin || 8,
       destroyedClues: (state.destroyedClues || []).length,
       charFates,
       deadChars,
@@ -790,7 +802,7 @@ const Engine = (() => {
     html += `<div class="result-stats">`;
     html += `<div class="stat-item"><span class="stat-label">Ronde</span><span class="stat-value">${data.roundCount}</span></div>`;
     html += `<div class="stat-item"><span class="stat-label">Tereliminasi</span><span class="stat-value">${data.deathCount}</span></div>`;
-    html += `<div class="stat-item"><span class="stat-label">Petunjuk</span><span class="stat-value">${data.escapeClues}/${data.totalEscapeClues}</span></div>`;
+    html += `<div class="stat-item"><span class="stat-label">Petunjuk</span><span class="stat-value">${data.escapeClues}/${data.cluesNeeded}</span></div>`;
     html += `<div class="stat-item"><span class="stat-label">Petunjuk Hancur</span><span class="stat-value">${data.destroyedClues}</span></div>`;
     html += `</div>`;
 
