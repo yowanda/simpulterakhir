@@ -11,8 +11,10 @@ const Engine = (() => {
   let brainActionCount = 0;
   let isBrainRevisit = false;
   let brainActionHistory = [];  // Track executed brain actions per node to prevent looping
-  const BRAIN_MAX_PER_NODE = 5; // Max brain actions per node — interactive gameplay first, plot supports ending
+  const BRAIN_MAX_PER_NODE = 5; // Max brain actions per node for survivor
+  const BRAIN_MAX_PER_NODE_KILLER = 3; // Max brain actions per node for killer — slower pacing
   const MAX_PLAYER_OPTIONS = 6; // Max choices shown to player per node — brain interactive first
+  const MAX_PLAYER_OPTIONS_KILLER = 4; // Killer gets fewer choices — less overwhelming
   let typingTimeout = null;
 
   // ---- 7 Unique Tools System ----
@@ -935,11 +937,12 @@ const Engine = (() => {
       choicesContainer.innerHTML = '';
       const storyChoices = (node.choices || []).slice();
       const allChoices = storyChoices.slice();
-      if (state.npcMinds && brainActionCount < BRAIN_MAX_PER_NODE) {
+      const brainMax = isPlayerKiller() ? BRAIN_MAX_PER_NODE_KILLER : BRAIN_MAX_PER_NODE;
+      if (state.npcMinds && brainActionCount < brainMax) {
         const dynamicChoices = generateDynamicChoices(state);
         dynamicChoices.forEach(c => allChoices.push(c));
       }
-      if (brainActionCount >= BRAIN_MAX_PER_NODE && storyChoices.length === 0) {
+      if (brainActionCount >= brainMax && storyChoices.length === 0) {
         const nextId = findNextStoryNode(nodeId);
         if (nextId) {
           allChoices.push({
@@ -1012,7 +1015,8 @@ const Engine = (() => {
       // Story choices first, then brain choices
       const storyChoices = (node.choices || []).slice();
       const allChoices = storyChoices.slice();
-      if (state.npcMinds && brainActionCount < BRAIN_MAX_PER_NODE) {
+      const brainMaxNorm = isPlayerKiller() ? BRAIN_MAX_PER_NODE_KILLER : BRAIN_MAX_PER_NODE;
+      if (state.npcMinds && brainActionCount < brainMaxNorm) {
         const dynamicChoices = generateDynamicChoices(state);
         dynamicChoices.forEach(c => allChoices.push(c));
       }
@@ -1570,7 +1574,9 @@ const Engine = (() => {
     if (connections.length > 0) {
       const shuffled = connections.slice().sort(() => Math.random() - 0.5);
       // Niko's ability: +1 extra movement option (knows secret passages)
-      const moveLimit = hasCharAbility(pc, 'extraMovement') ? 4 : 3;
+      // Killer players get fewer movement options (slower pacing)
+      const baseMove = isPlayerKiller() ? 2 : 3;
+      const moveLimit = hasCharAbility(pc, 'extraMovement') ? baseMove + 1 : baseMove;
       const moveDests = shuffled.slice(0, Math.min(moveLimit, shuffled.length));
       moveDests.forEach(loc => {
         if (brainActionTaken('move_' + loc)) return; // Don't show move to same loc twice
@@ -1736,7 +1742,8 @@ const Engine = (() => {
 
     // Limit player options — prioritize BRAIN interactive choices, then story
     let displayed = available;
-    if (displayed.length > MAX_PLAYER_OPTIONS) {
+    const maxOpts = isPlayerKiller() ? MAX_PLAYER_OPTIONS_KILLER : MAX_PLAYER_OPTIONS;
+    if (displayed.length > maxOpts) {
       const brain = displayed.filter(c => c.type === 'brain' || c.type === 'brain-killer');
       const story = displayed.filter(c => !c.type || c.type === 'story' || (!c.type?.startsWith('brain')));
       // Shuffle brain choices for variety each game
@@ -1746,8 +1753,8 @@ const Engine = (() => {
       }
       // Show 1 story choice max + fill rest with brain choices
       const storySlot = story.length > 0 ? 1 : 0;
-      displayed = story.slice(0, storySlot).concat(brain.slice(0, MAX_PLAYER_OPTIONS - storySlot));
-      displayed = displayed.slice(0, MAX_PLAYER_OPTIONS);
+      displayed = story.slice(0, storySlot).concat(brain.slice(0, maxOpts - storySlot));
+      displayed = displayed.slice(0, maxOpts);
     }
 
     displayed.forEach((choice, i) => {
