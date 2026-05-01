@@ -930,7 +930,7 @@ const CharBrain = (() => {
       }
 
       case 'frame': {
-        // Redirect suspicion to someone else — chance-based with real consequences
+        // Redirect suspicion to someone else — chance-based with REAL consequences
         const aliveNonKillers = Object.keys(allMinds).filter(n =>
           gameState.alive[n] && !gameState.killers.includes(n) && n !== mind.name
         );
@@ -938,20 +938,49 @@ const CharBrain = (() => {
           const framed = aliveNonKillers[Math.floor(Math.random() * aliveNonKillers.length)];
           const frameChance = 0.45 - getKillerPenalty(gameState);
           if (Math.random() < frameChance) {
-            gameState.suspicion[framed] = Math.min(100, (gameState.suspicion[framed] || 0) + 15);
-            gameState.suspicion[mind.name] = Math.max(0, (gameState.suspicion[mind.name] || 0) - 10);
-            // Nearby NPCs also start suspecting the framed target
+            // Heavy suspicion increase on framed target
+            const suspIncrease = 25 + Math.floor(Math.random() * 15);
+            gameState.suspicion[framed] = Math.min(100, (gameState.suspicion[framed] || 0) + suspIncrease);
+            gameState.suspicion[mind.name] = Math.max(0, (gameState.suspicion[mind.name] || 0) - 15);
+            // Nearby NPCs: suspicion + trust drop + mark as enemy
+            const affectedNpcs = [];
             Object.values(allMinds).forEach(m => {
               if (m.name !== mind.name && m.name !== framed && m.location === mind.location && gameState.alive[m.name]) {
-                m.suspicions[framed] = Math.min(100, (m.suspicions[framed] || 0) + 15);
+                m.suspicions[framed] = Math.min(100, (m.suspicions[framed] || 0) + 25);
+                // Trust between NPC and framed target drops hard
+                const tk = trustKeyFor(m.name, framed);
+                if (gameState.trust[tk] !== undefined) {
+                  gameState.trust[tk] = Math.max(0, gameState.trust[tk] - 20);
+                }
+                // If suspicion is high enough, mark as enemy → may trigger trust_kill later
+                if ((m.suspicions[framed] || 0) >= 50) {
+                  if (!m.enemies.includes(framed)) m.enemies.push(framed);
+                  affectedNpcs.push(charName(m.name));
+                }
+                // Remove framed from allies
+                m.allies = m.allies.filter(a => a !== framed);
               }
             });
+            // Framed target also loses trust toward others (confusion/isolation)
+            if (allMinds[framed]) {
+              allMinds[framed].tension = Math.min(100, allMinds[framed].tension + 15);
+              allMinds[framed].allies = allMinds[framed].allies.filter(a => a === mind.name || gameState.killers.includes(a));
+            }
+            const enemyNote = affectedNpcs.length > 0
+              ? ` ${affectedNpcs.join(', ')} sekarang MEMUSUHI ${charName(framed)}!`
+              : '';
             return { type: 'framed', framer: mind.name, victim: framed,
-              desc: `Kecurigaan meningkat terhadap ${charName(framed)}... NPC mulai curiga.` };
+              desc: `${charName(mind.name)} berhasil mengalihkan kecurigaan! Suspicion ${charName(framed)} +${suspIncrease}%, trust hancur.${enemyNote}` };
           } else {
-            gameState.suspicion[mind.name] = Math.min(100, (gameState.suspicion[mind.name] || 0) + 10);
+            // Failed: killer gets suspicion + nearby NPCs notice
+            gameState.suspicion[mind.name] = Math.min(100, (gameState.suspicion[mind.name] || 0) + 15);
+            Object.values(allMinds).forEach(m => {
+              if (m.name !== mind.name && m.location === mind.location && gameState.alive[m.name]) {
+                m.suspicions[mind.name] = Math.min(100, (m.suspicions[mind.name] || 0) + 10);
+              }
+            });
             return { type: 'frame_failed', framer: mind.name, victim: framed,
-              desc: `${charName(mind.name)} mencoba mengalihkan kecurigaan, tapi gerak-geriknya justru mencurigakan.` };
+              desc: `${charName(mind.name)} mencoba mengalihkan kecurigaan ke ${charName(framed)}, tapi gerak-geriknya justru mencurigakan! Suspicion ${charName(mind.name)} +15%.` };
           }
         }
         return null;
@@ -1124,8 +1153,25 @@ const CharBrain = (() => {
       }
 
       case 'divide': {
+        // Actually scatter nearby non-killer NPCs to random locations
+        const nearbyForDivide = Object.values(allMinds).filter(m =>
+          m !== mind && m.location === mind.location && gameState.alive[m.name] && !gameState.killers.includes(m.name)
+        );
+        const scattered = [];
+        nearbyForDivide.forEach(m => {
+          if (Math.random() < 0.6) {
+            const newLoc = pickNewLocation(m);
+            if (newLoc) {
+              m.location = newLoc;
+              scattered.push(charName(m.name));
+            }
+          }
+        });
+        const scatterMsg = scattered.length > 0
+          ? ` ${scattered.join(', ')} berpencar ke lokasi berbeda!`
+          : ' Tapi tidak ada yang bergerak.';
         return { type: 'group_divided', character: mind.name, location: mind.location,
-          desc: `${charName(mind.name)} memecah kelompok. Beberapa orang berpencar.` };
+          desc: `${charName(mind.name)} memecah kelompok.${scatterMsg}` };
       }
 
       case 'destroy_clue': {
@@ -1709,6 +1755,7 @@ const CharBrain = (() => {
     EMOTIONAL_STATES,
     GOAL_TYPES,
     charName,
-    locName
+    locName,
+    trustKeyFor
   };
 })();
