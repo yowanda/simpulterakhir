@@ -9,8 +9,8 @@ const STORY_CH2 = {
 'ch2_start': {
   chapter: 2,
   text: (s) => {
-    let text = `<p class="narration">Satu jam berlalu. Satu jam yang terasa seperti satu tahun.</p>`;
-    text += `<p>Speaker berderak:</p>`;
+    let text = `<p class="sound">— Satu jam berlalu. Satu jam yang terasa seperti satu tahun. —</p>`;
+    text += `<p class="sound">— Speaker berderak: —</p>`;
     text += `<p class="journal"><em>"Event kedua dimulai. Tema: Kepercayaan. Lokasi: Sayap Barat — Ruang Makan. Semua tamu diharapkan hadir. Ketidakhadiran akan... diperhitungkan."</em></p>`;
     // Player perspective
     const pc = s.playerCharacter || 'arin';
@@ -23,16 +23,16 @@ const STORY_CH2 = {
     else if (pc === 'farah') text += `<p class="journal"><em>Rahasia. Di meja ini ada rahasiamu — dan rahasiamu bisa menghancurkan segalanya. Kau harus mengendalikan narasi. Kau harus bernegosiasi.</em></p>`;
     else if (pc === 'vira') text += `<p class="journal"><em>Permainan ini... kau sudah pernah memainkannya. Enam bulan lalu. Dan hasilnya — seseorang mati.</em></p>`;
 
-    text += `<p>Kau menatap kelompokmu. Raut wajah mereka campuran antara takut dan determinasi. Semua orang bergerak ke Sayap Barat — bahkan yang paling ketakutan. Ancaman "diperhitungkan" cukup efektif.</p>`;
-    text += `<p>Ruang Makan Wardhana adalah mimpi buruk aristokrat. Meja panjang kayu gelap, sepuluh kursi, chandelier yang lebih kecil dari yang di hall tapi entah kenapa lebih menakutkan. Di tengah meja: sepuluh gelas kristal terisi cairan gelap — wine? — dan sepuluh piring tertutup cloche perak.</p>`;
+    text += `<p><span class="speaker arin">Arin</span> Kau menatap kelompokmu. Raut wajah mereka campuran antara takut dan determinasi. Semua orang bergerak ke Sayap Barat — bahkan yang paling ketakutan. Ancaman "diperhitungkan" cukup efektif.</p>`;
+    text += `<p><span class="speaker arin">Arin</span> Ruang Makan Wardhana adalah mimpi buruk aristokrat. Meja panjang kayu gelap, sepuluh kursi, chandelier yang lebih kecil dari yang di hall tapi entah kenapa lebih menakutkan. Di tengah meja: sepuluh gelas kristal terisi cairan gelap — wine? — dan sepuluh piring tertutup cloche perak.</p>`;
 
     if (s.flags.stoppedDimasTea || s.flags.tekoContaminated) {
-      text += `<p>Matamu langsung ke gelas-gelas. Dimas sudah pernah mencampurkan sesuatu ke minuman. Apakah ini juga...?</p>`;
+      text += `<p><span class="speaker dimas">Dimas</span> Matamu langsung ke gelas-gelas. Dimas sudah pernah mencampurkan sesuatu ke minuman. Apakah ini juga...?</p>`;
     }
 
-    text += `<p>Di kepala meja — kursi ke-11 yang Sera sebutkan tadi. Masih kosong. Tapi sekarang ada proyektor kecil yang menembakkan hologram wajah pria tua — Sang Penenun — ke dinding di belakang kursi.</p>`;
-    text += `<p>Speaker: <em>"Duduklah. Masing-masing di kursinya. Aturan Simpul Kedua sederhana: di bawah cloche kalian ada amplop. Di dalam amplop ada dua informasi — rahasia seseorang di meja ini, dan satu tuduhan palsu tentang orang lain. Tugas kalian: tentukan mana yang benar dan mana yang palsu. Kalian punya tiga puluh menit."</em></p>`;
-    text += `<p><em>"Tapi ada bonus: siapa yang berhasil mengidentifikasi semua kebenaran dan kebohongan dengan benar — mendapat akses ke lantai tiga."</em></p>`;
+    text += `<p><span class="speaker sera">Sera</span> Di kepala meja — kursi ke-11 yang Sera sebutkan tadi. Masih kosong. Tapi sekarang ada proyektor kecil yang menembakkan hologram wajah pria tua — Sang Penenun — ke dinding di belakang kursi.</p>`;
+    text += `<p><span class="speaker sera">Sera</span> Speaker: <em>"Duduklah. Masing-masing di kursinya. Aturan Simpul Kedua sederhana: di bawah cloche kalian ada amplop. Di dalam amplop ada dua informasi — rahasia seseorang di meja ini, dan satu tuduhan palsu tentang orang lain. Tugas kalian: tentukan mana yang benar dan mana yang palsu. Kalian punya tiga puluh menit."</em></p>`;
+    text += `<p><span class="speaker sera">Sera</span> <em>"Tapi ada bonus: siapa yang berhasil mengidentifikasi semua kebenaran dan kebohongan dengan benar — mendapat akses ke lantai tiga."</em></p>`;
 
     return text;
   },
@@ -65,19 +65,19 @@ const STORY_CH2 = {
 
 'ch2_check_drinks': {
   text: (s) => {
-    let text = `<p>"Jangan minum apapun!" Kau mengangkat gelasmu dan menciumnya. Wine. Tapi kau bukan sommelier.</p>`;
+    let text = `<p><span class="speaker sera">Sera</span> "Jangan minum apapun!" Kau mengangkat gelasmu dan menciumnya. Wine. Tapi kau bukan sommelier.</p>`;
     text += `<p><span class="speaker dimas">Dimas</span> menghampiri. "Aku bisa tes sederhana — reaksi kimia dasar." Dia mengeluarkan strip pH dari tasnya dan mencelupkannya.</p>`;
 
     if (s.flags.stoppedDimasTea || s.flags.sawDimasBottle) {
-      text += `<p>Kau menahan tangannya. "Kau. Menjauh dari minuman."</p>`;
-      text += `<p>Dimas menatapmu. Senyum sopannya tidak berubah. "Aku mencoba membantu, Arin."</p>`;
+      text += `<p class="sound">— Kau menahan tangannya. "Kau. Menjauh dari minuman." —</p>`;
+      text += `<p><span class="speaker arin">Arin</span> Dimas menatapmu. Senyum sopannya tidak berubah. "Aku mencoba membantu, Arin."</p>`;
       text += `<p><span class="speaker sera">Sera</span>: "Biar aku yang tes." Dia mengambil strip pH dari tangan Dimas.</p>`;
     }
 
-    text += `<p>Hasilnya: semua gelas berisi wine normal. Tidak ada anomali yang bisa dideteksi dengan tes sederhana.</p>`;
+    text += `<p><span class="speaker sera">Sera</span> Hasilnya: semua gelas berisi wine normal. Tidak ada anomali yang bisa dideteksi dengan tes sederhana.</p>`;
     text += `<p><span class="speaker reza">Reza</span>: "Tidak berarti aman. Beberapa substansi tidak terdeteksi dengan pH."</p>`;
-    text += `<p>"Jadi kita tidak minum," katamu.</p>`;
-    text += `<p>Speaker: <em>"Minum atau tidak minum — itu pilihan kalian. Tapi permainan tetap berjalan."</em></p>`;
+    text += `<p><span class="speaker reza">Reza</span> "Jadi kita tidak minum," katamu.</p>`;
+    text += `<p><span class="speaker reza">Reza</span> Speaker: <em>"Minum atau tidak minum — itu pilihan kalian. Tapi permainan tetap berjalan."</em></p>`;
 
     return text;
   },
@@ -93,10 +93,10 @@ const STORY_CH2 = {
 },
 
 'ch2_check_room': {
-  text: `<p>Kau memeriksa ruang makan. Pintu masuk dan keluar — hanya satu. Jendela — teralis. Dinding — solid.</p>
+  text: `<p><span class="speaker reza">Reza</span> Kau memeriksa ruang makan. Pintu masuk dan keluar — hanya satu. Jendela — teralis. Dinding — solid.</p>
 <p><span class="speaker kira">Kira</span> melakukan scan cepat di laptopnya. "Dua kamera tersembunyi — di chandelier dan di belakang lukisan di dinding utara. Dan... speaker di bawah meja."</p>
-<p>"Yang menarik," tambah Kira, "kunci pintu ruangan ini juga terhubung ke server. Bisa dikunci dari luar kapan saja."</p>
-<p>Kau menatap satu-satunya pintu. Kalau masuk dan pintu terkunci — terjebak lagi.</p>
+<p><span class="speaker kira">Kira</span> "Yang menarik," tambah Kira, "kunci pintu ruangan ini juga terhubung ke server. Bisa dikunci dari luar kapan saja."</p>
+<p class="sound">— Kau menatap satu-satunya pintu. Kalau masuk dan pintu terkunci — terjebak lagi. —</p>
 <p><span class="speaker reza">Reza</span>: "Aku jaga pintu. Dari luar. Kalau ada masalah, aku dobrak."</p>`,
   choices: [
     {
@@ -119,10 +119,10 @@ const STORY_CH2 = {
 
 'ch2_guard_outside': {
   text: (s) => {
-    let text = `<p>Kau berdiri di luar ruang makan. Yang lain masuk — kau bisa mendengar suara percakapan, perdebatan, melalui pintu.</p>`;
-    text += `<p>Lima menit berlalu. Lalu kau mendengar langkah kaki di koridor. Pelan. Dari arah sayap timur.</p>`;
+    let text = `<p><span class="speaker reza">Reza</span> Kau berdiri di luar ruang makan. Yang lain masuk — kau bisa mendengar suara percakapan, perdebatan, melalui pintu.</p>`;
+    text += `<p><span class="speaker reza">Reza</span> Lima menit berlalu. Lalu kau mendengar langkah kaki di koridor. Pelan. Dari arah sayap timur.</p>`;
     text += `<p>Kau bersembunyi di balik pilar dan melihat — <span class="speaker vira">Vira</span> berjalan melewatimu, menuju tangga ke lantai dua. Dia tidak menuju ruang makan. Dia pergi ke tempat lain.</p>`;
-    text += `<p>Dan dia membawa sesuatu — kunci. Kunci tua dari kuningan.</p>`;
+    text += `<p class="sound">— Dan dia membawa sesuatu — kunci. Kunci tua dari kuningan. —</p>`;
 
     return text;
   },
@@ -149,18 +149,18 @@ const STORY_CH2 = {
 
 'ch2_follow_vira': {
   text: `<p>Kau mengikuti <span class="speaker vira">Vira</span> ke lantai dua, lalu ke tangga sempit yang menuju lantai tiga — area yang seharusnya off-limits.</p>
-<p>Vira membuka pintu lantai tiga dengan kunci kuningan. Masuk. Kau menyelip sebelum pintu menutup.</p>
-<p>Lantai tiga mansion berbeda dari yang di bawah — lebih tua, lebih gelap, wallpaper yang terkelupas. Tiga ruangan: ruang kerja kakek Niko, kamar tidur tua, dan ruangan tanpa plakat.</p>
-<p>Vira masuk ke ruang kerja. Kau mengintip dari celah pintu.</p>
-<p>Ruang kerja penuh dengan buku, dokumen, dan di tengah — meja besar dengan peta mansion yang sama seperti yang kau temukan di dapur, tapi lebih detail. Garis-garis merah menghubungkan ruangan-ruangan tertentu. Notes bertebaran.</p>
-<p>Vira membuka laci bawah meja. Mengeluarkan sesuatu — hard drive eksternal. Menyimpannya di tasnya.</p>
-<p>Lalu dia berdiri dan berbicara — ke kamera kecil di sudut atas ruangan.</p>
-<p>"Aku melakukan apa yang kau minta. Hard drive-nya ada padaku." Jeda. "Sekarang lepaskan mereka."</p>
-<p>Tidak ada jawaban dari kamera.</p>
-<p>"Kau dengar aku? AKU SUDAH AMBIL HARD DRIVE-NYA!" Vira memukul meja. Suaranya pecah. "Lepaskan mereka. Kau janji—"</p>
-<p>Kamera berkedip merah. Lalu speaker kecil di meja berbunyi:</p>
+<p><span class="speaker vira">Vira</span> Vira membuka pintu lantai tiga dengan kunci kuningan. Masuk. Kau menyelip sebelum pintu menutup.</p>
+<p><span class="speaker niko">Niko</span> Lantai tiga mansion berbeda dari yang di bawah — lebih tua, lebih gelap, wallpaper yang terkelupas. Tiga ruangan: ruang kerja kakek Niko, kamar tidur tua, dan ruangan tanpa plakat.</p>
+<p><span class="speaker vira">Vira</span> Vira masuk ke ruang kerja. Kau mengintip dari celah pintu.</p>
+<p><span class="speaker vira">Vira</span> Ruang kerja penuh dengan buku, dokumen, dan di tengah — meja besar dengan peta mansion yang sama seperti yang kau temukan di dapur, tapi lebih detail. Garis-garis merah menghubungkan ruangan-ruangan tertentu. Notes bertebaran.</p>
+<p><span class="speaker vira">Vira</span> Vira membuka laci bawah meja. Mengeluarkan sesuatu — hard drive eksternal. Menyimpannya di tasnya.</p>
+<p class="sound">— Lalu dia berdiri dan berbicara — ke kamera kecil di sudut atas ruangan. —</p>
+<p><span class="speaker vira">Vira</span> "Aku melakukan apa yang kau minta. Hard drive-nya ada padaku." Jeda. "Sekarang lepaskan mereka."</p>
+<p class="sound">— Tidak ada jawaban dari kamera. —</p>
+<p><span class="speaker vira">Vira</span> "Kau dengar aku? AKU SUDAH AMBIL HARD DRIVE-NYA!" Vira memukul meja. Suaranya pecah. "Lepaskan mereka. Kau janji—"</p>
+<p class="sound">— Kamera berkedip merah. Lalu speaker kecil di meja berbunyi: —</p>
 <p class="journal"><em>"Simpul belum lengkap, Vira. Kau tahu aturannya. Tiga harus terputus sebelum fajar. Hard drive hanyalah satu bagian."</em></p>
-<p>Vira merosot ke kursi. Menangis.</p>`,
+<p><span class="speaker vira">Vira</span> Vira merosot ke kursi. Menangis.</p>`,
   shake: true,
   choices: [
     {
@@ -185,16 +185,16 @@ const STORY_CH2 = {
 },
 
 'ch2_vira_floor3_confront': {
-  text: `<p>Kau membuka pintu. Vira melompat berdiri, matanya lebar — ketakutan murni.</p>
-<p>"Arin—"</p>
-<p>"Siapa yang memaksamu? Lepaskan siapa?"</p>
-<p>Vira menelan air matanya. Butuh waktu — tapi dia bicara.</p>
-<p>"Adikku. Sana. Dia hilang tiga bulan lalu. Aku menerima pesan — dari nomor anonim — yang bilang dia aman, tapi aku harus melakukan apa yang diminta. Datang ke mansion. Ambil hard drive. Jangan bicara pada siapapun."</p>
-<p>"Dan tiga yang harus mati?"</p>
-<p>"Bukan aku yang memilih!" Suaranya rusak. "Sang Penenun yang memilih. Aku hanya — aku hanya alat. Dan aku benci diriku karena itu."</p>
-<p>Kau menatap hard drive di tasnya.</p>
-<p>"Apa yang ada di hard drive itu?"</p>
-<p>"Bukti. Tujuh tahun acara di mansion ini. Nama-nama korban. Nama-nama yang terlibat. Siapapun yang punya hard drive ini bisa menghancurkan — atau melanjutkan — siklus ini."</p>`,
+  text: `<p><span class="speaker vira">Vira</span> Kau membuka pintu. Vira melompat berdiri, matanya lebar — ketakutan murni.</p>
+<p><span class="speaker arin">Arin</span> "Arin—"</p>
+<p><span class="speaker arin">Arin</span> "Siapa yang memaksamu? Lepaskan siapa?"</p>
+<p><span class="speaker vira">Vira</span> Vira menelan air matanya. Butuh waktu — tapi dia bicara.</p>
+<p><span class="speaker vira">Vira</span> "Adikku. Sana. Dia hilang tiga bulan lalu. Aku menerima pesan — dari nomor anonim — yang bilang dia aman, tapi aku harus melakukan apa yang diminta. Datang ke mansion. Ambil hard drive. Jangan bicara pada siapapun."</p>
+<p><span class="speaker vira">Vira</span> "Dan tiga yang harus mati?"</p>
+<p><span class="speaker vira">Vira</span> "Bukan aku yang memilih!" Suaranya rusak. "Sang Penenun yang memilih. Aku hanya — aku hanya alat. Dan aku benci diriku karena itu."</p>
+<p class="sound">— Kau menatap hard drive di tasnya. —</p>
+<p><span class="speaker vira">Vira</span> "Apa yang ada di hard drive itu?"</p>
+<p><span class="speaker vira">Vira</span> "Bukti. Tujuh tahun acara di mansion ini. Nama-nama korban. Nama-nama yang terlibat. Siapapun yang punya hard drive ini bisa menghancurkan — atau melanjutkan — siklus ini."</p>`,
   choices: [
     {
       text: '"Berikan hard drive-nya padaku. Kita gunakan ini sebagai leverage."',
@@ -222,9 +222,9 @@ const STORY_CH2 = {
 },
 
 'ch2_play_dinner': {
-  text: `<p>Kalian duduk. Sepuluh orang. Sepuluh kursi. Sepuluh cloche.</p>
-<p>Kau membuka cloche-mu. Di bawahnya: amplop, dan — sebuah boneka kayu kecil yang menyerupaimu. Ukiran detail, miniatur sempurna. Menyeramkan.</p>
-<p>Semua orang membuka cloche mereka. Semua mendapat boneka masing-masing. Dan amplop.</p>`,
+  text: `<p class="sound">— Kalian duduk. Sepuluh orang. Sepuluh kursi. Sepuluh cloche. —</p>
+<p><span class="speaker vira">Vira</span> Kau membuka cloche-mu. Di bawahnya: amplop, dan — sebuah boneka kayu kecil yang menyerupaimu. Ukiran detail, miniatur sempurna. Menyeramkan.</p>
+<p><span class="speaker vira">Vira</span> Semua orang membuka cloche mereka. Semua mendapat boneka masing-masing. Dan amplop.</p>`,
   choices: [
     {
       text: "Baca amplopmu",
@@ -235,19 +235,19 @@ const STORY_CH2 = {
 
 'ch2_read_envelopes': {
   text: (s) => {
-    let text = `<p>Kau membuka amplop. Dua kartu:</p>`;
-    text += `<p>Kartu 1 — <em>"KEBENARAN atau KEBOHONGAN: Niko Wardhana secara sadar merencanakan event malam ini sebagai perangkap untuk mengumpulkan semua orang yang terhubung dengan dosa keluarganya."</em></p>`;
-    text += `<p>Kartu 2 — <em>"KEBENARAN atau KEBOHONGAN: Reza Hartono dipecat dari kepolisian karena membunuh tersangka yang ternyata tidak bersalah."</em></p>`;
-    text += `<p>Satu benar, satu palsu. Tapi mana?</p>`;
-    text += `<p>Di sekeliling meja, semua orang membaca kartu masing-masing. Ekspresi-ekspresi berubah — dan setiap ekspresi adalah cerita:</p>`;
+    let text = `<p class="sound">— Kau membuka amplop. Dua kartu: —</p>`;
+    text += `<p><span class="speaker niko">Niko</span> Kartu 1 — <em>"KEBENARAN atau KEBOHONGAN: Niko Wardhana secara sadar merencanakan event malam ini sebagai perangkap untuk mengumpulkan semua orang yang terhubung dengan dosa keluarganya."</em></p>`;
+    text += `<p><span class="speaker reza">Reza</span> Kartu 2 — <em>"KEBENARAN atau KEBOHONGAN: Reza Hartono dipecat dari kepolisian karena membunuh tersangka yang ternyata tidak bersalah."</em></p>`;
+    text += `<p class="sound">— Satu benar, satu palsu. Tapi mana? —</p>`;
+    text += `<p><span class="speaker reza">Reza</span> Di sekeliling meja, semua orang membaca kartu masing-masing. Ekspresi-ekspresi berubah — dan setiap ekspresi adalah cerita:</p>`;
     text += `<p><span class="speaker farah">Farah</span> menaruh kartunya di atas meja dengan tangan gemetar. "Ini... ini tidak adil." Suaranya pecah — armor pewaris retak. Di balik kemarahan, ada ketakutan seseorang yang tahu rahasianya hampir terbongkar. Matanya bergerak ke Niko — mencari sekutu, atau seseorang yang bisa dia beli kesetiaannya.</p>`;
     text += `<p><span class="speaker lana">Lana</span> membaca kartunya dan tersenyum — senyum yang membuat bulu kudukmu berdiri. Dalang menikmati permainan. Jarinya menelusuri tepi kartu seperti membelai naskah novel barunya. Di balik meja, kakinya menyentuh kaki Niko — dan kau melihat Niko tidak bergeser.</p>`;
     text += `<p><span class="speaker dimas">Dimas</span> membaca kartunya tanpa ekspresi. Tapi matanya — lagi-lagi — bergerak ke Sera. Saat Sera tidak melihat, Dimas menatapnya dengan intensitas yang melebihi ketertarikan normal. Kau mengenali tatapan itu dari kasus-kasus yang pernah kau liput: obsesi.</p>`;
     text += `<p><span class="speaker juno">Juno</span> meremas kartunya jadi bola. "Ini bullshit manipulatif." Suaranya keras, impulsif — Juno si pemantik konflik, yang selalu bereaksi dengan api. Reza di sebelahnya menyentuh lengannya pelan — gesture yang tenang, menenangkan. Juno berhenti. Mereka saling pandang selama satu detik. Lalu Juno menghembuskan napas.</p>`;
     text += `<p><span class="speaker vira">Vira</span> membaca kartunya dan tertawa kecil — tawa yang terlalu pelan, terlalu gelap. Eksentrik sampai di ujung. "Menarik," bisiknya. Matanya bertemu mata Niko dari ujung meja — dan di antara mereka, seluruh sejarah toxic love mereka mengalir: rindu, marah, sakit, dan sesuatu yang lebih berbahaya dari semua itu.</p>`;
     text += `<p><span class="speaker kira">Kira</span> sudah memfoto kartunya dan menjalankan sesuatu di laptopnya. "Font di kartu ini dicetak dengan printer laser. Kertas acid-free, 120 gram. Bukan barang murah." Eksentrik dan brilliant — Kira hidup di dunia detail yang tidak dilihat orang lain.</p>`;
-    text += `<p>Di bawah meja, kau merasakan tangan Sera menyentuh tanganmu. Bukan genggaman — hanya ujung jari yang bertemu. Komunikasi tanpa kata. <em>Aku di sini.</em></p>`;
-    text += `<p>Speaker: <em>"Diskusikanlah. Tiga puluh menit dimulai."</em></p>`;
+    text += `<p><span class="speaker sera">Sera</span> Di bawah meja, kau merasakan tangan Sera menyentuh tanganmu. Bukan genggaman — hanya ujung jari yang bertemu. Komunikasi tanpa kata. <em>Aku di sini.</em></p>`;
+    text += `<p class="sound">— Speaker: "Diskusikanlah. Tiga puluh menit dimulai." —</p>`;
 
     return text;
   },
@@ -286,10 +286,10 @@ const STORY_CH2 = {
 },
 
 'ch2_question_niko': {
-  text: `<p>"Niko." Kau menaruh kartumu di meja. "Apakah kau merencanakan ini?"</p>
+  text: `<p><span class="speaker niko">Niko</span> "Niko." Kau menaruh kartumu di meja. "Apakah kau merencanakan ini?"</p>
 <p><span class="speaker niko">Niko</span> menghela napas. Panjang. Berat.</p>
-<p>"Ya dan tidak." Dia menatap semua orang. "Aku merencanakan pameran seni. Aku merencanakan mengungkap dosa keluargaku. Tapi BUKAN seperti ini." Dia menunjuk boneka-boneka kayu. "Bukan dengan ancaman kematian dan kunci elektromagnetik."</p>
-<p>"Seseorang... membajak acaraku. Mengambil infrastruktur yang aku bangun — smart home, kamera, speaker — dan menggunakannya untuk ini. Aku host, tapi aku bukan dalang."</p>
+<p><span class="speaker niko">Niko</span> "Ya dan tidak." Dia menatap semua orang. "Aku merencanakan pameran seni. Aku merencanakan mengungkap dosa keluargaku. Tapi BUKAN seperti ini." Dia menunjuk boneka-boneka kayu. "Bukan dengan ancaman kematian dan kunci elektromagnetik."</p>
+<p><span class="speaker niko">Niko</span> "Seseorang... membajak acaraku. Mengambil infrastruktur yang aku bangun — smart home, kamera, speaker — dan menggunakannya untuk ini. Aku host, tapi aku bukan dalang."</p>
 <p><span class="speaker reza">Reza</span>: "Jadi kartumu tentang Niko... semi-benar. Dia merencanakan mengumpulkan orang, tapi bukan sebagai perangkap."</p>
 <p>"Atau itu yang dia ingin kita percaya," kata <span class="speaker lana">Lana</span> dari ujung meja.</p>`,
   choices: [
@@ -312,13 +312,13 @@ const STORY_CH2 = {
 
 'ch2_niko_passwords': {
   text: `<p><span class="speaker niko">Niko</span>: "Aku pakai sistem smart home profesional. Password kuat. Tapi..."</p>
-<p>"Tapi?"</p>
-<p>"Aku menyewa kontraktor IT untuk instalasinya. Tiga bulan lalu. Perusahaan kecil — referensi bagus. Tapi sekarang aku berpikir..." dia mengusap wajahnya, "...mereka punya akses ke semuanya selama instalasi."</p>
+<p><span class="speaker niko">Niko</span> "Tapi?"</p>
+<p><span class="speaker niko">Niko</span> "Aku menyewa kontraktor IT untuk instalasinya. Tiga bulan lalu. Perusahaan kecil — referensi bagus. Tapi sekarang aku berpikir..." dia mengusap wajahnya, "...mereka punya akses ke semuanya selama instalasi."</p>
 <p><span class="speaker kira">Kira</span> mengangkat tangan. "Nama perusahaan?"</p>
-<p>"PT Benang Digital."</p>
-<p>Kira mengetik di laptopnya. "Registrasi perusahaan... tidak ada. PT Benang Digital tidak terdaftar di database manapun."</p>
+<p><span class="speaker kira">Kira</span> "PT Benang Digital."</p>
+<p><span class="speaker kira">Kira</span> Kira mengetik di laptopnya. "Registrasi perusahaan... tidak ada. PT Benang Digital tidak terdaftar di database manapun."</p>
 <p>"Benang," bisik <span class="speaker sera">Sera</span>. "Penenun. Benang. Ini semua tentang benang dan simpul."</p>
-<p>Keheningan.</p>`,
+<p class="sound">— Keheningan. —</p>`,
   choices: [
     {
       text: "Lanjut ke diskusi utama",
@@ -333,12 +333,12 @@ const STORY_CH2 = {
 },
 
 'ch2_question_reza': {
-  text: `<p>"Reza. Kartuku menyebut kau dipecat dari kepolisian."</p>
+  text: `<p><span class="speaker reza">Reza</span> "Reza. Kartuku menyebut kau dipecat dari kepolisian."</p>
 <p><span class="speaker reza">Reza</span> menatapmu. Tidak marah — tapi ada luka lama di matanya.</p>
-<p>"Sebagian benar." Dia menarik napas. "Aku tidak dipecat karena membunuh. Aku dipecat karena menolak menutup kasus. Kasus serial killer yang melibatkan orang-orang berpengaruh. Aku disingkirkan karena terlalu dekat dengan kebenaran."</p>
-<p>"Dan tersangka yang tidak bersalah?"</p>
-<p>"Ada orang yang dipenjara untuk kasus itu. Orang yang aku yakin tidak bersalah. Dan orang itu..." suaranya turun, "...meninggal di penjara. Setahun lalu."</p>
-<p>Reza menatap gelasnya. "Kartumu setengah benar, setengah twist. Itulah cara manipulasi terbaik — campurkan kebenaran dengan kebohongan supaya kau tidak bisa membedakannya."</p>`,
+<p><span class="speaker reza">Reza</span> "Sebagian benar." Dia menarik napas. "Aku tidak dipecat karena membunuh. Aku dipecat karena menolak menutup kasus. Kasus serial killer yang melibatkan orang-orang berpengaruh. Aku disingkirkan karena terlalu dekat dengan kebenaran."</p>
+<p><span class="speaker reza">Reza</span> "Dan tersangka yang tidak bersalah?"</p>
+<p><span class="speaker reza">Reza</span> "Ada orang yang dipenjara untuk kasus itu. Orang yang aku yakin tidak bersalah. Dan orang itu..." suaranya turun, "...meninggal di penjara. Setahun lalu."</p>
+<p><span class="speaker reza">Reza</span> Reza menatap gelasnya. "Kartumu setengah benar, setengah twist. Itulah cara manipulasi terbaik — campurkan kebenaran dengan kebohongan supaya kau tidak bisa membedakannya."</p>`,
   choices: [
     {
       text: "Lanjut ke diskusi utama — semua orang perlu bicara",
@@ -352,12 +352,12 @@ const STORY_CH2 = {
 },
 
 'ch2_share_cards': {
-  text: `<p>"Ayo kita buka semua kartu. Transparan. Kalau kita saling curiga, Sang Penenun menang."</p>
-<p>Satu per satu, kartu dibuka. Kekacauan informasi:</p>
-<p>• Sera mendapat: "Juno pernah terlibat penyelundupan obat" (PALSU — Juno bersih, tapi pernah mural di area itu) dan "Vira dikurung selama menghilang, bukan pergi sukarela" (BENAR).</p>
-<p>• Juno mendapat: "Sera pernah gagal mencegah bunuh diri pasien" (BENAR — trauma terbesarnya) dan "Farah meracuni kakeknya untuk warisan" (PALSU — tapi Farah gemetar saat mendengarnya).</p>
-<p>• Lana mendapat: "Niko tahu tentang Sang Penenun sejak awal" (PALSU — setengah) dan "Kira pernah meretas bank dan mencuri data" (BENAR — tapi sebagai whistleblower).</p>
-<p>Pola muncul. Setiap kartu dirancang untuk memecah dua orang yang dekat. Sera vs Juno. Niko vs kelompok. Farah vs kepercayaan.</p>
+  text: `<p><span class="speaker reza">Reza</span> "Ayo kita buka semua kartu. Transparan. Kalau kita saling curiga, Sang Penenun menang."</p>
+<p class="sound">— Satu per satu, kartu dibuka. Kekacauan informasi: —</p>
+<p><span class="speaker sera">Sera</span> • Sera mendapat: "Juno pernah terlibat penyelundupan obat" (PALSU — Juno bersih, tapi pernah mural di area itu) dan "Vira dikurung selama menghilang, bukan pergi sukarela" (BENAR).</p>
+<p><span class="speaker sera">Sera</span> • Juno mendapat: "Sera pernah gagal mencegah bunuh diri pasien" (BENAR — trauma terbesarnya) dan "Farah meracuni kakeknya untuk warisan" (PALSU — tapi Farah gemetar saat mendengarnya).</p>
+<p><span class="speaker niko">Niko</span> • Lana mendapat: "Niko tahu tentang Sang Penenun sejak awal" (PALSU — setengah) dan "Kira pernah meretas bank dan mencuri data" (BENAR — tapi sebagai whistleblower).</p>
+<p><span class="speaker niko">Niko</span> Pola muncul. Setiap kartu dirancang untuk memecah dua orang yang dekat. Sera vs Juno. Niko vs kelompok. Farah vs kepercayaan.</p>
 <p><span class="speaker sera">Sera</span>: "Ini bukan permainan informasi. Ini psyops. Serangan psikologis untuk menghancurkan kelompok dari dalam."</p>`,
   choices: [
     {
@@ -382,7 +382,7 @@ const STORY_CH2 = {
 },
 
 'ch2_observe_dinner': {
-  text: `<p>Kau diam. Mengamati. Sementara yang lain bicara, berdebat, menuduh — kau membaca ruangan.</p>
+  text: `<p><span class="speaker sera">Sera</span> Kau diam. Mengamati. Sementara yang lain bicara, berdebat, menuduh — kau membaca ruangan.</p>
 <p><span class="speaker lana">Lana</span>: tenang, menulis di notes. Terlalu tenang. Dia menganggap ini sebagai material, bukan ancaman.</p>
 <p><span class="speaker dimas">Dimas</span>: senyum yang sama, postur yang sama. Tapi tangannya — di bawah meja, di saku jas, memegang sesuatu.</p>
 <p><span class="speaker farah">Farah</span>: makin panik. Minum wine meski kau memperingatkan — dua gelas sudah. Tangannya gemetar.</p>
@@ -413,22 +413,22 @@ const STORY_CH2 = {
 
 'ch2_save_farah_drink': {
   text: (s) => {
-    let text = `<p>Kau meraih gelas Farah. "Jangan minum lagi."</p>`;
+    let text = `<p><span class="speaker farah">Farah</span> Kau meraih gelas Farah. "Jangan minum lagi."</p>`;
     text += `<p><span class="speaker farah">Farah</span>: "Apa—"</p>`;
-    text += `<p>"Gelasmu terisi lebih banyak dari yang lain. Seseorang menambahkan sesuatu."</p>`;
-    text += `<p>Hening di meja.</p>`;
+    text += `<p><span class="speaker farah">Farah</span> "Gelasmu terisi lebih banyak dari yang lain. Seseorang menambahkan sesuatu."</p>`;
+    text += `<p class="sound">— Hening di meja. —</p>`;
     text += `<p><span class="speaker dimas">Dimas</span> berdiri. "Biar aku tes." Dia meraih gelasnya.</p>`;
 
     if (s.flags.stoppedDimasTea || s.flags.sawDimasBottle) {
-      text += `<p>"JANGAN SENTUH!" teriakmu. "Kau yang terakhir terlihat memegang botol tanpa label di basement."</p>`;
-      text += `<p>Semua mata ke Dimas. Dia membeku.</p>`;
-      text += `<p>"Itu... obat herbal. Valerian."</p>`;
+      text += `<p><span class="speaker dimas">Dimas</span> "JANGAN SENTUH!" teriakmu. "Kau yang terakhir terlihat memegang botol tanpa label di basement."</p>`;
+      text += `<p><span class="speaker dimas">Dimas</span> Semua mata ke Dimas. Dia membeku.</p>`;
+      text += `<p><span class="speaker dimas">Dimas</span> "Itu... obat herbal. Valerian."</p>`;
       text += `<p><span class="speaker reza">Reza</span> mengambil gelas dari tanganmu dan menciumnya. "Ini bukan valerian." Wajahnya mengeras. "Ini midazolam. Sedatif kuat. Dosis yang ada di gelas ini cukup untuk membuat orang tidak sadar selama berjam-jam."</p>`;
       text += `<p><span class="speaker dimas">Dimas</span> mundur. "Itu bukan aku—"</p>`;
     } else {
       text += `<p><span class="speaker reza">Reza</span> mengambil gelas dari tanganmu, menciumnya. Alisnya terangkat. "Ada sesuatu selain wine di sini."</p>`;
-      text += `<p>"Tapi siapa...?" Farah menatap ke sekeliling meja.</p>`;
-      text += `<p>Tidak ada yang menjawab.</p>`;
+      text += `<p><span class="speaker farah">Farah</span> "Tapi siapa...?" Farah menatap ke sekeliling meja.</p>`;
+      text += `<p class="sound">— Tidak ada yang menjawab. —</p>`;
     }
 
     return text;
@@ -447,12 +447,12 @@ const STORY_CH2 = {
 },
 
 'ch2_vira_missing': {
-  text: `<p>"Di mana Vira?"</p>
-<p>Semua menoleh ke kursi Vira — kosong.</p>
+  text: `<p><span class="speaker vira">Vira</span> "Di mana Vira?"</p>
+<p><span class="speaker vira">Vira</span> Semua menoleh ke kursi Vira — kosong.</p>
 <p><span class="speaker niko">Niko</span>: "Dia di sini tadi. Waktu kita masuk."</p>
-<p>"Tapi sekarang tidak." Kau berdiri. "Siapa yang melihatnya terakhir?"</p>
+<p><span class="speaker niko">Niko</span> "Tapi sekarang tidak." Kau berdiri. "Siapa yang melihatnya terakhir?"</p>
 <p><span class="speaker juno">Juno</span>: "Gue liat dia keluar ke koridor. Sebelum speaker mulai."</p>
-<p>Speaker berderak: <em>"Ah. Salah satu pemain memilih untuk bermain di luar board. Menarik. Apakah kalian akan mencarinya — atau fokus pada permainan di depan kalian?"</em></p>`,
+<p><span class="speaker juno">Juno</span> Speaker berderak: <em>"Ah. Salah satu pemain memilih untuk bermain di luar board. Menarik. Apakah kalian akan mencarinya — atau fokus pada permainan di depan kalian?"</em></p>`,
   choices: [
     {
       text: "Cari Vira — keselamatan lebih penting dari permainan",
@@ -474,22 +474,22 @@ const STORY_CH2 = {
 
 'ch2_search_vira': {
   text: (s) => {
-    let text = `<p>"Aku cari Vira. Juno, ikut. Yang lain tetap di sini."</p>`;
+    let text = `<p><span class="speaker juno">Juno</span> "Aku cari Vira. Juno, ikut. Yang lain tetap di sini."</p>`;
     text += `<p>Kau dan <span class="speaker juno">Juno</span> keluar ke koridor. Gelap — lampu berkedip dengan interval tidak teratur.</p>`;
-    text += `<p>Kalian menyusuri sayap barat, naik tangga ke lantai dua. Di ujung koridor — pintu kamar tamu terbuka. Cahaya dari dalam.</p>`;
+    text += `<p><span class="speaker juno">Juno</span> Kalian menyusuri sayap barat, naik tangga ke lantai dua. Di ujung koridor — pintu kamar tamu terbuka. Cahaya dari dalam.</p>`;
     text += `<p><span class="speaker vira">Vira</span> ada di dalam. Duduk di lantai. Di depannya: laptop yang terbuka, menampilkan feed CCTV dari seluruh mansion.</p>`;
-    text += `<p>"Vira."</p>`;
-    text += `<p>Dia tidak terkejut. "Aku tahu kalian akan datang." Dia menunjuk layar. "Lihat."</p>`;
-    text += `<p>Di salah satu feed — ruang makan, dari sudut yang kalian tidak tahu ada kameranya — terlihat jelas: seseorang memasukkan sesuatu ke gelas Farah. Rekamannya grainy tapi gesture-nya jelas.</p>`;
+    text += `<p><span class="speaker vira">Vira</span> "Vira."</p>`;
+    text += `<p class="sound">— Dia tidak terkejut. "Aku tahu kalian akan datang." Dia menunjuk layar. "Lihat." —</p>`;
+    text += `<p><span class="speaker farah">Farah</span> Di salah satu feed — ruang makan, dari sudut yang kalian tidak tahu ada kameranya — terlihat jelas: seseorang memasukkan sesuatu ke gelas Farah. Rekamannya grainy tapi gesture-nya jelas.</p>`;
 
     if (s.difficulty >= 2) {
       text += `<p>Orang yang memasukkan sesuatu ke gelas itu: <span class="speaker dimas">Dimas</span>. Gerakan halus, tangan di bawah meja, botol kecil.</p>`;
-      text += `<p>"Dimas," kata Juno pelan.</p>`;
-      text += `<p>"Ya," kata Vira. "Dan dia bukan satu-satunya. Lihat feed lain."</p>`;
+      text += `<p><span class="speaker juno">Juno</span> "Dimas,"  pelan.</p>`;
+      text += `<p><span class="speaker vira">Vira</span> "Ya," . "Dan dia bukan satu-satunya. Lihat feed lain."</p>`;
       text += `<p>Feed dari perpustakaan: <span class="speaker lana">Lana</span> membuka panel tersembunyi di belakang rak buku. Di dalamnya — walkie-talkie dan serangkaian notes. Dia berbicara ke walkie-talkie, tapi tanpa audio, kau tidak bisa tahu apa yang dia katakan.</p>`;
     } else {
-      text += `<p>Tapi wajah orang itu tidak terlihat jelas — angle kamera menutupi identitasnya.</p>`;
-      text += `<p>"Aku mencoba enhance," kata Vira, "tapi kualitas CCTV ini sengaja direndahkan."</p>`;
+      text += `<p class="sound">— Tapi wajah orang itu tidak terlihat jelas — angle kamera menutupi identitasnya. —</p>`;
+      text += `<p><span class="speaker vira">Vira</span> "Aku mencoba enhance," , "tapi kualitas CCTV ini sengaja direndahkan."</p>`;
     }
 
     return text;
@@ -513,30 +513,30 @@ const STORY_CH2 = {
 
 'ch2_dinner_discussion': {
   text: (s) => {
-    let text = `<p>Kelompok kembali bersama — atau apa yang tersisa dari kebersamaan. Diskusi menjadi debat. Debat menjadi pertengkaran.</p>`;
+    let text = `<p><span class="speaker vira">Vira</span> Kelompok kembali bersama — atau apa yang tersisa dari kebersamaan. Diskusi menjadi debat. Debat menjadi pertengkaran.</p>`;
 
     if (s.flags.unitedGroup) {
-      text += `<p>Upayamu untuk menjaga kesatuan berhasil — sampai sekarang. Tapi retakan mulai terlihat.</p>`;
+      text += `<p><span class="speaker vira">Vira</span> Upayamu untuk menjaga kesatuan berhasil — sampai sekarang. Tapi retakan mulai terlihat.</p>`;
     }
 
     text += `<p><span class="speaker juno">Juno</span> menunjuk <span class="speaker lana">Lana</span>. "Semua jari menunjuk ke lu dan Dimas. Jelaskan."</p>`;
     text += `<p><span class="speaker lana">Lana</span>: "Aku penulis. Dimas konsultan medis-ku. Kami berdua diundang secara terpisah oleh Niko. Dan aku muak dituduh tanpa bukti."</p>`;
 
     if (s.flags.cctvProofDimas) {
-      text += `<p>"Tanpa bukti?" Kau mengangkat laptop Vira yang menampilkan rekaman. "CCTV menunjukkan Dimas memasukkan sesuatu ke gelas Farah."</p>`;
-      text += `<p>Dimas menatap layar. Untuk pertama kali, senyumnya lenyap.</p>`;
-      text += `<p>"Itu... itu bukan aku—"</p>`;
-      text += `<p>"Itu JELAS kau," potong Reza. "Gesture, posisi duduk, timing. Itu kau."</p>`;
+      text += `<p><span class="speaker vira">Vira</span> "Tanpa bukti?" Kau mengangkat laptop Vira yang menampilkan rekaman. "CCTV menunjukkan Dimas memasukkan sesuatu ke gelas Farah."</p>`;
+      text += `<p><span class="speaker dimas">Dimas</span> Dimas menatap layar. Untuk pertama kali, senyumnya lenyap.</p>`;
+      text += `<p><span class="speaker dimas">Dimas</span> "Itu... itu bukan aku—"</p>`;
+      text += `<p><span class="speaker reza">Reza</span> "Itu JELAS kau," . "Gesture, posisi duduk, timing. Itu kau."</p>`;
     }
 
-    text += `<p>Lalu — speaker berbunyi lagi:</p>`;
+    text += `<p class="sound">— Lalu — speaker berbunyi lagi: —</p>`;
     text += `<p class="journal"><em>"Waktu habis. Simpul Kedua: Kepercayaan — terikat. Satu hal lagi sebelum event ketiga: hadiah kecil. Periksa koridor lantai satu."</em></p>`;
-    text += `<p>Semua bergerak ke koridor. Dan di sana—</p>`;
-    text += `<p>Sebuah proyektor menampilkan video di dinding. Durasi: 30 detik. Menunjukkan rekaman lama — hitam putih, grainy — dari ruangan di basement mansion ini.</p>`;
-    text += `<p>Dalam video: dua orang pria tua duduk berhadapan. Salah satu — Hendarto Wardhana, kakek Niko. Yang lain — kakek Farah. Di antara mereka, di meja: batu dengan ukiran kuno.</p>`;
-    text += `<p>Kakek Niko berbicara. Tidak ada audio, tapi subtitle muncul:</p>`;
+    text += `<p class="sound">— Semua bergerak ke koridor. Dan di sana— —</p>`;
+    text += `<p><span class="speaker reza">Reza</span> Sebuah proyektor menampilkan video di dinding. Durasi: 30 detik. Menunjukkan rekaman lama — hitam putih, grainy — dari ruangan di basement mansion ini.</p>`;
+    text += `<p><span class="speaker niko">Niko</span> Dalam video: dua orang pria tua duduk berhadapan. Salah satu — Hendarto Wardhana, kakek Niko. Yang lain — kakek Farah. Di antara mereka, di meja: batu dengan ukiran kuno.</p>`;
+    text += `<p><span class="speaker niko">Niko</span> Kakek Niko berbicara. Tidak ada audio, tapi subtitle muncul:</p>`;
     text += `<p class="journal"><em>"Kita sudah terlalu jauh untuk berhenti. Setiap tahun, simpul harus terputus. Itu harga yang kita bayar."</em></p>`;
-    text += `<p>Lalu — suara. Teriakan. Video berhenti.</p>`;
+    text += `<p class="sound">— Lalu — suara. Teriakan. Video berhenti. —</p>`;
 
     return text;
   },
@@ -564,29 +564,29 @@ const STORY_CH2 = {
 'ch2_death_scene': {
   chapter: 2,
   text: (s) => {
-    let text = `<p class="narration">Dan kemudian — jeritan.</p>`;
-    text += `<p>Bukan dari speaker. Bukan rekaman. Jeritan nyata, mentah, dari arah dapur.</p>`;
-    text += `<p>Semua berlari. Koridor. Belokan. Dapur.</p>`;
+    let text = `<p class="sound">— Dan kemudian — jeritan. —</p>`;
+    text += `<p class="sound">— Bukan dari speaker. Bukan rekaman. Jeritan nyata, mentah, dari arah dapur. —</p>`;
+    text += `<p class="sound">— Semua berlari. Koridor. Belokan. Dapur. —</p>`;
 
     if (s.difficulty === 1 && !s.flags.stoppedDimasTea && !s.flags.savedFarahDrink) {
       text += `<p><span class="speaker farah">Farah</span> tergeletak di lantai dapur. Tidak sadarkan diri. Foam di mulutnya. Botol valerian extract — yang Dimas sentuh tadi — tergeletak terbuka di sampingnya.</p>`;
       text += `<p><span class="speaker dimas">Dimas</span> sudah di sampingnya, memeriksa nadi. "Dia hidup tapi tidak sadar. Overdosis sedatif. Aku butuh—"</p>`;
       text += `<p><span class="speaker reza">Reza</span> menarik Dimas menjauh. "Kau JANGAN sentuh dia."</p>`;
-      text += `<p>Farah hidup — tapi unconscious. Satu korban, tanpa kematian. Untuk sekarang.</p>`;
+      text += `<p><span class="speaker farah">Farah</span> Farah hidup — tapi unconscious. Satu korban, tanpa kematian. Untuk sekarang.</p>`;
     } else if (s.flags.savedFarahDrink || s.flags.stoppedDimasTea) {
       text += `<p><span class="speaker kira">Kira</span> tergeletak di lantai dapur. Laptopnya pecah di sampingnya — seseorang menghantamkan sesuatu ke kepalanya.</p>`;
-      text += `<p>Darah. Nyata. Di lantai, di dinding, di counter.</p>`;
+      text += `<p class="sound">— Darah. Nyata. Di lantai, di dinding, di counter. —</p>`;
       text += `<p><span class="speaker reza">Reza</span> memeriksa nadinya. "Hidup. Tapi cedera kepala parah. Dia butuh rumah sakit — SEKARANG."</p>`;
-      text += `<p>Laptopnya hancur. Kira — satu-satunya yang bisa hack sistem — lumpuh.</p>`;
+      text += `<p><span class="speaker kira">Kira</span> Laptopnya hancur. Kira — satu-satunya yang bisa hack sistem — lumpuh.</p>`;
     } else {
       text += `<p><span class="speaker farah">Farah</span> tergeletak di lantai dapur. <span class="speaker dimas">Dimas</span> memeriksa nadinya.</p>`;
-      text += `<p>"Tidak sadar. Reaksi terhadap substansi — bukan alami." Dimas bekerja dengan efisiensi klinis. "Perlu posisi recovery."</p>`;
-      text += `<p>Farah hidup tapi unconscious.</p>`;
+      text += `<p><span class="speaker dimas">Dimas</span> "Tidak sadar. Reaksi terhadap substansi — bukan alami." Dimas bekerja dengan efisiensi klinis. "Perlu posisi recovery."</p>`;
+      text += `<p><span class="speaker farah">Farah</span> Farah hidup tapi unconscious.</p>`;
     }
 
-    text += `<p>Speaker: <em>"Simpul pertama nyaris terputus. Tapi belum sepenuhnya. Sang Penenun memberikan kesempatan kedua — kali ini."</em></p>`;
-    text += `<p>Pesan jelas: ini baru peringatan. Kali berikutnya tidak akan ada "nyaris".</p>`;
-    text += `<p>Countdown di layar: <strong>${s.flags.kiraTracking ? '03:00:00' : '04:00:00'}</strong></p>`;
+    text += `<p><span class="speaker farah">Farah</span> Speaker: <em>"Simpul pertama nyaris terputus. Tapi belum sepenuhnya. Sang Penenun memberikan kesempatan kedua — kali ini."</em></p>`;
+    text += `<p class="sound">— Pesan jelas: ini baru peringatan. Kali berikutnya tidak akan ada "nyaris". —</p>`;
+    text += `<p class="sound">— Countdown di layar: ${s.flags.kiraTracking ? '03:00:00' : '04:00:00'} —</p>`;
 
     return text;
   },
