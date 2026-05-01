@@ -1251,7 +1251,7 @@ const Engine = (() => {
         : `Tim Killer menang! Hanya ${CharBrain.charName(aliveSurvivors[0])} yang tersisa.`;
     } else if (canEscape && canEscape()) {
       winner = 'protagonist';
-      winDesc = 'Tim Protagonis menang! 8 petunjuk ditemukan — semua killer terungkap dan dieksekusi!';
+      winDesc = 'Tim Protagonis menang! 5 petunjuk ditemukan — semua killer terungkap dan dieksekusi!';
     } else {
       winner = result && result.type === 'win' ? (isK ? 'killer' : 'protagonist') : 'unresolved';
       winDesc = result ? result.desc : 'Permainan berakhir tanpa pemenang yang jelas.';
@@ -1416,6 +1416,13 @@ const Engine = (() => {
           });
         }
       }
+      // Last-resort anti-stuck: reset brain action count so player can keep acting
+      if (allChoices.length === 0 && state.npcMinds) {
+        brainActionCount = 0;
+        brainActionHistory = [];
+        const dynamicChoices = generateDynamicChoices(state);
+        dynamicChoices.forEach(c => allChoices.push(c));
+      }
       renderChoices(allChoices);
       updateNpcLogPanel();
       return;
@@ -1489,6 +1496,24 @@ const Engine = (() => {
       const allChoices = storyChoices.slice();
       const brainMaxNorm = isPlayerKiller() ? BRAIN_MAX_PER_NODE_KILLER : BRAIN_MAX_PER_NODE;
       if (state.npcMinds && brainActionCount < brainMaxNorm) {
+        const dynamicChoices = generateDynamicChoices(state);
+        dynamicChoices.forEach(c => allChoices.push(c));
+      }
+      // Anti-stuck: if all brain actions exhausted and no story choices, force next node
+      if (allChoices.length === 0) {
+        const nextId = findNextStoryNode(currentNodeId);
+        if (nextId) {
+          allChoices.push({
+            text: 'Lanjutkan cerita...', category: 'story',
+            hint: 'Sudah cukup mengeksplorasi — saatnya melanjutkan',
+            next: nextId
+          });
+        }
+      }
+      // Last-resort anti-stuck: reset brain actions so player always has options
+      if (allChoices.length === 0 && state.npcMinds) {
+        brainActionCount = 0;
+        brainActionHistory = [];
         const dynamicChoices = generateDynamicChoices(state);
         dynamicChoices.forEach(c => allChoices.push(c));
       }

@@ -342,7 +342,7 @@ Antagonis utama: **Ragil Pramudya** alias **Sang Penenun** — pria tua yang hid
    - Hati-hati dengan trust rendah — NPC bisa saling membunuh karena ketidakpercayaan!
 8. Sebagai **killer**:
    - Habisi protagonis sampai tersisa 1
-   - ATAU hancurkan petunjuk agar tersisa < 8 (protagonist tidak bisa mengungkap identitasmu)
+   - ATAU hancurkan petunjuk agar tersisa < 5 (protagonist tidak bisa mengungkap identitasmu)
    - Killer bisa saling membantu atau mengkhianati jika terancam
    - Hati-hati membunuh di depan saksi — kamu akan diburu!
 9. Jika kamu tereliminasi, NPC melanjutkan permainan sampai ada pemenang
