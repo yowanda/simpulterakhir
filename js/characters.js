@@ -1,116 +1,242 @@
 /* ============================================================
-   SIMPUL TERAKHIR — Profil Karakter
-   5 karakter dengan latar belakang dan kepribadian mendalam
+   SIMPUL TERAKHIR — Profil Karakter (Reworked)
+   10 karakter: 5 utama + 5 sampingan
+   Post-modern horror thriller
    ============================================================ */
 
 const CHARACTER_PROFILES = {
   arin: {
     name: 'Arin',
     fullName: 'Arin Prasetya',
-    age: 22,
-    role: 'Protagonis — Sang Penjaga',
+    age: 24,
+    role: 'Protagonis — Sang Pencari Kebenaran',
     portrait: 'img/arin.png',
-    quote: '"Kalau aku tidak menjaga mereka, siapa yang akan?"',
-    appearance: 'Rambut hitam berantakan yang selalu terlihat seperti baru bangun tidur. Mata cokelat hangat yang memancarkan ketulusan. Selalu memakai jaket hiking hijau tua — hadiah terakhir dari almarhum ayahnya. Senyumnya kecil tapi menenangkan, seperti cahaya lilin di tengah badai.',
-    personality: 'Arin adalah lem yang menyatukan kelompok ini. Di balik sikapnya yang tenang, dia memikul beban tanggung jawab yang berat. Sejak kehilangan ayahnya di usia 15 tahun, Arin berjanji untuk selalu melindungi orang-orang terdekatnya. Dia tidak pernah mengutamakan dirinya sendiri — dan itulah kelemahannya.',
-    backstory: 'Anak tunggal dari keluarga sederhana. Ayahnya meninggal karena kecelakaan di hutan saat ekspedisi geologi. Sejak saat itu, Arin membenci hutan — tapi diam-diam, dia merasa terpanggil oleh hutan. Seolah ada sesuatu yang belum selesai di sana.',
-    secret: 'Arin diam-diam menemukan jurnal ayahnya yang menyebut tentang "simpul" dan "perjanjian". Tapi dia terlalu takut untuk membacanya lebih lanjut.',
+    isMain: true,
+    quote: '"Kebenaran tidak pernah nyaman. Tapi kebohongan selalu lebih mahal."',
+    appearance: 'Rambut hitam berantakan, jaket army hijau tua penuh pin dan patch dari investigasi-investigasi sebelumnya. Mata cokelat yang tajam — mata orang yang terbiasa membaca detail kecil. Selalu membawa recorder dan notes kecil. Bekas luka tipis di pelipis kiri — kenang-kenangan dari investigasi terakhir yang hampir membunuhnya.',
+    personality: 'Mantan jurnalis investigasi yang sekarang menjalankan podcast true crime "Jejak Mati". Arin punya insting yang tajam untuk mendeteksi kebohongan, tapi kebiasaan menggali kebenaran sering membuatnya menjadi target. Dia datang ke acara ini karena Niko menjanjikan akses eksklusif ke cerita yang "akan mengubah segalanya".',
+    backstory: 'Setahun lalu, Arin mengungkap skandal korupsi besar yang melibatkan orang-orang berkuasa. Sumber utamanya ditemukan tewas — resmi bunuh diri, tapi Arin tidak percaya. Sejak itu, dia terobsesi mencari kebenaran di balik setiap kematian.',
+    secret: 'Arin menerima email anonim tiga hari sebelum acara: "Datang ke pameran. Pembunuh sumbermu akan ada di sana." Dia tidak memberitahu siapapun.',
     relationships: {
-      niko: 'Sahabat sejak SMP. Arin mengagumi kepercayaan diri Niko, tapi sering merasa cemas dengan ambisinya yang berlebihan.',
-      sera: 'Ada perasaan yang tidak pernah diucapkan. Arin selalu merasa damai di dekat Sera, dan diam-diam ingin melindunginya dari segalanya.',
-      juno: 'Teman yang selalu bisa diandalkan untuk tertawa. Tapi Arin tahu ada sesuatu yang Juno sembunyikan di balik leluconnya.',
-      vira: 'Dulu mereka sangat dekat. Tapi sejak Vira kembali dari hutan, Arin merasa ada dinding tak terlihat di antara mereka.'
+      niko: 'Teman kuliah lama. Arin mengagumi ambisi Niko tapi curiga dengan motif tersembunyinya.',
+      sera: 'Ada koneksi yang lebih dalam dari pertemanan. Sera adalah satu-satunya orang yang membuat Arin merasa tidak perlu selalu waspada.',
+      juno: 'Partner in crime. Juno sering membantu investigasi Arin dengan koneksi jalanannya.',
+      vira: 'Dulu sangat dekat sebelum Vira menghilang. Sekarang ada jarak yang tidak bisa dijelaskan.'
     },
-    traits: ['Pelindung', 'Empatik', 'Pemberani', 'Terlalu Bertanggung Jawab'],
-    weakness: 'Tidak bisa menolak permintaan orang lain, bahkan ketika itu membahayakan dirinya sendiri.',
+    traits: ['Analitis', 'Perseptif', 'Pemberani', 'Obsesif'],
+    weakness: 'Kebutuhan obsesifnya akan kebenaran membuatnya buta terhadap bahaya di depan mata.',
     color: '#4a7c59'
   },
 
   niko: {
     name: 'Niko',
     fullName: 'Niko Wardhana',
-    age: 23,
-    role: 'Pemimpin Ambisius — Sang Pewaris',
+    age: 26,
+    role: 'Sang Dalang — Tuan Rumah dengan Agenda',
     portrait: 'img/niko.png',
-    quote: '"Kekuatan bukan milik yang pantas. Kekuatan milik yang berani mengambilnya."',
-    appearance: 'Tampan dengan rahang tegas dan rambut hitam yang selalu tersisir rapi ke belakang. Mata gelapnya tajam dan menilai. Selalu berpakaian lebih baik dari yang lain — jaket kulit hitam mahal yang kontras dengan suasana hutan. Ada karisma alami yang membuat orang-orang mengikutinya, meski kadang secara tidak sadar.',
-    personality: 'Niko adalah pemimpin alami yang tahu persis apa yang dia inginkan. Di balik senyum karismatiknya, tersembunyi kalkulasi dingin. Dia tidak jahat — tapi dia percaya bahwa tujuan membenarkan cara. Niko mencintai teman-temannya dengan caranya sendiri, tapi loyalitasnya selalu kalah dari ambisinya.',
-    backstory: 'Cucu dari Kolonel Wardhana, tentara yang terlibat dalam ekspedisi militer 1973 di hutan Halimun. Kakeknya meninggal dengan meninggalkan batu aneh dan jurnal penuh tulisan yang seperti kode. Niko terobsesi membuktikan bahwa kakeknya menemukan sesuatu yang luar biasa — dan dia yakin perjalanan ini adalah kunci untuk mengungkapnya.',
-    secret: 'Niko sudah tahu tentang entitas di hutan jauh sebelum mereka berangkat. Dia merencanakan perjalanan ini bukan untuk liburan, tapi untuk mengakses kekuatan yang kakeknya temukan.',
+    isMain: true,
+    quote: '"Setiap orang punya harga. Yang membedakan hanya mata uangnya."',
+    appearance: 'Tampan dengan cara yang terkalkulasi. Rambut hitam gel ke belakang, setelan semi-formal yang terlalu rapi untuk acara kasual. Jam tangan mahal yang selalu dia putar saat berpikir. Senyumnya sempurna — terlalu sempurna, seperti dilatih di depan cermin.',
+    personality: 'CEO muda dari startup teknologi yang sedang naik daun. Niko adalah tipe orang yang selalu punya rencana B, C, dan D. Karismatik dan manipulatif secara halus — dia tidak memaksa orang, dia membuat mereka berpikir bahwa ide-idenya adalah ide mereka sendiri.',
+    backstory: 'Cucu dari industrialis kaya yang membangun mansion ini pada tahun 70-an. Setelah kakeknya meninggal dalam keadaan misterius tahun lalu, Niko mewarisi properti dan menemukan dokumen-dokumen yang menghubungkan keluarganya dengan serangkaian kematian yang tidak pernah terselesaikan.',
+    secret: 'Niko mengundang semua orang ke sini bukan untuk pameran seni — tapi untuk mengungkap siapa di antara tamu-tamunya yang terhubung dengan kematian kakeknya. Dia sudah tahu lebih banyak dari yang dia tunjukkan.',
     relationships: {
-      arin: 'Sahabat terlama. Niko menghormati Arin, tapi diam-diam menganggapnya terlalu lemah untuk memimpin.',
-      sera: 'Tidak sepenuhnya mempercayai intuisi Sera. Merasa terancam karena Sera bisa "membaca" niat tersembunyinya.',
-      juno: 'Menganggap Juno sebagai hiburan kelompok. Tidak tahu bahwa Juno punya informasi yang bisa menghancurkan rencananya.',
-      vira: 'Hubungan paling rumit. Niko memanfaatkan koneksi Vira dengan entitas, tapi ada bagian dari dirinya yang benar-benar khawatir tentang kondisi Vira.'
+      arin: 'Teman terlama. Niko menghormati inteligensi Arin tapi menganggapnya terlalu idealis.',
+      sera: 'Tidak nyaman dengan kemampuan Sera membaca orang. Merasa terekspos.',
+      juno: 'Menganggap Juno sebagai variabel tak terduga. Menarik tapi tidak bisa dikontrol.',
+      vira: 'Hubungan paling kompleks. Ada sesuatu antara mereka yang terjadi sebelum Vira menghilang.'
     },
     traits: ['Karismatik', 'Kalkulatif', 'Ambisius', 'Manipulatif'],
-    weakness: 'Keserakahannya terhadap kekuatan membuatnya buta terhadap konsekuensi.',
+    weakness: 'Kebutuhannya untuk mengontrol situasi membuatnya lambat bereaksi ketika rencana berantakan.',
     color: '#2c2c2c'
   },
 
   sera: {
     name: 'Sera',
     fullName: 'Sera Amalina',
-    age: 21,
-    role: 'Sang Perasaan — Cahaya yang Lembut',
+    age: 23,
+    role: 'Sang Pembaca — Mata yang Melihat Terlalu Banyak',
     portrait: 'img/sera.png',
-    quote: '"Aku tidak perlu melihat untuk tahu. Aku merasakannya."',
-    appearance: 'Cantik dengan cara yang membuat orang ingin melindunginya. Rambut cokelat tua bergelombang panjang yang selalu dihiasi jepit bunga kecil — kebiasaan sejak kecil. Mata cokelat besar yang bersinar dengan kepolosan dan kehangatan. Pipinya merona alami, dan senyumnya adalah jenis senyum yang membuat hari buruk terasa lebih baik. Sweater krem lembut yang selalu dia pakai memberinya aura hangat dan menenangkan.',
-    personality: 'Sera adalah matahari kecil di tengah kelompok. Manis, lembut, dan selalu peduli pada perasaan orang lain. Tapi di balik kelembutannya, ada intuisi tajam yang hampir supernatural. Sera bisa merasakan emosi orang lain, mendeteksi kebohongan, dan kadang — melihat bayangan hal yang belum terjadi. Dia takut pada kemampuannya sendiri, tapi diam-diam tahu bahwa kemampuan itu adalah satu-satunya harapan kelompok.',
-    backstory: 'Tumbuh di keluarga yang percaya pada hal-hal spiritual. Neneknya adalah dukun desa yang terkenal. Sejak kecil, Sera sering bermimpi tentang hal-hal yang kemudian terjadi. Dia mencoba menekan kemampuannya untuk terlihat "normal", tapi hutan Halimun membangkitkan semuanya kembali — lebih kuat dari sebelumnya.',
-    secret: 'Sera mendapat telepon dari Vira seminggu sebelum perjalanan — telepon yang berisi suara tangisan dan bisikan dalam bahasa kuno. Sera tidak pernah menceritakannya ke siapapun karena takut dianggap gila.',
+    isMain: true,
+    quote: '"Orang-orang bicara dengan mulut mereka. Tapi tubuh mereka berteriak."',
+    appearance: 'Rambut cokelat bergelombang, kacamata bulat yang sering dia lepas saat berkonsentrasi. Cardigan oversized warna krem, selalu memegang notes kecil berisi observasi perilaku. Mata besar yang hangat tapi intimidating karena intensitasnya saat memperhatikan seseorang.',
+    personality: 'Mahasiswa psikologi forensik semester akhir. Sera bisa membaca microexpression dan body language dengan akurasi yang membuat orang tidak nyaman. Kemampuannya bukan supernatural — murni ilmiah, hasil bertahun-tahun studi dan observasi. Tapi kadang hasilnya begitu akurat, orang menganggapnya cenayang.',
+    backstory: 'Thesis Sera adalah tentang "Psychopathology of Undetected Killers in Social Circles" — pembunuh yang hidup normal di tengah masyarakat tanpa terdeteksi. Ironisnya, penelitiannya membawanya ke tempat yang paling berbahaya.',
+    secret: 'Sera sudah mengidentifikasi pola perilaku mencurigakan pada salah satu tamu sejak malam pertama. Tapi dia tidak yakin dengan kesimpulannya — karena kalau dia benar, implikasinya terlalu mengerikan.',
     relationships: {
-      arin: 'Sera merasakan kehangatan dan perlindungan dari Arin yang tidak bisa dia jelaskan. Ada ikatan yang lebih dalam dari persahabatan — mungkin dari kehidupan lain.',
-      niko: 'Sera tidak bisa sepenuhnya membaca Niko, dan itu membuatnya gelisah. Dia merasakan niat tersembunyi tapi tidak bisa membuktikannya.',
-      juno: 'Sahabat terdekatnya. Sera tahu Juno menyimpan luka besar, dan dia selalu ada untuk mendengarkan — meski Juno jarang mau bercerita.',
-      vira: 'Sera dan Vira dulu sangat dekat. Tapi sejak Vira kembali dari hutan, Sera merasakan kehadiran "sesuatu yang lain" di dalam diri Vira — dan itu membuatnya menangis di malam hari.'
+      arin: 'Ada rasa yang tidak terucapkan. Arin adalah satu-satunya orang yang tidak takut dengan kemampuannya.',
+      niko: 'Sera bisa merasakan manipulasi Niko tapi belum bisa membuktikannya.',
+      juno: 'Sahabat terdekat. Sera tahu Juno menyimpan trauma besar.',
+      vira: 'Sebelum menghilang, Vira adalah subjek studi informal Sera. Sejak kembali, perilaku Vira tidak cocok dengan baseline yang Sera kenal.'
     },
-    traits: ['Manis', 'Intuitif', 'Empatik', 'Spiritual'],
-    weakness: 'Terlalu sensitif terhadap penderitaan orang lain, membuatnya kewalahan dan rentan.',
+    traits: ['Perceptif', 'Analitis', 'Empatik', 'Hati-hati'],
+    weakness: 'Terlalu banyak menganalisis membuatnya lambat bertindak saat situasi membutuhkan reaksi cepat.',
     color: '#c4956a'
   },
 
   juno: {
     name: 'Juno',
     fullName: 'Juno Kirana',
-    age: 22,
-    role: 'Sang Topeng — Tawa yang Menyembunyikan Air Mata',
+    age: 24,
+    role: 'Sang Pemberontak — Api di Balik Tawa',
     portrait: 'img/juno.png',
-    quote: '"Tertawa itu gratis. Menangis? Itu mahal — karena orang akan bertanya kenapa."',
-    appearance: 'Cantik dengan gaya tomboy yang unik. Rambut hitam pendek model bob yang bergerak bebas ditiup angin. Mata gelap yang ekspresif — bisa berubah dari jenaka ke melankolis dalam sekejap. Kemeja flannel merah yang selalu dia gulung lengannya, seolah siap bekerja kapan saja. Senyumnya lebar dan menular, tapi siapa yang memperhatikan dengan seksama akan melihat bahwa senyum itu tidak pernah sampai ke matanya.',
-    personality: 'Juno adalah pelawak kelompok — selalu punya lelucon, selalu punya komentar tajam. Tapi humornya adalah perisai. Di balik tawa dan candaan, Juno menyimpan rasa bersalah yang menggerogotinya dari dalam. Dia loyal sampai mati, tapi loyalitasnya berasal dari rasa bersalah, bukan keberanian.',
-    backstory: 'Juno adalah saksi ketika Vira menghilang di hutan tiga minggu lalu. Dia ada di sana. Dia melihat Vira ditarik oleh sesuatu ke dalam kegelapan — dan dia membeku. Tidak berteriak. Tidak berlari menolong. Hanya berdiri dan menonton. Ketika Vira kembali tiga minggu kemudian, "berbeda", Juno tahu itu salahnya. Dan rasa bersalah itu memakan jiwanya.',
-    secret: 'Juno menulis surat perpisahan sebelum perjalanan ini. Dia datang ke hutan bukan untuk liburan — tapi untuk menebus dosanya, apapun resikonya.',
+    isMain: true,
+    quote: '"Aku tertawa supaya tidak menjerit. Kadang aku lupa bedanya."',
+    appearance: 'Rambut hitam bob asimetris dengan highlight merah. Mata gelap ekspresif yang bisa berubah dari jenaka ke menakutkan dalam sekejap. Jaket kulit penuh pin band underground, boots combat, dan tato geometric di pergelangan tangan — masing-masing mewakili seseorang yang dia kehilangan.',
+    personality: 'Street artist dan aktivis yang terkenal di scene underground. Juno punya mulut tajam dan insting jalanan yang luar biasa. Humornya gelap, referensinya niche, dan loyalitasnya absolut — sampai kau mengkhianatinya.',
+    backstory: 'Juno menyaksikan temannya dibunuh dalam hate crime dua tahun lalu. Pelakunya tidak pernah tertangkap. Sejak itu, Juno menghabiskan waktu membuat seni yang mengekspos kekerasan tersembunyi di masyarakat. Salah satu muralnya menjadi viral dan membuatnya jadi target.',
+    secret: 'Juno mengenali salah satu tamu dari investigasinya sendiri — seseorang yang mungkin terhubung dengan kematian temannya. Dia datang ke pameran ini bukan untuk seni, tapi untuk konfrontasi.',
     relationships: {
-      arin: 'Menganggap Arin sebagai kompas moral kelompok. Diam-diam iri pada kemampuan Arin untuk selalu melakukan hal yang benar.',
-      niko: 'Hubungan yang penuh dinamika. Juno tidak suka cara Niko memimpin, tapi terlalu takut untuk menentangnya secara terbuka.',
-      sera: 'Sahabat terdekat. Sera adalah satu-satunya orang yang membuat Juno merasa aman untuk menjadi dirinya sendiri.',
-      vira: 'Sumber rasa bersalah terbesarnya. Setiap kali menatap Vira, Juno melihat malam itu lagi — dan membeku.'
+      arin: 'Partner in crime. Saling melengkapi — Arin punya metodologi, Juno punya insting.',
+      niko: 'Tidak percaya pada orang kaya. Niko mewakili semua yang Juno benci tentang privilege.',
+      sera: 'Sahabat terdekat. Sera adalah satu-satunya orang yang boleh melihat Juno menangis.',
+      vira: 'Sumber rasa bersalah terbesar. Juno tahu sesuatu tentang malam Vira menghilang yang belum dia ceritakan.'
     },
-    traits: ['Humoris', 'Loyal', 'Pemberontak', 'Dihantui Rasa Bersalah'],
-    weakness: 'Rasa bersalahnya membuatnya mengambil keputusan impulsif dan kadang self-destructive.',
+    traits: ['Berani', 'Loyal', 'Impulsif', 'Dihantui Masa Lalu'],
+    weakness: 'Impulsivitasnya dalam situasi emosional bisa membahayakan diri sendiri dan orang lain.',
     color: '#c44d3d'
   },
 
   vira: {
     name: 'Vira',
     fullName: 'Vira Deviani',
-    age: 22,
-    role: 'Sang Bayangan — Keindahan yang Mematikan',
+    age: 24,
+    role: 'Sang Enigma — Kembali tapi Berbeda',
     portrait: 'img/vira.png',
-    quote: '"Kalian pikir aku hilang. Tapi aku ditemukan."',
-    appearance: 'Menakjubkan dengan cara yang membuat orang tidak bisa berpaling — dan tidak bisa sepenuhnya nyaman. Rambut hitam pekat lurus sepinggang yang bergerak seolah ada angin yang hanya dia rasakan. Mata yang dulu cokelat gelap kini memiliki kilatan hijau supernatural yang muncul di saat-saat tertentu. Gaun gelap keunguan yang elegan tapi tidak sesuai untuk perjalanan ke hutan — seolah dia berpakaian untuk acara lain. Kecantikannya menusuk, seperti pisau kristal — indah tapi berbahaya.',
-    personality: 'Vira yang dulu — ceria, penuh energi, selalu tertawa — sudah tidak ada. Yang kembali dari hutan adalah seseorang yang berbicara dalam teka-teki, tersenyum pada hal yang tidak terlihat, dan kadang memandang teman-temannya seperti memandang mangsa. Tapi sesekali, di saat-saat yang tidak terduga, Vira yang asli muncul — ketakutan, memohon bantuan, sebelum ditarik kembali ke kegelapan. Apakah dia antagonis atau korban? Itu tergantung pilihanmu.',
-    backstory: 'Tiga minggu lalu, Vira pergi hiking sendirian di hutan Halimun dan menghilang. Pencarian besar dilakukan tapi tidak menemukan apa-apa. Lalu suatu malam, dia muncul di depan pintu rumahnya — kotor, kurus, dengan senyum yang membuat ibunya menjerit. Entitas kuno yang tinggal di jantung hutan Halimun menemukan Vira — dan menjadikannya jembatan antara dunia mereka dan dunia manusia. Vira adalah umpan, perangkap, dan kunci sekaligus.',
-    secret: 'Di lubuk terdalam kesadarannya, Vira yang asli masih berjuang. Dia sengaja mengundang teman-temannya ke hutan — bukan untuk menjebak mereka, tapi karena dia percaya merekalah satu-satunya harapan untuk membebaskannya. Sebuah taruhan terakhir yang bisa menyelamatkan semua orang, atau menghancurkan semuanya.',
+    isMain: true,
+    quote: '"Aku tidak hilang. Aku hanya... berada di tempat yang tidak bisa kalian jangkau."',
+    appearance: 'Kecantikan yang membuat orang tidak bisa berpaling — dan tidak bisa sepenuhnya nyaman. Rambut hitam lurus sepinggang yang selalu sempurna. Mata dengan lingkaran hitam permanen yang entah kenapa menambah daya tariknya. Selalu berpakaian gelap. Gerakannya terlalu halus, terlalu tepat, seperti diprogram.',
+    personality: 'Vira menghilang enam bulan lalu. Ditemukan di pinggir jalan, tidak ingat apa-apa. Tapi sejak kembali, ada sesuatu yang... bergeser. Vira yang dulu spontan dan berisik sekarang tenang dan penuh perhitungan. Dia berbicara dalam kalimat yang terasa seperti teka-teki. Dan kadang, di sudut mata, kau menangkap ekspresi yang bukan miliknya.',
+    backstory: 'Sebelum menghilang, Vira adalah fotografer yang dikenal karena seri foto kontroversialnya "Faces of the Dead" — foto-foto lokasi pembunuhan yang diambil ulang dengan model hidup. Polisi menemukan bahwa beberapa lokasi dalam fotonya cocok dengan kasus cold case yang belum terpecahkan.',
+    secret: 'Vira ingat segalanya tentang enam bulan itu. Dia tidak amnesia. Dia memilih diam karena apa yang dia alami terlalu berbahaya untuk diceritakan — dan orang yang bertanggung jawab mungkin ada di ruangan yang sama.',
     relationships: {
-      arin: 'Dulu ada kedekatan yang nyaris romantis. Entitas di dalam dirinya memanfaatkan perasaan itu sebagai senjata — tapi Vira yang asli masih berharap Arin bisa mendengar jeritan diamnya.',
-      niko: 'Hubungan yang paling berbahaya. Entitas tahu tentang ambisi Niko dan memanipulasinya. Niko pikir dia menggunakan Vira — padahal Vira yang menggunakannya.',
-      sera: 'Takut pada Sera. Intuisi Sera adalah ancaman terbesar bagi entitas. Di saat yang sama, Vira yang asli berharap Sera bisa merasakan kehadirannya yang masih tersisa.',
-      juno: 'Tahu bahwa Juno menyaksikan penculikannya. Entitas menggunakan rasa bersalah Juno sebagai alat manipulasi yang paling efektif.'
+      arin: 'Dulu sangat dekat. Sekarang Vira menjaga jarak — bukan karena tidak percaya, tapi karena takut melibatkan Arin.',
+      niko: 'Ada sejarah rumit. Vira tahu sesuatu tentang keluarga Niko yang bahkan Niko sendiri tidak tahu.',
+      sera: 'Sadar bahwa Sera bisa membacanya. Bermain kucing-kucingan.',
+      juno: 'Merasa bersalah karena membuat Juno menyimpan rahasia tentang malam itu.'
     },
-    traits: ['Misterius', 'Manipulatif', 'Cantik Mematikan', 'Terpecah Dua'],
-    weakness: 'Konflik internal antara Vira yang asli dan entitas yang merasukinya — ketika satu menguat, yang lain melemah.',
-    color: '#2d5a27'
+    traits: ['Misterius', 'Cerdas', 'Terfragmentasi', 'Berbahaya'],
+    weakness: 'Kebutuhannya untuk menyimpan rahasia membuatnya terisolasi saat dia paling butuh bantuan.',
+    color: '#4a2d5c'
+  },
+
+  reza: {
+    name: 'Reza',
+    fullName: 'Reza Hartono',
+    age: 38,
+    role: 'Sang Veteran — Hukum yang Sudah Retak',
+    portrait: null,
+    isMain: false,
+    quote: '"Aku sudah lihat terlalu banyak mayat untuk percaya pada kebetulan."',
+    appearance: 'Tubuh besar yang mulai kehilangan ketegasannya. Rambut cepak beruban di pelipis. Mata merah — terlalu sering begadang atau terlalu sering minum, mungkin keduanya. Jas lusuh, dasi longgar, dan holster kosong yang masih dia pakai karena kebiasaan.',
+    personality: 'Ex-detektif homisida yang dipaksa pensiun setelah kasus yang salah. Reza disewa Niko sebagai "konsultan keamanan" untuk acara ini. Tapi insting detektifnya masih tajam — bahkan terlalu tajam untuk kenyamanan orang lain.',
+    backstory: 'Reza menghabiskan 15 tahun di kepolisian. Kasus terakhirnya — serial killer yang membunuh 7 orang — berakhir dengan tersangka yang salah dipenjara. Ketika kebenaran terungkap, Reza di-scapegoat. Sekarang dia minum terlalu banyak dan mengambil pekerjaan security yang harusnya di bawah levelnya.',
+    secret: 'Reza mengenali pola di undangan tamu Niko. Profil mereka cocok dengan victimology dari kasus lama yang tidak pernah dia tutup. Dia belum yakin, tapi jantungnya berdetak lebih cepat setiap kali dia melihat daftar tamu.',
+    relationships: {
+      arin: 'Menghormati naluri investigasi Arin. Melihat versi muda dirinya.',
+      niko: 'Klien. Tapi Reza tidak mempercayai siapapun yang membayarnya.',
+      lana: 'Merasa tidak nyaman di dekat Lana. Terlalu banyak detail pembunuhan dalam novel-novelnya yang terlalu akurat.',
+      dimas: 'Suspicious. Mahasiswa kedokteran yang terlalu tenang melihat darah.'
+    },
+    traits: ['Berpengalaman', 'Sinis', 'Protektif', 'Alkoholik'],
+    weakness: 'Alkoholismenya mengaburkan judgmentnya di saat kritis.',
+    color: '#5a4e3c',
+    initials: 'RH'
+  },
+
+  lana: {
+    name: 'Lana',
+    fullName: 'Lana Maharani',
+    age: 30,
+    role: 'Sang Narator — Penulis yang Tahu Terlalu Banyak',
+    portrait: null,
+    isMain: false,
+    quote: '"Dalam fiksi, pembunuh selalu tertangkap. Kenyataan tidak seramah itu."',
+    appearance: 'Elegan dan dingin. Rambut hitam digelung ketat, lipstik merah gelap, gaun hitam yang selalu terlihat seperti sedang menghadiri pemakaman. Kacamata rantai emas. Jari-jarinya panjang dan selalu bergerak — mengetuk, menulis di udara, seolah sedang menyusun kalimat.',
+    personality: 'Penulis novel horor dan thriller paling laris di Asia Tenggara. Seri "Anatomy of Evil"-nya kontroversial karena detail pembunuhan yang terlalu realistis. Kritikus menyebutnya jenius. Polisi pernah menginterogasinya tiga kali.',
+    backstory: 'Lana tumbuh di keluarga psikiater. Ibunya menangani pasien-pasien kriminal di RSJ negeri. Sejak kecil, Lana mendengar cerita-cerita yang seharusnya tidak didengar anak-anak. Novelnya bukan fiksi murni — setiap pembunuhan di bukunya terinspirasi dari kasus nyata yang dia riset secara mendalam.',
+    secret: 'Novel terbarunya yang belum dipublikasi bercerita tentang pembunuhan di sebuah mansion terpencil. Plotnya terlalu mirip dengan apa yang mulai terjadi malam ini. Entah dia seorang nabi — atau dalang.',
+    relationships: {
+      reza: 'Pernah mewawancarai Reza untuk riset novel. Tahu tentang kasus gagalnya.',
+      farah: 'Menulis tentang keluarga Aldridge dalam salah satu novelnya. Farah tidak senang.',
+      vira: 'Tertarik pada seri foto Vira. Merasa ada kesamaan obsesi.',
+      dimas: 'Sumber riset. Dimas menyuplai detail medis untuk novelnya.'
+    },
+    traits: ['Brillian', 'Observan', 'Dingin', 'Ambigu'],
+    weakness: 'Melihat segalanya sebagai material cerita — termasuk kematian nyata.',
+    color: '#8b0000',
+    initials: 'LM'
+  },
+
+  dimas: {
+    name: 'Dimas',
+    fullName: 'Dimas Surya',
+    age: 25,
+    role: 'Sang Pemotong — Tangan Tenang di Tengah Darah',
+    portrait: null,
+    isMain: false,
+    quote: '"Tubuh manusia itu indah. Terutama dari dalam."',
+    appearance: 'Tampan dengan cara yang klinis. Rambut pendek rapi, wajah bersih, tangan yang selalu dicuci terlalu sering. Kaus polo putih bersih, celana chino — terlihat seperti model katalog. Senyumnya sopan tapi tidak pernah mencapai matanya. Selalu membawa tas medis kecil.',
+    personality: 'Mahasiswa kedokteran forensik semester akhir yang sedang magang di kamar mayat. Dimas mempunyai ketenangan yang tidak wajar saat berhadapan dengan kematian. Sementara orang lain panik, Dimas mengobservasi. Menganalisis. Kadang bahkan tersenyum — senyum akademis, katanya.',
+    backstory: 'Anak tunggal dari keluarga dokter bedah. Tumbuh di lingkungan steril dan emosional. Dimas tidak pernah menangis — bukan karena kuat, tapi karena ada sesuatu yang tidak terhubung di dalam dirinya. Dia datang ke pameran ini karena Lana mengundangnya sebagai "konsultan medis".',
+    secret: 'Dimas memalsukan beberapa hasil autopsi saat magang. Bukan untuk uang — tapi karena seseorang memintanya. Seseorang yang membuatnya merasa, untuk pertama kalinya, sesuatu.',
+    relationships: {
+      lana: 'Hubungan simbiosis. Dia menyuplai detail medis, Lana memberinya cerita.',
+      sera: 'Tertarik secara intelektual. Dua orang yang menganalisis manusia dari sudut berbeda.',
+      kira: 'Tidak suka. Kira terlalu banyak bertanya dan terlalu pandai menggali.',
+      reza: 'Merasa diamati. Tahu Reza mencurigainya tapi tidak tahu kenapa.'
+    },
+    traits: ['Tenang', 'Metodis', 'Disosiatif', 'Ambigu'],
+    weakness: 'Ketidakmampuannya merasakan empati membuatnya rentan dimanipulasi oleh orang yang memberikan stimulasi emosional.',
+    color: '#3a6b8c',
+    initials: 'DS'
+  },
+
+  kira: {
+    name: 'Kira',
+    fullName: 'Kira Chen',
+    age: 22,
+    role: 'Sang Pengawas — Mata Digital yang Tidak Tidur',
+    portrait: null,
+    isMain: false,
+    quote: '"Privasi itu ilusi. Yang nyata cuma data."',
+    appearance: 'Kecil, cepat, dan selalu terlihat seperti sedang merencanakan sesuatu. Rambut pendek biru-hitam, hoodie oversized yang menyembunyikan laptop di dalamnya. Headphone selalu menggantung di leher. Mata yang bergerak cepat, memindai, menganalisis. Jari-jari dengan nail art yang berbeda setiap minggu.',
+    personality: 'Hacker dan cybersecurity specialist yang bekerja freelance. Kira hidup di dunia digital lebih dari dunia nyata. Paranoid secara profesional — dia selalu mengasumsikan bahwa seseorang sedang mengawasinya, dan biasanya dia benar.',
+    backstory: 'Kira membongkar jaringan trafficking online saat masih 19 tahun. Sejak itu, dia menjadi target beberapa kelompok berbahaya. Dia datang ke pameran ini karena menemukan anomali digital: undangan acara ini dikirim dari server yang sama dengan serangkaian email ancaman yang dia tracking selama setahun.',
+    secret: 'Kira sudah meretas sistem keamanan mansion sebelum datang. Dia punya akses ke CCTV, log pintu, dan file-file tersembunyi di server lokal. Apa yang dia temukan membuatnya tidak bisa tidur.',
+    relationships: {
+      arin: 'Respek mutual. Keduanya pencari kebenaran, hanya beda medium.',
+      juno: 'Kindred spirits. Keduanya pemberontak dengan methods berbeda.',
+      dimas: 'Red flag. Data digital Dimas punya gaps yang terlalu bersih.',
+      farah: 'Menemukan koneksi finansial antara keluarga Farah dan kematian-kematian mencurigakan.'
+    },
+    traits: ['Jenius', 'Paranoid', 'Resourceful', 'Antisosial'],
+    weakness: 'Ketergantungannya pada teknologi membuatnya buta terhadap ancaman analog — manusia yang berbohong langsung di depan wajahnya.',
+    color: '#00b4d8',
+    initials: 'KC'
+  },
+
+  farah: {
+    name: 'Farah',
+    fullName: 'Farah Aldridge',
+    age: 28,
+    role: 'Sang Pewaris — Tahta yang Dibangun di Atas Tulang',
+    portrait: null,
+    isMain: false,
+    quote: '"Keluargaku membangun kota ini. Apa yang mereka kubur di bawahnya... bukan urusanmu."',
+    appearance: 'Cantik dengan cara old money — tidak mencolok tapi setiap detail terlihat mahal. Rambut auburn di-blow sempurna, makeup minimal, perhiasan antik. Blazer dan celana palazzo. Posturnya sempurna, seperti dibesarkan dengan buku di atas kepala. Tapi tangannya kadang gemetar saat dia pikir tidak ada yang melihat.',
+    personality: 'Pewaris keluarga Aldridge — keluarga yang membangun mansion ini dan setengah kota di sekitarnya. Farah tumbuh dengan privilege yang luar biasa, tapi juga dengan rahasia keluarga yang semakin berat. Dia sopan, terkontrol, dan pandai menyembunyikan sesuatu di balik senyum socialite-nya.',
+    backstory: 'Kakek Farah dan kakek Niko adalah partner bisnis di tahun 70-an. Pembangunan mansion ini memakan korban — tujuh pekerja tewas dalam "kecelakaan" konstruksi. Keluarga Aldridge membayar diam. Tapi ada yang tidak bisa dibeli — dan sekarang masa lalu itu mengejar.',
+    secret: 'Farah menemukan buku harian kakeknya yang mendetailkan pembunuhan-pembunuhan yang disamarkan sebagai kecelakaan. Dia datang ke pameran ini untuk menghancurkan bukti sebelum orang lain menemukannya. Tapi bukti itu sudah dipindahkan.',
+    relationships: {
+      niko: 'Hubungan keluarga yang rumit. Kakek mereka bersama membangun mansion — dan bersama menyimpan mayat.',
+      lana: 'Lana menulis tentang keluarganya. Farah ingin dia berhenti.',
+      kira: 'Tahu Kira bisa mengakses file-file berbahaya. Merasa terancam.',
+      reza: 'Ex-detektif yang dulu menyelidiki keluarganya. Masih takut.'
+    },
+    traits: ['Anggun', 'Kalkulatif', 'Tertekan', 'Desperate'],
+    weakness: 'Loyalitasnya pada keluarga membuatnya melindungi rahasia yang seharusnya terungkap.',
+    color: '#b8860b',
+    initials: 'FA'
   }
 };
