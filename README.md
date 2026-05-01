@@ -77,7 +77,7 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - Siapa yang ada di dekat mereka
   - Clue yang sudah ditemukan
   - Aliansi dan musuh
-- **500+ Decision Entries** — 40-60+ keputusan per karakter (termasuk chapters 4-5 endgame) dengan weighted random selection + catch-all fallbacks
+- **550+ Decision Entries** — 39-58 keputusan per karakter survivor + 34-36 per killer (termasuk chapters 4-5 endgame) dengan weighted random selection + catch-all fallbacks
 - **Sistem Win/Loss Dinamis** — hasil ditentukan oleh aksi NPC, bukan ending pre-scripted:
   - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan **5 dari 8 petunjuk** → semua killer terungkap & dieksekusi ATAU temukan **Kunci Master** (5% chance muncul di lokasi acak) → misi petunjuk langsung selesai
   - **Killer Menang**: Eliminasi protagonis hingga tersisa 1 ATAU hancurkan cukup petunjuk agar protagonist tak bisa capai 5
@@ -252,6 +252,63 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
   - Info kontekstual: jumlah NPC di lokasi tujuan, level trust, kecurigaan
 - **Animasi klik** — pilihan yang dipilih menyusut, pilihan lain memudar
 - **Auto-detect kategori** — pilihan cerita otomatis dikategorikan berdasarkan konten teks
+
+### Character Action Independence (Baru!)
+Setiap karakter kini memiliki **aksi unik** yang mencerminkan kepribadian mereka — tidak ada lagi karakter yang "meminjam" aksi karakter lain.
+
+- **CHARACTER_ACTION_FLAVOR System** — 10 karakter memiliki teks aksi berbeda untuk setiap tipe aksi:
+  - **Arin**: Investigasi dengan recorder jurnalis, wawancara, pengungkapan bukti
+  - **Sera**: Profiling psikologis, analisis micro-expression, terapi sebagai senjata
+  - **Niko**: Pengetahuan mansion, lorong rahasia, manipulasi tuan rumah
+  - **Juno**: Bahasa jalanan, konfrontasi fisik, insting bertahan hidup
+  - **Vira**: Flashback survivor, pengetahuan mansion sebelumnya, kepanikan PTSD
+  - **Reza**: Interogasi polisi, analisis TKP, otoritas detektif
+  - **Kira**: Hacking digital, CCTV monitoring, exploit sistem mansion
+  - **Farah**: Negosiasi bisnis, koneksi keluarga Wardhana, leverage kekayaan
+  - **Lana** (Killer): Manipulasi naratif, gosip strategis, charm penulis
+  - **Dimas** (Killer): Analisis forensik, deteksi kebohongan fisiologis, presisi klinis
+  - **Niko** (Killer): Jebakan mansion, lorong tersembunyi, kontrol tuan rumah
+
+- **Unique Actions per Character** — setiap karakter memiliki 2-3 aksi eksklusif yang hanya tersedia untuk karakter tersebut:
+  - Arin: Deep investigation (+20% bonus), Lindungi Sera
+  - Sera: Full psychological profiling, Terapi darurat
+  - Niko: Activate CCTV, Buka lorong rahasia
+  - Juno: Barricade dengan kekuatan, Intimidasi agresif
+  - Vira: Aktivasi ingatan mansion, Whisper warnings
+  - Reza: Interogasi formal, Setup crime scene reconstruction
+  - Kira: Decrypt file terenkripsi, Deploy digital trap
+  - Farah: Tawarkan suap, Buka brankas keluarga
+  - Lana (killer): Sebarkan informasi palsu, Buat alibi sempurna
+  - Dimas (killer): Analisis pola kematian, Silent approach
+  - Niko (killer): Aktifkan jebakan, Lockdown area
+
+- **Cross-Character Interactions** — 90+ interaksi unik antar karakter berdasarkan hubungan mereka:
+  - Arin↔Sera: Perlindungan dan kolaborasi
+  - Niko↔Vira: Konfrontasi toxic ex
+  - Juno↔Reza: Mentor-mentee dinamis
+  - Dimas→Sera: Obsesi satu arah
+  - Lana↔semua: Manipulasi penulis
+  - Setiap karakter berinteraksi unik dengan 9 karakter lainnya
+
+- **Balanced Decision Trees** — semua karakter memiliki 39-58 decision entries:
+
+| Karakter | Survivor Entries | Killer Entries |
+|----------|-----------------|----------------|
+| Arin | 58 | - |
+| Niko | 49 | 34 |
+| Sera | 45 | - |
+| Juno | 48 | - |
+| Vira | 46 | - |
+| Reza | 47 | - |
+| Lana | 39 | 36 |
+| Dimas | 40 | 35 |
+| Kira | 43 | - |
+| Farah | 47 | - |
+
+- **Anti-Stuck Guarantee** — setiap karakter memiliki:
+  - Catch-all entries untuk semua emotional states (calm, wary, suspicious, panicked, hostile)
+  - Ultimate fallback di `survivorFallback()` dan `killerFallback()` yang **selalu** return action
+  - Cooldown-aware alternative matching — jika aksi utama on cooldown, brain otomatis cari alternatif
 
 ---
 
