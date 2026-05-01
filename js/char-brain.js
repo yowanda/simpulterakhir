@@ -903,7 +903,7 @@ const CharBrain = (() => {
         if (!rivalMind || !gameState.alive[action.target]) return null;
         const sabChance = typeof Engine !== 'undefined' ? Engine.rollChance(45, mind.name, 'offense') : { success: Math.random() < 0.45, chance: 45 };
         if (sabChance.success) {
-          gameState.suspicion[action.target] = Math.min(100, (gameState.suspicion[action.target] || 0) + 25);
+          gameState.suspicion[action.target] = Math.min(100, (gameState.suspicion[action.target] || 0) + 20);
           rivalMind.killerExposed = true;
           if (!gameState.killerRevealed.includes(action.target)) gameState.killerRevealed.push(action.target);
           return { type: 'killer_sabotage', saboteur: mind.name, victim: action.target,
@@ -948,7 +948,7 @@ const CharBrain = (() => {
             targetMind.suspicions[mind.name] = 100;
             targetMind.enemies.push(mind.name);
           }
-          gameState.suspicion[mind.name] = Math.min(100, (gameState.suspicion[mind.name] || 0) + 30);
+          gameState.suspicion[mind.name] = Math.min(100, (gameState.suspicion[mind.name] || 0) + 22);
 
           // === PEMBURU MECHANIC: If killer fails AND >1 protagonists alive → hunter eliminates killer ===
           if (isAttackerKiller) {
@@ -1050,14 +1050,14 @@ const CharBrain = (() => {
           const frameChance = 0.45 - getKillerPenalty(gameState);
           if (Math.random() < frameChance) {
             // Heavy suspicion increase on framed target
-            const suspIncrease = 25 + Math.floor(Math.random() * 15);
+            const suspIncrease = 18 + Math.floor(Math.random() * 12);
             gameState.suspicion[framed] = Math.min(100, (gameState.suspicion[framed] || 0) + suspIncrease);
-            gameState.suspicion[mind.name] = Math.max(0, (gameState.suspicion[mind.name] || 0) - 15);
+            gameState.suspicion[mind.name] = Math.max(0, (gameState.suspicion[mind.name] || 0) - 10);
             // Nearby NPCs: suspicion + trust drop + mark as enemy
             const affectedNpcs = [];
             Object.values(allMinds).forEach(m => {
               if (m.name !== mind.name && m.name !== framed && m.location === mind.location && gameState.alive[m.name]) {
-                m.suspicions[framed] = Math.min(100, (m.suspicions[framed] || 0) + 25);
+                m.suspicions[framed] = Math.min(100, (m.suspicions[framed] || 0) + 18);
                 // Trust between NPC and framed target drops hard
                 const tk = trustKeyFor(m.name, framed);
                 if (gameState.trust[tk] !== undefined) {
@@ -1084,10 +1084,10 @@ const CharBrain = (() => {
               desc: `${charName(mind.name)} berhasil mengalihkan kecurigaan! Suspicion ${charName(framed)} +${suspIncrease}%, trust hancur.${enemyNote}` };
           } else {
             // Failed: killer gets suspicion + nearby NPCs notice
-            gameState.suspicion[mind.name] = Math.min(100, (gameState.suspicion[mind.name] || 0) + 15);
+            gameState.suspicion[mind.name] = Math.min(100, (gameState.suspicion[mind.name] || 0) + 12);
             Object.values(allMinds).forEach(m => {
               if (m.name !== mind.name && m.location === mind.location && gameState.alive[m.name]) {
-                m.suspicions[mind.name] = Math.min(100, (m.suspicions[mind.name] || 0) + 10);
+                m.suspicions[mind.name] = Math.min(100, (m.suspicions[mind.name] || 0) + 8);
               }
             });
             return { type: 'frame_failed', framer: mind.name, victim: framed,
@@ -1102,11 +1102,11 @@ const CharBrain = (() => {
         const susp = mind.suspicions[action.target] || 0;
         const isCorrect = gameState.killers.includes(action.target);
         if (isCorrect) {
-          gameState.suspicion[action.target] = Math.min(100, (gameState.suspicion[action.target] || 0) + 25);
+          gameState.suspicion[action.target] = Math.min(100, (gameState.suspicion[action.target] || 0) + 18);
           return { type: 'accusation', accuser: mind.name, accused: action.target, correct: true,
             desc: `${charName(mind.name)} menuduh ${charName(action.target)}: "Aku tahu apa yang kau lakukan!"` };
         } else {
-          gameState.suspicion[action.target] = Math.min(100, (gameState.suspicion[action.target] || 0) + 10);
+          gameState.suspicion[action.target] = Math.min(100, (gameState.suspicion[action.target] || 0) + 8);
           return { type: 'accusation', accuser: mind.name, accused: action.target, correct: false,
             desc: `${charName(mind.name)} salah menuduh ${charName(action.target)}.` };
         }
@@ -1804,7 +1804,7 @@ const CharBrain = (() => {
           targetMind.tension += 20;
           targetMind.enemies.push(pc);
           if (gameState.killers.includes(targetName)) {
-            gameState.suspicion[targetName] = Math.min(100, (gameState.suspicion[targetName] || 0) + 30);
+            gameState.suspicion[targetName] = Math.min(100, (gameState.suspicion[targetName] || 0) + 22);
           }
         }
         break;
@@ -1845,7 +1845,7 @@ const CharBrain = (() => {
         if (Math.random() < defense) {
           targetMind.suspicions[pc] = 100;
           targetMind.enemies.push(pc);
-          gameState.suspicion[pc] = Math.min(100, (gameState.suspicion[pc] || 0) + 35);
+          gameState.suspicion[pc] = Math.min(100, (gameState.suspicion[pc] || 0) + 25);
           return { success: false, desc: `${charName(targetName)} bertahan dari seranganmu!` };
         }
         gameState.alive[targetName] = false;
