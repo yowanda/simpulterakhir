@@ -4,6 +4,8 @@
 
 > *Sepuluh tamu. Satu mansion. Tiga simpul yang harus terputus. Siapa Sang Penenun?*
 
+[▶ Mainkan Sekarang](https://simpul-terakhir-wttltjhd.devinapps.com/)
+
 ---
 
 ## Sinopsis
