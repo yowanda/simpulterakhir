@@ -9,14 +9,14 @@ const STORY_PROLOG = {
   chapter: 0,
   text: (s) => {
     const pc = s.playerCharacter || 'arin';
-    const pcName = Engine.CHAR_DISPLAY[pc] || 'Arin';
+    const pcName = Engine.CHAR_DISPLAY[pc] || 'Arya';
     let text = '';
     text += `<p class="journal"><em>"Kau diundang untuk menyaksikan kebenaran. Mansion Wardhana, Sabtu, 21:00. Datang sendirian. Jangan beritahu siapapun."</em></p>`;
 
     // Character-specific arrival — as inner monolog / self-chat
     const perspective = Engine.getPlayerPerspective();
     if (pc === 'arin') {
-      text += `<p><span class="speaker arin">Arin</span> "Jalan ini... gelap banget. Sinyal udah hilang dari tadi."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Jalan ini... gelap banget. Sinyal udah hilang dari tadi."</p>`;
     } else if (pc === 'niko') {
       text += `<p><span class="speaker niko">Niko</span> "Semua sudah siap. Tamu-tamu mulai datang. Malam ini... kotak Pandora terbuka."</p>`;
     } else if (pc === 'sera') {
@@ -36,17 +36,17 @@ const STORY_PROLOG = {
         text += `<p class="journal"><em>[Kau adalah operator Sang Penenun. "Pemotong."]</em></p>`;
       }
     } else if (pc === 'kira') {
-      text += `<p><span class="speaker kira">Kira</span> "QR code tersembunyi di watermark amplop. Server di Estonia, di-route melalui tiga proxy. Pengirim ini bukan amatir."</p>`;
+      text += `<p><span class="speaker kira">Kai</span> "QR code tersembunyi di watermark amplop. Server di Estonia, di-route melalui tiga proxy. Pengirim ini bukan amatir."</p>`;
     } else if (pc === 'farah') {
       text += `<p><span class="speaker farah">Farah</span> "Mansion yang dibangun dengan uang keluarga Aldridge. Uang kakekku. Dan rahasia di bawah fondasinya..."</p>`;
     }
 
     if (pc === 'niko') {
-      text += `<p><span class="speaker niko">Niko</span> "Arin! Kau datang. Aku tahu kau tidak bisa menolak misteri."</p>`;
+      text += `<p><span class="speaker niko">Niko</span> "Arya! Kau datang. Aku tahu kau tidak bisa menolak misteri."</p>`;
     } else {
       text += `<p><span class="speaker niko">Niko</span> berdiri di tangga depan mansion, senyumnya cerah seperti iklan — terlalu cerah untuk tempat segelap ini.</p>`;
       if (pc === 'arin') {
-        text += `<p><span class="speaker niko">Niko</span> "Arin! Kau datang. Aku tahu kau tidak bisa menolak misteri."</p>`;
+        text += `<p><span class="speaker niko">Niko</span> "Arya! Kau datang. Aku tahu kau tidak bisa menolak misteri."</p>`;
       } else {
         text += `<p><span class="speaker niko">Niko</span> "${pcName}! Senang kau datang. Masuk, yang lain sudah menunggu."</p>`;
       }
@@ -132,7 +132,7 @@ const STORY_PROLOG = {
   text: `<p><span class="speaker niko">Niko</span> "Amplop hitam? Dramatik sekali. Tidak, aku mengirim undangan biasa lewat email. Desainnya minimalis — hitam dan emas. Kau tahu aku suka branding."</p>
 <p><span class="speaker niko">Niko</span> "Ini proyek terbaruku. Kakekku meninggalkan properti ini, dan aku mengubahnya jadi ruang pameran seni imersif. Malam ini soft launch."</p>
 <p><span class="speaker niko">Niko</span> "Oh — satu hal. Sinyal telepon agak buruk di sini. Tapi mansion punya Wi-Fi sendiri."</p>
-<p><span class="speaker niko">Niko</span> "Arin? Aku senang kau di sini. Serius. Malam ini... aku butuh seseorang yang bisa kupercaya."</p>`,
+<p><span class="speaker niko">Niko</span> "Arya? Aku senang kau di sini. Serius. Malam ini... aku butuh seseorang yang bisa kupercaya."</p>`,
   choices: [
     {
       text: "Ikuti Niko ke dalam hall utama",
@@ -153,8 +153,8 @@ const STORY_PROLOG = {
 },
 
 'prologue_check_cars': {
-  text: `<p><span class="speaker arin">Arin</span> "SUV hitam mengkilap, plat Jakarta. Sedan tua hijau army dengan stiker 'Ex Serviam'. Hatchback putih — 'My other car is a hearse'. Dan motor Juno."</p>
-<p><span class="speaker arin">Arin</span> "Tunggu... sedan silver di ujung, hampir tersembunyi. Di dalamnya — folder manila tebal. Header polisi."</p>`,
+  text: `<p><span class="speaker arin">Arya</span> "SUV hitam mengkilap, plat Jakarta. Sedan tua hijau army dengan stiker 'Ex Serviam'. Hatchback putih — 'My other car is a hearse'. Dan motor Juno."</p>
+<p><span class="speaker arin">Arya</span> "Tunggu... sedan silver di ujung, hampir tersembunyi. Di dalamnya — folder manila tebal. Header polisi."</p>`,
   choices: [
     {
       text: "Ambil foto folder polisi itu dengan ponsel",
@@ -180,7 +180,7 @@ const STORY_PROLOG = {
 },
 
 'prologue_photo_evidence': {
-  text: `<p><span class="speaker arin">Arin</span> "Dari foto ini... 'kasus tidak aktif... korban ke-7... profil serupa... mansion Wardhana...' Seseorang membawa file kasus pembunuhan ke pameran seni."</p>
+  text: `<p><span class="speaker arin">Arya</span> "Dari foto ini... 'kasus tidak aktif... korban ke-7... profil serupa... mansion Wardhana...' Seseorang membawa file kasus pembunuhan ke pameran seni."</p>
 <p><span class="speaker reza">Reza</span> "Mencari sesuatu?"</p>
 <p><span class="speaker reza">Reza</span> "Itu mobilku. Dan itu <em>file</em>-ku."</p>`,
   choices: [
@@ -206,12 +206,12 @@ const STORY_PROLOG = {
 },
 
 'prologue_reza_intro': {
-  text: `<p><span class="speaker reza">Reza</span> "Arin Prasetya. Podcast 'Jejak Mati'. Episode 47 — kasus Pembunuh Jembatan. Kau hampir benar soal pelakunya."</p>
-<p><span class="speaker arin">Arin</span> "Kau mendengarkan podcast-ku?"</p>
+  text: `<p><span class="speaker reza">Reza</span> "Arya Prasetya. Podcast 'Jejak Mati'. Episode 47 — kasus Pembunuh Jembatan. Kau hampir benar soal pelakunya."</p>
+<p><span class="speaker arin">Arya</span> "Kau mendengarkan podcast-ku?"</p>
 <p><span class="speaker reza">Reza</span> "Aku mendengarkan semua orang yang bicara tentang kasus-kasusku. Reza Hartono. Dulu detektif homisida. Sekarang konsultan keamanan. Niko menyewa jasaku untuk malam ini."</p>
-<p><span class="speaker arin">Arin</span> "Tapi kau membawa file kasus lama."</p>
+<p><span class="speaker arin">Arya</span> "Tapi kau membawa file kasus lama."</p>
 <p><span class="speaker reza">Reza</span> "Pernah dengar perasaan di perut yang bilang sesuatu tidak beres? Daftar tamu malam ini... cocok dengan profil korban dari kasus yang tidak pernah kututup."</p>
-<p><span class="speaker arin">Arin</span> "Kasus apa?"</p>
+<p><span class="speaker arin">Arya</span> "Kasus apa?"</p>
 <p><span class="speaker reza">Reza</span> "Tujuh orang. Tujuh tahun. Semuanya diundang ke acara eksklusif. Semuanya menghilang. Dan semuanya punya koneksi dengan keluarga pemilik properti."</p>
 <p><span class="speaker reza">Reza</span> "Aku bisa salah. Semoga aku salah."</p>`,
   choices: [
@@ -237,7 +237,7 @@ const STORY_PROLOG = {
 
 'prologue_reza_motive': {
   text: `<p><span class="speaker reza">Reza</span> "Karena terakhir kali aku mengabaikan perasaan ini, orang yang salah masuk penjara. Dan yang benar terus membunuh."</p>
-<p><span class="speaker reza">Reza</span> "Kita masuk. Amati. Jangan tunjukkan bahwa kau tahu apapun. Dan Arin — jangan percaya siapapun malam ini. Termasuk aku."</p>`,
+<p><span class="speaker reza">Reza</span> "Kita masuk. Amati. Jangan tunjukkan bahwa kau tahu apapun. Dan Arya — jangan percaya siapapun malam ini. Termasuk aku."</p>`,
   choices: [
     {
       text: "Masuk ke hall utama",
@@ -251,14 +251,14 @@ const STORY_PROLOG = {
 },
 
 'prologue_call_juno': {
-  text: `<p><span class="speaker juno">Juno</span> "Arin! Lo udah di sana? Gue baru parkir. Tempat ini gila — kayak haunted mansion di film B."</p>
-<p><span class="speaker arin">Arin</span> "Kau juga dapat amplop hitam?"</p>
+  text: `<p><span class="speaker juno">Juno</span> "Arya! Lo udah di sana? Gue baru parkir. Tempat ini gila — kayak haunted mansion di film B."</p>
+<p><span class="speaker arin">Arya</span> "Kau juga dapat amplop hitam?"</p>
 <p><span class="speaker juno">Juno</span> "Amplop hitam? Nggak. Gue diajak Niko lewat DM. Dia bilang ada pameran seni yang 'harus gue lihat'. Emang kenapa?"</p>
-<p><span class="speaker arin">Arin</span> "Tidak. Lupakan. Kita ketemu di dalam?"</p>
-<p><span class="speaker juno">Juno</span> "Bentar. Arin... lo kenal semua yang diundang?"</p>
-<p><span class="speaker arin">Arin</span> "Belum. Kenapa?"</p>
+<p><span class="speaker arin">Arya</span> "Tidak. Lupakan. Kita ketemu di dalam?"</p>
+<p><span class="speaker juno">Juno</span> "Bentar. Arya... lo kenal semua yang diundang?"</p>
+<p><span class="speaker arin">Arya</span> "Belum. Kenapa?"</p>
 <p><span class="speaker juno">Juno</span> "Gue baru papasan sama satu cewek. Berambut hitam, gaun gelap. Dia senyum dan bilang, 'Selamat datang kembali.' Gue belum pernah ke sini."</p>
-<p><span class="speaker juno">Juno</span> "Dan Arin — gue kenal wajahnya. Itu Vira. Vira yang hilang enam bulan."</p>`,
+<p><span class="speaker juno">Juno</span> "Dan Arya — gue kenal wajahnya. Itu Vira. Vira yang hilang enam bulan."</p>`,
   choices: [
     {
       text: '"Vira ada di sini?! Tunggu aku di lobby."',
@@ -281,10 +281,10 @@ const STORY_PROLOG = {
 },
 
 'prologue_phone_check': {
-  text: `<p><span class="speaker arin">Arin</span> "Nomor darurat disimpan. Pin lokasi terkirim ke editor podcast. Screenshot peta area — done."</p>
-<p><span class="speaker arin">Arin</span> "Sial. Status 'Sending...' tanpa centang. Sinyal udah nol."</p>
-<p><span class="speaker arin">Arin</span> "Wi-Fi mansion: 'WARDHANA_GUEST'. Kuat. Tapi semua request di-redirect ke splash screen: 'THE LAST KNOT' dengan countdown timer."</p>
-<p><span class="speaker arin">Arin</span> "Timer: 06:00:00. Enam jam. Sampai apa?"</p>`,
+  text: `<p><span class="speaker arin">Arya</span> "Nomor darurat disimpan. Pin lokasi terkirim ke editor podcast. Screenshot peta area — done."</p>
+<p><span class="speaker arin">Arya</span> "Sial. Status 'Sending...' tanpa centang. Sinyal udah nol."</p>
+<p><span class="speaker arin">Arya</span> "Wi-Fi mansion: 'WARDHANA_GUEST'. Kuat. Tapi semua request di-redirect ke splash screen: 'THE LAST KNOT' dengan countdown timer."</p>
+<p><span class="speaker arin">Arya</span> "Timer: 06:00:00. Enam jam. Sampai apa?"</p>`,
   choices: [
     {
       text: "Masuk ke mansion. Waktu berjalan.",
@@ -312,7 +312,7 @@ const STORY_PROLOG = {
     }
 
     if (s.flags.calledJuno) {
-      text += `<p><span class="speaker juno">Juno</span> "Gue nggak suka tempat ini, Arin. Terlalu... disetting."</p>`;
+      text += `<p><span class="speaker juno">Juno</span> "Gue nggak suka tempat ini, Arya. Terlalu... disetting."</p>`;
     } else {
       text += `<p><span class="speaker juno">Juno</span> muncul dari lorong samping, mengangguk — anggukan jalanan, cepat.</p>`;
     }
@@ -369,11 +369,11 @@ const STORY_PROLOG = {
 },
 
 'prologue_sera_talk': {
-  text: `<p><span class="speaker sera">Sera</span> "Tiga hal, Arin."</p>
+  text: `<p><span class="speaker sera">Sera</span> "Tiga hal, Arya."</p>
 <p><span class="speaker sera">Sera</span> "Satu — aku menghitung sepuluh undangan tapi sebelas tempat duduk di meja makan. Untuk siapa kursi kosong itu?"</p>
 <p><span class="speaker sera">Sera</span> "Dua — pria di dekat bar. Microexpression-nya tidak sinkron. Dia tersenyum tapi pupilnya tidak melebar. Itu masking. Tipe yang aku pelajari di bab psychopathology."</p>
 <p><span class="speaker sera">Sera</span> "Dan tiga — Vira. Body language-nya salah. Vira yang aku kenal itu orang yang <em>tidak bisa diam</em>. Vira yang ini posturnya terlalu terkontrol. Seperti sedang mengevaluasi ruangan. Bukan sebagai tamu — sebagai <em>predator</em>."</p>
-<p><span class="speaker sera">Sera</span> "Arin, aku takut. Tapi aku lebih takut kalau aku diam dan ternyata aku benar."</p>`,
+<p><span class="speaker sera">Sera</span> "Arya, aku takut. Tapi aku lebih takut kalau aku diam dan ternyata aku benar."</p>`,
   choices: [
     {
       text: '"Catatan yang bagus. Kita jaga mata terbuka — bersama."',
@@ -407,10 +407,10 @@ const STORY_PROLOG = {
 },
 
 'prologue_eleventh_chair': {
-  text: `<p><span class="speaker arin">Arin</span> "Meja panjang kayu gelap, sepuluh tempat duduk dengan name card — dan satu lagi di ujung kepala meja. Tanpa nama."</p>
-<p><span class="speaker sera">Sera</span> "Arin, lihat — di piring kursi kosong itu. Amplop hitam yang sudah terbuka. Ada foto polaroid di dalamnya."</p>
-<p><span class="speaker arin">Arin</span> "Foto kita semua — diambil malam ini. Pakaian sama, posisi sama. Tapi ada tanda silang merah di atas wajah tiga orang."</p>
-<p><span class="speaker sera">Sera</span> "Arin... itu tanda target."</p>
+  text: `<p><span class="speaker arin">Arya</span> "Meja panjang kayu gelap, sepuluh tempat duduk dengan name card — dan satu lagi di ujung kepala meja. Tanpa nama."</p>
+<p><span class="speaker sera">Sera</span> "Arya, lihat — di piring kursi kosong itu. Amplop hitam yang sudah terbuka. Ada foto polaroid di dalamnya."</p>
+<p><span class="speaker arin">Arya</span> "Foto kita semua — diambil malam ini. Pakaian sama, posisi sama. Tapi ada tanda silang merah di atas wajah tiga orang."</p>
+<p><span class="speaker sera">Sera</span> "Arya... itu tanda target."</p>
 <p class="journal"><em>"Sebelum fajar, tiga simpul akan terputus. Pertanyaannya bukan siapa — tapi apakah kau cukup berani untuk mengikat ulang?"</em></p>`,
   shake: true,
   choices: [
@@ -448,11 +448,11 @@ const STORY_PROLOG = {
 },
 
 'prologue_reveal_photo': {
-  text: `<p><span class="speaker arin">Arin</span> "Perhatian, semuanya. Aku menemukan ini di ruang makan. Foto kita semua — diambil malam ini. Dengan tanda target di tiga wajah."</p>
+  text: `<p><span class="speaker arin">Arya</span> "Perhatian, semuanya. Aku menemukan ini di ruang makan. Foto kita semua — diambil malam ini. Dengan tanda target di tiga wajah."</p>
 <p><span class="speaker reza">Reza</span> "Tunjukkan." </p>
-<p><span class="speaker kira">Kira</span> "Kamera tersembunyi di chandelier. Aku bisa tracing feed-nya kalau aku dapat akses ke router lokal."</p>
+<p><span class="speaker kira">Kai</span> "Kamera tersembunyi di chandelier. Aku bisa tracing feed-nya kalau aku dapat akses ke router lokal."</p>
 <p><span class="speaker juno">Juno</span> "Siapa tiga yang di-target?"</p>
-<p><span class="speaker arin">Arin</span> "Tiga tanda silang: Reza, Farah, dan... Vira."</p>
+<p><span class="speaker arin">Arya</span> "Tiga tanda silang: Reza, Farah, dan... Vira."</p>
 <p><span class="speaker vira">Vira</span> "Menarik. Seseorang suka bermain."</p>
 <p><span class="speaker niko">Niko</span> "Oke. Ini jelas bukan bagian dari pameran. Aku akan—"</p>
 <p class="sound">— lampu mati. Gelap total. Tiga detik. —</p>
@@ -480,13 +480,13 @@ const STORY_PROLOG = {
 },
 
 'prologue_vira_talk': {
-  text: `<p><span class="speaker vira">Vira</span> "Arin. Aku tahu kau akan datang. Kau selalu datang."</p>
-<p><span class="speaker arin">Arin</span> "Vira. Enam bulan."</p>
+  text: `<p><span class="speaker vira">Vira</span> "Arya. Aku tahu kau akan datang. Kau selalu datang."</p>
+<p><span class="speaker arin">Arya</span> "Vira. Enam bulan."</p>
 <p><span class="speaker vira">Vira</span> "Enam bulan, dua minggu, empat hari. Tapi siapa yang menghitung?"</p>
-<p><span class="speaker arin">Arin</span> "Di mana kau—"</p>
+<p><span class="speaker arin">Arya</span> "Di mana kau—"</p>
 <p><span class="speaker vira">Vira</span> "Pertanyaan yang salah. Pertanyaan yang benar adalah: kenapa aku kembali <em>sekarang</em>? Kenapa di <em>tempat ini</em>?"</p>
-<p><span class="speaker vira">Vira</span> "Aku kembali karena ini belum selesai, Arin. Yang dimulai di mansion ini lima puluh tahun lalu — siklus itu masih berjalan. Dan malam ini, kita semua bagian darinya."</p>
-<p><span class="speaker arin">Arin</span> "Kau bicara seperti orang yang tahu apa yang akan terjadi."</p>
+<p><span class="speaker vira">Vira</span> "Aku kembali karena ini belum selesai, Arya. Yang dimulai di mansion ini lima puluh tahun lalu — siklus itu masih berjalan. Dan malam ini, kita semua bagian darinya."</p>
+<p><span class="speaker arin">Arya</span> "Kau bicara seperti orang yang tahu apa yang akan terjadi."</p>
 <p><span class="speaker vira">Vira</span> "Mungkin aku tahu. Mungkin aku <em>sudah melihatnya</em>. Atau mungkin aku gila. Pilih yang membuat kau bisa tidur malam ini."</p>`,
   choices: [
     {
@@ -518,8 +518,8 @@ const STORY_PROLOG = {
 },
 
 'prologue_vira_hint': {
-  text: `<p><span class="speaker vira">Vira</span> "Arin." Suaranya berbisik, bergetar. "Jangan percaya yang di atas."</p>
-<p><span class="speaker arin">Arin</span> "Apa maksud—"</p>
+  text: `<p><span class="speaker vira">Vira</span> "Arya." Suaranya berbisik, bergetar. "Jangan percaya yang di atas."</p>
+<p><span class="speaker arin">Arya</span> "Apa maksud—"</p>
 <p><span class="speaker vira">Vira</span> "Oh, aku hanya bercanda. Kau tahu aku suka dramatis."</p>
 <p><span class="speaker niko">Niko</span> menepuk tangannya di tengah ruangan.</p>`,
   choices: [
@@ -544,7 +544,7 @@ const STORY_PROLOG = {
 },
 
 'prologue_vira_cold': {
-  text: `<p><span class="speaker vira">Vira</span> "Bersalah. Kata yang menarik dari seseorang yang membangun karir dari mayat orang lain. Podcast-mu, Arin — setiap episode adalah cerita kematian. Kau <em>menikmati</em> ini."</p>
+  text: `<p><span class="speaker vira">Vira</span> "Bersalah. Kata yang menarik dari seseorang yang membangun karir dari mayat orang lain. Podcast-mu, Arya — setiap episode adalah cerita kematian. Kau <em>menikmati</em> ini."</p>
 <p><span class="speaker vira">Vira</span> "Tapi kau benar. Satu petunjuk gratis: malam ini, perhatikan tangan. Bukan mulut. Mulut berbohong. Tangan menunjukkan kebenaran."</p>`,
   choices: [
     {
@@ -559,13 +559,13 @@ const STORY_PROLOG = {
 },
 
 'prologue_examine_chairs': {
-  text: `<p><span class="speaker arin">Arin</span> "Sepuluh kursi kayu, disusun melingkar. Di depan setiap kursi, amplop hitam dengan nama."</p>
+  text: `<p><span class="speaker arin">Arya</span> "Sepuluh kursi kayu, disusun melingkar. Di depan setiap kursi, amplop hitam dengan nama."</p>
 <p class="journal"><em>"ARIN PRASETYA — Sang Pencari. Kau mencari kebenaran di tempat gelap. Tapi apakah kau siap menemukan kebenaran tentang dirimu sendiri?"</em></p>
-<p><span class="speaker kira">Kira</span> "Hei, lihat kartuku — 'KIRA CHEN — Sang Pengawas. Kau melihat semua yang digital. Tapi apakah kau bisa melihat apa yang nyata?'"</p>
-<p><span class="speaker kira">Kira</span> "Ini bukan pameran seni. Ini profiling. Seseorang sudah meneliti kita semua."</p>`,
+<p><span class="speaker kira">Kai</span> "Hei, lihat kartuku — 'KIRA CHEN — Sang Pengawas. Kau melihat semua yang digital. Tapi apakah kau bisa melihat apa yang nyata?'"</p>
+<p><span class="speaker kira">Kai</span> "Ini bukan pameran seni. Ini profiling. Seseorang sudah meneliti kita semua."</p>`,
   choices: [
     {
-      text: '"Kira, bisa kau cek siapa yang hosting server Wi-Fi di sini?"',
+      text: '"Kai, bisa kau cek siapa yang hosting server Wi-Fi di sini?"',
       next: 'prologue_kira_hack',
       effect: (s) => {
         Engine.modTrust('arin', 'kira', 10);
@@ -592,11 +592,11 @@ const STORY_PROLOG = {
 },
 
 'prologue_kira_hack': {
-  text: `<p><span class="speaker kira">Kira</span> "Udah. Aku scan jaringan ini sebelum masuk. Kebiasaan."</p>
-<p><span class="speaker kira">Kira</span> "Router mansion terhubung ke NAS server lokal. Tapi ada satu device lain — server stream. Aktif. Streaming video ke IP eksternal."</p>
-<p><span class="speaker arin">Arin</span> "Seseorang menyiarkan apa yang terjadi di sini? Live?"</p>
-<p><span class="speaker kira">Kira</span> "Dan satu hal lagi. Di NAS ada folder bertanggal mundur tujuh tahun. Setiap folder berisi video. Aku baru buka satu."</p>
-<p><span class="speaker kira">Kira</span> "Setiap tahun. Selama tujuh tahun. Ada 'acara' di mansion ini. Dan setiap kali... ada yang tidak keluar hidup-hidup."</p>`,
+  text: `<p><span class="speaker kira">Kai</span> "Udah. Aku scan jaringan ini sebelum masuk. Kebiasaan."</p>
+<p><span class="speaker kira">Kai</span> "Router mansion terhubung ke NAS server lokal. Tapi ada satu device lain — server stream. Aktif. Streaming video ke IP eksternal."</p>
+<p><span class="speaker arin">Arya</span> "Seseorang menyiarkan apa yang terjadi di sini? Live?"</p>
+<p><span class="speaker kira">Kai</span> "Dan satu hal lagi. Di NAS ada folder bertanggal mundur tujuh tahun. Setiap folder berisi video. Aku baru buka satu."</p>
+<p><span class="speaker kira">Kai</span> "Setiap tahun. Selama tujuh tahun. Ada 'acara' di mansion ini. Dan setiap kali... ada yang tidak keluar hidup-hidup."</p>`,
   shake: true,
   choices: [
     {
@@ -623,9 +623,9 @@ const STORY_PROLOG = {
 },
 
 'prologue_try_escape': {
-  text: `<p><span class="speaker arin">Arin</span> "Pintu depan — terkunci."</p>
-<p><span class="speaker kira">Kira</span> "Kunci elektromagnetik. Dikontrol dari server. Semua pintu keluar terkunci tiga menit lalu. Tepat saat tamu terakhir masuk."</p>
-<p><span class="speaker arin">Arin</span> "Niko! Pintu terkunci!"</p>
+  text: `<p><span class="speaker arin">Arya</span> "Pintu depan — terkunci."</p>
+<p><span class="speaker kira">Kai</span> "Kunci elektromagnetik. Dikontrol dari server. Semua pintu keluar terkunci tiga menit lalu. Tepat saat tamu terakhir masuk."</p>
+<p><span class="speaker arin">Arya</span> "Niko! Pintu terkunci!"</p>
 <p><span class="speaker niko">Niko</span> "Aku tahu. Itu bagian dari pengalaman imersif. Santai — kunci akan terbuka otomatis saat pameran selesai. Escape room versi premium."</p>`,
   choices: [
     {
@@ -665,10 +665,10 @@ const STORY_PROLOG = {
 },
 
 'prologue_lana_envelope': {
-  text: `<p><span class="speaker lana">Lana</span> "Menginspirasi. Kata yang kuat. Aku penulis fiksi, Arin. Kalau setiap penulis thriller dituduh menginspirasi pembunuhan, Stephen King sudah di penjara sejak 1980."</p>
-<p><span class="speaker arin">Arin</span> "Tapi kasus di buku ketigamu — 'Anatomi Malam' — detail-detailnya cocok dengan kasus nyata yang polisi tidak publikasikan."</p>
+  text: `<p><span class="speaker lana">Lana</span> "Menginspirasi. Kata yang kuat. Aku penulis fiksi, Arya. Kalau setiap penulis thriller dituduh menginspirasi pembunuhan, Stephen King sudah di penjara sejak 1980."</p>
+<p><span class="speaker arin">Arya</span> "Tapi kasus di buku ketigamu — 'Anatomi Malam' — detail-detailnya cocok dengan kasus nyata yang polisi tidak publikasikan."</p>
 <p><span class="speaker lana">Lana</span> "Kau sudah riset tentang aku. Bagus. Aku juga sudah riset tentang kau."</p>
-<p><span class="speaker lana">Lana</span> "Sumber podcast episode 32-mu. Yang bunuh diri. Aku kenal dia. Dan dia tidak bunuh diri, Arin."</p>
+<p><span class="speaker lana">Lana</span> "Sumber podcast episode 32-mu. Yang bunuh diri. Aku kenal dia. Dan dia tidak bunuh diri, Arya."</p>
 <p><span class="speaker lana">Lana</span> "Kita punya banyak yang bisa dibicarakan malam ini. Tapi nanti. Tuan rumah ingin mulai."</p>`,
   choices: [
     {
@@ -686,14 +686,14 @@ const STORY_PROLOG = {
 
 'prologue_lana_intro': {
   text: `<p><span class="speaker lana">Lana</span> "Indah, bukan? Dalam cara yang membuatmu malu mengakuinya."</p>
-<p><span class="speaker arin">Arin</span> "Lana Maharani. 'Anatomi Malam'. 'Tujuh Belati'. 'Sang Penenun'."</p>
+<p><span class="speaker arin">Arya</span> "Lana Maharani. 'Anatomi Malam'. 'Tujuh Belati'. 'Sang Penenun'."</p>
 <p><span class="speaker lana">Lana</span> "Fan?"</p>
-<p><span class="speaker arin">Arin</span> "Reviewer. Episode 51 podcast-ku. Aku bilang novel-novelmu 'terlalu akurat untuk nyaman'."</p>
+<p><span class="speaker arin">Arya</span> "Reviewer. Episode 51 podcast-ku. Aku bilang novel-novelmu 'terlalu akurat untuk nyaman'."</p>
 <p><span class="speaker lana">Lana</span> "Ah. Kau yang bilang aku mungkin psychopath. Aku suka review itu. Paling jujur yang pernah kuterima."</p>
 <p><span class="speaker lana">Lana</span> "Kau tahu apa yang menarik? Foto-foto ini semua dari lokasi yang sama. Mansion ini. Berbeda tahun, berbeda ruangan, tapi tempat yang sama."</p>
-<p><span class="speaker arin">Arin</span> "Bagaimana kau tahu?"</p>
+<p><span class="speaker arin">Arya</span> "Bagaimana kau tahu?"</p>
 <p><span class="speaker lana">Lana</span> "Karena aku meneliti mansion Wardhana untuk novel terakhirku. Novel tentang sepuluh orang yang diundang ke sebuah mansion. Dan satu per satu..."</p>
-<p><span class="speaker lana">Lana</span> "Kau tahu, Arin... aku suka jurnalis. Kalian dan novelis — dua sisi mata uang. Bedanya, aku menciptakan monster. Kau mencari mereka. Pertanyaannya: siapa yang lebih bahaya?"</p>`,
+<p><span class="speaker lana">Lana</span> "Kau tahu, Arya... aku suka jurnalis. Kalian dan novelis — dua sisi mata uang. Bedanya, aku menciptakan monster. Kau mencari mereka. Pertanyaannya: siapa yang lebih bahaya?"</p>`,
   choices: [
     {
       text: '"Novel yang belum terbit tentang skenario yang mirip malam ini. Kebetulan?"',
@@ -720,7 +720,7 @@ const STORY_PROLOG = {
   text: `<p><span class="speaker lana">Lana</span> "Mansion Wardhana dibangun 1971 oleh dua keluarga — Wardhana dan Aldridge. Selama konstruksi, tujuh pekerja tewas. Semuanya jatuh dari ketinggian. Semuanya di sayap timur."</p>
 <p><span class="speaker lana">Lana</span> "Setelah dibangun, mansion jadi tempat pertemuan eksklusif. Dan setiap tahun, pada tanggal yang sama, satu orang yang hadir... menghilang."</p>
 <p><span class="speaker lana">Lana</span> "Resmi: meninggalkan pesta karena darurat keluarga. Tidak pernah dilaporkan hilang. Keluarga menerima uang tutup mulut."</p>
-<p><span class="speaker arin">Arin</span> "Tidak ada yang keluar."</p>
+<p><span class="speaker arin">Arya</span> "Tidak ada yang keluar."</p>
 <p><span class="speaker lana">Lana</span> "Satu yang keluar. Selalu satu. Yang lain... menjadi bagian dari koleksi."</p>`,
   choices: [
     {
@@ -737,8 +737,8 @@ const STORY_PROLOG = {
 },
 
 'prologue_bar_talk': {
-  text: `<p><span class="speaker farah">Farah</span> "Oh, kau pasti Arin. Niko cerita tentang kau — podcaster, kan? Sangat... berani."</p>
-<p><span class="speaker arin">Arin</span> "Dan kau Farah Aldridge. Keluarga yang co-founded mansion ini bersama keluarga Wardhana."</p>
+  text: `<p><span class="speaker farah">Farah</span> "Oh, kau pasti Arya. Niko cerita tentang kau — podcaster, kan? Sangat... berani."</p>
+<p><span class="speaker arin">Arya</span> "Dan kau Farah Aldridge. Keluarga yang co-founded mansion ini bersama keluarga Wardhana."</p>
 <p><span class="speaker farah">Farah</span> "Keluargaku <em>mendanai</em> pembangunan. Yang membangun adalah Wardhana. Aku di sini karena Niko bilang akan ada pengumuman tentang properti ini. Sebagai co-owner, aku harus hadir."</p>
 <p><span class="speaker dimas">Dimas</span> "Dimas Surya. Mahasiswa kedokteran forensik. Aku di sini karena Lana mengundangku sebagai konsultan untuk novel barunya."</p>
 <p><span class="speaker dimas">Dimas</span> "Ironis ya — forensik di pameran seni."</p>
@@ -797,7 +797,7 @@ const STORY_PROLOG = {
 <p><span class="speaker dimas">Dimas</span> "Tapi pertanyaan yang lebih menarik: bisakah kau membuat pembunuhan terlihat seperti kecelakaan?"</p>
 <p><span class="speaker dimas">Dimas</span> "Jawaban akademisnya: ya. Dengan pengetahuan anatomi yang cukup, alat yang tepat, dan waktu — hampir semua pembunuhan bisa disamarkan."</p>
 <p><span class="speaker dimas">Dimas</span> "Tapi tentu saja, aku hanya bicara teori."</p>
-<p><span class="speaker arin">Arin</span> "Tentu saja."</p>`,
+<p><span class="speaker arin">Arya</span> "Tentu saja."</p>`,
   choices: [
     {
       text: "Ikuti acara Niko",
@@ -814,15 +814,15 @@ const STORY_PROLOG = {
   text: (s) => {
     let text = '';
     if (s.flags.seraAlliance) {
-      text += `<p><span class="speaker kira">Kira</span> menghampiri kalian berdua.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> menghampiri kalian berdua.</p>`;
     } else {
-      text += `<p><span class="speaker kira">Kira</span> menghampirimu.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> menghampirimu.</p>`;
     }
-    text += `<p><span class="speaker kira">Kira</span> "Arin Prasetya, kan? Aku Kira. Dengerin — gue hack jaringan Wi-Fi mansion ini. Ada server yang streaming live feed ke IP luar. Kita sedang ditonton."</p>`;
-    text += `<p><span class="speaker kira">Kira</span> "Dan semua pintu keluar dikunci elektromagnetik tiga menit yang lalu."</p>`;
+    text += `<p><span class="speaker kira">Kai</span> "Arya Prasetya, kan? Aku Kai. Dengerin — gue hack jaringan Wi-Fi mansion ini. Ada server yang streaming live feed ke IP luar. Kita sedang ditonton."</p>`;
+    text += `<p><span class="speaker kira">Kai</span> "Dan semua pintu keluar dikunci elektromagnetik tiga menit yang lalu."</p>`;
     if (s.flags.seraAlliance) {
       text += `<p><span class="speaker sera">Sera</span> "Kita terjebak?"</p>`;
-      text += `<p><span class="speaker kira">Kira</span> "Kita terkunci di dalam dengan seseorang yang sudah merencanakan ini bertahun-tahun. Nggak sama."</p>`;
+      text += `<p><span class="speaker kira">Kai</span> "Kita terkunci di dalam dengan seseorang yang sudah merencanakan ini bertahun-tahun. Nggak sama."</p>`;
     }
     return text;
   },
@@ -848,7 +848,7 @@ const STORY_PROLOG = {
     text += `<p><span class="speaker niko">Niko</span> "Mansion ini punya sejarah. Keluargaku membangun tempat ini lima puluh tahun lalu — dan selama itu, tempat ini menyimpan rahasia yang ingin dikubur banyak orang."</p>`;
 
     if (s.flags.revealedPhotoToAll) {
-      text += `<p><span class="speaker niko">Niko</span> "Dan ya — aku tahu tentang foto yang Arin temukan. Itu bukan ancaman. Itu bagian dari pameran. Performance art."</p>`;
+      text += `<p><span class="speaker niko">Niko</span> "Dan ya — aku tahu tentang foto yang Arya temukan. Itu bukan ancaman. Itu bagian dari pameran. Performance art."</p>`;
       text += `<p><span class="speaker reza">Reza</span> "Performance art dengan tanda target di wajah orang? Itu bukan seni. Itu intimidasi."</p>`;
     }
 
@@ -886,7 +886,7 @@ const STORY_PROLOG = {
       }
     },
     {
-      text: "Minta Kira trace siapa yang mengontrol lampu dan kunci",
+      text: "Minta Kai trace siapa yang mengontrol lampu dan kunci",
       next: 'prologue_kira_trace',
       effect: (s) => {
         Engine.modTrust('arin', 'kira', 8);
@@ -908,23 +908,23 @@ const STORY_PROLOG = {
 'prologue_observe_reactions': {
   text: (s) => {
     let text = '';
-    text += `<p><span class="speaker arin">Arin</span> "Niko — terkejut, tapi matanya mengkalkulasi. Ini mungkin bukan rencananya, tapi dia tidak sepenuhnya tidak siap."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Sera — takut, tapi juga mengamati. Satu tipe denganku."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Juno — marah. Reaksi fight. Tangannya terkepal."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Reza — profesional. Sudah mode detektif. Tangan di pinggul — kebiasaan lama."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Farah — ketakutan murni. Tapi matanya bergerak ke lantai tiga."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Kira — sudah di laptop. Fokus, bukan panik."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Vira — <em>tidak bereaksi sama sekali</em>. Seperti cuaca yang sudah dia ramalkan."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Niko — terkejut, tapi matanya mengkalkulasi. Ini mungkin bukan rencananya, tapi dia tidak sepenuhnya tidak siap."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Sera — takut, tapi juga mengamati. Satu tipe denganku."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Juno — marah. Reaksi fight. Tangannya terkepal."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Reza — profesional. Sudah mode detektif. Tangan di pinggul — kebiasaan lama."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Farah — ketakutan murni. Tapi matanya bergerak ke lantai tiga."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Kai — sudah di laptop. Fokus, bukan panik."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Vira — <em>tidak bereaksi sama sekali</em>. Seperti cuaca yang sudah dia ramalkan."</p>`;
 
     if (s.difficulty >= 2) {
-      text += `<p><span class="speaker arin">Arin</span> "Lana — bibirnya bergerak. Berbisik: 'Tepat waktu.' Siapa yang tepat waktu?"</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Dimas — tenang. Memeriksa tas medisnya. Dia sudah siap untuk malam ini. Kenapa?"</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Lana — bibirnya bergerak. Berbisik: 'Tepat waktu.' Siapa yang tepat waktu?"</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Dimas — tenang. Memeriksa tas medisnya. Dia sudah siap untuk malam ini. Kenapa?"</p>`;
     } else {
-      text += `<p><span class="speaker arin">Arin</span> "Lana — menulis catatan. Novelis — selalu mencatat."</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Dimas — tenang. Terlalu tenang untuk mahasiswa."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Lana — menulis catatan. Novelis — selalu mencatat."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Dimas — tenang. Terlalu tenang untuk mahasiswa."</p>`;
     }
 
-    text += `<p><span class="speaker arin">Arin</span> "Dua orang tidak terkejut: Vira dan `;
+    text += `<p><span class="speaker arin">Arya</span> "Dua orang tidak terkejut: Vira dan `;
     text += s.difficulty >= 2 ? `Lana."` : `Dimas."`;
 
     return text;
@@ -958,7 +958,7 @@ const STORY_PROLOG = {
     if (s.flags.kiraAlliance) allies.push('kira');
     if (!allies.includes('juno')) allies.push('juno');
 
-    let text = `<p><span class="speaker arin">Arin</span> "Kita perlu rencana. Sekarang."</p>`;
+    let text = `<p><span class="speaker arin">Arya</span> "Kita perlu rencana. Sekarang."</p>`;
     text += `<p><span class="speaker juno">Juno</span> "Simpel. Kita cari jalan keluar, hubungi polisi, dan—"</p>`;
     text += `<p><span class="speaker sera">Sera</span> "Sinyal telepon nol. Wi-Fi dikontrol. Semua pintu keluar terkunci elektromagnetik."</p>`;
     text += `<p><span class="speaker juno">Juno</span> "Jendela?"</p>`;
@@ -968,7 +968,7 @@ const STORY_PROLOG = {
     }
 
     if (allies.includes('kira')) {
-      text += `<p><span class="speaker kira">Kira</span> "Aku bisa coba override sistem kunci dari server lokal. Tapi butuh akses fisik ke ruang server — kemungkinan di basement."</p>`;
+      text += `<p><span class="speaker kira">Kai</span> "Aku bisa coba override sistem kunci dari server lokal. Tapi butuh akses fisik ke ruang server — kemungkinan di basement."</p>`;
     }
 
     return text;
@@ -1017,7 +1017,7 @@ const STORY_PROLOG = {
 
 'prologue_niko_denies': {
   text: `<p><span class="speaker niko">Niko</span> "Tulisan itu — bukan bagian dari pameran. Aku merancang semuanya. Instalasi, pencahayaan, foto-foto. Tapi tulisan itu... bukan aku."</p>
-<p><span class="speaker arin">Arin</span> "Lalu siapa?"</p>
+<p><span class="speaker arin">Arya</span> "Lalu siapa?"</p>
 <p><span class="speaker niko">Niko</span> "Aku tidak tahu. Tapi ada kemungkinan seseorang lain punya akses ke mansion ini. Seseorang yang tahu tentang sistem kelistrikan dan kunci."</p>
 <p><span class="speaker reza">Reza</span> "Niko. Daftar. Siapa lagi yang punya kunci atau akses?"</p>
 <p><span class="speaker niko">Niko</span> "Secara legal? Aku dan Farah. Tapi kunci digital — sistem baru yang kupasang bulan lalu — hanya aku yang seharusnya punya passwordnya."</p>
@@ -1041,7 +1041,7 @@ const STORY_PROLOG = {
 },
 
 'prologue_check_exits': {
-  text: `<p><span class="speaker arin">Arin</span> "Pintu depan — terkunci elektromagnetik."</p>
+  text: `<p><span class="speaker arin">Arya</span> "Pintu depan — terkunci elektromagnetik."</p>
 <p><span class="speaker reza">Reza</span> "Pintu belakang dapur — terkunci. Pintu samping taman — terkunci. Jendela — teralis besi."</p>
 <p><span class="speaker reza">Reza</span> "Tunggu. Pintu ini berbeda — lebih tua, tidak ada kunci elektronik. Gembok klasik. Menuju basement."</p>
 <p><span class="speaker reza">Reza</span> "Aku dengar sesuatu dari bawah. Dengungan mesin. Dan... musik yang sama yang di hall. Tapi dari sini, kedengarannya terbalik."</p>`,
@@ -1068,12 +1068,12 @@ const STORY_PROLOG = {
 },
 
 'prologue_kira_trace': {
-  text: `<p><span class="speaker kira">Kira</span> "Sistem kunci dijalankan dari server di basement — terhubung ke semua pintu dan jendela. Lampu juga. Smart home terintegrasi."</p>
-<p><span class="speaker arin">Arin</span> "Bisa kau override?"</p>
-<p><span class="speaker kira">Kira</span> "Dari sini? Tidak. Firewallnya enterprise-grade. Setup profesional."</p>
-<p><span class="speaker kira">Kira</span> "Tapi aku menemukan countdown timer di server. Enam jam mundur. Dan setiap jam, ada event terjadwal yang terpicu otomatis."</p>
-<p><span class="speaker arin">Arin</span> "Event apa?"</p>
-<p><span class="speaker kira">Kira</span> "Tidak bisa baca detailnya. Tapi timestamp event pertama... lima belas menit dari sekarang."</p>`,
+  text: `<p><span class="speaker kira">Kai</span> "Sistem kunci dijalankan dari server di basement — terhubung ke semua pintu dan jendela. Lampu juga. Smart home terintegrasi."</p>
+<p><span class="speaker arin">Arya</span> "Bisa kau override?"</p>
+<p><span class="speaker kira">Kai</span> "Dari sini? Tidak. Firewallnya enterprise-grade. Setup profesional."</p>
+<p><span class="speaker kira">Kai</span> "Tapi aku menemukan countdown timer di server. Enam jam mundur. Dan setiap jam, ada event terjadwal yang terpicu otomatis."</p>
+<p><span class="speaker arin">Arya</span> "Event apa?"</p>
+<p><span class="speaker kira">Kai</span> "Tidak bisa baca detailnya. Tapi timestamp event pertama... lima belas menit dari sekarang."</p>`,
   choices: [
     {
       text: "Siapkan semua orang untuk event pertama",
@@ -1089,8 +1089,8 @@ const STORY_PROLOG = {
 },
 
 'prologue_confront_vira_public': {
-  text: `<p><span class="speaker arin">Arin</span> "Vira. Kau tidak terkejut. Lampu mati. Tulisan ancaman. Pintu terkunci. Dan kau berdiri seperti menonton film yang sudah kau hapal endingnya."</p>
-<p><span class="speaker vira">Vira</span> "Arin si jurnalis. Selalu mencari cerita."</p>
+  text: `<p><span class="speaker arin">Arya</span> "Vira. Kau tidak terkejut. Lampu mati. Tulisan ancaman. Pintu terkunci. Dan kau berdiri seperti menonton film yang sudah kau hapal endingnya."</p>
+<p><span class="speaker vira">Vira</span> "Arya si jurnalis. Selalu mencari cerita."</p>
 <p><span class="speaker vira">Vira</span> "Kau mau tahu kenapa aku tidak terkejut? Karena aku sudah pernah ada di sini. Enam bulan lalu. Sebelum aku 'menghilang'."</p>
 <p><span class="speaker vira">Vira</span> "Aku diundang. Sama seperti kalian. Dan aku melihat apa yang terjadi pada orang-orang sebelumnya. Aku selamat. Yang lain tidak."</p>
 <p><span class="speaker vira">Vira</span> "Malam ini, siklus itu berulang. Satu-satunya cara menghentikannya — temukan siapa yang menjalankannya. Sebelum mereka menyelesaikan apa yang mereka mulai."</p>
@@ -1122,7 +1122,7 @@ const STORY_PROLOG = {
 'prologue_vira_doesnt_know': {
   text: `<p><span class="speaker vira">Vira</span> "Kalau aku tahu, aku tidak akan di sini. Aku akan di kantor polisi."</p>
 <p><span class="speaker vira">Vira</span> "Yang aku tahu: ada seseorang yang menyebut dirinya 'Sang Penenun'. Dia merancang ini semua seperti skenario. Setiap orang di ruangan ini dipilih karena alasan tertentu."</p>
-<p><span class="speaker arin">Arin</span> "Siapa Sang Penenun?"</p>
+<p><span class="speaker arin">Arya</span> "Siapa Sang Penenun?"</p>
 <p><span class="speaker vira">Vira</span> "Bisa siapa saja. Bisa salah satu dari kita."</p>`,
   choices: [
     {

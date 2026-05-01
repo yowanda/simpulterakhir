@@ -13,15 +13,15 @@ const STORY_CH10 = {
 
     if (s.flags.outsideMansion) {
       if (s.flags.mansionBurned) {
-        text += `<p><span class="speaker arin">Arin</span> Di belakang kalian, mansion Wardhana masih berasap. Kerangka kayu hitam berdiri seperti tulang-tulang raksasa. Lima puluh tahun kengerian — direduksi menjadi abu dan puing.</p>`;
+        text += `<p><span class="speaker arin">Arya</span> Di belakang kalian, mansion Wardhana masih berasap. Kerangka kayu hitam berdiri seperti tulang-tulang raksasa. Lima puluh tahun kengerian — direduksi menjadi abu dan puing.</p>`;
       } else {
-        text += `<p><span class="speaker arin">Arin</span> Mansion Wardhana berdiri di belakang kalian — gelap, diam, seolah tidak pernah terjadi apa-apa di dalamnya.</p>`;
+        text += `<p><span class="speaker arin">Arya</span> Mansion Wardhana berdiri di belakang kalian — gelap, diam, seolah tidak pernah terjadi apa-apa di dalamnya.</p>`;
       }
     } else {
-      text += `<p><span class="speaker arin">Arin</span> Dari jendela lantai satu — yang sudah pecah, yang sudah dibayar dengan darah — cahaya fajar masuk. Pertama kalinya dalam sepuluh jam, kau melihat sesuatu selain lampu fluorescent dan kegelapan.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Dari jendela lantai satu — yang sudah pecah, yang sudah dibayar dengan darah — cahaya fajar masuk. Pertama kalinya dalam sepuluh jam, kau melihat sesuatu selain lampu fluorescent dan kegelapan.</p>`;
     }
 
-    text += `<p><span class="speaker arin">Arin</span> Yang tersisa: `;
+    text += `<p><span class="speaker arin">Arya</span> Yang tersisa: `;
     let survivors = [];
     Engine.CHARACTERS.forEach(c => { if (s.alive[c]) survivors.push(Engine.CHAR_DISPLAY[c]); });
     text += survivors.join(', ') + `. ${survivors.length} jiwa dari sepuluh.</p>`;
@@ -43,15 +43,15 @@ const STORY_CH10 = {
       text += `<p class="journal"><em>Fajar. Kasus selesai. Bukan kasus terbersih yang pernah kau tangani — tapi kau masih hidup. Di umur ini, itu sudah bonus.</em></p>`;
     }
 
-    text += `<p><span class="speaker arin">Arin</span> Dan di cahaya fajar itu, kau melihat mereka semua — bukan sebagai tersangka, bukan sebagai korban. Tapi sebagai manusia yang rusak dan indah:</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Dan di cahaya fajar itu, kau melihat mereka semua — bukan sebagai tersangka, bukan sebagai korban. Tapi sebagai manusia yang rusak dan indah:</p>`;
 
     if (s.alive.sera) {
       if (pc === 'arin') {
         text += `<p><span class="speaker sera">Sera</span> berdiri di sampingmu. Tangannya menggenggam tanganmu — tidak sembunyi-sembunyi lagi. Di cahaya fajar, genggaman itu terlihat oleh semua orang. "Kita berhasil," bisiknya.</p>`;
       } else if (pc === 'sera') {
-        text += `<p><span class="speaker arin">Arin</span> Arin berdiri di sampingmu. Kau menggenggam tangannya — tidak sembunyi-sembunyi lagi. "Kita berhasil," bisikmu. Dan untuk pertama kalinya, kau tidak menganalisis perasaanmu. Kau hanya membiarkannya ada.</p>`;
+        text += `<p><span class="speaker arin">Arya</span> Arya berdiri di sampingmu. Kau menggenggam tangannya — tidak sembunyi-sembunyi lagi. "Kita berhasil," bisikmu. Dan untuk pertama kalinya, kau tidak menganalisis perasaanmu. Kau hanya membiarkannya ada.</p>`;
       } else {
-        text += `<p><span class="speaker sera">Sera</span> dan <span class="speaker arin">Arin</span> berdiri bergandengan tangan. Cahaya fajar menerpa mereka. Tidak ada yang berkomentar.</p>`;
+        text += `<p><span class="speaker sera">Sera</span> dan <span class="speaker arin">Arya</span> berdiri bergandengan tangan. Cahaya fajar menerpa mereka. Tidak ada yang berkomentar.</p>`;
       }
     }
     if (s.alive.niko && s.alive.vira) {
@@ -83,7 +83,7 @@ const STORY_CH10 = {
       if (pc === 'kira') {
         text += `<p><span class="speaker farah">Farah</span> Laptopmu kehabisan baterai tiga puluh menit lalu. Untuk pertama kalinya sejak kau ingat, kau duduk tanpa layar di depanmu. Dunia analog terasa... aneh. Tapi juga nyata.</p>`;
       } else {
-        text += `<p><span class="speaker kira">Kira</span> menutup laptopnya. Baterai habis. Dia menatap fajar tanpa filter layar — mungkin untuk pertama kalinya.</p>`;
+        text += `<p><span class="speaker kira">Kai</span> menutup laptopnya. Baterai habis. Dia menatap fajar tanpa filter layar — mungkin untuk pertama kalinya.</p>`;
       }
     }
 
@@ -114,18 +114,18 @@ const STORY_CH10 = {
 'ch10_walk_out': {
   text: (s) => {
     let text = `<p class="sound">— Tidak menunggu. Berjalan. —</p>`;
-    text += `<p><span class="speaker kira">Kira</span> Pagar kawat — kali ini, tanpa listrik dari mansion, tidak aktif. Kau menemukan celah yang bisa dipotong.</p>`;
-    text += `<p><span class="speaker kira">Kira</span> Jalan hutan. Turun tebing. Dua jam berjalan kaki dalam cahaya fajar yang makin terang.</p>`;
+    text += `<p><span class="speaker kira">Kai</span> Pagar kawat — kali ini, tanpa listrik dari mansion, tidak aktif. Kau menemukan celah yang bisa dipotong.</p>`;
+    text += `<p><span class="speaker kira">Kai</span> Jalan hutan. Turun tebing. Dua jam berjalan kaki dalam cahaya fajar yang makin terang.</p>`;
 
-    text += `<p><span class="speaker kira">Kira</span> Desa pertama. Warung kopi yang baru buka. Pemiliknya menatap kalian — berdarah, kotor, kelelahan — dengan kengerian yang wajar.</p>`;
-    text += `<p><span class="speaker kira">Kira</span> "Telepon," katamu. "Kami butuh telepon."</p>`;
+    text += `<p><span class="speaker kira">Kai</span> Desa pertama. Warung kopi yang baru buka. Pemiliknya menatap kalian — berdarah, kotor, kelelahan — dengan kengerian yang wajar.</p>`;
+    text += `<p><span class="speaker kira">Kai</span> "Telepon," katamu. "Kami butuh telepon."</p>`;
 
     const pc = s.playerCharacter || 'arin';
     if (pc === 'arin') {
       text += `<p class="sound">— Kau menelepon polisi. Dan sebelum polisi datang — kau menelepon editormu. —</p>`;
-      text += `<p><span class="speaker kira">Kira</span> "Aku punya cerita. Cerita terbesar yang pernah ada. Dan ini bukan podcast."</p>`;
+      text += `<p><span class="speaker kira">Kai</span> "Aku punya cerita. Cerita terbesar yang pernah ada. Dan ini bukan podcast."</p>`;
     } else {
-      text += `<p><span class="speaker kira">Kira</span> Seseorang menelepon polisi. Dan setelah itu — satu per satu, kalian mulai menelepon orang-orang yang kalian cintai.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> Seseorang menelepon polisi. Dan setelah itu — satu per satu, kalian mulai menelepon orang-orang yang kalian cintai.</p>`;
     }
 
     return text;
@@ -142,16 +142,16 @@ const STORY_CH10 = {
 'ch10_wait_rescue': {
   text: (s) => {
     let text = `<p class="sound">— Kalian duduk di tanah basah di tepi hutan. Menunggu. —</p>`;
-    text += `<p><span class="speaker kira">Kira</span> Empat puluh menit kemudian: suara helikopter. Lalu sirene. Api mansion terlihat dari kota terdekat.</p>`;
-    text += `<p><span class="speaker kira">Kira</span> Pemadam kebakaran. Polisi. Ambulans. Dunia luar kembali — dan bersamanya, realitas.</p>`;
+    text += `<p><span class="speaker kira">Kai</span> Empat puluh menit kemudian: suara helikopter. Lalu sirene. Api mansion terlihat dari kota terdekat.</p>`;
+    text += `<p><span class="speaker kira">Kai</span> Pemadam kebakaran. Polisi. Ambulans. Dunia luar kembali — dan bersamanya, realitas.</p>`;
 
     if (s.flags.capturedRagil) {
-      text += `<p><span class="speaker kira">Kira</span> Ragil Pramudya diamankan oleh paramedis. Polisi menatapnya bingung — pria tua di kursi roda, mengaku bertanggung jawab atas "operasi yang sudah berjalan 50 tahun". Mereka pikir dia delusional.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> Ragil Pramudya diamankan oleh paramedis. Polisi menatapnya bingung — pria tua di kursi roda, mengaku bertanggung jawab atas "operasi yang sudah berjalan 50 tahun". Mereka pikir dia delusional.</p>`;
       text += `<p class="sound">— Sampai kau menunjukkan bukti. —</p>`;
     }
 
     if (s.flags.broadcastSuccess) {
-      text += `<p><span class="speaker kira">Kira</span> Dan saat polisi masih mengamankan area — internet sudah bergerak. File yang kau upload mulai ditemukan. Jurnalis. Aktivis. Netizen.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> Dan saat polisi masih mengamankan area — internet sudah bergerak. File yang kau upload mulai ditemukan. Jurnalis. Aktivis. Netizen.</p>`;
     }
 
     return text;

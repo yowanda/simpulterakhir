@@ -18,18 +18,18 @@ const STORY_ENDINGS = {
   rating: 'S',
   endingText: (s) => {
     let text = `<p class="sound">— ENDING #1: Sang Penenun Terakhir —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Bukti tersebar ke seluruh dunia. Ragil Pramudya ditangkap — pria tua di kursi roda yang mengakui puluhan tahun kejahatan. "Dewan Penenun" teridentifikasi satu per satu: enam individu berkuasa yang dulu merasa tak tersentuh.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Investigasi berlangsung dua tahun. Tujuh negara terlibat. Interpol. FBI. Jaksa Agung.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Hasilnya: 47 kasus kematian terungkap. 23 terpidana. Dan siklus yang telah beroperasi selama setengah abad — berakhir.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Bukti tersebar ke seluruh dunia. Ragil Pramudya ditangkap — pria tua di kursi roda yang mengakui puluhan tahun kejahatan. "Dewan Penenun" teridentifikasi satu per satu: enam individu berkuasa yang dulu merasa tak tersentuh.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Investigasi berlangsung dua tahun. Tujuh negara terlibat. Interpol. FBI. Jaksa Agung.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Hasilnya: 47 kasus kematian terungkap. 23 terpidana. Dan siklus yang telah beroperasi selama setengah abad — berakhir.</p>`;
     // Player-specific S-rank epilogue
     const pc = s.playerCharacter || 'arin';
     if (pc === 'arin') {
-      text += `<p><span class="speaker arin">Arin</span> Kau tidak membuat podcast tentang malam itu. Kau menulis buku. Non-fiksi. 600 halaman. Best-seller internasional. Judul: <em>Simpul Terakhir</em>.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Kau tidak membuat podcast tentang malam itu. Kau menulis buku. Non-fiksi. 600 halaman. Best-seller internasional. Judul: <em>Simpul Terakhir</em>.</p>`;
       text += `<p><span class="speaker sera">Sera</span> Di acara peluncuran, Sera duduk di barisan depan. Saat kau membaca bagian tentangnya — wanita yang bisa membaca jiwa dalam kegelapan — dia tersenyum. Dan kau tahu: simpul baru terikat. Simpul yang tidak perlu kata-kata.</p>`;
     } else if (pc === 'sera') {
-      text += `<p><span class="speaker arin">Arin</span> Kau menulis paper psikologi tentang malam itu — "Deindividuasi dan Kohesi Kelompok dalam Situasi Ancaman Nyata." 200 sitasi dalam setahun. Tapi yang lebih penting: Arin menulis buku tentang malam itu. Dan bab tentangmu — 40 halaman — adalah surat cinta yang tidak pernah dia kirim secara langsung.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Kau menulis paper psikologi tentang malam itu — "Deindividuasi dan Kohesi Kelompok dalam Situasi Ancaman Nyata." 200 sitasi dalam setahun. Tapi yang lebih penting: Arya menulis buku tentang malam itu. Dan bab tentangmu — 40 halaman — adalah surat cinta yang tidak pernah dia kirim secara langsung.</p>`;
     } else if (pc === 'niko') {
-      text += `<p><span class="speaker arin">Arin</span> Kau menjual mansion. Setiap batu bata, setiap memori. Hasilnya mendanai yayasan untuk korban. Dalang yang memilih menjadi manusia. Prosesnya lambat. Menyakitkan. Tapi untuk pertama kalinya dalam hidupmu, kau merasa bebas.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Kau menjual mansion. Setiap batu bata, setiap memori. Hasilnya mendanai yayasan untuk korban. Dalang yang memilih menjadi manusia. Prosesnya lambat. Menyakitkan. Tapi untuk pertama kalinya dalam hidupmu, kau merasa bebas.</p>`;
     } else if (pc === 'juno') {
       text += `<p><span class="speaker reza">Reza</span> Lo bikin instalasi seni tentang malam itu. Pameran di enam kota. Kritikus bilang itu "masterpiece." Lo bilang itu "terapi." Reza datang ke setiap pameran. Lo nggak bilang apa-apa. Lo nggak perlu.</p>`;
     } else if (pc === 'vira') {
@@ -84,9 +84,9 @@ const STORY_ENDINGS = {
     let text = `<p class="sound">— ENDING #2: Detektif Sejati —</p>`;
     text += `<p><span class="speaker juno">Juno</span> Kau menemukan semua clue. Mengungkap semua operator. Melacak Dewan Penenun. Dan membawa Ragil hidup-hidup ke tangan hukum.</p>`;
     text += `<p><span class="speaker juno">Juno</span> Proses pengadilan memakan waktu tiga tahun. Tapi hasilnya: keadilan. Bukan keadilan sempurna — karena yang mati tidak bisa kembali — tapi keadilan yang cukup untuk memberikan closure.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Arin menerima penghargaan jurnalisme investigasi tertinggi. Bukan untuk podcast — tapi untuk keberanian yang melampaui job description.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Di malam penghargaan, Sera ada di sampingnya. Bukan sebagai kolega. Bukan sebagai narasumber. Sebagai orang yang membuatnya pulang. "Kau tahu," bisik Sera saat tepuk tangan mereda, "aku sudah menganalisis hubungan kita dari setiap sudut psikologis." "Dan?" "Dan kesimpulannya: aku menyerah menganalisis. Aku hanya ingin di sini." Arin mencium keningnya — gesture kecil yang mengatakan lebih banyak dari 600 halaman buku.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> <em>"Simpul terakhir adalah simpul yang kau ikat sendiri — dengan keberanian yang tidak kau tahu kau punya, dan cinta yang tidak kau izinkan sampai terlambat."</em></p>`;
+    text += `<p><span class="speaker arin">Arya</span> Arya menerima penghargaan jurnalisme investigasi tertinggi. Bukan untuk podcast — tapi untuk keberanian yang melampaui job description.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Di malam penghargaan, Sera ada di sampingnya. Bukan sebagai kolega. Bukan sebagai narasumber. Sebagai orang yang membuatnya pulang. "Kau tahu," bisik Sera saat tepuk tangan mereda, "aku sudah menganalisis hubungan kita dari setiap sudut psikologis." "Dan?" "Dan kesimpulannya: aku menyerah menganalisis. Aku hanya ingin di sini." Arya mencium keningnya — gesture kecil yang mengatakan lebih banyak dari 600 halaman buku.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> <em>"Simpul terakhir adalah simpul yang kau ikat sendiri — dengan keberanian yang tidak kau tahu kau punya, dan cinta yang tidak kau izinkan sampai terlambat."</em></p>`;
     return text;
   },
   fates: {
@@ -106,12 +106,12 @@ const STORY_ENDINGS = {
   rating: 'A',
   endingText: (s) => {
     let text = `<p class="sound">— ENDING #3: Fajar yang Cukup —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Mansion di belakang. Fajar di depan. Bukti cukup untuk memulai investigasi — tapi tidak cukup untuk menghancurkan seluruh jaringan.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Ragil meninggal dua bulan kemudian — kanker yang sudah terlalu lama ditunda. Dewan Penenun teridentifikasi sebagian. Tiga dari enam diadili. Sisanya — menghilang. Memindahkan operasi ke tempat lain. Negara lain. Mansion lain.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Mansion di belakang. Fajar di depan. Bukti cukup untuk memulai investigasi — tapi tidak cukup untuk menghancurkan seluruh jaringan.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Ragil meninggal dua bulan kemudian — kanker yang sudah terlalu lama ditunda. Dewan Penenun teridentifikasi sebagian. Tiga dari enam diadili. Sisanya — menghilang. Memindahkan operasi ke tempat lain. Negara lain. Mansion lain.</p>`;
     text += `<p class="sound">— Tapi siklus ini — siklus Wardhana — berakhir. Dan itu sudah cukup. Harus cukup. —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Arin melanjutkan podcast-nya. Episode tentang malam itu menjadi yang paling banyak didengarkan. Tapi kali ini — orang percaya.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Sera mendengarkan episode itu dari apartemennya. Menangis. Menelepon Arin pukul tiga pagi. Tidak bicara apa-apa selama dua menit pertama. Lalu: "Kopi besok pagi?" "Ya." "Dan setelah itu?" "Aku tidak tahu. Tapi aku ingin mencari tahu." Cukup. Untuk sekarang, cukup.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> <em>"Tidak semua simpul bisa diurai. Tapi kau bisa memilih siapa yang menggenggam ujung benang bersamamu."</em></p>`;
+    text += `<p><span class="speaker arin">Arya</span> Arya melanjutkan podcast-nya. Episode tentang malam itu menjadi yang paling banyak didengarkan. Tapi kali ini — orang percaya.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Sera mendengarkan episode itu dari apartemennya. Menangis. Menelepon Arya pukul tiga pagi. Tidak bicara apa-apa selama dua menit pertama. Lalu: "Kopi besok pagi?" "Ya." "Dan setelah itu?" "Aku tidak tahu. Tapi aku ingin mencari tahu." Cukup. Untuk sekarang, cukup.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> <em>"Tidak semua simpul bisa diurai. Tapi kau bisa memilih siapa yang menggenggam ujung benang bersamamu."</em></p>`;
     return text;
   },
   fates: {
@@ -127,10 +127,10 @@ const STORY_ENDINGS = {
   rating: 'A',
   endingText: (s) => {
     let text = `<p class="sound">— ENDING #4: Pengorbanan —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Kau turun ke B-3 terakhir kali untuk memastikan bukti terkirim. Api sudah di B-1. Asap di mana-mana.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Kau turun ke B-3 terakhir kali untuk memastikan bukti terkirim. Api sudah di B-1. Asap di mana-mana.</p>`;
     text += `<p class="sound">— Upload selesai. 100%. Ke dunia. —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Tapi tangga kembali sudah tertutup puing. Ventilasi menyemburkan asap. Kau terjebak.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Di monitor terakhir yang masih menyala, kau melihat teman-temanmu di luar. Selamat. Berlari menjauh dari api.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Tapi tangga kembali sudah tertutup puing. Ventilasi menyemburkan asap. Kau terjebak.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Di monitor terakhir yang masih menyala, kau melihat teman-temanmu di luar. Selamat. Berlari menjauh dari api.</p>`;
     text += `<p><span class="speaker sera">Sera</span> Sera berhenti. Berbalik. Berteriak namamu — suara yang tidak pernah kau dengar darinya: bukan analitis, bukan profesional, tapi mentah, hancur, dan penuh cinta yang tidak pernah sempat diucapkan. Juno menahan Sera. Sera melawan. Juno tidak melepaskan.</p>`;
     text += `<p><span class="speaker sera">Sera</span> Kau duduk di kursi roda Ragil. Ironi akhir. Jurnalis yang selalu mencari kebenaran — akhirnya menjadi bagian dari cerita.</p>`;
     text += `<p><span class="speaker sera">Sera</span> Podcast terakhirmu merekam sendiri: suara napas yang semakin tipis, asap yang semakin pekat, dan kata-kata terakhir:</p>`;
@@ -177,9 +177,9 @@ const STORY_ENDINGS = {
     let text = `<p class="sound">— ENDING #6: Abu dan Fajar —</p>`;
     text += `<p><span class="speaker vira">Vira</span> Mansion terbakar. Bukti terbakar. Ragil terbakar. Dan bersamanya — kemungkinan keadilan yang sempurna.</p>`;
     text += `<p><span class="speaker vira">Vira</span> Kalian selamat. Tapi tanpa bukti fisik, kasus ini menjadi "cerita" — bukan fakta.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Arin mempublikasikan podcast tentang malam itu. Viral. Kontroversial. Separuh dunia percaya, separuh menganggapnya fiksi.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Tapi cukup banyak yang percaya untuk memulai investigasi independen. Cukup banyak mata yang terbuka. Cukup banyak simpul yang terurai — pelan, tapi pasti.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> <em>"Kadang kebenaran tidak datang sebagai kilat — tapi sebagai fajar. Pelan. Sabar. Tak terbendung."</em></p>`;
+    text += `<p><span class="speaker arin">Arya</span> Arya mempublikasikan podcast tentang malam itu. Viral. Kontroversial. Separuh dunia percaya, separuh menganggapnya fiksi.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Tapi cukup banyak yang percaya untuk memulai investigasi independen. Cukup banyak mata yang terbuka. Cukup banyak simpul yang terurai — pelan, tapi pasti.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> <em>"Kadang kebenaran tidak datang sebagai kilat — tapi sebagai fajar. Pelan. Sabar. Tak terbendung."</em></p>`;
     return text;
   },
   fates: {
@@ -197,11 +197,11 @@ const STORY_ENDINGS = {
     return `<p class="sound">— ENDING #7: Kemenangan yang Pecah —</p>
 <p class="sound">— Kau menang. Ragil diadili. Bukti tersebar. Siklus berakhir. —</p>
 <p class="sound">— Tapi kemenangan ini berasa seperti kaca pecah di mulut. Setiap fragmen mengiris. —</p>
-<p><span class="speaker arin">Arin</span> PTSD. Insomnia. Hubungan yang hancur. Teman-teman yang mati masih muncul di mimpi — bukan sebagai hantu, tapi sebagai pengingat bahwa kau selamat dan mereka tidak.</p>
+<p><span class="speaker arin">Arya</span> PTSD. Insomnia. Hubungan yang hancur. Teman-teman yang mati masih muncul di mimpi — bukan sebagai hantu, tapi sebagai pengingat bahwa kau selamat dan mereka tidak.</p>
 <p class="sound">— Terapi membantu. Pelan. Tahun demi tahun. —</p>
-<p><span class="speaker arin">Arin</span> Sepuluh tahun kemudian, Arin berdiri di depan reruntuhan mansion Wardhana yang sudah ditumbuhi tanaman liar. Monumen kecil untuk korban berdiri di antara puing.</p>
+<p><span class="speaker arin">Arya</span> Sepuluh tahun kemudian, Arya berdiri di depan reruntuhan mansion Wardhana yang sudah ditumbuhi tanaman liar. Monumen kecil untuk korban berdiri di antara puing.</p>
 <p class="sound">— Dia tidak menangis. Sudah tidak bisa. Tapi dia menaruh bunga — dan pergi. —</p>
-<p><span class="speaker arin">Arin</span> <em>"Kemenangan terbesar bukan mengalahkan monster. Tapi tetap manusia setelahnya."</em></p>`;
+<p><span class="speaker arin">Arya</span> <em>"Kemenangan terbesar bukan mengalahkan monster. Tapi tetap manusia setelahnya."</em></p>`;
   },
   fates: {
     arin: 'Survivor. Masih berjuang. Masih manusia.'
@@ -263,8 +263,8 @@ const STORY_ENDINGS = {
 <p><span class="speaker vira">Vira</span> Kau selamat. Beberapa temanmu selamat. Ragil mati — kanker atau api, tidak jelas mana yang lebih dulu.</p>
 <p><span class="speaker vira">Vira</span> Tapi Dewan Penenun tidak pernah teridentifikasi. Bukti tidak cukup. Dan setahun kemudian — undangan hitam muncul lagi. Di kota berbeda. Mansion berbeda.</p>
 <p class="sound">— Siklus berlanjut. Dengan nama baru. Dengan wajah baru. Tapi mesin yang sama. —</p>
-<p><span class="speaker arin">Arin</span> Arin tahu. Dan tidak bisa berbuat apa-apa.</p>
-<p><span class="speaker arin">Arin</span> <em>"Kadang simpul terakhir bukan ending — tapi koma. Jeda sebelum kalimat berikutnya."</em></p>`;
+<p><span class="speaker arin">Arya</span> Arya tahu. Dan tidak bisa berbuat apa-apa.</p>
+<p><span class="speaker arin">Arya</span> <em>"Kadang simpul terakhir bukan ending — tapi koma. Jeda sebelum kalimat berikutnya."</em></p>`;
   },
   fates: {
     arin: 'Hidup. Tapi siklus berlanjut tanpa dia.'
@@ -279,12 +279,12 @@ const STORY_ENDINGS = {
   rating: 'C',
   endingText: (s) => {
     return `<p class="sound">— ENDING #11: Perjanjian dengan Iblis —</p>
-<p><span class="speaker arin">Arin</span> Ragil menawarkan deal: lepaskan dia, dan dia membuka semua pintu. Semua orang selamat. Tidak ada kematian lagi.</p>
+<p><span class="speaker arin">Arya</span> Ragil menawarkan deal: lepaskan dia, dan dia membuka semua pintu. Semua orang selamat. Tidak ada kematian lagi.</p>
 <p class="sound">— Kau menerima. —</p>
-<p><span class="speaker arin">Arin</span> Semua keluar. Semua hidup. Ragil menghilang — bersama systemnya, bersama buktinya, bersama segalanya.</p>
-<p><span class="speaker arin">Arin</span> Sebulan kemudian, Ragil mati karena kanker. Tapi sebelum mati — dia mewariskan sistem kepada... seseorang. Dan siklus berlanjut.</p>
-<p><span class="speaker arin">Arin</span> Kau menyelamatkan nyawa malam itu. Tapi mengorbankan keadilan untuk tahun-tahun mendatang.</p>
-<p><span class="speaker arin">Arin</span> <em>"Simpul yang kau ikat dengan iblis tidak pernah benar-benar terurai."</em></p>`;
+<p><span class="speaker arin">Arya</span> Semua keluar. Semua hidup. Ragil menghilang — bersama systemnya, bersama buktinya, bersama segalanya.</p>
+<p><span class="speaker arin">Arya</span> Sebulan kemudian, Ragil mati karena kanker. Tapi sebelum mati — dia mewariskan sistem kepada... seseorang. Dan siklus berlanjut.</p>
+<p><span class="speaker arin">Arya</span> Kau menyelamatkan nyawa malam itu. Tapi mengorbankan keadilan untuk tahun-tahun mendatang.</p>
+<p><span class="speaker arin">Arya</span> <em>"Simpul yang kau ikat dengan iblis tidak pernah benar-benar terurai."</em></p>`;
   },
   fates: {
     arin: 'Hidup. Semua hidup. Tapi dengan harga yang tidak terlihat.'
@@ -299,10 +299,10 @@ const STORY_ENDINGS = {
   rating: 'C',
   endingText: (s) => {
     return `<p class="sound">— ENDING #12: Perpecahan Fatal —</p>
-<p><span class="speaker arin">Arin</span> Kelompok terpecah dan tidak pernah bersatu kembali. Sebagian berhasil keluar melalui jendela. Sebagian terjebak sampai fajar.</p>
-<p><span class="speaker arin">Arin</span> Yang keluar lebih dulu menghubungi polisi — tapi saat polisi tiba, mansion sudah bersih. Sistem self-destruct yang disiapkan Ragil menghapus semua bukti.</p>
-<p><span class="speaker arin">Arin</span> Tidak ada yang diadili. Tidak ada yang dipercaya. Tapi setidaknya — kebanyakan selamat.</p>
-<p><span class="speaker arin">Arin</span> <em>"Kadang perpecahan bukan kekalahan — tapi survival strategy yang jujur."</em></p>`;
+<p><span class="speaker arin">Arya</span> Kelompok terpecah dan tidak pernah bersatu kembali. Sebagian berhasil keluar melalui jendela. Sebagian terjebak sampai fajar.</p>
+<p><span class="speaker arin">Arya</span> Yang keluar lebih dulu menghubungi polisi — tapi saat polisi tiba, mansion sudah bersih. Sistem self-destruct yang disiapkan Ragil menghapus semua bukti.</p>
+<p><span class="speaker arin">Arya</span> Tidak ada yang diadili. Tidak ada yang dipercaya. Tapi setidaknya — kebanyakan selamat.</p>
+<p><span class="speaker arin">Arya</span> <em>"Kadang perpecahan bukan kekalahan — tapi survival strategy yang jujur."</em></p>`;
   },
   fates: {
     arin: 'Selamat. Frustrasi. Melanjutkan.'
@@ -341,10 +341,10 @@ const STORY_ENDINGS = {
   endingText: (s) => {
     return `<p class="sound">— ENDING #14: Paranoia Menang —</p>
 <p><span class="speaker niko">Niko</span> Kepercayaan hancur total. Semua orang mencurigai semua orang. Kelompok pecah menjadi individu-individu yang mengunci diri di kamar masing-masing.</p>
-<p><span class="speaker niko">Niko</span> Egoisme menang. Farah mengunci diri di wine cellar dengan persediaan makanan. Niko menutup diri di ruang kerjanya, dalang yang akhirnya terjebak dalam permainannya sendiri. Kira menghancurkan laptopnya sendiri — paranoia mengalahkan logika.</p>
+<p><span class="speaker niko">Niko</span> Egoisme menang. Farah mengunci diri di wine cellar dengan persediaan makanan. Niko menutup diri di ruang kerjanya, dalang yang akhirnya terjebak dalam permainannya sendiri. Kai menghancurkan laptopnya sendiri — paranoia mengalahkan logika.</p>
 <p><span class="speaker niko">Niko</span> Sang Penenun tidak perlu membunuh siapapun — paranoia melakukannya. Satu per satu, mereka jatuh: kecelakaan di kegelapan, kepanikan, keputusan buruk saat sendirian.</p>
-<p><span class="speaker arin">Arin</span> Sera mengetuk pintumu pukul empat pagi. "Arin, buka pintunya. Please." Kau berdiri di balik pintu. Tanganmu di handle. Tapi kau tidak membuka. Karena bagaimana kalau yang di luar bukan Sera? Bagaimana kalau ini jebakan?</p>
-<p><span class="speaker arin">Arin</span> Suara Sera pecah. "Arin... aku tidak mau sendirian." Dan kau mendengar langkahnya menjauh. Dan kau tahu — dengan kepastian yang menghancurkan — bahwa kau baru saja kehilangan sesuatu yang lebih penting dari keselamatan.</p>
+<p><span class="speaker arin">Arya</span> Sera mengetuk pintumu pukul empat pagi. "Arya, buka pintunya. Please." Kau berdiri di balik pintu. Tanganmu di handle. Tapi kau tidak membuka. Karena bagaimana kalau yang di luar bukan Sera? Bagaimana kalau ini jebakan?</p>
+<p><span class="speaker arin">Arya</span> Suara Sera pecah. "Arya... aku tidak mau sendirian." Dan kau mendengar langkahnya menjauh. Dan kau tahu — dengan kepastian yang menghancurkan — bahwa kau baru saja kehilangan sesuatu yang lebih penting dari keselamatan.</p>
 <p><span class="speaker sera">Sera</span> Fajar datang. Tiga orang selamat. Semua trauma. Tidak ada yang bicara satu sama lain lagi. Kau dan Sera berpapasan di luar mansion. Mata bertemu mata. Tapi jarak yang ada sekarang — jarak yang kau ciptakan saat tidak membuka pintu — tidak akan pernah bisa ditutup.</p>
 <p><span class="speaker sera">Sera</span> <em>"Simpul terakhir adalah kepercayaan. Dan begitu terputus — cinta pun tidak cukup kuat untuk mengikatnya kembali."</em></p>`;
   },
@@ -434,10 +434,10 @@ const STORY_ENDINGS = {
       text += `<p><span class="speaker sera">Sera</span> Sera ada di antara yang hilang. Tangan yang pernah mencari tanganmu — tangan yang kau genggam terlalu sedikit, terlalu terlambat.</p>`;
       text += `<p><span class="speaker sera">Sera</span> Podcast episode #47: "Malam di Mansion Wardhana." Di menit ke-42, kau menangis on air. Untuk satu nama: "Sera."</p>`;
     } else if (pc === 'sera') {
-      text += `<p><span class="speaker arin">Arin</span> Kau selamat. Psikolog yang bisa membaca semua orang — kecuali masa depan. Arin ada di antara yang hilang. Tangan yang pernah kau genggam di bawah meja — tidak akan pernah kau genggam lagi.</p>`;
-      text += `<p><span class="speaker arin">Arin</span> Kau menulis paper tentang malam itu. Tapi setiap kali sampai di bagian tentang Arin, jarimu berhenti. Ada hal-hal yang tidak bisa direduksi menjadi data.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Kau selamat. Psikolog yang bisa membaca semua orang — kecuali masa depan. Arya ada di antara yang hilang. Tangan yang pernah kau genggam di bawah meja — tidak akan pernah kau genggam lagi.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Kau menulis paper tentang malam itu. Tapi setiap kali sampai di bagian tentang Arya, jarimu berhenti. Ada hal-hal yang tidak bisa direduksi menjadi data.</p>`;
     } else if (pc === 'niko') {
-      text += `<p><span class="speaker arin">Arin</span> Mansionmu. Dosamu. Dan sekarang — kuburanmu. Semua orang yang kau undang, hilang karena keputusanmu. Dalang yang menjadi korban dari permainan yang dia mulai sendiri.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Mansionmu. Dosamu. Dan sekarang — kuburanmu. Semua orang yang kau undang, hilang karena keputusanmu. Dalang yang menjadi korban dari permainan yang dia mulai sendiri.</p>`;
     } else if (pc === 'juno') {
       text += `<p><span class="speaker reza">Reza</span> Lo selamat. Lo selalu selamat — itu yang lo lakukan. Lari. Tapi kali ini, lo lari dari orang-orang yang seharusnya lo lindungi. Reza di antara yang hilang. Dan sepi yang ditinggalkannya lebih keras dari ledakan manapun.</p>`;
     } else if (pc === 'lana') {
@@ -463,14 +463,14 @@ const STORY_ENDINGS = {
   rating: 'B',
   endingText: (s) => {
     return `<p class="sound">— ENDING #21: Pahlawan yang Jatuh —</p>
-<p><span class="speaker arin">Arin</span> Arin turun ke B-3 sendirian. Menemukan Ragil. Memaksanya membuka semua kunci.</p>
-<p><span class="speaker arin">Arin</span> Tapi Ragil punya satu trik terakhir — dead man's switch. Kalau jantungnya berhenti, gas dari ventilasi mengisi seluruh basement.</p>
+<p><span class="speaker arin">Arya</span> Arya turun ke B-3 sendirian. Menemukan Ragil. Memaksanya membuka semua kunci.</p>
+<p><span class="speaker arin">Arya</span> Tapi Ragil punya satu trik terakhir — dead man's switch. Kalau jantungnya berhenti, gas dari ventilasi mengisi seluruh basement.</p>
 <p class="sound">— Ragil mati — usianya yang memang sudah habis. Dan gas mengisi B-3. —</p>
-<p><span class="speaker arin">Arin</span> Arin tidak sempat naik. Tapi semua pintu sudah terbuka. Yang lain — selamat.</p>
+<p><span class="speaker arin">Arya</span> Arya tidak sempat naik. Tapi semua pintu sudah terbuka. Yang lain — selamat.</p>
 <p><span class="speaker sera">Sera</span> Di atas, Sera menjerit. Jerit yang merobek malam — bukan analitis, bukan terkontrol, tapi kehilangan yang mentah dan total. Juno memeluknya. Reza berdiri di belakang mereka, rahangnya bergetar tapi matanya kering — negosiator yang tahu bahwa beberapa hal tidak bisa dinegosiasikan dengan kematian.</p>
-<p><span class="speaker arin">Arin</span> Podcast Arin ditemukan oleh Kira di cloud. Episode terakhir — direkam di ponselnya saat gas mengisi ruangan. Enam menit monolog yang menjadi viral. Di menit terakhir, suaranya berbisik: "Sera, kalau kau dengar ini... aku mau bilang sesuatu yang harusnya aku bilang di sofa itu, saat tanganmu menyentuh tanganku dan aku... aku terlalu pengecut untuk menggenggam."</p>
+<p><span class="speaker arin">Arya</span> Podcast Arya ditemukan oleh Kai di cloud. Episode terakhir — direkam di ponselnya saat gas mengisi ruangan. Enam menit monolog yang menjadi viral. Di menit terakhir, suaranya berbisik: "Sera, kalau kau dengar ini... aku mau bilang sesuatu yang harusnya aku bilang di sofa itu, saat tanganmu menyentuh tanganku dan aku... aku terlalu pengecut untuk menggenggam."</p>
 <p><span class="speaker sera">Sera</span> Sera mendengarkan rekaman itu sekali. Lalu dia tidak pernah mendengarkannya lagi. Tapi dia menggenggam ponselnya setiap malam selama setahun — menggantikan tangan yang tidak pernah sempat dia genggam.</p>
-<p><span class="speaker arin">Arin</span> <em>"Ini Arin Prasetya. Dan ini... cerita terakhirku. Cerita tentang orang yang selalu mencari kebenaran di luar sana — dan tidak pernah cukup berani mengakui kebenaran yang ada di sebelahnya."</em></p>`;
+<p><span class="speaker arin">Arya</span> <em>"Ini Arya Prasetya. Dan ini... cerita terakhirku. Cerita tentang orang yang selalu mencari kebenaran di luar sana — dan tidak pernah cukup berani mengakui kebenaran yang ada di sebelahnya."</em></p>`;
   },
   fates: {
     arin: 'Meninggal. Tapi ceritanya hidup selamanya.'
@@ -485,11 +485,11 @@ const STORY_ENDINGS = {
   rating: 'D',
   endingText: (s) => {
     return `<p class="sound">— ENDING #22: Siklus Berlanjut —</p>
-<p><span class="speaker arin">Arin</span> Kau memilih kabur di chapter awal. Berlari ke hutan. Menemukan jalan keluar melalui pagar yang belum sepenuhnya terpasang.</p>
+<p><span class="speaker arin">Arya</span> Kau memilih kabur di chapter awal. Berlari ke hutan. Menemukan jalan keluar melalui pagar yang belum sepenuhnya terpasang.</p>
 <p class="sound">— Polisi datang. Mansion sudah bersih saat mereka sampai. —</p>
-<p><span class="speaker arin">Arin</span> Satu tahun kemudian, kau menerima amplop hitam. Lagi. Undangan yang sama. Mansion yang berbeda.</p>
+<p><span class="speaker arin">Arya</span> Satu tahun kemudian, kau menerima amplop hitam. Lagi. Undangan yang sama. Mansion yang berbeda.</p>
 <p class="sound">— Dan kali ini — ada nama baru di undangan: nama seseorang yang kau cintai. —</p>
-<p><span class="speaker arin">Arin</span> <em>"Simpul yang tidak diputuskan... mengikat generasi berikutnya."</em></p>`;
+<p><span class="speaker arin">Arya</span> <em>"Simpul yang tidak diputuskan... mengikat generasi berikutnya."</em></p>`;
   },
   fates: {
     arin: 'Selamat. Tapi terjebak dalam siklus yang tidak pernah dia hentikan.'
@@ -543,7 +543,7 @@ const STORY_ENDINGS = {
 <p class="sound">— Semua selamat. Secara fisik. —</p>
 <p><span class="speaker sera">Sera</span> Tapi tidak ada yang bicara. Tidak ada yang melapor. Tidak ada yang bersaksi. Egoisme menang atas keberanian. Ketakutan menang atas keadilan.</p>
 <p><span class="speaker sera">Sera</span> Masing-masing pulang. Masing-masing diam. Masing-masing memilih untuk melupakan — atau berpura-pura lupa.</p>
-<p><span class="speaker arin">Arin</span> Arin dan Sera tidak pernah bicara lagi. Bukan karena marah. Tapi karena setiap kali mereka melihat satu sama lain, mereka teringat malam itu — tangan yang bersentuhan di bawah meja, bisikan "aku di sini," dan pilihan untuk diam yang membuat semua itu tidak berarti.</p>
+<p><span class="speaker arin">Arya</span> Arya dan Sera tidak pernah bicara lagi. Bukan karena marah. Tapi karena setiap kali mereka melihat satu sama lain, mereka teringat malam itu — tangan yang bersentuhan di bawah meja, bisikan "aku di sini," dan pilihan untuk diam yang membuat semua itu tidak berarti.</p>
 <p><span class="speaker niko">Niko</span> Niko dan Vira — toxic love yang seharusnya berakhir malam itu — justru kembali bersama. Dua orang yang terikat oleh rahasia dan rasa bersalah, bukan cinta. Hubungan mereka lebih beracun dari sebelumnya.</p>
 <p><span class="speaker juno">Juno</span> Juno dan Reza kehilangan kontak. Koneksi yang baru tumbuh di malam itu — layu karena diam. Reza kembali minum. Juno kembali marah pada dunia.</p>
 <p><span class="speaker juno">Juno</span> Sang Penenun menang — bukan dengan kekerasan, tapi dengan keheningan. Dan keheningan itu meracuni setiap hubungan, setiap koneksi, setiap kemungkinan cinta yang tumbuh malam itu.</p>
@@ -627,8 +627,8 @@ const STORY_ENDINGS = {
       if (s.alive[c] && !(s.killers || []).includes(c)) survivors.push(c);
     });
 
-    text += `<p><span class="speaker arin">Arin</span> <strong>Yang Selamat:</strong> ${survivors.map(c => ({ arin: 'Arin', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira', reza: 'Reza', lana: 'Lana', dimas: 'Dimas', kira: 'Kira', farah: 'Farah' }[c] || c)).join(', ')}</p>`;
-    text += `<p><span class="speaker arin">Arin</span> <em>"Kadang satu-satunya cara mengakhiri permainan adalah menghancurkan pemainnya. Bukan papannya."</em></p>`;
+    text += `<p><span class="speaker arin">Arya</span> <strong>Yang Selamat:</strong> ${survivors.map(c => ({ arin: 'Arya', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira', reza: 'Reza', lana: 'Lana', dimas: 'Dimas', kira: 'Kai', farah: 'Farah' }[c] || c)).join(', ')}</p>`;
+    text += `<p><span class="speaker arin">Arya</span> <em>"Kadang satu-satunya cara mengakhiri permainan adalah menghancurkan pemainnya. Bukan papannya."</em></p>`;
     return text;
   },
   fates: {
@@ -649,10 +649,10 @@ const STORY_ENDINGS = {
   endingText: (s) => {
     const pc = s.playerCharacter || 'arin';
     let text = `<p class="sound">— ENDING #28: Pengkhianatan Sempurna —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Killer mengkhianati killer. Dalam kegelapan mansion, aliansi gelap runtuh dari dalam.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Saat identitas satu killer terungkap, yang lain memilih untuk mengorbankan rekannya demi bertahan. Tapi pengkhianatan itu membuka celah — dan protagonis memanfaatkannya.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Satu per satu, killer jatuh — bukan hanya oleh tangan protagonis, tapi oleh tangan sesama killer. Ironi yang menakutkan dan indah sekaligus.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> <em>"Simpul yang diikat oleh pengkhianatan — hanya bisa diputus oleh pengkhianatan yang lebih besar."</em></p>`;
+    text += `<p><span class="speaker arin">Arya</span> Killer mengkhianati killer. Dalam kegelapan mansion, aliansi gelap runtuh dari dalam.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Saat identitas satu killer terungkap, yang lain memilih untuk mengorbankan rekannya demi bertahan. Tapi pengkhianatan itu membuka celah — dan protagonis memanfaatkannya.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Satu per satu, killer jatuh — bukan hanya oleh tangan protagonis, tapi oleh tangan sesama killer. Ironi yang menakutkan dan indah sekaligus.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> <em>"Simpul yang diikat oleh pengkhianatan — hanya bisa diputus oleh pengkhianatan yang lebih besar."</em></p>`;
     return text;
   },
   fates: {
@@ -668,10 +668,10 @@ const STORY_ENDINGS = {
   rating: 'D',
   endingText: (s) => {
     let text = `<p class="sound">— ENDING #29: Jejak yang Terhapus —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Petunjuk pelarian — satu per satu — dihancurkan oleh tangan-tangan gelap. Peta dibakar. Kode dihapus. Blueprint dirobek. Kunci dibuang ke kegelapan.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Tanpa petunjuk, tidak ada jalan keluar. Mansion ini menjadi labirin tanpa pintu keluar.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Petunjuk pelarian — satu per satu — dihancurkan oleh tangan-tangan gelap. Peta dibakar. Kode dihapus. Blueprint dirobek. Kunci dibuang ke kegelapan.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Tanpa petunjuk, tidak ada jalan keluar. Mansion ini menjadi labirin tanpa pintu keluar.</p>`;
     text += `<p class="sound">— Yang tersisa hanya dua pilihan: bunuh semua killer... atau mati mencoba. —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> <em>"Saat semua jalan tertutup, satu-satunya arah adalah menghadapi kegelapan itu sendiri."</em></p>`;
+    text += `<p><span class="speaker arin">Arya</span> <em>"Saat semua jalan tertutup, satu-satunya arah adalah menghadapi kegelapan itu sendiri."</em></p>`;
     return text;
   },
   fates: {
@@ -687,13 +687,13 @@ const STORY_ENDINGS = {
   rating: 'A',
   endingText: (s) => {
     const pc = s.playerCharacter || 'arin';
-    const pcName = { arin: 'Arin', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira', reza: 'Reza', lana: 'Lana', dimas: 'Dimas', kira: 'Kira', farah: 'Farah' }[pc] || pc;
+    const pcName = { arin: 'Arya', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira', reza: 'Reza', lana: 'Lana', dimas: 'Dimas', kira: 'Kai', farah: 'Farah' }[pc] || pc;
     let text = `<p class="sound">— ENDING #30: Yang Terakhir Berdiri —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> ${pcName} — satu-satunya protagonis yang tersisa. Semua teman telah jatuh. Tapi semua killer juga telah dieliminasi.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Kemenangan ini tidak terasa seperti kemenangan. Ini terasa seperti bertahan hidup di reruntuhan. Setiap langkah di atas abu teman-teman yang tidak sempat diselamatkan.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> ${pcName} — satu-satunya protagonis yang tersisa. Semua teman telah jatuh. Tapi semua killer juga telah dieliminasi.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Kemenangan ini tidak terasa seperti kemenangan. Ini terasa seperti bertahan hidup di reruntuhan. Setiap langkah di atas abu teman-teman yang tidak sempat diselamatkan.</p>`;
     text += `<p class="sound">— Tapi kau berdiri. Di tengah kegelapan, di antara mayat-mayat, kau masih berdiri. —</p>`;
     text += `<p class="sound">— Dan itu sudah cukup. —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> <em>"Yang terakhir berdiri bukan yang terkuat — tapi yang paling keras kepala untuk tidak jatuh."</em></p>`;
+    text += `<p><span class="speaker arin">Arya</span> <em>"Yang terakhir berdiri bukan yang terkuat — tapi yang paling keras kepala untuk tidak jatuh."</em></p>`;
     return text;
   },
   fates: {

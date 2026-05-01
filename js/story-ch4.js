@@ -12,7 +12,7 @@ const STORY_CH4 = {
     let text = `<p class="sound">— Mansion berubah. Bukan hanya metafora — secara literal, koridor-koridor yang tadi terbuka sekarang tertutup. Pintu-pintu baru muncul di tempat yang sebelumnya dinding solid. Seperti mansion ini hidup, bernapas, dan menyusun ulang dirinya sendiri. —</p>`;
 
     if (s.flags.allDoorsOpen) {
-      text += `<p><span class="speaker arin">Arin</span> Generator cadangan menyala — lampu darurat berkedip merah. Sistem kunci reboot. Pintu-pintu kembali terkunci. Kebebasan singkatmu — ilusi.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Generator cadangan menyala — lampu darurat berkedip merah. Sistem kunci reboot. Pintu-pintu kembali terkunci. Kebebasan singkatmu — ilusi.</p>`;
     }
 
     text += `<p class="sound">— Countdown: 02:00:00. Dua jam sebelum fajar. —</p>`;
@@ -27,10 +27,10 @@ const STORY_CH4 = {
     else if (pc === 'kira') text += `<p class="journal"><em>Mansion ini punya sistem otomasi. Lo bisa hack-nya — kalau lo bisa menemukan hub controller-nya. Pintu-pintu, kunci, bahkan lampu — semua terhubung ke satu sistem.</em></p>`;
     else if (pc === 'dimas') text += `<p class="journal"><em>Lana memberimu instruksi terakhir: "Simpul kedua malam ini." Tapi tanganmu gemetar untuk pertama kalinya. Sera menatapmu tadi — dan sesuatu di tatapan itu... merusak programmu.</em></p>`;
 
-    text += `<p><span class="speaker arin">Arin</span> Sang Penenun sudah mendapat simpul pertamanya. Dua lagi yang dijanjikan. Dan sekarang, permainan berubah — bukan lagi tentang manipulasi psikologis. Ini <em>perburuan</em>.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Sang Penenun sudah mendapat simpul pertamanya. Dua lagi yang dijanjikan. Dan sekarang, permainan berubah — bukan lagi tentang manipulasi psikologis. Ini <em>perburuan</em>.</p>`;
 
     if (s.flags.presentedEvidence) {
-      text += `<p><span class="speaker arin">Arin</span> Kau sudah mempresentasikan semua bukti. Kelompok tahu tentang protokol, tentang operator, tentang sejarah mansion. Tapi pengetahuan tidak sama dengan keselamatan.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Kau sudah mempresentasikan semua bukti. Kelompok tahu tentang protokol, tentang operator, tentang sejarah mansion. Tapi pengetahuan tidak sama dengan keselamatan.</p>`;
     }
     if (s.flags.heldVoting) {
       text += `<p><span class="speaker dimas">Dimas</span> Voting dilakukan. Mayoritas menunjuk Dimas sebagai tersangka utama. `;
@@ -42,11 +42,11 @@ const STORY_CH4 = {
     }
 
     text += `<p class="sound">— Di sisi ruangan, drama kecil bermain tanpa kata: —</p>`;
-    text += `<p><span class="speaker sera">Sera</span> berdiri di dekatmu — lebih dekat dari biasanya. Bahunya menyentuh bahumu. Di situasi normal, seorang psikolog profesional akan menjaga jarak. Tapi malam ini bukan malam normal, dan Sera sudah berhenti berpura-pura bahwa perasaannya pada Arin hanya "kolega". Setiap kali lampu berkedip, tangannya mencari tanganmu.</p>`;
+    text += `<p><span class="speaker sera">Sera</span> berdiri di dekatmu — lebih dekat dari biasanya. Bahunya menyentuh bahumu. Di situasi normal, seorang psikolog profesional akan menjaga jarak. Tapi malam ini bukan malam normal, dan Sera sudah berhenti berpura-pura bahwa perasaannya pada Arya hanya "kolega". Setiap kali lampu berkedip, tangannya mencari tanganmu.</p>`;
     text += `<p><span class="speaker niko">Niko</span> berdiri terpisah dari kelompok — dalang yang terisolasi oleh egonya sendiri. Tapi matanya tidak bisa berhenti kembali ke <span class="speaker vira">Vira</span>. Cinta lama yang toxic tidak pernah benar-benar mati — hanya bermutasi menjadi sesuatu yang lebih berbahaya. "Vira," bisiknya saat tidak ada yang mendengar, "aku mengundangmu karena—" "Karena rasa bersalah?" potong Vira. "Atau karena kau masih tidak bisa melepaskanku?" Keheningan yang menyakitkan.</p>`;
     text += `<p><span class="speaker juno">Juno</span> berjalan mondar-mandir, energinya ceroboh dan berbahaya. Reza mengikutinya dengan mata — negosiator yang tahu bahwa bom waktu emosional di depannya bisa meledak kapan saja. "Duduk, Juno." "Nggak bisa." "Duduk." Juno duduk. Dan ketika lutut mereka bersentuhan, keduanya pura-pura tidak menyadarinya.</p>`;
     text += `<p><span class="speaker lana">Lana</span> berbisik pada <span class="speaker dimas">Dimas</span> — dalang menarik benang bonekanya. "Sebentar lagi waktunya. Kau tahu apa yang harus dilakukan." Dimas mengangguk tanpa ekspresi. Tapi ada sesuatu yang baru di matanya — keraguan? Perasaan? Matanya bergerak ke Sera, dan untuk pertama kalinya, Dimas merasakan sesuatu yang Lana tidak bisa kontrol: emosi manusia.</p>`;
-    text += `<p><span class="speaker farah">Farah</span> menarik <span class="speaker kira">Kira</span> ke sudut. "Aku bisa membayarmu. Nama hargamu." Kira tertawa — tawa eksentrik yang terlalu keras untuk situasi ini. "Uang? Serius? Kita bisa mati dan lo nawarin gue uang?" Farah mengepalkan tangan — negosiator yang kehabisan mata uang.</p>`;
+    text += `<p><span class="speaker farah">Farah</span> menarik <span class="speaker kira">Kai</span> ke sudut. "Aku bisa membayarmu. Nama hargamu." Kai tertawa — tawa eksentrik yang terlalu keras untuk situasi ini. "Uang? Serius? Kita bisa mati dan lo nawarin gue uang?" Farah mengepalkan tangan — negosiator yang kehabisan mata uang.</p>`;
 
     text += `<p><span class="speaker farah">Farah</span> Speaker — sekarang dengan suara yang lebih manusiawi, lebih personal, seolah Sang Penenun melepas filter elektroniknya:</p>`;
     text += `<p class="journal"><em>"Dua jam tersisa. Dua simpul lagi. Tapi kali ini, aku beri kalian kesempatan. Di suatu tempat di mansion ini, ada kunci master yang membuka semua pintu — termasuk pintu keluar. Temukan, dan kalian bebas. Tapi kunci itu dijaga."</em></p>`;
@@ -131,7 +131,7 @@ const STORY_CH4 = {
     text += `<p class="sound">— • Monitor kecil yang menampilkan feed CCTV dari hall utama —</p>`;
     text += `<p class="sound">— • Walkie-talkie — frekuensi yang sama yang disebutkan di notes: 462.5625 MHz —</p>`;
     text += `<p class="sound">— • Sebuah kotak logam terkunci —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> • Dan di dinding: foto-foto. Foto-foto Arin. Dicetak dari internet — dari social media, dari podcast, dari acara-acara publik. Timeline. Sang Penenun sudah mengikutimu jauh sebelum malam ini.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> • Dan di dinding: foto-foto. Foto-foto Arya. Dicetak dari internet — dari social media, dari podcast, dari acara-acara publik. Timeline. Sang Penenun sudah mengikutimu jauh sebelum malam ini.</p>`;
     text += `<p class="sound">— Kotak logam itu butuh kode. Empat digit. —</p>`;
 
     return text;
@@ -155,7 +155,7 @@ const STORY_CH4 = {
       }
     },
     {
-      text: "Foto-foto Arin di dinding... ini personal. Periksa semuanya.",
+      text: "Foto-foto Arya di dinding... ini personal. Periksa semuanya.",
       next: 'ch4_arin_photos',
       effect: (s) => {
         Engine.modAwareness('arin', 15);
@@ -168,8 +168,8 @@ const STORY_CH4 = {
 'ch4_walkie': {
   text: `<p class="sound">— Kau menyalakan walkie-talkie. Static. Lalu — suara. —</p>
 <p class="sound">— Dua suara. Berbisik. Terputus-putus. —</p>
-<p><span class="speaker arin">Arin</span> "...target kedua bergerak ke... timur... ikuti tapi jangan..."</p>
-<p><span class="speaker arin">Arin</span> "...Arin di hidden room... kita punya... menit sebelum..."</p>
+<p><span class="speaker arin">Arya</span> "...target kedua bergerak ke... timur... ikuti tapi jangan..."</p>
+<p><span class="speaker arin">Arya</span> "...Arya di hidden room... kita punya... menit sebelum..."</p>
 <p class="sound">— Mereka tahu kau di sini. Sekarang. —</p>
 <p class="sound">— Suara langkah di lorong. Mendekat. —</p>`,
   shake: true,
@@ -197,14 +197,14 @@ const STORY_CH4 = {
   text: (s) => {
     let text = `<p class="sound">— Kau menutup panel. Gelap total kecuali cahaya monitor kecil. —</p>`;
     text += `<p class="sound">— Langkah kaki melewati dinding. Berhenti. Lalu berlalu. —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Walkie-talkie: "...dia hilang dari visual... cek ruangan-ruangan di sayap timur..."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Walkie-talkie: "...dia hilang dari visual... cek ruangan-ruangan di sayap timur..."</p>`;
     text += `<p class="sound">— Lalu suara yang membuatmu membeku. Suara yang kau kenali: —</p>`;
 
     if (s.difficulty === 3) {
-      text += `<p>"Kalian berdua, fokus. Arin punya bukti yang cukup untuk menghancurkan kita. Temukan dia sebelum fajar." Suara itu — <span class="speaker niko">Niko</span>.</p>`;
+      text += `<p>"Kalian berdua, fokus. Arya punya bukti yang cukup untuk menghancurkan kita. Temukan dia sebelum fajar." Suara itu — <span class="speaker niko">Niko</span>.</p>`;
       text += `<p><span class="speaker niko">Niko</span> Niko. Pewaris Wardhana. Terlibat. Bukan hanya memberikan akses — dia aktif berpartisipasi.</p>`;
     } else if (s.difficulty === 2) {
-      text += `<p>"Aku akan urus Arin. Kau selesaikan target kedua." Suara wanita — <span class="speaker lana">Lana</span>.</p>`;
+      text += `<p>"Aku akan urus Arya. Kau selesaikan target kedua." Suara wanita — <span class="speaker lana">Lana</span>.</p>`;
       text += `<p>"Metode?" Suara pria — <span class="speaker dimas">Dimas</span>.</p>`;
       text += `<p class="sound">— "Skenario kecelakaan. Tangga gelap, lantai licin. Natural." —</p>`;
     } else {
@@ -232,7 +232,7 @@ const STORY_CH4 = {
 'ch4_arin_photos': {
   text: `<p><span class="speaker dimas">Dimas</span> Kau memeriksa foto-foto di dinding. Timeline lengkap kehidupanmu selama dua tahun terakhir. Setiap episode podcast yang kau rekam. Setiap acara publik. Bahkan foto dari kafe tempat kau biasa bekerja.</p>
 <p><span class="speaker dimas">Dimas</span> Dan di antara foto-foto itu — notes. Analisis tentangmu. Kebiasaan, kelemahan, pola perilaku.</p>
-<p class="journal"><em>"Arin Prasetya — profil ideal untuk Saksi Selamat. Insting investigasi kuat. Kecenderungan heroik. Survivor's guilt moderat. Akan menjadi narasi sempurna untuk menutup siklus tahun ini."</em></p>
+<p class="journal"><em>"Arya Prasetya — profil ideal untuk Saksi Selamat. Insting investigasi kuat. Kecenderungan heroik. Survivor's guilt moderat. Akan menjadi narasi sempurna untuk menutup siklus tahun ini."</em></p>
 <p><span class="speaker dimas">Dimas</span> "Saksi Selamat." Kau direncanakan untuk selamat. Bukan karena keberuntungan — tapi karena kau akan menjadi saksi yang tidak dipercaya siapapun. Podcaster konspirasi yang bercerita tentang mansion pembunuh. Siapa yang akan percaya?</p>
 <p class="sound">— Sang Penenun tidak ingin membunuhmu. Dia ingin menggunakanmu. —</p>`,
   shake: true,
@@ -283,9 +283,9 @@ const STORY_CH4 = {
   text: `<p><span class="speaker dimas">Dimas</span> Kau berlari ke pintu keluar utama. Kunci masuk. Memutar. Mekanisme berderak — klik berat, puas, final.</p>
 <p class="sound">— Pintu terbuka. Udara malam. Kebebasan. —</p>
 <p>Tapi di belakangmu — suara langkah. <span class="speaker sera">Sera</span>. Matanya lebar.</p>
-<p><span class="speaker arin">Arin</span> "Arin? Kau mau... pergi? Sendirian?"</p>
+<p><span class="speaker arin">Arya</span> "Arya? Kau mau... pergi? Sendirian?"</p>
 <p class="sound">— Di belakang Sera, bayangan-bayangan yang lain. Mendekat. —</p>
-<p><span class="speaker juno">Juno</span>: "Arin, lo serius?"</p>
+<p><span class="speaker juno">Juno</span>: "Arya, lo serius?"</p>
 <p class="sound">— Kunci sudah diputar. Mekanisme sudah rusak. Pintu terbuka. —</p>
 <p><span class="speaker juno">Juno</span> Pilihan: keluar dan selamatkan dirimu. Atau tetap dan gunakan pintu terbuka untuk menyelamatkan semua.</p>`,
   choices: [
@@ -376,13 +376,13 @@ const STORY_CH4 = {
   text: (s) => {
     let text = `<p><span class="speaker sera">Sera</span> "Kita buat situasi di mana Sang Penenun HARUS bertindak secara langsung. Dan saat dia bertindak — kita tangkap."</p>`;
     text += `<p><span class="speaker sera">Sera</span>: "Bait. Kita butuh bait."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Aku yang jadi bait." Kau mengangkat tangan sebelum ada yang protes. "Arin Prasetya, podcaster. Aku yang punya bukti paling banyak. Aku ancaman terbesar bagi Sang Penenun."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Aku yang jadi bait." Kau mengangkat tangan sebelum ada yang protes. "Arya Prasetya, podcaster. Aku yang punya bukti paling banyak. Aku ancaman terbesar bagi Sang Penenun."</p>`;
 
     if (s.flags.knowsArinIsPlanned) {
-      text += `<p><span class="speaker arin">Arin</span> "Dan aku tahu sesuatu yang dia tidak tahu aku tahu: dia MERENCANAKANKU untuk jadi 'saksi selamat'. Jadi dia tidak akan membunuhku — dia akan mencoba mengendalikanku. Dan saat dia mencoba..."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Dan aku tahu sesuatu yang dia tidak tahu aku tahu: dia MERENCANAKANKU untuk jadi 'saksi selamat'. Jadi dia tidak akan membunuhku — dia akan mencoba mengendalikanku. Dan saat dia mencoba..."</p>`;
     }
 
-    text += `<p><span class="speaker arin">Arin</span> Rencana sederhana: Arin berjalan sendirian ke Galeri Timur. Kamera CCTV dihancurkan sebelumnya sehingga Sang Penenun harus mengirim operatornya — atau datang sendiri — untuk mengawasi. Tim lain bersembunyi di posisi strategis.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Rencana sederhana: Arya berjalan sendirian ke Galeri Timur. Kamera CCTV dihancurkan sebelumnya sehingga Sang Penenun harus mengirim operatornya — atau datang sendiri — untuk mengawasi. Tim lain bersembunyi di posisi strategis.</p>`;
 
     return text;
   },
@@ -408,14 +408,14 @@ const STORY_CH4 = {
 
 'ch4_trap_execution': {
   text: (s) => {
-    let text = `<p><span class="speaker arin">Arin</span> Galeri Timur. Kau berjalan masuk sendirian. Layar-layar masih menampilkan foto-foto kalian — wajah-wajah dengan data personal di bawahnya.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Kau berdiri di tengah galeri. Menunggu. Jantung berdentam keras cukup untuk menggetarkan tulang rusuk.</p>`;
+    let text = `<p><span class="speaker arin">Arya</span> Galeri Timur. Kau berjalan masuk sendirian. Layar-layar masih menampilkan foto-foto kalian — wajah-wajah dengan data personal di bawahnya.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Kau berdiri di tengah galeri. Menunggu. Jantung berdentam keras cukup untuk menggetarkan tulang rusuk.</p>`;
     text += `<p class="sound">— Lima menit. Sepuluh. Lima belas. —</p>`;
     text += `<p class="sound">— Langkah kaki. Dari kedua ujung galeri sekaligus. Terperangkap dari dua arah. —</p>`;
 
     if (s.difficulty >= 2) {
       text += `<p>Dari kiri: <span class="speaker dimas">Dimas</span>. Senyum sopannya sudah hilang — yang tersisa hanya tatapan klinis yang kau lihat di orang-orang yang memandang tubuh manusia sebagai objek.</p>`;
-      text += `<p>Dari kanan: <span class="speaker lana">Lana</span>. "Skenario yang bagus, Arin. Kau tahu itu? Protagonis yang rela menjadi bait. Chapter climax yang klasik."</p>`;
+      text += `<p>Dari kanan: <span class="speaker lana">Lana</span>. "Skenario yang bagus, Arya. Kau tahu itu? Protagonis yang rela menjadi bait. Chapter climax yang klasik."</p>`;
     } else {
       text += `<p><span class="speaker lana">Lana</span> Dari kiri: seseorang. Sosok gelap yang kau lihat di CCTV tadi. Bergerak pelan, methodis.</p>`;
     }

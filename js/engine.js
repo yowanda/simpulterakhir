@@ -169,8 +169,8 @@ const Engine = (() => {
   const CHARACTERS = MAIN_CHARACTERS.concat(SIDE_CHARACTERS);
 
   const CHAR_DISPLAY = {
-    arin: 'Arin', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira',
-    reza: 'Reza', lana: 'Lana', dimas: 'Dimas', kira: 'Kira', farah: 'Farah'
+    arin: 'Arya', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira',
+    reza: 'Reza', lana: 'Lana', dimas: 'Dimas', kira: 'Kai', farah: 'Farah'
   };
 
   const CHAR_PORTRAITS = {
@@ -368,15 +368,15 @@ const Engine = (() => {
         },
         {
           id: 'sera_protect_arin',
-          text: () => `Lindungi Arin — tidak bisa membayangkan kehilangannya`,
+          text: () => `Lindungi Arya — tidak bisa membayangkan kehilangannya`,
           category: 'protect',
-          hint: 'Berdiri di samping Arin. Trust meningkat.',
+          hint: 'Berdiri di samping Arya. Trust meningkat.',
           condition: (gs, nearby) => nearby.includes('arin') && (gs.dangerLevel || 0) >= 30,
           risk: 35, reward: 70,
           effect: (s, pc) => {
             Engine.modTrust(pc, 'arin', 12);
             Engine.modDanger(-8);
-            Engine.notify('Kau berdiri di samping Arin. Trust +12%. Bahaya turun.');
+            Engine.notify('Kau berdiri di samping Arya. Trust +12%. Bahaya turun.');
           }
         }
       ]
@@ -565,7 +565,7 @@ const Engine = (() => {
       investigate: (loc) => `Scan digital ${CharBrain.locName(loc)} — cari sinyal dan data tersembunyi`,
       observe: (target) => `Monitor aktivitas digital ${CharBrain.charName(target)}`,
       talk: (target) => `Chat dengan ${CharBrain.charName(target)} — gaya hacker, to-the-point`,
-      accuse: (target) => `"Data tidak berbohong." Kira menunjukkan bukti digital ke ${CharBrain.charName(target)}.`,
+      accuse: (target) => `"Data tidak berbohong." Kai menunjukkan bukti digital ke ${CharBrain.charName(target)}.`,
       hide: (loc) => `Stealth mode di ${CharBrain.locName(loc)} — off the grid`,
       ally: (target) => `Share akses dengan ${CharBrain.charName(target)} — "Aku bisa hack, kau yang tangani fisik"`,
       escape_clue: (loc) => `Hack sistem keamanan di ${CharBrain.locName(loc)} — cari data pelarian`,
@@ -762,7 +762,7 @@ const Engine = (() => {
     return state.playerCharacter || 'arin';
   }
   function playerName() {
-    return CHAR_DISPLAY[playerChar()] || 'Arin';
+    return CHAR_DISPLAY[playerChar()] || 'Arya';
   }
   function isPlayerKiller() {
     return state.killers && state.killers.includes(playerChar());

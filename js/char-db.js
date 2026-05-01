@@ -165,95 +165,95 @@ const CharDB = (() => {
     // ========== ARIN — The Investigator ==========
     arin: [
       // Early game: investigate everything
-      { condition: { chapter: 0 }, action: { type: 'observe', desc: 'Arin mengamati setiap tamu dengan mata jurnalisnya — mencari cerita di balik ekspresi mereka.' }, weight: 15 },
-      { condition: { chapter: 1, emotion: 'calm' }, action: { type: 'investigate', desc: 'Arin memeriksa setiap sudut ruangan, recorder menyala, mencatat detail yang orang lain lewatkan.' }, weight: 20 },
-      { condition: { chapter: 1, emotion: 'wary' }, action: { type: 'investigate', desc: 'Arin menemukan catatan aneh di balik lukisan — tulisan tangan yang familiar...' }, weight: 18 },
+      { condition: { chapter: 0 }, action: { type: 'observe', desc: 'Arya mengamati setiap tamu dengan mata jurnalisnya — mencari cerita di balik ekspresi mereka.' }, weight: 15 },
+      { condition: { chapter: 1, emotion: 'calm' }, action: { type: 'investigate', desc: 'Arya memeriksa setiap sudut ruangan, recorder menyala, mencatat detail yang orang lain lewatkan.' }, weight: 20 },
+      { condition: { chapter: 1, emotion: 'wary' }, action: { type: 'investigate', desc: 'Arya menemukan catatan aneh di balik lukisan — tulisan tangan yang familiar...' }, weight: 18 },
 
       // Protect Sera
-      { condition: { nearbyIncludes: 'sera', minDanger: 40 }, action: { type: 'guard', desc: 'Arin berdiri di dekat Sera, tanpa kata tapi jelas — dia tidak akan membiarkan siapapun menyentuhnya.' }, weight: 25 },
-      { condition: { nearbyIncludes: 'sera', emotion: 'panicked' }, action: { type: 'guard', desc: '"Sera, tetap di belakangku." Arin menarik Sera ke belakangnya, tubuhnya menjadi perisai.' }, weight: 30 },
+      { condition: { nearbyIncludes: 'sera', minDanger: 40 }, action: { type: 'guard', desc: 'Arya berdiri di dekat Sera, tanpa kata tapi jelas — dia tidak akan membiarkan siapapun menyentuhnya.' }, weight: 25 },
+      { condition: { nearbyIncludes: 'sera', emotion: 'panicked' }, action: { type: 'guard', desc: '"Sera, tetap di belakangku." Arya menarik Sera ke belakangnya, tubuhnya menjadi perisai.' }, weight: 30 },
 
       // Investigate when alone
-      { condition: { isAlone: true, emotion: 'wary' }, action: { type: 'investigate', desc: 'Sendirian, Arin mengeluarkan senter kecilnya. Ada sesuatu di sini yang belum ditemukan.' }, weight: 22 },
-      { condition: { isAlone: true, emotion: 'suspicious' }, action: { type: 'investigate', desc: 'Arin membuka recorder: "Catatan pribadi — aku menemukan sesuatu. Kalau aku tidak kembali, cek rekaman ini."' }, weight: 20 },
+      { condition: { isAlone: true, emotion: 'wary' }, action: { type: 'investigate', desc: 'Sendirian, Arya mengeluarkan senter kecilnya. Ada sesuatu di sini yang belum ditemukan.' }, weight: 22 },
+      { condition: { isAlone: true, emotion: 'suspicious' }, action: { type: 'investigate', desc: 'Arya membuka recorder: "Catatan pribadi — aku menemukan sesuatu. Kalau aku tidak kembali, cek rekaman ini."' }, weight: 20 },
 
       // Confront suspects
-      { condition: { emotion: 'suspicious', minDeaths: 1 }, action: { type: 'confront', desc: 'Arin tidak bisa diam lagi. "Salah satu dari kalian bertanggung jawab. Dan aku akan menemukan siapa."' }, weight: 18 },
+      { condition: { emotion: 'suspicious', minDeaths: 1 }, action: { type: 'confront', desc: 'Arya tidak bisa diam lagi. "Salah satu dari kalian bertanggung jawab. Dan aku akan menemukan siapa."' }, weight: 18 },
 
       // Share clues with Sera
-      { condition: { hasClue: true, nearbyIncludes: 'sera' }, action: { type: 'share_clue', desc: 'Arin berbisik ke Sera: "Lihat ini — bukti ini menghubungkan semuanya."', target: 'sera' }, weight: 20 },
-      { condition: { hasClue: true, nearbyIncludes: 'reza' }, action: { type: 'share_clue', desc: 'Arin menunjukkan bukti ke Reza. "Kau mantan detektif. Apa pendapatmu?"', target: 'reza' }, weight: 15 },
+      { condition: { hasClue: true, nearbyIncludes: 'sera' }, action: { type: 'share_clue', desc: 'Arya berbisik ke Sera: "Lihat ini — bukti ini menghubungkan semuanya."', target: 'sera' }, weight: 20 },
+      { condition: { hasClue: true, nearbyIncludes: 'reza' }, action: { type: 'share_clue', desc: 'Arya menunjukkan bukti ke Reza. "Kau mantan detektif. Apa pendapatmu?"', target: 'reza' }, weight: 15 },
 
       // High danger
-      { condition: { minDanger: 70, emotion: 'panicked' }, action: { type: 'flee', desc: 'Untuk pertama kalinya, insting jurnalis kalah oleh insting bertahan hidup. Arin berlari.' }, weight: 15 },
+      { condition: { minDanger: 70, emotion: 'panicked' }, action: { type: 'flee', desc: 'Untuk pertama kalinya, insting jurnalis kalah oleh insting bertahan hidup. Arya berlari.' }, weight: 15 },
 
       // Accuse when confident
-      { condition: { minDeaths: 2, emotion: 'hostile' }, action: { type: 'accuse', desc: 'Arin menunjuk jari: "AKU TAHU SIAPA KAU." Matanya berkilat — ini bukan tuduhan, ini fakta.' }, weight: 25 },
+      { condition: { minDeaths: 2, emotion: 'hostile' }, action: { type: 'accuse', desc: 'Arya menunjuk jari: "AKU TAHU SIAPA KAU." Matanya berkilat — ini bukan tuduhan, ini fakta.' }, weight: 25 },
 
       // Mid-game investigation
-      { condition: { chapter: 2 }, action: { type: 'investigate', desc: 'Arin menyusun timeline di dinding — foto, catatan, benang merah menghubungkan semuanya.' }, weight: 16 },
-      { condition: { chapter: 3 }, action: { type: 'investigate', desc: 'Arin menemukan pola: setiap kematian terjadi saat korban sendirian. Ini bukan acak.' }, weight: 18 },
-      { condition: { chapter: 3 }, action: { type: 'confront', desc: 'Arin mengumpulkan semua bukti. Saatnya mengungkap kebenaran di depan semua orang.' }, weight: 20 },
+      { condition: { chapter: 2 }, action: { type: 'investigate', desc: 'Arya menyusun timeline di dinding — foto, catatan, benang merah menghubungkan semuanya.' }, weight: 16 },
+      { condition: { chapter: 3 }, action: { type: 'investigate', desc: 'Arya menemukan pola: setiap kematian terjadi saat korban sendirian. Ini bukan acak.' }, weight: 18 },
+      { condition: { chapter: 3 }, action: { type: 'confront', desc: 'Arya mengumpulkan semua bukti. Saatnya mengungkap kebenaran di depan semua orang.' }, weight: 20 },
 
       // Emotional moments
-      { condition: { nearbyIncludes: 'sera', minDeaths: 3 }, action: { type: 'socialize', desc: 'Arin menggenggam tangan Sera. "Kalau kita tidak selamat..." — "Kita akan selamat," potong Sera.' }, weight: 12 },
+      { condition: { nearbyIncludes: 'sera', minDeaths: 3 }, action: { type: 'socialize', desc: 'Arya menggenggam tangan Sera. "Kalau kita tidak selamat..." — "Kita akan selamat," potong Sera.' }, weight: 12 },
 
       // --- NEW: Progressive investigation chain ---
-      { condition: { chapter: 2, hasClue: true }, action: { type: 'confront', desc: 'Arin menunjukkan bukti ke kelompok: "Dengarkan. Ada pola di semua ini — kematian tidak acak."' }, weight: 18 },
-      { condition: { chapter: 3, minDeaths: 2 }, action: { type: 'accuse', desc: 'Arin menyusun semua bukti di dinding. "Aku sudah tahu siapa. Dan aku bisa buktikan."' }, weight: 22 },
+      { condition: { chapter: 2, hasClue: true }, action: { type: 'confront', desc: 'Arya menunjukkan bukti ke kelompok: "Dengarkan. Ada pola di semua ini — kematian tidak acak."' }, weight: 18 },
+      { condition: { chapter: 3, minDeaths: 2 }, action: { type: 'accuse', desc: 'Arya menyusun semua bukti di dinding. "Aku sudah tahu siapa. Dan aku bisa buktikan."' }, weight: 22 },
 
       // --- NEW: Movement & exploration decisions ---
-      { condition: { isAlone: true, emotion: 'calm' }, action: { type: 'move', desc: 'Arin bergerak ke ruangan lain, mengikuti insting jurnalisnya. Ada sesuatu yang belum ditemukan.', moveTo: 'perpustakaan' }, weight: 14 },
-      { condition: { minDanger: 40, emotion: 'wary' }, action: { type: 'move', desc: 'Arin merasa tidak aman di sini. Saatnya pindah ke tempat yang lebih strategis.', moveTo: 'aula_utama' }, weight: 12 },
+      { condition: { isAlone: true, emotion: 'calm' }, action: { type: 'move', desc: 'Arya bergerak ke ruangan lain, mengikuti insting jurnalisnya. Ada sesuatu yang belum ditemukan.', moveTo: 'perpustakaan' }, weight: 14 },
+      { condition: { minDanger: 40, emotion: 'wary' }, action: { type: 'move', desc: 'Arya merasa tidak aman di sini. Saatnya pindah ke tempat yang lebih strategis.', moveTo: 'aula_utama' }, weight: 12 },
 
       // --- NEW: Unique character interactions ---
-      { condition: { nearbyIncludes: 'kira' }, action: { type: 'socialize', desc: '"Kira, bisa kau hack CCTV mansion ini? Aku butuh rekaman malam itu." Arin mengajak Kira berkolaborasi.' }, weight: 16 },
-      { condition: { nearbyIncludes: 'reza', minDeaths: 1 }, action: { type: 'socialize', desc: '"Reza, kau pernah menangani kasus seperti ini. Apa yang kau lihat?" Arin mengandalkan pengalaman Reza.' }, weight: 14 },
-      { condition: { nearbyIncludes: 'niko', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Niko, ini mansionmu. Kau tahu lebih banyak dari yang kau akui. BICARA." Arin mendesak Niko.' }, weight: 18 },
-      { condition: { nearbyIncludes: 'vira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Vira, kau pernah di sini. Apa yang terjadi enam bulan lalu? Aku perlu tahu." Arin mencari jawaban dari Vira.' }, weight: 16 },
+      { condition: { nearbyIncludes: 'kira' }, action: { type: 'socialize', desc: '"Kai, bisa kau hack CCTV mansion ini? Aku butuh rekaman malam itu." Arya mengajak Kai berkolaborasi.' }, weight: 16 },
+      { condition: { nearbyIncludes: 'reza', minDeaths: 1 }, action: { type: 'socialize', desc: '"Reza, kau pernah menangani kasus seperti ini. Apa yang kau lihat?" Arya mengandalkan pengalaman Reza.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'niko', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Niko, ini mansionmu. Kau tahu lebih banyak dari yang kau akui. BICARA." Arya mendesak Niko.' }, weight: 18 },
+      { condition: { nearbyIncludes: 'vira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Vira, kau pernah di sini. Apa yang terjadi enam bulan lalu? Aku perlu tahu." Arya mencari jawaban dari Vira.' }, weight: 16 },
 
       // --- Tactical protagonist actions ---
-      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: 'Arin mengambil alih. "Dengarkan. Kita butuh strategi — siapa jaga pintu, siapa investigasi, siapa pantau pergerakan."' }, weight: 20 },
-      { condition: { isAlone: true, emotion: 'suspicious' }, action: { type: 'scout', desc: 'Arin bergerak pelan, memeriksa setiap sudut sebelum melangkah. Jurnalis yang tahu kapan harus diam.' }, weight: 16 },
-      { condition: { minDeaths: 2, isAlone: false, hasClue: true }, action: { type: 'rally', desc: '"SEMUA DENGARKAN. Aku punya bukti. Kita akhiri ini malam ini." Arin mengumpulkan semua yang tersisa.' }, weight: 22 },
-      { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'ambush', desc: 'Arin menyusun rencana penyergapan. "Kita tahu dia akan lewat sini. Bersiap."' }, weight: 18 },
-      { condition: { minDanger: 60, isAlone: false }, action: { type: 'secure_exit', desc: 'Arin memeriksa semua jalur keluar. "Kalau semuanya gagal, kita butuh rencana pelarian."' }, weight: 14 },
-      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'betray', desc: 'Insting survival mengalahkan segalanya. Arin mempertimbangkan untuk meninggalkan yang lain demi keselamatannya.' }, weight: 10 },
-      // Trust-kill: Arin bisa membunuh seseorang yang dia curigai sebagai killer (jika trust sangat rendah)
-      { condition: { minDeaths: 2, emotion: 'hostile', minTension: 60 }, action: { type: 'trust_kill', desc: '"AKU SUDAH MUAK DENGAN KEBOHONGAN." Arin menyerang orang yang paling dia curigai — apapun konsekuensinya.' }, weight: 20 },
-      { condition: { minDeaths: 3, emotion: 'panicked', minTension: 70 }, action: { type: 'trust_kill', desc: 'Paranoia mengambil alih. Arin tidak bisa mempercayai siapapun lagi. "Salah satu dari kalian pasti pembunuh."' }, weight: 18 },
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: 'Arya mengambil alih. "Dengarkan. Kita butuh strategi — siapa jaga pintu, siapa investigasi, siapa pantau pergerakan."' }, weight: 20 },
+      { condition: { isAlone: true, emotion: 'suspicious' }, action: { type: 'scout', desc: 'Arya bergerak pelan, memeriksa setiap sudut sebelum melangkah. Jurnalis yang tahu kapan harus diam.' }, weight: 16 },
+      { condition: { minDeaths: 2, isAlone: false, hasClue: true }, action: { type: 'rally', desc: '"SEMUA DENGARKAN. Aku punya bukti. Kita akhiri ini malam ini." Arya mengumpulkan semua yang tersisa.' }, weight: 22 },
+      { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'ambush', desc: 'Arya menyusun rencana penyergapan. "Kita tahu dia akan lewat sini. Bersiap."' }, weight: 18 },
+      { condition: { minDanger: 60, isAlone: false }, action: { type: 'secure_exit', desc: 'Arya memeriksa semua jalur keluar. "Kalau semuanya gagal, kita butuh rencana pelarian."' }, weight: 14 },
+      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'betray', desc: 'Insting survival mengalahkan segalanya. Arya mempertimbangkan untuk meninggalkan yang lain demi keselamatannya.' }, weight: 10 },
+      // Trust-kill: Arya bisa membunuh seseorang yang dia curigai sebagai killer (jika trust sangat rendah)
+      { condition: { minDeaths: 2, emotion: 'hostile', minTension: 60 }, action: { type: 'trust_kill', desc: '"AKU SUDAH MUAK DENGAN KEBOHONGAN." Arya menyerang orang yang paling dia curigai — apapun konsekuensinya.' }, weight: 20 },
+      { condition: { minDeaths: 3, emotion: 'panicked', minTension: 70 }, action: { type: 'trust_kill', desc: 'Paranoia mengambil alih. Arya tidak bisa mempercayai siapapun lagi. "Salah satu dari kalian pasti pembunuh."' }, weight: 18 },
 
       // --- Chapters 4-5: Escalation & endgame ---
-      { condition: { chapter: 4, hasClue: true, isAlone: false }, action: { type: 'rally', desc: 'Arin mengumpulkan semua bukti. "Dengarkan! Aku tahu siapa dalangnya. Kita akhiri malam ini."' }, weight: 24 },
-      { condition: { chapter: 4, emotion: 'suspicious', isAlone: false }, action: { type: 'coordinate_defense', desc: '"Kita sudah kehilangan terlalu banyak. Mulai sekarang, TIDAK ADA yang pergi sendirian." Arin mengambil komando.' }, weight: 22 },
-      { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Waktu hampir habis. Arin mencari petunjuk pelarian dengan intensitas yang meningkat.' }, weight: 20 },
-      { condition: { chapter: 4, minDeaths: 2, isAlone: false }, action: { type: 'accuse', desc: 'Arin menyusun semua timeline di dinding. "INI DIA. Semua bukti menunjuk ke satu orang."' }, weight: 26 },
+      { condition: { chapter: 4, hasClue: true, isAlone: false }, action: { type: 'rally', desc: 'Arya mengumpulkan semua bukti. "Dengarkan! Aku tahu siapa dalangnya. Kita akhiri malam ini."' }, weight: 24 },
+      { condition: { chapter: 4, emotion: 'suspicious', isAlone: false }, action: { type: 'coordinate_defense', desc: '"Kita sudah kehilangan terlalu banyak. Mulai sekarang, TIDAK ADA yang pergi sendirian." Arya mengambil komando.' }, weight: 22 },
+      { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Waktu hampir habis. Arya mencari petunjuk pelarian dengan intensitas yang meningkat.' }, weight: 20 },
+      { condition: { chapter: 4, minDeaths: 2, isAlone: false }, action: { type: 'accuse', desc: 'Arya menyusun semua timeline di dinding. "INI DIA. Semua bukti menunjuk ke satu orang."' }, weight: 26 },
       { condition: { chapter: 4, emotion: 'hostile', hasClue: true }, action: { type: 'rally', desc: '"SEMUANYA BERKUMPUL! Aku tahu jalannya — kita keluar atau mati mencoba!"' }, weight: 24 },
-      { condition: { chapter: 4, isAlone: true, minDanger: 50 }, action: { type: 'scout', desc: 'Endgame. Arin bergerak cepat, memeriksa setiap sudut terakhir mansion. Recorder masih menyala.' }, weight: 20 },
-      { condition: { chapter: 5, isAlone: false, minDeaths: 3 }, action: { type: 'coordinate_defense', desc: '"Formasi terakhir. Kita keluar bersama atau tidak sama sekali." Arin memimpin evakuasi.' }, weight: 28 },
-      { condition: { chapter: 5, emotion: 'panicked', hasClue: true }, action: { type: 'secure_exit', desc: 'Arin menemukan jalur keluar berkat petunjuk yang dikumpulkan. "DI SINI! JALAN KELUARNYA!"' }, weight: 26 },
-      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Arin mengumpulkan siapa pun yang tersisa. "Ini simpul terakhir. Putuskan sekarang."' }, weight: 30 },
-      { condition: { chapter: 5, hasClue: true }, action: { type: 'accuse', desc: 'Semua benang merah terhubung. Arin mengungkap SEMUANYA — nama, motif, rencana. Final confrontation.' }, weight: 28 },
+      { condition: { chapter: 4, isAlone: true, minDanger: 50 }, action: { type: 'scout', desc: 'Endgame. Arya bergerak cepat, memeriksa setiap sudut terakhir mansion. Recorder masih menyala.' }, weight: 20 },
+      { condition: { chapter: 5, isAlone: false, minDeaths: 3 }, action: { type: 'coordinate_defense', desc: '"Formasi terakhir. Kita keluar bersama atau tidak sama sekali." Arya memimpin evakuasi.' }, weight: 28 },
+      { condition: { chapter: 5, emotion: 'panicked', hasClue: true }, action: { type: 'secure_exit', desc: 'Arya menemukan jalur keluar berkat petunjuk yang dikumpulkan. "DI SINI! JALAN KELUARNYA!"' }, weight: 26 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Arya mengumpulkan siapa pun yang tersisa. "Ini simpul terakhir. Putuskan sekarang."' }, weight: 30 },
+      { condition: { chapter: 5, hasClue: true }, action: { type: 'accuse', desc: 'Semua benang merah terhubung. Arya mengungkap SEMUANYA — nama, motif, rencana. Final confrontation.' }, weight: 28 },
 
       // --- Cross-character interactions (missing) ---
-      { condition: { nearbyIncludes: 'juno', emotion: 'wary' }, action: { type: 'socialize', desc: '"Juno, kau punya keberanian yang aku kagumi. Tapi jangan bertindak gegabah — kita butuh strategi." Arin meredam Juno.' }, weight: 14 },
-      { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Lana, novel terbarumu tentang pembunuhan di mansion. Kebetulan? Aku tidak percaya kebetulan." Arin menantang Lana.' }, weight: 16 },
+      { condition: { nearbyIncludes: 'juno', emotion: 'wary' }, action: { type: 'socialize', desc: '"Juno, kau punya keberanian yang aku kagumi. Tapi jangan bertindak gegabah — kita butuh strategi." Arya meredam Juno.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Lana, novel terbarumu tentang pembunuhan di mansion. Kebetulan? Aku tidak percaya kebetulan." Arya menantang Lana.' }, weight: 16 },
       { condition: { nearbyIncludes: 'dimas', emotion: 'wary' }, action: { type: 'socialize', desc: '"Dimas, ketenangan forensikmu berguna. Tapi kenapa kau begitu tenang? Jurnalis selalu bertanya."' }, weight: 14 },
       { condition: { nearbyIncludes: 'farah', emotion: 'calm' }, action: { type: 'socialize', desc: '"Farah, aku ingin mewawancaraimu. Sebagai pewaris Wardhana, kau pasti tahu sejarah mansion ini."' }, weight: 12 },
 
       // --- Broad catch-all: different for every emotion so brain ALWAYS triggers ---
-      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Arin diam-diam mencatat siapa bicara dengan siapa dan siapa yang menghindari kontak mata.' }, weight: 10 },
-      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'investigate', desc: 'Arin memeriksa ruangan, mata jurnalisnya menangkap sesuatu yang tidak terlihat oleh yang lain.' }, weight: 10 },
-      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'confront', desc: '"Ceritamu tidak konsisten." Arin menantang orang yang paling mencurigakan di ruangan.' }, weight: 10 },
-      { condition: { emotion: 'hostile' }, action: { type: 'accuse', desc: 'Arin sudah lelah bersabar. "Aku punya cukup bukti. Saatnya mengakhiri ini."' }, weight: 12 },
-      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Arin meraih tangan siapapun yang terdekat dan berlari. "PERGI DARI SINI! SEKARANG!"' }, weight: 10 },
-      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Arin mematikan lampu dan bersembunyi di balik furnitur. Napasnya tertahan.' }, weight: 12 },
-      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Keuntungan sendirian — Arin bisa memeriksa tempat ini tanpa gangguan. Recorder menyala.' }, weight: 12 },
-      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Arin memutuskan untuk bergerak. Diam di satu tempat terlalu lama itu berbahaya.' }, weight: 10 },
-      { condition: { minDanger: 30, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Kita perlu strategi. Jangan pergi sendirian — buddy system mulai sekarang." Arin mengorganisir kelompok.' }, weight: 12 },
-      { condition: { minDanger: 50, isAlone: true }, action: { type: 'hide', desc: 'Tingkat bahaya tinggi. Arin menemukan celah gelap dan menunggu sampai situasi lebih aman.' }, weight: 12 },
-      { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Arin mengajak bicara orang terdekat. Setiap percakapan bisa jadi petunjuk — atau perangkap.' }, weight: 8 },
-      { condition: {}, action: { type: 'observe', desc: 'Arin mengamati sekitarnya. Setiap detail bisa jadi penting — atau jadi perbedaan antara hidup dan mati.' }, weight: 6 }
+      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Arya diam-diam mencatat siapa bicara dengan siapa dan siapa yang menghindari kontak mata.' }, weight: 10 },
+      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'investigate', desc: 'Arya memeriksa ruangan, mata jurnalisnya menangkap sesuatu yang tidak terlihat oleh yang lain.' }, weight: 10 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'confront', desc: '"Ceritamu tidak konsisten." Arya menantang orang yang paling mencurigakan di ruangan.' }, weight: 10 },
+      { condition: { emotion: 'hostile' }, action: { type: 'accuse', desc: 'Arya sudah lelah bersabar. "Aku punya cukup bukti. Saatnya mengakhiri ini."' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Arya meraih tangan siapapun yang terdekat dan berlari. "PERGI DARI SINI! SEKARANG!"' }, weight: 10 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Arya mematikan lampu dan bersembunyi di balik furnitur. Napasnya tertahan.' }, weight: 12 },
+      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Keuntungan sendirian — Arya bisa memeriksa tempat ini tanpa gangguan. Recorder menyala.' }, weight: 12 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Arya memutuskan untuk bergerak. Diam di satu tempat terlalu lama itu berbahaya.' }, weight: 10 },
+      { condition: { minDanger: 30, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Kita perlu strategi. Jangan pergi sendirian — buddy system mulai sekarang." Arya mengorganisir kelompok.' }, weight: 12 },
+      { condition: { minDanger: 50, isAlone: true }, action: { type: 'hide', desc: 'Tingkat bahaya tinggi. Arya menemukan celah gelap dan menunggu sampai situasi lebih aman.' }, weight: 12 },
+      { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Arya mengajak bicara orang terdekat. Setiap percakapan bisa jadi petunjuk — atau perangkap.' }, weight: 8 },
+      { condition: {}, action: { type: 'observe', desc: 'Arya mengamati sekitarnya. Setiap detail bisa jadi penting — atau jadi perbedaan antara hidup dan mati.' }, weight: 6 }
     ],
 
     // ========== NIKO — The Mastermind (as survivor) ==========
@@ -319,11 +319,11 @@ const CharDB = (() => {
       { condition: { minDeaths: 3, emotion: 'hostile' }, action: { type: 'trust_kill', desc: '"Mansionku. Aturanku. Dan kau bukan bagian dari solusinya." Niko mengeliminasi orang yang paling dia curigai.' }, weight: 18 },
 
       // --- Cross-character interactions (missing) ---
-      { condition: { nearbyIncludes: 'arin', emotion: 'suspicious' }, action: { type: 'manipulate', desc: '"Arin, jurnalis selalu mencari cerita. Tapi cerita apa yang kau sembunyikan dari kami?" Niko membalik pertanyaan.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'arin', emotion: 'suspicious' }, action: { type: 'manipulate', desc: '"Arya, jurnalis selalu mencari cerita. Tapi cerita apa yang kau sembunyikan dari kami?" Niko membalik pertanyaan.' }, weight: 14 },
       { condition: { nearbyIncludes: 'juno', emotion: 'wary' }, action: { type: 'socialize', desc: '"Juno, kekuatanmu berguna di sini. Tapi keberanianmu bisa jadi kelemahanmu." Niko menasihati dengan kalkulasi.' }, weight: 14 },
       { condition: { nearbyIncludes: 'reza', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Niko menatap Reza. Detektif. Orang yang paling berbahaya di sini — karena dia bisa melihat menembus topeng.' }, weight: 16 },
       { condition: { nearbyIncludes: 'dimas', emotion: 'calm' }, action: { type: 'socialize', desc: '"Dimas, forensikmu bisa berguna. Tapi di mansion ini, sains tidak selalu menang atas kegelapan."' }, weight: 12 },
-      { condition: { nearbyIncludes: 'kira', emotion: 'wary' }, action: { type: 'question', desc: '"Kira, apa yang kau temukan di server mansion? Aku tahu infrastrukturnya — tapi apa yang disembunyikannya?"' }, weight: 16 },
+      { condition: { nearbyIncludes: 'kira', emotion: 'wary' }, action: { type: 'question', desc: '"Kai, apa yang kau temukan di server mansion? Aku tahu infrastrukturnya — tapi apa yang disembunyikannya?"' }, weight: 16 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'manipulate', desc: 'Niko menyebar informasi setengah benar ke kelompok. Membuat mereka saling curiga — sementara dia mengamati.' }, weight: 10 },
@@ -349,11 +349,11 @@ const CharDB = (() => {
       { condition: { emotion: 'wary' }, action: { type: 'investigate', desc: 'Sera menulis profil: "Subjek menunjukkan flat affect, kurangnya respons empatik, dan tendensi untuk memposisikan diri di dekat exit..."' }, weight: 22 },
       { condition: { emotion: 'suspicious' }, action: { type: 'accuse', desc: 'Sera membaca microexpression seseorang dan langsung tahu: "Kau berbohong. Pupilmu melebar 0.3 milimeter setiap kali kau bicara tentang alibi."' }, weight: 20 },
 
-      // Protect Arin
-      { condition: { nearbyIncludes: 'arin', minDanger: 40 }, action: { type: 'guard', desc: 'Sera berdiri di samping Arin. Bukan karena dia kuat — tapi karena dia tidak bisa membayangkan dunia tanpa Arin di dalamnya.' }, weight: 25 },
+      // Protect Arya
+      { condition: { nearbyIncludes: 'arin', minDanger: 40 }, action: { type: 'guard', desc: 'Sera berdiri di samping Arya. Bukan karena dia kuat — tapi karena dia tidak bisa membayangkan dunia tanpa Arya di dalamnya.' }, weight: 25 },
 
-      // Emotional vulnerability with Arin
-      { condition: { nearbyIncludes: 'arin', minDeaths: 2 }, action: { type: 'socialize', desc: 'Sera menggenggam tangan Arin di bawah meja. "Aku... aku tidak bisa menganalisis ini. Aku hanya tahu aku tidak mau kehilanganmu."' }, weight: 18 },
+      // Emotional vulnerability with Arya
+      { condition: { nearbyIncludes: 'arin', minDeaths: 2 }, action: { type: 'socialize', desc: 'Sera menggenggam tangan Arya di bawah meja. "Aku... aku tidak bisa menganalisis ini. Aku hanya tahu aku tidak mau kehilanganmu."' }, weight: 18 },
 
       // Read the room
       { condition: { isAlone: false, chapter: 2 }, action: { type: 'observe', desc: 'Sera memperhatikan dinamika kelompok berubah. Kepercayaan runtuh. Tapi satu orang — satu orang terlalu tenang.' }, weight: 20 },
@@ -362,7 +362,7 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'dimas', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Dimas, tatap mataku." Sera membaca kekosongan di balik senyum sopannya. "Aku tahu apa yang kau sembunyikan."' }, weight: 22 },
 
       // Share profiling with allies
-      { condition: { hasClue: true, nearbyIncludes: 'arin' }, action: { type: 'share_clue', desc: 'Sera menunjukkan catatan profilingnya ke Arin: "Ini daftar tersangka berdasarkan analisis perilaku."', target: 'arin' }, weight: 20 },
+      { condition: { hasClue: true, nearbyIncludes: 'arin' }, action: { type: 'share_clue', desc: 'Sera menunjukkan catatan profilingnya ke Arya: "Ini daftar tersangka berdasarkan analisis perilaku."', target: 'arin' }, weight: 20 },
       { condition: { hasClue: true, nearbyIncludes: 'reza' }, action: { type: 'share_clue', desc: 'Sera dan Reza membandingkan catatan. "Kau punya insting polisi. Aku punya data perilaku. Gabungkan."', target: 'reza' }, weight: 15 },
 
       // Panic
@@ -378,7 +378,7 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'juno', emotion: 'calm' }, action: { type: 'socialize', desc: '"Juno, impulsivitasmu bukan kelemahan. Itu insting survival. Tapi kau perlu fokus." Sera menenangkan Juno.' }, weight: 16 },
       { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Sera memperhatikan Lana dengan intens. "Narcissistic personality, antisocial tendency, charm yang dipelajari... profil yang sempurna untuk—" Dia terdiam.' }, weight: 20 },
       { condition: { nearbyIncludes: 'farah' }, action: { type: 'socialize', desc: '"Farah, uangmu tidak bisa membeli keselamatan di sini. Tapi informasimu bisa. Apa yang kau tahu tentang keluarga Wardhana?"' }, weight: 14 },
-      { condition: { nearbyIncludes: 'kira', hasClue: true }, action: { type: 'share_clue', desc: 'Sera membagi analisis profilingnya dengan Kira. "Gabungkan ini dengan data digitalmu. Pola akan muncul."', target: 'kira' }, weight: 18 },
+      { condition: { nearbyIncludes: 'kira', hasClue: true }, action: { type: 'share_clue', desc: 'Sera membagi analisis profilingnya dengan Kai. "Gabungkan ini dengan data digitalmu. Pola akan muncul."', target: 'kira' }, weight: 18 },
 
       // --- NEW: Escalation ---
       { condition: { minDeaths: 2, emotion: 'suspicious' }, action: { type: 'confront', desc: 'Sera tidak lagi menganalisis dari kejauhan. "Aku sudah melihat tanda-tandanya. Salah satu dari kita adalah pembunuh. Dan aku tahu siapa."' }, weight: 22 },
@@ -389,17 +389,17 @@ const CharDB = (() => {
       { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'scout', desc: 'Sera mengamati semua orang di ruangan. Profilingnya mencari tanda-tanda predator — micro-expression, postur, pernapasan.' }, weight: 18 },
       { condition: { minDeaths: 2, hasClue: true, isAlone: false }, action: { type: 'rally', desc: '"Aku sudah profil semua orang. Hasilnya mengejutkan. Pembunuh ada di antara kita — dan aku tahu polanya."' }, weight: 22 },
       { condition: { minDanger: 50, isAlone: false }, action: { type: 'ambush', desc: 'Sera menyusun strategi psikologis. "Jangan lari dari predator. Buat dia merasa diburu."' }, weight: 16 },
-      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Sera melihat peluang. Mengorbankan satu orang untuk menyelamatkan dirinya dan Arin. Keputusan yang dingin.' }, weight: 10 },
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Sera melihat peluang. Mengorbankan satu orang untuk menyelamatkan dirinya dan Arya. Keputusan yang dingin.' }, weight: 10 },
       // Trust-kill: Sera membaca tanda-tanda dan bertindak jika yakin seseorang berbahaya
       { condition: { minDeaths: 2, emotion: 'hostile', minTension: 60 }, action: { type: 'trust_kill', desc: '"Profilmu konsisten dengan seorang pembunuh. Maaf — tapi aku tidak bisa mengambil risiko." Sera bertindak berdasarkan analisisnya.' }, weight: 18 },
 
       // --- Chapters 4-5: Escalation ---
       { condition: { chapter: 4, isAlone: false, hasClue: true }, action: { type: 'accuse', desc: 'Sera berdiri. Profilnya lengkap. "Aku sudah analisis setiap perilaku, setiap kebohongan. INILAH pembunuhnya."' }, weight: 26 },
       { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Sera mencari petunjuk pelarian, menggunakan pola perilaku killer untuk memprediksi lokasi yang aman.' }, weight: 22 },
-      { condition: { chapter: 4, nearbyIncludes: 'arin', minDeaths: 3 }, action: { type: 'coordinate_defense', desc: '"Arin, dengar. Aku sudah profil semua orang. Kita berdua yang tersisa yang bisa dipercaya."' }, weight: 26 },
+      { condition: { chapter: 4, nearbyIncludes: 'arin', minDeaths: 3 }, action: { type: 'coordinate_defense', desc: '"Arya, dengar. Aku sudah profil semua orang. Kita berdua yang tersisa yang bisa dipercaya."' }, weight: 26 },
       { condition: { chapter: 4, emotion: 'hostile' }, action: { type: 'confront', desc: '"CUKUP." Sera melempar catatannya ke lantai. "Profil sudah lengkap. Pembunuh ada di ruangan ini."' }, weight: 24 },
       { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: '"Aku psikolog. Aku tahu bagaimana predator berpikir. Dan aku tahu cara menghentikannya. IKUT AKU."' }, weight: 28 },
-      { condition: { chapter: 5, emotion: 'panicked', nearbyIncludes: 'arin' }, action: { type: 'guard', desc: 'Sera berdiri di depan Arin. Tidak peduli risikonya. "Aku tidak akan kehilanganmu."' }, weight: 26 },
+      { condition: { chapter: 5, emotion: 'panicked', nearbyIncludes: 'arin' }, action: { type: 'guard', desc: 'Sera berdiri di depan Arya. Tidak peduli risikonya. "Aku tidak akan kehilanganmu."' }, weight: 26 },
       { condition: { chapter: 5, hasClue: true }, action: { type: 'accuse', desc: 'Final profiling. Sera mengungkap setiap kebohongan, setiap alibi palsu. "INILAH KEBENARAN MALAM INI."' }, weight: 30 },
       { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. "Aku sudah baca setiap wajah di mansion ini. Simpul terakhir ada di tangan kita."' }, weight: 28 },
 
@@ -453,7 +453,7 @@ const CharDB = (() => {
       { condition: { emotion: 'hostile', isAlone: true }, action: { type: 'move', desc: 'Juno bergerak agresif menyusuri mansion, mencari konfrontasi langsung.', moveTo: 'aula_utama' }, weight: 16 },
 
       // --- NEW: Unique interactions ---
-      { condition: { nearbyIncludes: 'arin', emotion: 'wary' }, action: { type: 'socialize', desc: '"Arin, lo selalu nyari bukti. Kadang bukti itu di depan mata — cuma butuh orang yang berani ngambil." Juno mendorong Arin bertindak.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'arin', emotion: 'wary' }, action: { type: 'socialize', desc: '"Arya, lo selalu nyari bukti. Kadang bukti itu di depan mata — cuma butuh orang yang berani ngambil." Juno mendorong Arya bertindak.' }, weight: 14 },
       { condition: { nearbyIncludes: 'dimas', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Dimas, lo terlalu tenang buat situasi kayak gini. KENAPA lo nggak takut?!" Juno menuduh Dimas.' }, weight: 20 },
       { condition: { nearbyIncludes: 'niko', minDeaths: 1 }, action: { type: 'confront', desc: '"Niko! Ini rumah lo! Lo BERTANGGUNG JAWAB atas semua yang terjadi di sini!" Juno mengamuk.' }, weight: 18 },
       { condition: { nearbyIncludes: 'vira', emotion: 'calm' }, action: { type: 'socialize', desc: '"Vira, gue respect lo. Lo selamat dari sini sekali. Ajarin gue caranya." Sisi lembut Juno yang jarang muncul.' }, weight: 12 },
@@ -484,7 +484,7 @@ const CharDB = (() => {
 
       // --- Cross-character interactions (missing) ---
       { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Lana, gue tau lo pinter ngomong. Tapi gue bukan orang yang bisa lo manipulasi. JUJUR. SEKARANG."' }, weight: 16 },
-      { condition: { nearbyIncludes: 'kira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Kira, lo bisa hack apapun kan? Bantu gue buka pintu mansion ini. Gue cover lo."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'kira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Kai, lo bisa hack apapun kan? Bantu gue buka pintu mansion ini. Gue cover lo."' }, weight: 14 },
       { condition: { nearbyIncludes: 'farah', emotion: 'calm' }, action: { type: 'confront', desc: '"Farah, lo pewaris. Lo punya kunci rumah ini. Jangan bilang lo nggak bisa buka pintu keluar."' }, weight: 14 },
 
       // --- Broad catch-all ---
@@ -533,7 +533,7 @@ const CharDB = (() => {
       { condition: { emotion: 'calm', chapter: 2 }, action: { type: 'move', desc: 'Vira memimpin kelompok kecil melalui jalan tersembunyi di dinding mansion.', moveTo: 'bunker_b3' }, weight: 16 },
 
       // --- NEW: Unique interactions ---
-      { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'socialize', desc: '"Arin, aku percaya padamu. Kau mengingatkanku pada diriku sendiri enam bulan lalu — sebelum semuanya berubah." Vira terbuka.' }, weight: 16 },
+      { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'socialize', desc: '"Arya, aku percaya padamu. Kau mengingatkanku pada diriku sendiri enam bulan lalu — sebelum semuanya berubah." Vira terbuka.' }, weight: 16 },
       { condition: { nearbyIncludes: 'sera', emotion: 'wary' }, action: { type: 'socialize', desc: '"Sera, baca aku. Aku serius. Kalau kau bisa melihat kebohongan, kau akan tahu aku tidak berbohong tentang apa yang terjadi dulu."' }, weight: 14 },
       { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Lana. Aku membaca novelmu. Bab 17 — itu bukan fiksi, kan? Kau di sini malam itu." Vira tahu lebih dari yang dia tunjukkan.' }, weight: 20 },
 
@@ -563,7 +563,7 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'juno', emotion: 'panicked' }, action: { type: 'socialize', desc: '"Juno, tolong... aku pernah di sini. Aku tahu apa yang akan terjadi. Kita harus pergi SEKARANG."' }, weight: 16 },
       { condition: { nearbyIncludes: 'reza', emotion: 'suspicious' }, action: { type: 'share_clue', desc: '"Reza, enam bulan lalu ada kejadian yang sama. Aku... aku satu-satunya yang selamat. Ini pola-nya."', target: 'reza' }, weight: 18 },
       { condition: { nearbyIncludes: 'dimas', emotion: 'wary' }, action: { type: 'observe', desc: 'Vira menatap Dimas. Terlalu tenang. Terlalu terkontrol. Seperti seseorang yang sudah tahu apa yang akan terjadi.' }, weight: 14 },
-      { condition: { nearbyIncludes: 'kira', emotion: 'calm' }, action: { type: 'socialize', desc: '"Kira, bisakah kau cari rekaman 6 bulan lalu? Aku perlu tahu apa yang terjadi di malam itu — yang tidak aku ingat."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'kira', emotion: 'calm' }, action: { type: 'socialize', desc: '"Kai, bisakah kau cari rekaman 6 bulan lalu? Aku perlu tahu apa yang terjadi di malam itu — yang tidak aku ingat."' }, weight: 14 },
       { condition: { nearbyIncludes: 'farah', emotion: 'wary' }, action: { type: 'socialize', desc: '"Farah, keluarga Wardhana memiliki mansion ini. Apa kau tahu kenapa kami semua diundang?"' }, weight: 12 },
 
       // --- Broad catch-all ---
@@ -612,9 +612,9 @@ const CharDB = (() => {
       { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'move', desc: 'Reza melakukan patroli perimeter. Kebiasaan lama tidak pernah mati.', moveTo: 'aula_utama' }, weight: 16 },
 
       // --- NEW: Unique interactions ---
-      { condition: { nearbyIncludes: 'kira', hasClue: true }, action: { type: 'share_clue', desc: '"Kira, cross-reference data digitalmu dengan bukti fisik ini. Aku butuh timeline yang akurat." Reza dan Kira berkolaborasi.', target: 'kira' }, weight: 18 },
+      { condition: { nearbyIncludes: 'kira', hasClue: true }, action: { type: 'share_clue', desc: '"Kai, cross-reference data digitalmu dengan bukti fisik ini. Aku butuh timeline yang akurat." Reza dan Kai berkolaborasi.', target: 'kira' }, weight: 18 },
       { condition: { nearbyIncludes: 'dimas', emotion: 'suspicious' }, action: { type: 'question', desc: '"Dimas, kau memeriksa tubuh tadi dengan terlalu... nyaman. Jelaskan padaku." Reza menginterogasi Dimas.' }, weight: 20 },
-      { condition: { nearbyIncludes: 'arin', emotion: 'wary' }, action: { type: 'socialize', desc: '"Arin, kau jurnalis investigasi. Aku butuh partnerku yang dulu. Bantu aku memecahkan ini." Reza merekrut Arin.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'arin', emotion: 'wary' }, action: { type: 'socialize', desc: '"Arya, kau jurnalis investigasi. Aku butuh partnerku yang dulu. Bantu aku memecahkan ini." Reza merekrut Arya.' }, weight: 14 },
 
       // --- NEW: Escalation ---
       { condition: { minDeaths: 3, hasClue: true }, action: { type: 'accuse', desc: 'Reza memasang wajah detektifnya. "Cukup. Aku sudah menyusun semua bukti. Pembunuhnya di antara kita — dan aku tahu siapa."' }, weight: 24 },
@@ -695,12 +695,12 @@ const CharDB = (() => {
       { condition: { minDeaths: 2, emotion: 'hostile', minTension: 50 }, action: { type: 'trust_kill', desc: '"Kau plot twist terburuk dalam ceritaku." Lana menyerang dengan tenang — membunuh sambil tersenyum. "Self-defense, tentu saja."' }, weight: 20 },
 
       // --- Cross-character interactions ---
-      { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'socialize', desc: '"Arin, kau jurnalis kan? Menarik... aku juga menulis fiksi. Bedanya, fiksiku kadang jadi kenyataan."' }, weight: 16 },
+      { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'socialize', desc: '"Arya, kau jurnalis kan? Menarik... aku juga menulis fiksi. Bedanya, fiksiku kadang jadi kenyataan."' }, weight: 16 },
       { condition: { nearbyIncludes: 'juno', emotion: 'wary' }, action: { type: 'manipulate', desc: 'Lana mendekati Juno. "Kau kuat, Juno. Tapi kekuatan tanpa arah hanya destruksi. Biarkan aku yang mengarahkan."' }, weight: 14 },
       { condition: { nearbyIncludes: 'reza', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Lana menatap Reza. Detektif. Ancaman terbesar baginya — orang yang terlatih menemukan kebohongan.' }, weight: 16 },
       { condition: { nearbyIncludes: 'farah', emotion: 'calm' }, action: { type: 'manipulate', desc: '"Farah, sayang. Uangmu bisa membeli banyak hal — tapi tidak kebenaran. Biarkan aku yang mengungkapnya untukmu."' }, weight: 14 },
       { condition: { nearbyIncludes: 'vira' }, action: { type: 'observe', desc: 'Lana melirik Vira. Ada sesuatu tentang gadis itu — terlalu banyak rahasia untuk seseorang yang terlihat polos.' }, weight: 12 },
-      { condition: { nearbyIncludes: 'kira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Kira, bisakah kau cek sesuatu untukku? Aku menemukan catatan digital yang aneh." Lana memanfaatkan keahlian orang lain.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'kira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Kai, bisakah kau cek sesuatu untukku? Aku menemukan catatan digital yang aneh." Lana memanfaatkan keahlian orang lain.' }, weight: 14 },
 
       // --- Additional tactical survivor entries ---
       { condition: { chapter: 1 }, action: { type: 'investigate', desc: 'Lana memetakan timeline kematian. Sebagai penulis misteri, dia tahu bahwa urutan peristiwa selalu mengungkap pelaku.' }, weight: 16 },
@@ -756,15 +756,15 @@ const CharDB = (() => {
       { condition: { minDeaths: 2, nearbyIncludes: 'reza' }, action: { type: 'share_clue', desc: '"Reza, lihat pola lukanya. Aku tahu jenis senjata yang dipakai — dan siapa yang punya akses."', target: 'reza' }, weight: 20 },
       { condition: { emotion: 'panicked' }, action: { type: 'barricade', desc: 'Dimas menutup dan mengunci pintu dengan presisi klinis. "Pintu ini tidak akan terbuka dari luar."' }, weight: 18 },
       { condition: { minDeaths: 3, hasClue: true }, action: { type: 'accuse', desc: 'Dimas berdiri tenang. "Berdasarkan analisis forensik — waktu kematian, senjata, akses — pelakunya sudah jelas."' }, weight: 22 },
-      { condition: { nearbyIncludes: 'arin', hasClue: true }, action: { type: 'share_clue', desc: '"Arin, sebagai jurnalis kau perlu fakta forensik ini. Ini bukti fisik yang tak terbantahkan."', target: 'arin' }, weight: 16 },
+      { condition: { nearbyIncludes: 'arin', hasClue: true }, action: { type: 'share_clue', desc: '"Arya, sebagai jurnalis kau perlu fakta forensik ini. Ini bukti fisik yang tak terbantahkan."', target: 'arin' }, weight: 16 },
       // Trust-kill: Dimas yang klinis — membunuh berdasarkan "analisis forensik" yang salah sasaran
       { condition: { minDeaths: 2, emotion: 'suspicious', minTension: 55 }, action: { type: 'trust_kill', desc: '"Pola luka, metode, timing — analisis forensikku menunjuk padamu." Dimas bertindak dengan presisi klinis — tapi kali ini salah sasaran.' }, weight: 18 },
 
       // --- Cross-character interactions ---
       { condition: { nearbyIncludes: 'juno', emotion: 'wary' }, action: { type: 'socialize', desc: '"Juno, kau punya insting bertahan. Aku punya pengetahuan forensik. Kita bisa menutupi kelemahan satu sama lain."' }, weight: 14 },
-      { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'share_clue', desc: '"Arin, sebagai jurnalis kau perlu tahu — pola kematian ini bukan acak. Ada metodologi di baliknya."', target: 'arin' }, weight: 16 },
+      { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'share_clue', desc: '"Arya, sebagai jurnalis kau perlu tahu — pola kematian ini bukan acak. Ada metodologi di baliknya."', target: 'arin' }, weight: 16 },
       { condition: { nearbyIncludes: 'farah' }, action: { type: 'observe', desc: 'Dimas melirik Farah. Pewaris. Privileged. Tapi juga target potensial — seseorang pasti menginginkan kekayaannya.' }, weight: 12 },
-      { condition: { nearbyIncludes: 'kira', emotion: 'suspicious' }, action: { type: 'socialize', desc: '"Kira, bisakah kau cross-reference data CCTV dengan timeline forensikku? Dua perspektif lebih baik."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'kira', emotion: 'suspicious' }, action: { type: 'socialize', desc: '"Kai, bisakah kau cross-reference data CCTV dengan timeline forensikku? Dua perspektif lebih baik."' }, weight: 14 },
       { condition: { nearbyIncludes: 'niko', emotion: 'wary' }, action: { type: 'observe', desc: 'Dimas memperhatikan Niko. Tuan rumah tahu terlalu banyak tentang mansion ini. Pengetahuan bisa jadi senjata.' }, weight: 14 },
       { condition: { nearbyIncludes: 'vira', emotion: 'calm' }, action: { type: 'socialize', desc: '"Vira, aku perhatikan kau sangat cemas. Detak jantungmu stabil tapi pupilmu bergetar." Dimas membaca tubuh, bukan kata.' }, weight: 14 },
 
@@ -795,74 +795,74 @@ const CharDB = (() => {
     // ========== KIRA — The Hacker ==========
     kira: [
       // Digital investigation
-      { condition: { chapter: 0 }, action: { type: 'investigate', desc: 'Kira mengeluarkan laptop kecilnya. "Wi-Fi mansion ini punya arsitektur aneh. Ada subnet tersembunyi yang—" Matanya melebar.' }, weight: 20 },
-      { condition: { emotion: 'calm' }, action: { type: 'investigate', desc: 'Kira meng-scan jaringan internal mansion. Kamera CCTV, speaker system, door locks — semuanya terhubung ke satu server.' }, weight: 22 },
+      { condition: { chapter: 0 }, action: { type: 'investigate', desc: 'Kai mengeluarkan laptop kecilnya. "Wi-Fi mansion ini punya arsitektur aneh. Ada subnet tersembunyi yang—" Matanya melebar.' }, weight: 20 },
+      { condition: { emotion: 'calm' }, action: { type: 'investigate', desc: 'Kai meng-scan jaringan internal mansion. Kamera CCTV, speaker system, door locks — semuanya terhubung ke satu server.' }, weight: 22 },
 
       // Hack systems
-      { condition: { emotion: 'wary' }, action: { type: 'investigate', desc: 'Kira berhasil mengakses log CCTV. "Guys... ada rekaman yang dihapus. Tapi tidak ada yang benar-benar terhapus dari hard drive."' }, weight: 25 },
-      { condition: { isAlone: true }, action: { type: 'investigate', desc: 'Kira menemukan server room tersembunyi di basement. Di dalamnya — database dengan nama semua tamu. File dibuat enam bulan lalu.' }, weight: 22 },
+      { condition: { emotion: 'wary' }, action: { type: 'investigate', desc: 'Kai berhasil mengakses log CCTV. "Guys... ada rekaman yang dihapus. Tapi tidak ada yang benar-benar terhapus dari hard drive."' }, weight: 25 },
+      { condition: { isAlone: true }, action: { type: 'investigate', desc: 'Kai menemukan server room tersembunyi di basement. Di dalamnya — database dengan nama semua tamu. File dibuat enam bulan lalu.' }, weight: 22 },
 
       // Paranoia
-      { condition: { minDanger: 40 }, action: { type: 'hide', desc: 'Kira memutus semua koneksi dan bersembunyi. "Kalau sistem mansion bisa dilacak, aku juga bisa dilacak."' }, weight: 20 },
-      { condition: { emotion: 'panicked' }, action: { type: 'flee', desc: 'Kira berlari ke server room — satu-satunya tempat di mana dia merasa punya kontrol.' }, weight: 18 },
+      { condition: { minDanger: 40 }, action: { type: 'hide', desc: 'Kai memutus semua koneksi dan bersembunyi. "Kalau sistem mansion bisa dilacak, aku juga bisa dilacak."' }, weight: 20 },
+      { condition: { emotion: 'panicked' }, action: { type: 'flee', desc: 'Kai berlari ke server room — satu-satunya tempat di mana dia merasa punya kontrol.' }, weight: 18 },
 
       // Share digital evidence
-      { condition: { hasClue: true, nearbyIncludes: 'arin' }, action: { type: 'share_clue', desc: 'Kira menunjukkan layar laptopnya ke Arin: "Lihat email ini. Seseorang merencanakan malam ini berbulan-bulan yang lalu."', target: 'arin' }, weight: 22 },
-      { condition: { hasClue: true, nearbyIncludes: 'reza' }, action: { type: 'share_clue', desc: 'Kira memperlihatkan rekaman CCTV ke Reza. "Ini bukti digital. Tidak bisa dibantah."', target: 'reza' }, weight: 18 },
+      { condition: { hasClue: true, nearbyIncludes: 'arin' }, action: { type: 'share_clue', desc: 'Kai menunjukkan layar laptopnya ke Arya: "Lihat email ini. Seseorang merencanakan malam ini berbulan-bulan yang lalu."', target: 'arin' }, weight: 22 },
+      { condition: { hasClue: true, nearbyIncludes: 'reza' }, action: { type: 'share_clue', desc: 'Kai memperlihatkan rekaman CCTV ke Reza. "Ini bukti digital. Tidak bisa dibantah."', target: 'reza' }, weight: 18 },
 
       // Disable traps
-      { condition: { chapter: 3 }, action: { type: 'investigate', desc: 'Kira meng-hack door lock system mansion. "Aku bisa membuka semua pintu... atau mengunci semuanya. Pilihan kita."' }, weight: 22 },
+      { condition: { chapter: 3 }, action: { type: 'investigate', desc: 'Kai meng-hack door lock system mansion. "Aku bisa membuka semua pintu... atau mengunci semuanya. Pilihan kita."' }, weight: 22 },
 
       // Late game
-      { condition: { chapter: 4 }, action: { type: 'investigate', desc: 'Kira menemukan pesan terenkripsi terakhir di server. Ketika di-decrypt, isinya mengubah segalanya.' }, weight: 25 },
+      { condition: { chapter: 4 }, action: { type: 'investigate', desc: 'Kai menemukan pesan terenkripsi terakhir di server. Ketika di-decrypt, isinya mengubah segalanya.' }, weight: 25 },
 
       // --- NEW: Movement ---
-      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Kira bergerak ke basement mencari server room. "Semua jawaban ada di data."', moveTo: 'basement' }, weight: 16 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Kai bergerak ke basement mencari server room. "Semua jawaban ada di data."', moveTo: 'basement' }, weight: 16 },
 
       // --- NEW: Unique interactions ---
-      { condition: { nearbyIncludes: 'niko' }, action: { type: 'question', desc: '"Niko, siapa yang memasang Wi-Fi mesh di mansion ini? Arsitekturnya terlalu canggih untuk rumah tua." Kira curiga pada infrastruktur mansion.' }, weight: 18 },
+      { condition: { nearbyIncludes: 'niko' }, action: { type: 'question', desc: '"Niko, siapa yang memasang Wi-Fi mesh di mansion ini? Arsitekturnya terlalu canggih untuk rumah tua." Kai curiga pada infrastruktur mansion.' }, weight: 18 },
       { condition: { nearbyIncludes: 'sera', hasClue: true }, action: { type: 'share_clue', desc: '"Sera, lihat metadata foto ini. Timestamp-nya diedit. Seseorang sengaja memalsukan alibi digital."', target: 'sera' }, weight: 20 },
       { condition: { nearbyIncludes: 'farah' }, action: { type: 'socialize', desc: '"Farah, aku hack email keluargamu. Jangan marah — tapi kakekmu transfer dana ke rekening yang sama dengan pemilik mansion ini."' }, weight: 16 },
 
       // --- NEW: Escalation ---
-      { condition: { minDeaths: 2, hasClue: true }, action: { type: 'accuse', desc: 'Kira menunjukkan layar laptop: "Lihat log CCTV yang di-recover. Timestamp. Lokasi. Identitas. Game over untuk pembunuh."' }, weight: 22 },
+      { condition: { minDeaths: 2, hasClue: true }, action: { type: 'accuse', desc: 'Kai menunjukkan layar laptop: "Lihat log CCTV yang di-recover. Timestamp. Lokasi. Identitas. Game over untuk pembunuh."' }, weight: 22 },
 
       // --- Tactical protagonist actions ---
       { condition: { minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Aku bisa hack sistem door lock. Kita kunci semua pintu kecuali exit utama. Pembunuh terjebak."' }, weight: 20 },
-      { condition: { isAlone: true, emotion: 'wary' }, action: { type: 'scout', desc: 'Kira menggunakan remote access ke CCTV untuk mengintai pergerakan di seluruh mansion dari laptopnya.' }, weight: 18 },
-      { condition: { emotion: 'panicked' }, action: { type: 'secure_exit', desc: 'Kira meng-hack door lock system. "Semua pintu keluar terbuka. SEKARANG LARI!"' }, weight: 20 },
-      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'ambush', desc: 'Kira memasang trip-wire digital di koridor — alarm otomatis jika seseorang lewat.' }, weight: 16 },
-      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Kira mengunci semua pintu dari laptop — termasuk pintu yang mengurung temannya. "Maaf. Aku butuh waktu."' }, weight: 10 },
-      // Trust-kill: Kira paranoid — menyerang jika data "membuktikan" seseorang berbahaya
-      { condition: { minDeaths: 2, emotion: 'panicked', minTension: 60 }, action: { type: 'trust_kill', desc: '"Data tidak bohong. Log CCTV, posisi GPS, timeline — semuanya menunjuk ke kau." Kira menyerang berdasarkan bukti digitalnya.' }, weight: 16 },
+      { condition: { isAlone: true, emotion: 'wary' }, action: { type: 'scout', desc: 'Kai menggunakan remote access ke CCTV untuk mengintai pergerakan di seluruh mansion dari laptopnya.' }, weight: 18 },
+      { condition: { emotion: 'panicked' }, action: { type: 'secure_exit', desc: 'Kai meng-hack door lock system. "Semua pintu keluar terbuka. SEKARANG LARI!"' }, weight: 20 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'ambush', desc: 'Kai memasang trip-wire digital di koridor — alarm otomatis jika seseorang lewat.' }, weight: 16 },
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Kai mengunci semua pintu dari laptop — termasuk pintu yang mengurung temannya. "Maaf. Aku butuh waktu."' }, weight: 10 },
+      // Trust-kill: Kai paranoid — menyerang jika data "membuktikan" seseorang berbahaya
+      { condition: { minDeaths: 2, emotion: 'panicked', minTension: 60 }, action: { type: 'trust_kill', desc: '"Data tidak bohong. Log CCTV, posisi GPS, timeline — semuanya menunjuk ke kau." Kai menyerang berdasarkan bukti digitalnya.' }, weight: 16 },
 
       // --- Chapters 4-5: Escalation ---
-      { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Kira meng-crack file terenkripsi terakhir mansion. Di dalamnya — peta jalan keluar.' }, weight: 24 },
+      { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Kai meng-crack file terenkripsi terakhir mansion. Di dalamnya — peta jalan keluar.' }, weight: 24 },
       { condition: { chapter: 4, hasClue: true, isAlone: false }, action: { type: 'share_clue', desc: '"Aku berhasil decrypt SEMUA file mansion. Dengarkan — ini blueprint jalan keluarnya."' }, weight: 22 },
       { condition: { chapter: 4, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Aku bisa kunci semua door lock dari laptop. Kita bikin safe zone di sini. TIDAK ADA yang bisa masuk."' }, weight: 24 },
-      { condition: { chapter: 4, emotion: 'hostile', hasClue: true }, action: { type: 'accuse', desc: '"Log CCTV, door access, GPS tracking — SEMUANYA menunjuk ke satu orang." Kira mengungkap data.' }, weight: 26 },
+      { condition: { chapter: 4, emotion: 'hostile', hasClue: true }, action: { type: 'accuse', desc: '"Log CCTV, door access, GPS tracking — SEMUANYA menunjuk ke satu orang." Kai mengungkap data.' }, weight: 26 },
       { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: '"Aku punya akses ke seluruh sistem mansion. Aku bisa buka SEMUA pintu sekaligus. READY?!"' }, weight: 28 },
-      { condition: { chapter: 5, hasClue: true }, action: { type: 'secure_exit', desc: 'Kira meng-hack door lock terakhir. "SEMUA PINTU TERBUKA. INI KESEMPATAN TERAKHIR!"' }, weight: 30 },
+      { condition: { chapter: 5, hasClue: true }, action: { type: 'secure_exit', desc: 'Kai meng-hack door lock terakhir. "SEMUA PINTU TERBUKA. INI KESEMPATAN TERAKHIR!"' }, weight: 30 },
       { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. "Aku sudah crack semuanya. Simpul terakhir ada di server ini."' }, weight: 28 },
 
       // --- Cross-character interactions (missing) ---
       { condition: { nearbyIncludes: 'juno', emotion: 'wary' }, action: { type: 'socialize', desc: '"Juno, gue bisa unlock semua pintu dari sini. Lo cover gue dari ancaman fisik. Deal?"' }, weight: 14 },
       { condition: { nearbyIncludes: 'vira', emotion: 'calm' }, action: { type: 'socialize', desc: '"Vira, enam bulan lalu apa ada sistem keamanan yang sama? Aku perlu tau arsitektur lamanya."' }, weight: 14 },
-      { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Kira cek log Lana. "Menarik... kau browsing blueprint mansion tiga bulan sebelum pesta ini."' }, weight: 16 },
-      { condition: { nearbyIncludes: 'dimas', emotion: 'wary' }, action: { type: 'observe', desc: 'Kira menatap Dimas. "Digital footprint-mu terlalu bersih. Orang normal meninggalkan jejak. Kau tidak."' }, weight: 16 },
+      { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Kai cek log Lana. "Menarik... kau browsing blueprint mansion tiga bulan sebelum pesta ini."' }, weight: 16 },
+      { condition: { nearbyIncludes: 'dimas', emotion: 'wary' }, action: { type: 'observe', desc: 'Kai menatap Dimas. "Digital footprint-mu terlalu bersih. Orang normal meninggalkan jejak. Kau tidak."' }, weight: 16 },
 
       // --- Broad catch-all ---
-      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Kira scan jaringan WiFi. "Hm, ada device baru yang terkoneksi... siapa yang bawa phone ke sini?"' }, weight: 10 },
-      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Kira deep-dive ke server mansion. Log file, database, hidden directories — semuanya terbuka.' }, weight: 14 },
-      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'observe', desc: 'Kira memonitor feed CCTV dari laptopnya. "Ada yang bergerak di koridor barat."' }, weight: 10 },
-      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'investigate', desc: 'Kira meng-crack enkripsi file terkunci. Setiap password punya pattern — dan dia ahlinya.' }, weight: 12 },
-      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'confront', desc: '"Lo punya dua HP. Yang satu burner phone. Mau jelasin?" Kira menunjukkan bukti digital.' }, weight: 12 },
-      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'investigate', desc: 'Kira trace komunikasi keluar mansion. Seseorang mengirim pesan — dan dia tahu ke mana.' }, weight: 12 },
-      { condition: { emotion: 'hostile' }, action: { type: 'accuse', desc: '"Check this out." Kira membuka log yang di-recover. "Timestamp, lokasi, siapa yang masuk ruangan apa. Game over."' }, weight: 12 },
-      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Kira menutup laptop dan lari. "SERVER DOWN. SISTEM OFFLINE. KITA HARUS PERGI!"' }, weight: 10 },
-      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Kira bersembunyi dengan laptop masih terbuka. Bahkan dalam panik, dia tetap monitoring.' }, weight: 12 },
-      { condition: { isAlone: false }, action: { type: 'socialize', desc: '"Bro, phone lo bisa dipake hotspot? Aku perlu koneksi ke luar." Kira selalu mikirin tech solution.' }, weight: 8 },
-      { condition: {}, action: { type: 'investigate', desc: 'Kira nge-type di laptop. Mencari backdoor, exploit, apa saja yang bisa kasih keuntungan digital.' }, weight: 6 }
+      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Kai scan jaringan WiFi. "Hm, ada device baru yang terkoneksi... siapa yang bawa phone ke sini?"' }, weight: 10 },
+      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Kai deep-dive ke server mansion. Log file, database, hidden directories — semuanya terbuka.' }, weight: 14 },
+      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'observe', desc: 'Kai memonitor feed CCTV dari laptopnya. "Ada yang bergerak di koridor barat."' }, weight: 10 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'investigate', desc: 'Kai meng-crack enkripsi file terkunci. Setiap password punya pattern — dan dia ahlinya.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'confront', desc: '"Lo punya dua HP. Yang satu burner phone. Mau jelasin?" Kai menunjukkan bukti digital.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'investigate', desc: 'Kai trace komunikasi keluar mansion. Seseorang mengirim pesan — dan dia tahu ke mana.' }, weight: 12 },
+      { condition: { emotion: 'hostile' }, action: { type: 'accuse', desc: '"Check this out." Kai membuka log yang di-recover. "Timestamp, lokasi, siapa yang masuk ruangan apa. Game over."' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Kai menutup laptop dan lari. "SERVER DOWN. SISTEM OFFLINE. KITA HARUS PERGI!"' }, weight: 10 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Kai bersembunyi dengan laptop masih terbuka. Bahkan dalam panik, dia tetap monitoring.' }, weight: 12 },
+      { condition: { isAlone: false }, action: { type: 'socialize', desc: '"Bro, phone lo bisa dipake hotspot? Aku perlu koneksi ke luar." Kai selalu mikirin tech solution.' }, weight: 8 },
+      { condition: {}, action: { type: 'investigate', desc: 'Kai nge-type di laptop. Mencari backdoor, exploit, apa saja yang bisa kasih keuntungan digital.' }, weight: 6 }
     ],
 
     // ========== FARAH — The Heiress ==========
@@ -895,7 +895,7 @@ const CharDB = (() => {
       // --- NEW: Unique interactions ---
       { condition: { nearbyIncludes: 'niko', emotion: 'calm' }, action: { type: 'negotiate', desc: '"Niko, keluarga kita terikat oleh mansion ini. Aku punya dokumen yang membuktikannya. Ayo bekerja sama."' }, weight: 16 },
       { condition: { nearbyIncludes: 'reza', minDeaths: 1 }, action: { type: 'socialize', desc: '"Detektif Reza. Aku akan memberikan semua informasi keluargaku. Tapi jaga aku tetap hidup. Deal?" Farah bernegosiasi.' }, weight: 14 },
-      { condition: { nearbyIncludes: 'kira' }, action: { type: 'socialize', desc: '"Kira, aku butuh kau menghapus sesuatu dari server mansion. Rahasia keluargaku tidak boleh bocor." Farah panik tentang reputasi.' }, weight: 16 },
+      { condition: { nearbyIncludes: 'kira' }, action: { type: 'socialize', desc: '"Kai, aku butuh kau menghapus sesuatu dari server mansion. Rahasia keluargaku tidak boleh bocor." Farah panik tentang reputasi.' }, weight: 16 },
 
       // --- NEW: Escalation & character growth ---
       { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'guard', desc: 'Farah meraih tongkat golf antik dari dinding. Untuk pertama kalinya dalam hidupnya, pewaris ini siap bertarung sendiri.' }, weight: 20 },
@@ -920,7 +920,7 @@ const CharDB = (() => {
       { condition: { chapter: 5, hasClue: true }, action: { type: 'secure_exit', desc: 'Farah mengaktifkan protokol evakuasi keluarga. "Kakek membangun ini untuk keadaan darurat. INI keadaan darurat."' }, weight: 28 },
 
       // --- Cross-character interactions (missing) ---
-      { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'socialize', desc: '"Arin, sebagai jurnalis kau bisa mempublikasikan ini. Tapi aku minta — lindungi nama keluargaku. Deal?"' }, weight: 14 },
+      { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'socialize', desc: '"Arya, sebagai jurnalis kau bisa mempublikasikan ini. Tapi aku minta — lindungi nama keluargaku. Deal?"' }, weight: 14 },
       { condition: { nearbyIncludes: 'sera', emotion: 'wary' }, action: { type: 'socialize', desc: '"Sera, aku butuh seseorang yang bisa membaca orang. Profiling-mu bisa menyelamatkan kita. Apa yang kau butuhkan?"' }, weight: 14 },
       { condition: { nearbyIncludes: 'juno', emotion: 'panicked' }, action: { type: 'socialize', desc: '"Juno, kau pejuang. Aku punya akses ke safe room keluarga. Kau jaga kami, aku buka pintunya."' }, weight: 16 },
       { condition: { nearbyIncludes: 'vira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Vira, kau pernah di sini. Kau dan aku — kita punya koneksi ke mansion ini yang tidak dimiliki orang lain."' }, weight: 14 },

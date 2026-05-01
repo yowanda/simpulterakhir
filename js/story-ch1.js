@@ -12,7 +12,7 @@ const STORY_CH1 = {
 
     if (s.flags.openedBasement) {
       text += `<p><span class="speaker reza">Reza</span> "Pintu basement terbuka. Generator di bawah. Aku turun duluan — kalau nggak kembali lima menit..."</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Aku ikut."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Aku ikut."</p>`;
     } else {
       text += `<p class="sound">— speaker tersembunyi berderak hidup. Suara diproses, tanpa gender —</p>`;
       text += `<p class="journal"><em>"Selamat malam, para tamu. Selamat datang di Pameran Simpul Terakhir. Dalam enam jam, pintu akan terbuka. Setiap jam, sebuah 'karya seni' baru akan terungkap. Karya pertama dimulai dalam tiga menit. Silakan menuju Galeri Timur."</em></p>`;
@@ -44,14 +44,14 @@ const STORY_CH1 = {
     if (!Engine.isPlayer('dimas')) text += `<p><span class="speaker dimas">Dimas</span> mengikuti Lana tanpa kata.</p>`;
     else text += `<p><span class="speaker dimas">Dimas</span> "Aku ikut Lana."</p>`;
 
-    if (!Engine.isPlayer('juno')) text += `<p><span class="speaker juno">Juno</span> "${Engine.isPlayer('arin') ? 'Arin' : Engine.playerName()}, ini trap yang obvious banget. Kita nggak harus ikut."</p>`;
+    if (!Engine.isPlayer('juno')) text += `<p><span class="speaker juno">Juno</span> "${Engine.isPlayer('arin') ? 'Arya' : Engine.playerName()}, ini trap yang obvious banget. Kita nggak harus ikut."</p>`;
     else text += `<p><span class="speaker juno">Juno</span> "Ini trap yang obvious banget."</p>`;
 
     if (!Engine.isPlayer('niko')) text += `<p><span class="speaker niko">Niko</span> "Atau justru di situlah jawabannya."</p>`;
     else text += `<p><span class="speaker niko">Niko</span> "Atau justru di situlah jawabannya."</p>`;
 
-    if (!Engine.isPlayer('kira')) text += `<p><span class="speaker kira">Kira</span> "Gue nge-trace frekuensi audio dari speaker. Kalau dikendalikan remote, gue bisa trace IP-nya."</p>`;
-    else text += `<p><span class="speaker kira">Kira</span> "Gue bisa trace IP speaker ini."</p>`;
+    if (!Engine.isPlayer('kira')) text += `<p><span class="speaker kira">Kai</span> "Gue nge-trace frekuensi audio dari speaker. Kalau dikendalikan remote, gue bisa trace IP-nya."</p>`;
+    else text += `<p><span class="speaker kira">Kai</span> "Gue bisa trace IP speaker ini."</p>`;
 
     return text;
   },
@@ -147,8 +147,8 @@ const STORY_CH1 = {
       text += `<p><span class="speaker sera">Sera</span> "Dimas — detak jantung normal. Tidak ada fight-or-flight. Terlalu tenang untuk mahasiswa."</p>`;
       text += `<p class="journal"><em>Dua orang yang tidak takut. Profil predator.</em></p>`;
     } else if (pc === 'kira') {
-      text = `<p><span class="speaker kira">Kira</span> "Speaker system pakai ZigBee. Gue trace dalam 30 detik."</p>`;
-      text += `<p><span class="speaker kira">Kira</span> "Source: device di sublevel B-2. Bawah. Dan ada 4 kamera tersembunyi di jaringan."</p>`;
+      text = `<p><span class="speaker kira">Kai</span> "Speaker system pakai ZigBee. Gue trace dalam 30 detik."</p>`;
+      text += `<p><span class="speaker kira">Kai</span> "Source: device di sublevel B-2. Bawah. Dan ada 4 kamera tersembunyi di jaringan."</p>`;
       text += `<p class="journal"><em>Network map lengkap. Empat kamera. Satu controller di basement. Encrypted channel belum di-crack.</em></p>`;
     } else if (pc === 'lana') {
       text = `<p><span class="speaker lana">Lana</span> "Layar ketiga dari kiri — itu bukan bagian dari naskahku. Seseorang menambahkan konten tanpa sepengetahuanku."</p>`;
@@ -204,13 +204,13 @@ const STORY_CH1 = {
     }
 
     text += `<p class="sound">— tepat pukul 22:00. Layar menyala serentak. —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Setiap layar menampilkan wajah kita. Foto close-up, resolusi tinggi, diambil tanpa sepengetahuan kita."</p>`;
-    text += `<p class="journal"><em>"Arin Prasetya. 24. Mencari kebenaran tentang kematian sumbernya — dan menemukan lebih dari yang dia minta."</em></p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Setiap layar menampilkan wajah kita. Foto close-up, resolusi tinggi, diambil tanpa sepengetahuan kita."</p>`;
+    text += `<p class="journal"><em>"Arya Prasetya. 24. Mencari kebenaran tentang kematian sumbernya — dan menemukan lebih dari yang dia minta."</em></p>`;
     text += `<p class="journal"><em>"Niko Wardhana. 26. Mewarisi mansion ini dan rahasia di fondasinya."</em></p>`;
     text += `<p><span class="speaker farah">Farah</span> "TIDAK!" Layarnya: <em>"Farah Aldridge. 28. Melindungi rahasia keluarga — tapi tidak bisa melindungi dirinya sendiri."</em></p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Layar terakhir — lebih besar. Bukan wajah tamu. Pria tua, mata tajam, senyum dingin."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Layar terakhir — lebih besar. Bukan wajah tamu. Pria tua, mata tajam, senyum dingin."</p>`;
     text += `<p class="journal"><em>"Sang Penenun. Arsitektur malam ini adalah mahakaryanya. Setiap simpul yang terputus adalah seni."</em></p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Visual berubah — rekaman CCTV live. Setiap ruangan di mansion. Dan satu feed — ruangan gelap. Meja dengan sepuluh boneka kayu."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Visual berubah — rekaman CCTV live. Setiap ruangan di mansion. Dan satu feed — ruangan gelap. Meja dengan sepuluh boneka kayu."</p>`;
     text += `<p class="sound">— tangan bersarung hitam masuk frame. Mengangkat satu boneka. Mematahkannya. —</p>`;
     text += `<p class="journal"><em>"Karya pertama dimulai. Simpul pertama: Keberanian atau Kesetiaan? Pilihlah."</em></p>`;
 
@@ -273,7 +273,7 @@ const STORY_CH1 = {
 <p><span class="speaker niko">Niko</span> "Wasiatnya bilang: 'Kembalikan apa yang kita ambil. Undang mereka yang terikat. Biarkan simpul terakhir menentukan.' Aku pikir dia bicara soal warisan."</p>
 <p><span class="speaker niko">Niko</span> "Sekarang... aku tidak yakin dia benar-benar mati."</p>
 <p><span class="speaker reza">Reza</span> "Aku bisa verifikasi sertifikat kematian kalau ada sinyal."</p>
-<p><span class="speaker kira">Kira</span> "Nggak ada sinyal. Tapi aku bisa cari di server lokal."</p>
+<p><span class="speaker kira">Kai</span> "Nggak ada sinyal. Tapi aku bisa cari di server lokal."</p>
 <p class="journal"><em>"Waktu berjalan. Simpul pertama menunggu di Ruang Musik. Dua orang harus masuk. Pintu terkunci sepuluh menit. Pilihlah."</em></p>`,
   choices: [
     {
@@ -314,7 +314,7 @@ const STORY_CH1 = {
 
 'ch1_niko_room': {
   text: `<p><span class="speaker niko">Niko</span> "Itu ruang kerja kakekku. Lantai tiga. Seharusnya terkunci. Aku sendiri yang kunci."</p>
-<p><span class="speaker arin">Arin</span> "Siapa lagi yang punya akses?"</p>
+<p><span class="speaker arin">Arya</span> "Siapa lagi yang punya akses?"</p>
 <p><span class="speaker niko">Niko</span> "Tidak ada! Kunci fisik cuma dua — satu padaku, satu di safe deposit box notaris."</p>
 <p><span class="speaker farah">Farah</span> "Atau orang yang mencuri kunci dari notaris."</p>
 <p class="journal"><em>"Simpul pertama menunggu di Ruang Musik. Dua orang harus masuk. Pintu terkunci sepuluh menit. Siapa yang berani?"</em></p>`,
@@ -390,7 +390,7 @@ const STORY_CH1 = {
     const partnerKey = partner.toLowerCase();
 
     let text = `<p class="sound">— pintu berdebam. Klik kunci magnetik. Sepuluh menit dimulai. —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Meja bundar, dua kursi. Dua amplop, botol wine, jam pasir yang sudah mengalir."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Meja bundar, dua kursi. Dua amplop, botol wine, jam pasir yang sudah mengalir."</p>`;
     text += `<p class="journal"><em>"SIMPUL PERTAMA: KEBERANIAN ATAU KESETIAAN — Baca kedua amplop. Lalu pilih — BUKA satu rahasia ke kelompok melalui intercom, atau SIMPAN keduanya. BUKA: orang itu terluka, tapi kelompok dapat informasi. SIMPAN: jam pasir terus berjalan. Habis sebelum memilih — ruangan ini punya kejutan."</em></p>`;
 
     if (s.difficulty === 1) {
@@ -457,10 +457,10 @@ const STORY_CH1 = {
 
 'ch1_reveal_lana': {
   text: (s) => {
-    let text = `<p><span class="speaker arin">Arin</span> menekan intercom dan membacakan rahasia Lana.</p>`;
+    let text = `<p><span class="speaker arin">Arya</span> menekan intercom dan membacakan rahasia Lana.</p>`;
     text += `<p class="journal"><em>"Pilihan dibuat. Simpul Keberanian: terikat."</em></p>`;
     text += `<p class="sound">— pintu terbuka —</p>`;
-    text += `<p><span class="speaker lana">Lana</span> "Kau memilih untuk membuka rahasiaku. Oke. Adil. Tapi ingat, Arin — malam masih panjang. Dan semua orang punya rahasia."</p>`;
+    text += `<p><span class="speaker lana">Lana</span> "Kau memilih untuk membuka rahasiaku. Oke. Adil. Tapi ingat, Arya — malam masih panjang. Dan semua orang punya rahasia."</p>`;
 
     if (s.difficulty >= 2) {
       text += `<p><span class="speaker reza">Reza</span> "Lana dan Dimas pergi bersama. Kalau rahasia itu benar — kita baru kasih tahu dua orang yang berkonspirasi bahwa kita tahu."</p>`;
@@ -549,7 +549,7 @@ const STORY_CH1 = {
     const partner = s.flags.musicRoomTeam === 'arin_reza' ? 'Reza' : 'Juno';
     const partnerKey = partner.toLowerCase();
 
-    let text = `<p><span class="speaker arin">Arin</span> "Kami tidak akan membuka rahasia siapapun. Kami menolak bermain."</p>`;
+    let text = `<p><span class="speaker arin">Arya</span> "Kami tidak akan membuka rahasia siapapun. Kami menolak bermain."</p>`;
     text += `<p class="journal"><em>"Pilihan yang mulia. Tapi bukan tanpa konsekuensi."</em></p>`;
     text += `<p class="sound">— jam pasir habis. Lampu mati. Suara mekanis di dinding. —</p>`;
 
@@ -562,7 +562,7 @@ const STORY_CH1 = {
     text += `<p class="sound">— semprotan cat merah dari nozzle tersembunyi. Menutup kepala sampai kaki. —</p>`;
     text += `<p class="sound">— lampu menyala. Pintu terbuka. —</p>`;
     text += `<p><span class="speaker sera">Sera</span> "Kalian baik-baik saja?!"</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Cat. Hanya cat."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Cat. Hanya cat."</p>`;
     text += `<p class="journal"><em>"Simpul pertama: Rahmat. Keberanian menolak selalu punya harga. Countdown: 05:00:00."</em></p>`;
 
     return text;
@@ -583,11 +583,11 @@ const STORY_CH1 = {
   text: (s) => {
     const partner = s.flags.musicRoomTeam === 'arin_reza' ? 'Reza' : 'Juno';
 
-    let text = `<p><span class="speaker arin">Arin</span> "Dinding belakang ini hollow."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Panel palsu. Lorong sempit di baliknya — koridor servis dari era mansion dibangun."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Keluar ke dapur belakang. Kita lewati permainan sepenuhnya."</p>`;
+    let text = `<p><span class="speaker arin">Arya</span> "Dinding belakang ini hollow."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Panel palsu. Lorong sempit di baliknya — koridor servis dari era mansion dibangun."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Keluar ke dapur belakang. Kita lewati permainan sepenuhnya."</p>`;
     text += `<p class="journal"><em>"Menarik. Pemain yang menolak aturan. Sang Penenun menghargai kreativitas. Tapi keluar dari satu permainan berarti masuk ke yang lain."</em></p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Ada diagram mansion di dinding dapur — setiap ruangan, setiap lorong, termasuk jalur tersembunyi. Dan di pojok: 'Kontrol utama: Basement B-2. Akses melalui wine cellar.'"</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Ada diagram mansion di dinding dapur — setiap ruangan, setiap lorong, termasuk jalur tersembunyi. Dan di pojok: 'Kontrol utama: Basement B-2. Akses melalui wine cellar.'"</p>`;
 
     return text;
   },
@@ -618,7 +618,7 @@ const STORY_CH1 = {
       text += `<p><span class="speaker farah">Farah</span> "Untuk sekarang. Tapi ada hal yang harus kalian tahu. Nanti."</p>`;
     } else {
       text += `<p class="sound">— Juno dan Dimas masuk. Sepuluh menit. Hening total. —</p>`;
-      text += `<p><span class="speaker juno">Juno</span> "Gue perlu ngomong sama lu, Arin. Sekarang."</p>`;
+      text += `<p><span class="speaker juno">Juno</span> "Gue perlu ngomong sama lu, Arya. Sekarang."</p>`;
       text += `<p><span class="speaker dimas">Dimas</span> berjalan ke arah Lana. Mereka berbisik.</p>`;
     }
 
@@ -639,9 +639,9 @@ const STORY_CH1 = {
 
 'ch1_music_room_solo': {
   text: `<p class="sound">— masuk sendirian. Pintu berdebam. —</p>
-<p><span class="speaker arin">Arin</span> "Meja, kursi, amplop, jam pasir. Plus layar CCTV — aku bisa lihat yang lain di hall."</p>
-<p><span class="speaker arin">Arin</span> "Sera mondar-mandir. Reza berjaga di pintu. Lana bicara intens dengan Dimas di sudut."</p>
-<p><span class="speaker arin">Arin</span> "Dua amplop. Rahasia Lana. Rahasia Farah. Dan bonus — amplop ketiga."</p>
+<p><span class="speaker arin">Arya</span> "Meja, kursi, amplop, jam pasir. Plus layar CCTV — aku bisa lihat yang lain di hall."</p>
+<p><span class="speaker arin">Arya</span> "Sera mondar-mandir. Reza berjaga di pintu. Lana bicara intens dengan Dimas di sudut."</p>
+<p><span class="speaker arin">Arya</span> "Dua amplop. Rahasia Lana. Rahasia Farah. Dan bonus — amplop ketiga."</p>
 <p class="journal"><em>"BONUS UNTUK YANG BERANI: Sang Penenun bukan orang luar. Sang Penenun duduk bersama kalian malam ini. Dan dia sudah mulai bergerak."</em></p>`,
   shake: true,
   choices: [
@@ -675,12 +675,12 @@ const STORY_CH1 = {
 'ch1_stay_hall': {
   text: `<p><span class="speaker sera">Sera</span> "Aku tetap di sini."</p>
 <p><span class="speaker farah">Farah</span> "Aku juga."</p>
-<p><span class="speaker kira">Kira</span> "Gue stay. Ada panel elektrikal di balik lukisan yang mau gue reverse-engineer."</p>
+<p><span class="speaker kira">Kai</span> "Gue stay. Ada panel elektrikal di balik lukisan yang mau gue reverse-engineer."</p>
 <p><span class="speaker vira">Vira</span> duduk di kursi, membuka amplopnya, membaca, menaruhnya kembali.</p>
-<p><span class="speaker kira">Kira</span> "Panel ketemu. Mulai reverse-engineering sistem kunci."</p>
+<p><span class="speaker kira">Kai</span> "Panel ketemu. Mulai reverse-engineering sistem kunci."</p>
 <p><span class="speaker sera">Sera</span> "Aku sudah bikin profil psikologis kasar semua orang."</p>
 <p class="sound">— dari Galeri Timur, teriakan. Lalu keheningan. —</p>
-<p><span class="speaker juno">Juno</span> "Arin — mereka disuruh pilih siapa yang masuk Ruang Musik. Nggak ada yang mau."</p>`,
+<p><span class="speaker juno">Juno</span> "Arya — mereka disuruh pilih siapa yang masuk Ruang Musik. Nggak ada yang mau."</p>`,
   choices: [
     {
       text: '"Aku yang masuk. Biar aku yang hadapi."',
@@ -692,7 +692,7 @@ const STORY_CH1 = {
       }
     },
     {
-      text: '"Kira, bisa kau override kunci ruangan itu supaya tidak ada yang perlu masuk?"',
+      text: '"Kai, bisa kau override kunci ruangan itu supaya tidak ada yang perlu masuk?"',
       next: 'ch1_kira_override',
       effect: (s) => {
         s.flags.kiraOverride = true;
@@ -703,17 +703,17 @@ const STORY_CH1 = {
 },
 
 'ch1_kira_override': {
-  text: `<p><span class="speaker kira">Kira</span> "Aku bisa bypass kunci satu ruangan — tapi itu trigger alert di server. Sang Penenun bakal tahu aku hacking."</p>
-<p><span class="speaker arin">Arin</span> "Lakukan."</p>
-<p><span class="speaker kira">Kira</span> "Got it. Ruang Musik terbuka. Dan — aku juga nemu sesuatu. Log server. Dua admin account: 'ADMIN_NW' milik Niko. Dan satu lagi..."</p>
-<p><span class="speaker arin">Arin</span> "Siapa?"</p>
-<p><span class="speaker kira">Kira</span> "'PENENUN'. Aktif terakhir... lima menit yang lalu."</p>
-<p class="journal"><em>"Kira Chen. Kau memilih jalan pintas. Sang Penenun menghargai kecerdasan — tapi menghukum ketidaksabaran. Countdown dipercepat satu jam."</em></p>
+  text: `<p><span class="speaker kira">Kai</span> "Aku bisa bypass kunci satu ruangan — tapi itu trigger alert di server. Sang Penenun bakal tahu aku hacking."</p>
+<p><span class="speaker arin">Arya</span> "Lakukan."</p>
+<p><span class="speaker kira">Kai</span> "Got it. Ruang Musik terbuka. Dan — aku juga nemu sesuatu. Log server. Dua admin account: 'ADMIN_NW' milik Niko. Dan satu lagi..."</p>
+<p><span class="speaker arin">Arya</span> "Siapa?"</p>
+<p><span class="speaker kira">Kai</span> "'PENENUN'. Aktif terakhir... lima menit yang lalu."</p>
+<p class="journal"><em>"Kai Chen. Kau memilih jalan pintas. Sang Penenun menghargai kecerdasan — tapi menghukum ketidaksabaran. Countdown dipercepat satu jam."</em></p>
 <p class="sound">— timer: 04:00:00. Satu jam hilang. —</p>`,
   shake: true,
   choices: [
     {
-      text: '"Worth it. Kira, terus tracking account Penenun itu."',
+      text: '"Worth it. Kai, terus tracking account Penenun itu."',
       next: 'ch1_regroup',
       effect: (s) => {
         Engine.modDanger(15);
@@ -734,12 +734,12 @@ const STORY_CH1 = {
 },
 
 'ch1_explore_floor2': {
-  text: `<p><span class="speaker arin">Arin</span> "Lantai dua. Koridor panjang, lampu darurat hijau. Enam pintu — empat kamar tamu, kamar mandi, dan satu ruang bertuliskan 'ARSIP'."</p>
-<p><span class="speaker arin">Arin</span> "Arsip terkunci — kunci fisik. Lockpick pakai hairpin."</p>
-<p><span class="speaker arin">Arin</span> "Di dalam — rak file dari lantai ke langit-langit. Dokumen, foto, rekaman. Puluhan tahun sejarah mansion."</p>
-<p><span class="speaker arin">Arin</span> "'Acara Tahunan 2022'. Daftar tamu sepuluh nama. Foto polaroid — sepuluh orang tersenyum. Di belakang: '8 pulang. 2 tinggal.'"</p>
-<p><span class="speaker arin">Arin</span> "2021: '7 pulang. 3 tinggal.' 2020: '8 pulang. 2 tinggal.' Setiap tahun — sepuluh masuk, beberapa 'tinggal'."</p>
-<p><span class="speaker arin">Arin</span> "Folder 2019... salah satu tamu di foto — itu Vira. Tapi Vira hilang enam bulan lalu, bukan tiga tahun. Kecuali dia pernah diundang sebelumnya. Dan selamat."</p>`,
+  text: `<p><span class="speaker arin">Arya</span> "Lantai dua. Koridor panjang, lampu darurat hijau. Enam pintu — empat kamar tamu, kamar mandi, dan satu ruang bertuliskan 'ARSIP'."</p>
+<p><span class="speaker arin">Arya</span> "Arsip terkunci — kunci fisik. Lockpick pakai hairpin."</p>
+<p><span class="speaker arin">Arya</span> "Di dalam — rak file dari lantai ke langit-langit. Dokumen, foto, rekaman. Puluhan tahun sejarah mansion."</p>
+<p><span class="speaker arin">Arya</span> "'Acara Tahunan 2022'. Daftar tamu sepuluh nama. Foto polaroid — sepuluh orang tersenyum. Di belakang: '8 pulang. 2 tinggal.'"</p>
+<p><span class="speaker arin">Arya</span> "2021: '7 pulang. 3 tinggal.' 2020: '8 pulang. 2 tinggal.' Setiap tahun — sepuluh masuk, beberapa 'tinggal'."</p>
+<p><span class="speaker arin">Arya</span> "Folder 2019... salah satu tamu di foto — itu Vira. Tapi Vira hilang enam bulan lalu, bukan tiga tahun. Kecuali dia pernah diundang sebelumnya. Dan selamat."</p>`,
   shake: true,
   choices: [
     {
@@ -771,10 +771,10 @@ const STORY_CH1 = {
 'ch1_basement': {
   text: `<p><span class="speaker reza">Reza</span> "Basement terbagi dua. B-1 wine cellar. B-2 di balik pintu baja — terkunci elektronik."</p>
 <p><span class="speaker reza">Reza</span> "Lihat — cahaya biru dari celah. Server di dalam sana."</p>
-<p><span class="speaker arin">Arin</span> "Meja kerja tersembunyi di antara rak botol. Laptop tua, kabel, dan notes."</p>
-<p><span class="speaker arin">Arin</span> "Notes berisi jadwal — tanggal, nama, kode: 'SMP-1' sampai 'SMP-7'. Di setiap kode: nama dua-tiga orang dengan centang. 'Terselesaikan.'"</p>
+<p><span class="speaker arin">Arya</span> "Meja kerja tersembunyi di antara rak botol. Laptop tua, kabel, dan notes."</p>
+<p><span class="speaker arin">Arya</span> "Notes berisi jadwal — tanggal, nama, kode: 'SMP-1' sampai 'SMP-7'. Di setiap kode: nama dua-tiga orang dengan centang. 'Terselesaikan.'"</p>
 <p><span class="speaker reza">Reza</span> "SMP — Simpul."</p>
-<p><span class="speaker arin">Arin</span> "Dan di bawah: 'SMP-8' — tanggal hari ini. Sepuluh nama. Nama kita semua. Tiga nama dilingkari merah."</p>`,
+<p><span class="speaker arin">Arya</span> "Dan di bawah: 'SMP-8' — tanggal hari ini. Sepuluh nama. Nama kita semua. Tiga nama dilingkari merah."</p>`,
   shake: true,
   choices: [
     {
@@ -793,15 +793,15 @@ const STORY_CH1 = {
   text: (s) => {
     let text = '';
     if (s.difficulty === 1) {
-      text += `<p class="journal"><em>Tiga nama dilingkari: Reza Hartono. Farah Aldridge. Kira Chen.</em></p>`;
-      text += `<p><span class="speaker reza">Reza</span> "Aku sudah curiga. Targetnya orang yang bisa mengungkap Sang Penenun. Aku — ex-detektif. Kira — hacker. Farah — akses ke bukti lama."</p>`;
+      text += `<p class="journal"><em>Tiga nama dilingkari: Reza Hartono. Farah Aldridge. Kai Chen.</em></p>`;
+      text += `<p><span class="speaker reza">Reza</span> "Aku sudah curiga. Targetnya orang yang bisa mengungkap Sang Penenun. Aku — ex-detektif. Kai — hacker. Farah — akses ke bukti lama."</p>`;
     } else if (s.difficulty === 2) {
-      text += `<p class="journal"><em>Tiga nama dilingkari: Reza Hartono. Vira Deviani. Arin Prasetya.</em></p>`;
+      text += `<p class="journal"><em>Tiga nama dilingkari: Reza Hartono. Vira Deviani. Arya Prasetya.</em></p>`;
       text += `<p><span class="speaker reza">Reza</span> "Kita berdua di daftar. Berarti kita ancaman bagi Sang Penenun."</p>
-<p><span class="speaker arin">Arin</span> "Dan Vira?"</p>
+<p><span class="speaker arin">Arya</span> "Dan Vira?"</p>
 <p><span class="speaker reza">Reza</span> "Vira tahu terlalu banyak. Satu-satunya yang pernah selamat dari acara sebelumnya."</p>`;
     } else {
-      text += `<p class="journal"><em>Tiga nama dilingkari: Arin Prasetya. Sera Amalina. Kira Chen.</em></p>`;
+      text += `<p class="journal"><em>Tiga nama dilingkari: Arya Prasetya. Sera Amalina. Kai Chen.</em></p>`;
       text += `<p><span class="speaker reza">Reza</span> "Analitis, psikolog, hacker. Mereka mengincar otak operasi. Ini bukan random — ini surgical."</p>`;
     }
 
@@ -840,7 +840,7 @@ const STORY_CH1 = {
       text += `<p><span class="speaker lana">Lana</span> "Tidak tahu. Tapi kita harus percepat timeline. Sebelum mereka menemukan B-2."</p>`;
       text += `<p><span class="speaker reza">Reza</span> "Lana tahu password. Tahu layout. Dia bukan tamu — dia bagian dari ini."</p>`;
     } else {
-      text += `<p><span class="speaker arin">Arin</span> "Dimas. Sendirian. Membuka laci meja — mengambil botol kecil tanpa label, masuk ke saku jas."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Dimas. Sendirian. Membuka laci meja — mengambil botol kecil tanpa label, masuk ke saku jas."</p>`;
       text += `<p><span class="speaker reza">Reza</span> "Botol tanpa label, disembunyikan di basement. Itu bukan obat OTC."</p>`;
     }
 
@@ -900,11 +900,11 @@ const STORY_CH1 = {
 },
 
 'ch1_follow_dimas_solo': {
-  text: `<p><span class="speaker arin">Arin</span> "Dimas di dapur. Tas medisnya terbuka — bukan P3K biasa. Suntikan, botol kecil, scalpel."</p>
-<p><span class="speaker arin">Arin</span> "Dia mengisi suntikan dengan cairan bening. Gerakan presisi, tanpa ragu."</p>
-<p><span class="speaker arin">Arin</span> "Sekarang dia menuang sesuatu ke teko teh — cairan dari botol kedua."</p>
-<p><span class="speaker dimas">Dimas</span> "Arin. Aku sedang menyiapkan obat tidur herbal. Valerian root. Untuk Farah — panic attack."</p>
-<p><span class="speaker arin">Arin</span> "Dan suntikan?"</p>
+  text: `<p><span class="speaker arin">Arya</span> "Dimas di dapur. Tas medisnya terbuka — bukan P3K biasa. Suntikan, botol kecil, scalpel."</p>
+<p><span class="speaker arin">Arya</span> "Dia mengisi suntikan dengan cairan bening. Gerakan presisi, tanpa ragu."</p>
+<p><span class="speaker arin">Arya</span> "Sekarang dia menuang sesuatu ke teko teh — cairan dari botol kedua."</p>
+<p><span class="speaker dimas">Dimas</span> "Arya. Aku sedang menyiapkan obat tidur herbal. Valerian root. Untuk Farah — panic attack."</p>
+<p><span class="speaker arin">Arya</span> "Dan suntikan?"</p>
 <p><span class="speaker dimas">Dimas</span> "Epinephrine. Standar P3K untuk reaksi alergi berat. Aku mahasiswa kedokteran. Selalu siap."</p>`,
   choices: [
     {
@@ -949,7 +949,7 @@ const STORY_CH1 = {
     text += `<p><span class="speaker reza">Reza</span> "Kita punya satu jam. Bagaimana kita menggunakannya?"</p>`;
 
     if (s.flags.heardLanaDimasPlan || s.flags.sawLanaInBasement) {
-      text += `<p><span class="speaker arin">Arin</span> "Ada yang harus kalian tahu tentang Lana dan Dimas."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Ada yang harus kalian tahu tentang Lana dan Dimas."</p>`;
     }
 
     return text;
@@ -1001,14 +1001,14 @@ const STORY_CH1 = {
 
 'ch1_confront_killers': {
   text: (s) => {
-    let text = `<p><span class="speaker arin">Arin</span> "Lana. Dimas. Kita perlu bicara."</p>`;
+    let text = `<p><span class="speaker arin">Arya</span> "Lana. Dimas. Kita perlu bicara."</p>`;
     text += `<p><span class="speaker lana">Lana</span> "Tentang?"</p>`;
 
     if (s.flags.heardLanaDimasPlan) {
-      text += `<p><span class="speaker arin">Arin</span> "Aku dengar pembicaraan kalian di perpustakaan. 'Percepat timeline.' 'Isolasi target.' Kalian bukan tamu."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Aku dengar pembicaraan kalian di perpustakaan. 'Percepat timeline.' 'Isolasi target.' Kalian bukan tamu."</p>`;
       text += `<p><span class="speaker lana">Lana</span> "Kau salah dengar. Kami membicarakan novel — skenario untuk buku berikutnya. Aku penulis, ingat?"</p>`;
     } else if (s.flags.sawLanaInBasement) {
-      text += `<p><span class="speaker arin">Arin</span> "Aku lihat kau di basement. Kau tahu password laptop di sana. Kau tahu layout mansion. Kau bukan tamu, Lana."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Aku lihat kau di basement. Kau tahu password laptop di sana. Kau tahu layout mansion. Kau bukan tamu, Lana."</p>`;
       text += `<p><span class="speaker lana">Lana</span> "Aku riset untuk novel. Sudah ke mansion ini tiga kali. Tentu aku tahu layoutnya."</p>`;
     }
 
@@ -1045,15 +1045,15 @@ const STORY_CH1 = {
 },
 
 'ch1_vira_survivor': {
-  text: `<p><span class="speaker arin">Arin</span> "Kau pernah ke sini sebelumnya. 2019. Aku menemukan fotomu di arsip."</p>
+  text: `<p><span class="speaker arin">Arya</span> "Kau pernah ke sini sebelumnya. 2019. Aku menemukan fotomu di arsip."</p>
 <p><span class="speaker vira">Vira</span> "2019. Ya. Aku masih muda. Masih percaya dunia pada dasarnya baik."</p>
-<p><span class="speaker arin">Arin</span> "Apa yang terjadi?"</p>
+<p><span class="speaker arin">Arya</span> "Apa yang terjadi?"</p>
 <p><span class="speaker vira">Vira</span> "Sepuluh masuk. Delapan keluar. Satu ditemukan di hutan tiga bulan kemudian. Yang satu lagi... tidak pernah ditemukan."</p>
-<p><span class="speaker arin">Arin</span> "Dan kau?"</p>
+<p><span class="speaker arin">Arya</span> "Dan kau?"</p>
 <p><span class="speaker vira">Vira</span> "Aku selamat karena aku melakukan sesuatu yang tidak bisa kumaafkan. Aku mengorbankan orang lain supaya aku keluar."</p>
-<p><span class="speaker arin">Arin</span> "Tapi kau kembali."</p>
+<p><span class="speaker arin">Arya</span> "Tapi kau kembali."</p>
 <p><span class="speaker vira">Vira</span> "Karena tahun ini targetnya orang yang aku sayangi. Kau. Sera. Juno. Aku tidak bisa biarkan ini terulang."</p>
-<p><span class="speaker arin">Arin</span> "Siapa Sang Penenun?"</p>
+<p><span class="speaker arin">Arya</span> "Siapa Sang Penenun?"</p>
 <p><span class="speaker vira">Vira</span> "Aku tidak pernah lihat wajahnya. Tapi dia selalu ada di antara tamu. Berpura-pura jadi salah satu dari kita. Dan dia <em>menikmati</em> menontonnya."</p>`,
   choices: [
     {

@@ -30,11 +30,11 @@ const STORY_CH3 = {
     text += `<p class="sound">— Kelompok secara alami terpecah menjadi faksi: —</p>`;
 
     let factions = '';
-    factions += `<p><span class="speaker arin">Arin</span> <strong>Faksi Investigasi:</strong> `;
-    let investigators = ['Arin'];
+    factions += `<p><span class="speaker arin">Arya</span> <strong>Faksi Investigasi:</strong> `;
+    let investigators = ['Arya'];
     if (s.flags.seraAlliance) investigators.push('Sera');
     if (s.flags.rezaAlliance || s.flags.rezaWarning) investigators.push('Reza');
-    if (s.flags.kiraAlliance) investigators.push('Kira');
+    if (s.flags.kiraAlliance) investigators.push('Kai');
     factions += investigators.join(', ') + ` — mencari kebenaran dan jalan keluar.</p>`;
 
     factions += `<p><span class="speaker sera">Sera</span> <strong>Faksi Survival:</strong> Juno, Farah`;
@@ -99,8 +99,8 @@ const STORY_CH3 = {
 
 'ch3_convince_juno': {
   text: `<p><span class="speaker juno">Juno</span> menggeram frustrasi.</p>
-<p><span class="speaker arin">Arin</span> "Arin, lo denger gue nggak? Orang udah kena racun. Laptop Kira hancur. Dan kita masih di sini ngobrol soal 'clue' dan 'simpul'? Ini bukan game — ini HIDUP KITA."</p>
-<p><span class="speaker sera">Sera</span> menyentuh bahu Juno. "Dia benar soal satu hal, Arin. Kita perlu exit strategy."</p>
+<p><span class="speaker arin">Arya</span> "Arya, lo denger gue nggak? Orang udah kena racun. Laptop Kai hancur. Dan kita masih di sini ngobrol soal 'clue' dan 'simpul'? Ini bukan game — ini HIDUP KITA."</p>
+<p><span class="speaker sera">Sera</span> menyentuh bahu Juno. "Dia benar soal satu hal, Arya. Kita perlu exit strategy."</p>
 <p><span class="speaker reza">Reza</span>: "Kompromi. Kita bagi dua tim. Satu cari jalan keluar fisik. Satu investigasi Sang Penenun. Komunikasi setiap lima belas menit."</p>
 <p><span class="speaker juno">Juno</span> Proposal yang masuk akal. Juno masih tegang tapi mengangguk.</p>`,
   choices: [
@@ -127,8 +127,8 @@ const STORY_CH3 = {
       text += `Farah.</p>`;
     }
 
-    text += `<p><span class="speaker arin">Arin</span> <strong>Tim Investigasi (Arin pimpin):</strong> Arin, `;
-    let investigateTeam = ['Arin'];
+    text += `<p><span class="speaker arin">Arya</span> <strong>Tim Investigasi (Arya pimpin):</strong> Arya, `;
+    let investigateTeam = ['Arya'];
     if (s.flags.seraAlliance) { text += 'Sera, '; investigateTeam.push('Sera'); }
     if (s.flags.rezaAlliance) { text += 'Reza, '; investigateTeam.push('Reza'); }
     text += `dan Niko (dia tahu layout mansion).</p>`;
@@ -330,7 +330,7 @@ const STORY_CH3 = {
 
       if (s.flags.facedVisitor) {
         text += `<p><span class="speaker niko">Niko</span> Kau berdiri di tengah ruangan. "Niko. Lana. Menarik — kalian berdua datang bersama."</p>`;
-        text += `<p><span class="speaker arin">Arin</span> Niko: "Arin, aku bisa jelaskan—"</p>`;
+        text += `<p><span class="speaker arin">Arya</span> Niko: "Arya, aku bisa jelaskan—"</p>`;
         text += `<p><span class="speaker niko">Niko</span> "Jelaskan apa? Bahwa kau memberikan akses penuh ke mansion ini kepada Sang Penenun? Aku menemukan notes-nya, Niko."</p>`;
         text += `<p><span class="speaker niko">Niko</span> Niko memucat. Lana diam — terlalu diam.</p>`;
       } else {
@@ -342,12 +342,12 @@ const STORY_CH3 = {
       }
     } else {
       text += `<p><span class="speaker niko">Niko</span> muncul sendirian.</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Arin. Aku tahu kau akan ke sini." Dia terlihat hancur — bukan fisik, tapi sesuatu di dalamnya pecah.</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Kau sudah baca protokolnya."</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Ya."</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Maka kau tahu. Keluargaku... kakekku... melakukan ini selama puluhan tahun. Setiap tahun, dia mengundang orang — dan beberapa dari mereka tidak pernah kembali."</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Dan kau merencanakan malam ini untuk mengungkapnya?"</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Aku merencanakan pameran dokumenter. Mengekspos dosa keluargaku. Tapi seseorang membajak rencana itu — seseorang yang INGIN siklus itu berlanjut, bukan berhenti."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Arya. Aku tahu kau akan ke sini." Dia terlihat hancur — bukan fisik, tapi sesuatu di dalamnya pecah.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Kau sudah baca protokolnya."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Ya."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Maka kau tahu. Keluargaku... kakekku... melakukan ini selama puluhan tahun. Setiap tahun, dia mengundang orang — dan beberapa dari mereka tidak pernah kembali."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Dan kau merencanakan malam ini untuk mengungkapnya?"</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Aku merencanakan pameran dokumenter. Mengekspos dosa keluargaku. Tapi seseorang membajak rencana itu — seseorang yang INGIN siklus itu berlanjut, bukan berhenti."</p>`;
     }
 
     return text;
@@ -490,7 +490,7 @@ const STORY_CH3 = {
 <p><span class="speaker farah">Farah</span> Dan di dalam patung — sesuatu jatuh. Flash drive kecil. Tersembunyi di rongga kayu.</p>
 <p class="sound">— Kau mengambilnya. Label kecil: "POLIS ASURANSI". —</p>
 <p class="sound">— Speaker berderak. Kali ini suaranya berbeda — bukan mekanis. Marah. —</p>
-<p class="journal"><em>"Kau menghancurkan karya seni tujuh dekade. Apakah kau merasa jadi pahlawan, Arin? Setiap penghancuran memiliki harga. Cek lantai satu."</em></p>
+<p class="journal"><em>"Kau menghancurkan karya seni tujuh dekade. Apakah kau merasa jadi pahlawan, Arya? Setiap penghancuran memiliki harga. Cek lantai satu."</em></p>
 <p class="sound">— Jantungmu berhenti sedetik. —</p>
 <p class="sound">— Kau berlari ke tangga. —</p>`,
   shake: true,
@@ -513,19 +513,19 @@ const STORY_CH3 = {
     let text = `<p><span class="speaker farah">Farah</span> Basement B-1 — wine cellar. Kau melewati rak-rak botol berdebu menuju pintu baja B-2.</p>`;
 
     if (s.flags.kiraAlliance && !s.flags.savedFarahDrink) {
-      text += `<p><span class="speaker kira">Kira</span> ada bersamamu, laptop di tangan. "Aku bisa coba brute force password dari sini."</p>`;
+      text += `<p><span class="speaker kira">Kai</span> ada bersamamu, laptop di tangan. "Aku bisa coba brute force password dari sini."</p>`;
       text += `<p class="sound">— Tiga menit mengetik. Lima menit. Tujuh menit. —</p>`;
       text += `<p class="sound">— "Got it." Suara klik magnetik. Pintu baja terbuka. —</p>`;
     } else {
       text += `<p class="sound">— Pintu baja. Kunci elektronik. Panel keypad di samping. —</p>`;
       if (s.flags.hasMansionMap) {
-        text += `<p><span class="speaker kira">Kira</span> Dari diagram mansion yang kau temukan di dapur, ada catatan: kode backup B-2 adalah "71-SIMPUL".</p>`;
+        text += `<p><span class="speaker kira">Kai</span> Dari diagram mansion yang kau temukan di dapur, ada catatan: kode backup B-2 adalah "71-SIMPUL".</p>`;
         text += `<p class="sound">— Kau memasukkan kode. Pintu terbuka. —</p>`;
       } else {
         text += `<p class="sound">— Kau mencoba beberapa kombinasi. Tidak berhasil. Panel menolak. —</p>`;
         text += `<p><span class="speaker niko">Niko</span>: "Coba 1971."</p>`;
         text += `<p class="sound">— Tidak berhasil. —</p>`;
-        text += `<p><span class="speaker reza">Reza</span> menendang panel. Tidak bergerak. "Kita butuh Kira."</p>`;
+        text += `<p><span class="speaker reza">Reza</span> menendang panel. Tidak bergerak. "Kita butuh Kai."</p>`;
         text += `<p class="sound">— Kau terjebak di depan pintu yang tidak bisa kau buka. —</p>`;
       }
     }
@@ -652,14 +652,14 @@ const STORY_CH3 = {
 <p class="sound">— Lalu sosok itu mundur. Menghilang ke bayangan. —</p>
 <p><span class="speaker juno">Juno</span> Kau menyelamatkan Juno — untuk sekarang. Tapi Sang Penenun tahu kau di ruang server. Dan dia tidak akan membiarkan kau tetap di sana.</p>
 <p class="sound">— Lampu di ruang server berkedip. Monitor menampilkan pesan: —</p>
-<p class="journal"><em>"Bukan giliranmu bermain sutradara, Arin. Keluar dari ruangan ini dalam 30 detik — atau gas dari ventilasi akan memastikan kau tidak keluar sama sekali."</em></p>`,
+<p class="journal"><em>"Bukan giliranmu bermain sutradara, Arya. Keluar dari ruangan ini dalam 30 detik — atau gas dari ventilasi akan memastikan kau tidak keluar sama sekali."</em></p>`,
   choices: [
     {
       text: "KELUAR! Sekarang!",
       next: 'ch3_first_death',
       effect: (s) => {
         s.flags.escapedServerRoom = true;
-        s.flags.penenunKnowsArin = true;
+        s.flags.penenunKnowsArya = true;
         Engine.modDanger(15);
       }
     }
@@ -695,7 +695,7 @@ const STORY_CH3 = {
       text += `<p>"Jangan bilang." Suara <span class="speaker sera">Sera</span> pecah.</p>`;
       text += `<p><span class="speaker reza">Reza</span> Reza. Mantan detektif. Orang yang berjuang untuk kebenaran bahkan setelah sistem menolaknya. Mati di lorong gelap mansion terkutuk ini.</p>`;
     } else if (victim === 'kira') {
-      text += `<p><span class="speaker kira">Kira</span> — yang sebelumnya terluka — ditemukan di kamar tempat dia diistirahatkan. Mesinnya mati total. Luka di kepalanya... diperburuk. Seseorang memastikan dia tidak bangun lagi.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> — yang sebelumnya terluka — ditemukan di kamar tempat dia diistirahatkan. Mesinnya mati total. Luka di kepalanya... diperburuk. Seseorang memastikan dia tidak bangun lagi.</p>`;
       text += `<p>"Dia masih hidup setengah jam lalu," bisik <span class="speaker sera">Sera</span>. "Siapa yang berjaga?"</p>`;
       text += `<p class="sound">— Tidak ada yang menjawab. Semua saling melirik. —</p>`;
     } else if (victim === 'farah') {

@@ -6,23 +6,23 @@
 
 const CHARACTER_PROFILES = {
   arin: {
-    name: 'Arin',
-    fullName: 'Arin Prasetya',
+    name: 'Arya',
+    fullName: 'Arya Prasetya',
     age: 24,
     role: 'Protagonis — Sang Pencari Kebenaran',
     portrait: 'img/arin.png',
     isMain: true,
     quote: '"Kebenaran tidak pernah nyaman. Tapi kebohongan selalu lebih mahal."',
     appearance: 'Rambut hitam berantakan, jaket army hijau tua penuh pin dan patch dari investigasi-investigasi sebelumnya. Mata cokelat yang tajam — mata orang yang terbiasa membaca detail kecil. Selalu membawa recorder dan notes kecil. Bekas luka tipis di pelipis kiri — kenang-kenangan dari investigasi terakhir yang hampir membunuhnya.',
-    personality: 'Mantan jurnalis investigasi yang sekarang menjalankan podcast true crime "Jejak Mati". Arin punya insting yang tajam untuk mendeteksi kebohongan, tapi kebiasaan menggali kebenaran sering membuatnya menjadi target. Dia datang ke acara ini karena Niko menjanjikan akses eksklusif ke cerita yang "akan mengubah segalanya".',
-    backstory: 'Setahun lalu, Arin mengungkap skandal korupsi besar yang melibatkan orang-orang berkuasa. Sumber utamanya ditemukan tewas — resmi bunuh diri, tapi Arin tidak percaya. Sejak itu, dia terobsesi mencari kebenaran di balik setiap kematian.',
-    secret: 'Arin menerima email anonim tiga hari sebelum acara: "Datang ke pameran. Pembunuh sumbermu akan ada di sana." Dia tidak memberitahu siapapun.',
+    personality: 'Mantan jurnalis investigasi yang sekarang menjalankan podcast true crime "Jejak Mati". Arya punya insting yang tajam untuk mendeteksi kebohongan, tapi kebiasaan menggali kebenaran sering membuatnya menjadi target. Dia datang ke acara ini karena Niko menjanjikan akses eksklusif ke cerita yang "akan mengubah segalanya".',
+    backstory: 'Setahun lalu, Arya mengungkap skandal korupsi besar yang melibatkan orang-orang berkuasa. Sumber utamanya ditemukan tewas — resmi bunuh diri, tapi Arya tidak percaya. Sejak itu, dia terobsesi mencari kebenaran di balik setiap kematian.',
+    secret: 'Arya menerima email anonim tiga hari sebelum acara: "Datang ke pameran. Pembunuh sumbermu akan ada di sana." Dia tidak memberitahu siapapun.',
     relationships: {
-      niko: 'Teman kuliah lama. Arin mengagumi ambisi Niko tapi curiga dengan motif tersembunyinya.',
-      sera: 'Ada rasa yang tidak pernah diucapkan — chemistry yang keduanya rasakan tapi takut merusak pertemanan. Sera adalah satu-satunya orang yang membuat Arin merasa tidak perlu selalu waspada. Di malam tergelap, tangan mereka selalu saling mencari.',
-      juno: 'Partner in crime. Juno sering membantu investigasi Arin dengan koneksi jalanannya. Ada loyalitas yang melampaui pertemanan biasa.',
+      niko: 'Teman kuliah lama. Arya mengagumi ambisi Niko tapi curiga dengan motif tersembunyinya.',
+      sera: 'Ada rasa yang tidak pernah diucapkan — chemistry yang keduanya rasakan tapi takut merusak pertemanan. Sera adalah satu-satunya orang yang membuat Arya merasa tidak perlu selalu waspada. Di malam tergelap, tangan mereka selalu saling mencari.',
+      juno: 'Partner in crime. Juno sering membantu investigasi Arya dengan koneksi jalanannya. Ada loyalitas yang melampaui pertemanan biasa.',
       vira: 'Dulu sangat dekat — ada periode di mana perasaan mereka lebih dari sekadar teman. Sekarang ada jarak yang menyakitkan keduanya.',
-      dimas: 'Dimas terlalu sopan, terlalu tenang — Arin merasakan ada topeng yang belum dia bisa kupas.'
+      dimas: 'Dimas terlalu sopan, terlalu tenang — Arya merasakan ada topeng yang belum dia bisa kupas.'
     },
     emotionalRole: 'Idealis yang ceroboh — insting jurnalisnya membuatnya menerjang bahaya tanpa memikirkan hati orang-orang di sekitarnya.',
     traits: ['Analitis', 'Perseptif', 'Pemberani', 'Obsesif', 'Ceroboh dalam Perasaan'],
@@ -43,7 +43,7 @@ const CHARACTER_PROFILES = {
     backstory: 'Cucu dari industrialis kaya yang membangun mansion ini pada tahun 70-an. Setelah kakeknya meninggal dalam keadaan misterius tahun lalu, Niko mewarisi properti dan menemukan dokumen-dokumen yang menghubungkan keluarganya dengan serangkaian kematian yang tidak pernah terselesaikan.',
     secret: 'Niko mengundang semua orang ke sini bukan untuk pameran seni — tapi untuk mengungkap siapa di antara tamu-tamunya yang terhubung dengan kematian kakeknya. Dia sudah tahu lebih banyak dari yang dia tunjukkan.',
     relationships: {
-      arin: 'Teman terlama. Niko menghormati inteligensi Arin tapi menganggapnya terlalu idealis. Diam-diam iri dengan integritas Arin yang tidak bisa dia miliki.',
+      arin: 'Teman terlama. Niko menghormati inteligensi Arya tapi menganggapnya terlalu idealis. Diam-diam iri dengan integritas Arya yang tidak bisa dia miliki.',
       sera: 'Tidak nyaman dengan kemampuan Sera membaca orang. Merasa terekspos. Pernah mencoba merayunya untuk mengalihkan perhatian — gagal total.',
       juno: 'Menganggap Juno sebagai variabel tak terduga. Ada tarikan fisik yang dia tolak karena Juno adalah tipe yang tidak bisa dia kontrol.',
       vira: 'Toxic love history. Mereka berpacaran sebelum Vira menghilang — Niko yang memutuskan karena Vira "terlalu intens". Rasa bersalah membuatnya mengundang Vira kembali.',
@@ -68,7 +68,7 @@ const CHARACTER_PROFILES = {
     backstory: 'Thesis Sera adalah tentang "Psychopathology of Undetected Killers in Social Circles" — pembunuh yang hidup normal di tengah masyarakat tanpa terdeteksi. Ironisnya, penelitiannya membawanya ke tempat yang paling berbahaya.',
     secret: 'Sera sudah mengidentifikasi pola perilaku mencurigakan pada salah satu tamu sejak malam pertama. Tapi dia tidak yakin dengan kesimpulannya — karena kalau dia benar, implikasinya terlalu mengerikan.',
     relationships: {
-      arin: 'Cinta yang tidak terucapkan — perasaan terdalam yang dia sembunyikan di balik profesionalisme. Arin adalah satu-satunya orang yang membuat jantungnya berdetak tidak teratur, dan Sera BENCI tidak bisa menganalisis perasaannya sendiri.',
+      arin: 'Cinta yang tidak terucapkan — perasaan terdalam yang dia sembunyikan di balik profesionalisme. Arya adalah satu-satunya orang yang membuat jantungnya berdetak tidak teratur, dan Sera BENCI tidak bisa menganalisis perasaannya sendiri.',
       niko: 'Sera bisa merasakan manipulasi Niko dan itu membuatnya jijik sekaligus fascinated. Pernah ada momen di mana Niko mencoba merayunya — Sera membaca setiap microexpression dan menolaknya dengan pembedahan verbal yang brutal.',
       juno: 'Sahabat terdekat. Sera tahu Juno menyimpan trauma besar dan diam-diam menanggung beban itu juga.',
       vira: 'Sebelum menghilang, Vira adalah subjek studi informal Sera. Sejak kembali, perilaku Vira tidak cocok dengan baseline yang Sera kenal.',
@@ -76,7 +76,7 @@ const CHARACTER_PROFILES = {
     },
     emotionalRole: 'Negosiator emosional — bisa membaca dan meredakan konflik, tapi gagal total mengurus perasaannya sendiri. Kecerdasannya menjadi tameng dari kerentanan.',
     traits: ['Perceptif', 'Analitis', 'Empatik', 'Hati-hati', 'Romantis Terpendam'],
-    weakness: 'Terlalu banyak menganalisis membuatnya lambat bertindak. Perasaannya pada Arin membuatnya bias dalam situasi kritis.',
+    weakness: 'Terlalu banyak menganalisis membuatnya lambat bertindak. Perasaannya pada Arya membuatnya bias dalam situasi kritis.',
     color: '#c4956a'
   },
 
@@ -93,7 +93,7 @@ const CHARACTER_PROFILES = {
     backstory: 'Juno menyaksikan temannya dibunuh dalam hate crime dua tahun lalu. Pelakunya tidak pernah tertangkap. Sejak itu, Juno menghabiskan waktu membuat seni yang mengekspos kekerasan tersembunyi di masyarakat. Salah satu muralnya menjadi viral dan membuatnya jadi target.',
     secret: 'Juno mengenali salah satu tamu dari investigasinya sendiri — seseorang yang mungkin terhubung dengan kematian temannya. Dia datang ke pameran ini bukan untuk seni, tapi untuk konfrontasi.',
     relationships: {
-      arin: 'Partner in crime. Saling melengkapi — Arin punya metodologi, Juno punya insting. Juno diam-diam tahu tentang perasaan Arin ke Sera dan mendorong dari belakang.',
+      arin: 'Partner in crime. Saling melengkapi — Arya punya metodologi, Juno punya insting. Juno diam-diam tahu tentang perasaan Arya ke Sera dan mendorong dari belakang.',
       niko: 'Tidak percaya pada orang kaya. Niko mewakili semua yang Juno benci tentang privilege. Tapi ada tarikan fisik yang membuat Juno marah pada dirinya sendiri.',
       sera: 'Sahabat terdekat. Sera adalah satu-satunya orang yang boleh melihat Juno menangis. Juno protektif terhadap Sera sampai level posesif.',
       vira: 'Sumber rasa bersalah terbesar. Juno tahu sesuatu tentang malam Vira menghilang yang belum dia ceritakan.',
@@ -118,7 +118,7 @@ const CHARACTER_PROFILES = {
     backstory: 'Sebelum menghilang, Vira adalah fotografer yang dikenal karena seri foto kontroversialnya "Faces of the Dead" — foto-foto lokasi pembunuhan yang diambil ulang dengan model hidup. Polisi menemukan bahwa beberapa lokasi dalam fotonya cocok dengan kasus cold case yang belum terpecahkan.',
     secret: 'Vira ingat segalanya tentang enam bulan itu. Dia tidak amnesia. Dia memilih diam karena apa yang dia alami terlalu berbahaya untuk diceritakan — dan orang yang bertanggung jawab mungkin ada di ruangan yang sama.',
     relationships: {
-      arin: 'Dulu sangat dekat — ada periode abu-abu di mana mereka hampir menjadi lebih. Sekarang Vira menjaga jarak bukan karena tidak percaya, tapi karena takut Arin melihat apa yang ada di dalam dirinya sekarang.',
+      arin: 'Dulu sangat dekat — ada periode abu-abu di mana mereka hampir menjadi lebih. Sekarang Vira menjaga jarak bukan karena tidak percaya, tapi karena takut Arya melihat apa yang ada di dalam dirinya sekarang.',
       niko: 'Mantan kekasih. Toxic relationship yang berakhir dengan Niko membuang Vira tepat sebelum dia menghilang. Vira masih menyimpan perasaan — dan itu membuatnya benci diri sendiri.',
       sera: 'Sadar bahwa Sera bisa membacanya. Bermain kucing-kucingan. Tapi diam-diam, Vira ingin Sera menembus dindingnya.',
       juno: 'Merasa bersalah karena membuat Juno menyimpan rahasia tentang malam itu. Juno melihat sisi Vira yang tidak dia tunjukkan ke siapapun.'
@@ -142,7 +142,7 @@ const CHARACTER_PROFILES = {
     backstory: 'Reza menghabiskan 15 tahun di kepolisian. Kasus terakhirnya — serial killer yang membunuh 7 orang — berakhir dengan tersangka yang salah dipenjara. Ketika kebenaran terungkap, Reza di-scapegoat. Sekarang dia minum terlalu banyak dan mengambil pekerjaan security yang harusnya di bawah levelnya.',
     secret: 'Reza mengenali pola di undangan tamu Niko. Profil mereka cocok dengan victimology dari kasus lama yang tidak pernah dia tutup. Dia belum yakin, tapi jantungnya berdetak lebih cepat setiap kali dia melihat daftar tamu.',
     relationships: {
-      arin: 'Menghormati naluri investigasi Arin. Melihat versi muda dirinya — sebelum sistem menghancurkannya.',
+      arin: 'Menghormati naluri investigasi Arya. Melihat versi muda dirinya — sebelum sistem menghancurkannya.',
       niko: 'Klien. Tapi Reza tidak mempercayai siapapun yang membayarnya. Melihat Niko sebagai anak kaya yang bermain-main dengan nyawa orang.',
       lana: 'Merasa tidak nyaman di dekat Lana. Terlalu banyak detail pembunuhan dalam novel-novelnya yang terlalu akurat. Tapi ada tarikan gelap — keduanya terobsesi dengan kematian.',
       dimas: 'Suspicious. Mahasiswa kedokteran yang terlalu tenang melihat darah.',
@@ -196,7 +196,7 @@ const CHARACTER_PROFILES = {
     relationships: {
       lana: 'Dimanipulasi sepenuhnya. Lana adalah satu-satunya orang yang membuat Dimas "merasakan" sesuatu. Hubungan mereka toxic dan codependent — Lana memberi makna, Dimas memberi kepatuhan.',
       sera: 'Obsesi intelektual yang berkembang menjadi obsesi romantis. Dimas fascinated oleh kemampuan Sera membaca manusia — kemampuan yang dia tidak punya. Perasaannya disturbing dan one-sided.',
-      kira: 'Tidak suka. Kira terlalu banyak bertanya dan terlalu pandai menggali. Dimas merasa terancam.',
+      kira: 'Tidak suka. Kai terlalu banyak bertanya dan terlalu pandai menggali. Dimas merasa terancam.',
       reza: 'Merasa diamati. Tahu Reza mencurigainya. Di momen tertentu, Dimas hampir menghormati naluri Reza — hampir.'
     },
     emotionalRole: 'Predator ceroboh — eksekutor yang overconfident. Ketidakmampuannya merasakan empati membuatnya efisien tapi juga careless. Membuat kesalahan karena meremehkan emosi manusia yang dia tidak pahami.',
@@ -207,24 +207,24 @@ const CHARACTER_PROFILES = {
   },
 
   kira: {
-    name: 'Kira',
-    fullName: 'Kira Chen',
+    name: 'Kai',
+    fullName: 'Kai Chen',
     age: 22,
     role: 'Sang Pengawas — Mata Digital yang Tidak Tidur',
     portrait: null,
     isMain: false,
     quote: '"Privasi itu ilusi. Yang nyata cuma data."',
-    appearance: 'Kecil, cepat, dan selalu terlihat seperti sedang merencanakan sesuatu. Rambut pendek biru-hitam, hoodie oversized yang menyembunyikan laptop di dalamnya. Headphone selalu menggantung di leher. Mata yang bergerak cepat, memindai, menganalisis. Jari-jari dengan nail art yang berbeda setiap minggu.',
-    personality: 'Hacker dan cybersecurity specialist yang bekerja freelance. Kira hidup di dunia digital lebih dari dunia nyata. Paranoid secara profesional — dia selalu mengasumsikan bahwa seseorang sedang mengawasinya, dan biasanya dia benar.',
-    backstory: 'Kira membongkar jaringan trafficking online saat masih 19 tahun. Sejak itu, dia menjadi target beberapa kelompok berbahaya. Dia datang ke pameran ini karena menemukan anomali digital: undangan acara ini dikirim dari server yang sama dengan serangkaian email ancaman yang dia tracking selama setahun.',
-    secret: 'Kira sudah meretas sistem keamanan mansion sebelum datang. Dia punya akses ke CCTV, log pintu, dan file-file tersembunyi di server lokal. Apa yang dia temukan membuatnya tidak bisa tidur.',
+    appearance: 'Kurus, cepat, dan selalu terlihat seperti sedang merencanakan sesuatu. Rambut pendek biru-hitam acak-acakan, hoodie oversized yang menyembunyikan laptop di dalamnya. Headphone selalu menggantung di leher. Mata tajam yang bergerak cepat, memindai, menganalisis. Jari-jari panjang dengan bekas kopi di ujungnya — tipikal programmer yang begadang.',
+    personality: 'Hacker dan cybersecurity specialist yang bekerja freelance. Kai hidup di dunia digital lebih dari dunia nyata. Paranoid secara profesional — dia selalu mengasumsikan bahwa seseorang sedang mengawasinya, dan biasanya dia benar.',
+    backstory: 'Kai membongkar jaringan trafficking online saat masih 19 tahun. Sejak itu, dia menjadi target beberapa kelompok berbahaya. Dia datang ke pameran ini karena menemukan anomali digital: undangan acara ini dikirim dari server yang sama dengan serangkaian email ancaman yang dia tracking selama setahun.',
+    secret: 'Kai sudah meretas sistem keamanan mansion sebelum datang. Dia punya akses ke CCTV, log pintu, dan file-file tersembunyi di server lokal. Apa yang dia temukan membuatnya tidak bisa tidur.',
     relationships: {
-      arin: 'Respek mutual. Keduanya pencari kebenaran, hanya beda medium. Kira menganggap Arin terlalu lambat tapi mengagumi keberaniannya.',
-      juno: 'Kindred spirits dan chaos partners. Keduanya pemberontak — Kira digital, Juno fisik. Saling cover dalam situasi bahaya. Ada chemistry tapi keduanya terlalu stubborn untuk mengakuinya.',
+      arin: 'Respek mutual. Keduanya pencari kebenaran, hanya beda medium. Kai menganggap Arya terlalu lambat tapi mengagumi keberaniannya.',
+      juno: 'Kindred spirits dan chaos partners. Keduanya pemberontak — Kai digital, Juno fisik. Saling cover dalam situasi bahaya. Ada chemistry tapi keduanya terlalu stubborn untuk mengakuinya.',
       dimas: 'Red flag BESAR. Data digital Dimas punya gaps yang terlalu bersih — orang normal tidak punya digital footprint seseptic itu.',
-      farah: 'Menemukan koneksi finansial antara keluarga Farah dan kematian-kematian mencurigakan. Kira tidak suka old money. Farah mewakili segalanya yang korup di dunia.'
+      farah: 'Menemukan koneksi finansial antara keluarga Farah dan kematian-kematian mencurigakan. Kai tidak suka old money. Farah mewakili segalanya yang korup di dunia.'
     },
-    emotionalRole: 'Eksentrik wildcard — unpredictable, chaotic, dan brilliant. Kira adalah variabel yang tidak bisa dikontrol siapapun. Paranoidnya kadang menyelamatkan, kadang menghancurkan. Social skills-nya minus tapi observasinya tajam.',
+    emotionalRole: 'Eksentrik wildcard — unpredictable, chaotic, dan brilliant. Kai adalah variabel yang tidak bisa dikontrol siapapun. Paranoidnya kadang menyelamatkan, kadang menghancurkan. Social skills-nya minus tapi observasinya tajam.',
     traits: ['Jenius', 'Paranoid', 'Resourceful', 'Antisosial', 'Eksentrik'],
     weakness: 'Ketergantungannya pada teknologi membuatnya buta terhadap ancaman analog. Kecenderungan menyebarkan informasi tanpa filter bisa memantik konflik yang tidak perlu.',
     color: '#00b4d8',
@@ -246,7 +246,7 @@ const CHARACTER_PROFILES = {
     relationships: {
       niko: 'Hubungan keluarga yang rumit dan intim. Tumbuh bersama, hampir seperti saudara — tapi ada momen di masa remaja yang membuat keduanya canggung. Sekarang mereka terikat oleh rahasia yang lebih gelap.',
       lana: 'Lana menulis tentang keluarganya. Farah ingin dia berhenti — dan bersedia membayar harga apapun. Ketakutan Farah adalah senjata favorit Lana.',
-      kira: 'Tahu Kira bisa mengakses file-file berbahaya. Farah mencoba menyuap Kira — ditolak mentah-mentah. Sekarang Kira adalah ancaman terbesar.',
+      kira: 'Tahu Kai bisa mengakses file-file berbahaya. Farah mencoba menyuap Kai — ditolak mentah-mentah. Sekarang Kai adalah ancaman terbesar.',
       reza: 'Ex-detektif yang dulu menyelidiki keluarganya. Ada rasa bersalah yang membuat Farah kadang ingin jujur kepada Reza — tapi ego keluarga selalu menang.',
       sera: 'Sera melihat menembus fasad Farah. Farah tidak suka dianalisis — tapi diam-diam butuh seseorang yang melihat dirinya yang asli, bukan heiress.'
     },

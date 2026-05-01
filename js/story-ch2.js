@@ -23,8 +23,8 @@ const STORY_CH2 = {
     else if (pc === 'farah') text += `<p class="journal"><em>Rahasia. Di meja ini ada rahasiamu — dan rahasiamu bisa menghancurkan segalanya. Kau harus mengendalikan narasi. Kau harus bernegosiasi.</em></p>`;
     else if (pc === 'vira') text += `<p class="journal"><em>Permainan ini... kau sudah pernah memainkannya. Enam bulan lalu. Dan hasilnya — seseorang mati.</em></p>`;
 
-    text += `<p><span class="speaker arin">Arin</span> Kau menatap kelompokmu. Raut wajah mereka campuran antara takut dan determinasi. Semua orang bergerak ke Sayap Barat — bahkan yang paling ketakutan. Ancaman "diperhitungkan" cukup efektif.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Ruang Makan Wardhana adalah mimpi buruk aristokrat. Meja panjang kayu gelap, sepuluh kursi, chandelier yang lebih kecil dari yang di hall tapi entah kenapa lebih menakutkan. Di tengah meja: sepuluh gelas kristal terisi cairan gelap — wine? — dan sepuluh piring tertutup cloche perak.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Kau menatap kelompokmu. Raut wajah mereka campuran antara takut dan determinasi. Semua orang bergerak ke Sayap Barat — bahkan yang paling ketakutan. Ancaman "diperhitungkan" cukup efektif.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Ruang Makan Wardhana adalah mimpi buruk aristokrat. Meja panjang kayu gelap, sepuluh kursi, chandelier yang lebih kecil dari yang di hall tapi entah kenapa lebih menakutkan. Di tengah meja: sepuluh gelas kristal terisi cairan gelap — wine? — dan sepuluh piring tertutup cloche perak.</p>`;
 
     if (s.flags.stoppedDimasTea || s.flags.tekoContaminated) {
       text += `<p><span class="speaker dimas">Dimas</span> Matamu langsung ke gelas-gelas. Dimas sudah pernah mencampurkan sesuatu ke minuman. Apakah ini juga...?</p>`;
@@ -70,7 +70,7 @@ const STORY_CH2 = {
 
     if (s.flags.stoppedDimasTea || s.flags.sawDimasBottle) {
       text += `<p class="sound">— Kau menahan tangannya. "Kau. Menjauh dari minuman." —</p>`;
-      text += `<p><span class="speaker arin">Arin</span> Dimas menatapmu. Senyum sopannya tidak berubah. "Aku mencoba membantu, Arin."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Dimas menatapmu. Senyum sopannya tidak berubah. "Aku mencoba membantu, Arya."</p>`;
       text += `<p><span class="speaker sera">Sera</span>: "Biar aku yang tes." Dia mengambil strip pH dari tangan Dimas.</p>`;
     }
 
@@ -94,8 +94,8 @@ const STORY_CH2 = {
 
 'ch2_check_room': {
   text: `<p><span class="speaker reza">Reza</span> Kau memeriksa ruang makan. Pintu masuk dan keluar — hanya satu. Jendela — teralis. Dinding — solid.</p>
-<p><span class="speaker kira">Kira</span> melakukan scan cepat di laptopnya. "Dua kamera tersembunyi — di chandelier dan di belakang lukisan di dinding utara. Dan... speaker di bawah meja."</p>
-<p><span class="speaker kira">Kira</span> "Yang menarik," tambah Kira, "kunci pintu ruangan ini juga terhubung ke server. Bisa dikunci dari luar kapan saja."</p>
+<p><span class="speaker kira">Kai</span> melakukan scan cepat di laptopnya. "Dua kamera tersembunyi — di chandelier dan di belakang lukisan di dinding utara. Dan... speaker di bawah meja."</p>
+<p><span class="speaker kira">Kai</span> "Yang menarik," tambah Kai, "kunci pintu ruangan ini juga terhubung ke server. Bisa dikunci dari luar kapan saja."</p>
 <p class="sound">— Kau menatap satu-satunya pintu. Kalau masuk dan pintu terkunci — terjebak lagi. —</p>
 <p><span class="speaker reza">Reza</span>: "Aku jaga pintu. Dari luar. Kalau ada masalah, aku dobrak."</p>`,
   choices: [
@@ -186,8 +186,8 @@ const STORY_CH2 = {
 
 'ch2_vira_floor3_confront': {
   text: `<p><span class="speaker vira">Vira</span> Kau membuka pintu. Vira melompat berdiri, matanya lebar — ketakutan murni.</p>
-<p><span class="speaker arin">Arin</span> "Arin—"</p>
-<p><span class="speaker arin">Arin</span> "Siapa yang memaksamu? Lepaskan siapa?"</p>
+<p><span class="speaker arin">Arya</span> "Arya?—"</p>
+<p><span class="speaker arin">Arya</span> "Siapa yang memaksamu? Lepaskan siapa?"</p>
 <p><span class="speaker vira">Vira</span> Vira menelan air matanya. Butuh waktu — tapi dia bicara.</p>
 <p><span class="speaker vira">Vira</span> "Adikku. Sana. Dia hilang tiga bulan lalu. Aku menerima pesan — dari nomor anonim — yang bilang dia aman, tapi aku harus melakukan apa yang diminta. Datang ke mansion. Ambil hard drive. Jangan bicara pada siapapun."</p>
 <p><span class="speaker vira">Vira</span> "Dan tiga yang harus mati?"</p>
@@ -271,7 +271,7 @@ const STORY_CH2 = {
     text += `<p><span class="speaker dimas">Dimas</span> membaca kartunya tanpa ekspresi. Tapi matanya — lagi-lagi — bergerak ke Sera. Saat Sera tidak melihat, Dimas menatapnya dengan intensitas yang melebihi ketertarikan normal. Kau mengenali tatapan itu dari kasus-kasus yang pernah kau liput: obsesi.</p>`;
     text += `<p><span class="speaker juno">Juno</span> meremas kartunya jadi bola. "Ini bullshit manipulatif." Suaranya keras, impulsif — Juno si pemantik konflik, yang selalu bereaksi dengan api. Reza di sebelahnya menyentuh lengannya pelan — gesture yang tenang, menenangkan. Juno berhenti. Mereka saling pandang selama satu detik. Lalu Juno menghembuskan napas.</p>`;
     text += `<p><span class="speaker vira">Vira</span> membaca kartunya dan tertawa kecil — tawa yang terlalu pelan, terlalu gelap. Eksentrik sampai di ujung. "Menarik," bisiknya. Matanya bertemu mata Niko dari ujung meja — dan di antara mereka, seluruh sejarah toxic love mereka mengalir: rindu, marah, sakit, dan sesuatu yang lebih berbahaya dari semua itu.</p>`;
-    text += `<p><span class="speaker kira">Kira</span> sudah memfoto kartunya dan menjalankan sesuatu di laptopnya. "Font di kartu ini dicetak dengan printer laser. Kertas acid-free, 120 gram. Bukan barang murah." Eksentrik dan brilliant — Kira hidup di dunia detail yang tidak dilihat orang lain.</p>`;
+    text += `<p><span class="speaker kira">Kai</span> sudah memfoto kartunya dan menjalankan sesuatu di laptopnya. "Font di kartu ini dicetak dengan printer laser. Kertas acid-free, 120 gram. Bukan barang murah." Eksentrik dan brilliant — Kai hidup di dunia detail yang tidak dilihat orang lain.</p>`;
     text += `<p><span class="speaker sera">Sera</span> Di bawah meja, kau merasakan tangan Sera menyentuh tanganmu. Bukan genggaman — hanya ujung jari yang bertemu. Komunikasi tanpa kata. <em>Aku di sini.</em></p>`;
     text += `<p class="sound">— Speaker: "Diskusikanlah. Tiga puluh menit dimulai." —</p>`;
 
@@ -340,9 +340,9 @@ const STORY_CH2 = {
   text: `<p><span class="speaker niko">Niko</span>: "Aku pakai sistem smart home profesional. Password kuat. Tapi..."</p>
 <p><span class="speaker niko">Niko</span> "Tapi?"</p>
 <p><span class="speaker niko">Niko</span> "Aku menyewa kontraktor IT untuk instalasinya. Tiga bulan lalu. Perusahaan kecil — referensi bagus. Tapi sekarang aku berpikir..." dia mengusap wajahnya, "...mereka punya akses ke semuanya selama instalasi."</p>
-<p><span class="speaker kira">Kira</span> mengangkat tangan. "Nama perusahaan?"</p>
-<p><span class="speaker kira">Kira</span> "PT Benang Digital."</p>
-<p><span class="speaker kira">Kira</span> Kira mengetik di laptopnya. "Registrasi perusahaan... tidak ada. PT Benang Digital tidak terdaftar di database manapun."</p>
+<p><span class="speaker kira">Kai</span> mengangkat tangan. "Nama perusahaan?"</p>
+<p><span class="speaker kira">Kai</span> "PT Benang Digital."</p>
+<p><span class="speaker kira">Kai</span> Kai mengetik di laptopnya. "Registrasi perusahaan... tidak ada. PT Benang Digital tidak terdaftar di database manapun."</p>
 <p>"Benang," bisik <span class="speaker sera">Sera</span>. "Penenun. Benang. Ini semua tentang benang dan simpul."</p>
 <p class="sound">— Keheningan. —</p>`,
   choices: [
@@ -382,7 +382,7 @@ const STORY_CH2 = {
 <p class="sound">— Satu per satu, kartu dibuka. Kekacauan informasi: —</p>
 <p><span class="speaker sera">Sera</span> • Sera mendapat: "Juno pernah terlibat penyelundupan obat" (PALSU — Juno bersih, tapi pernah mural di area itu) dan "Vira dikurung selama menghilang, bukan pergi sukarela" (BENAR).</p>
 <p><span class="speaker sera">Sera</span> • Juno mendapat: "Sera pernah gagal mencegah bunuh diri pasien" (BENAR — trauma terbesarnya) dan "Farah meracuni kakeknya untuk warisan" (PALSU — tapi Farah gemetar saat mendengarnya).</p>
-<p><span class="speaker niko">Niko</span> • Lana mendapat: "Niko tahu tentang Sang Penenun sejak awal" (PALSU — setengah) dan "Kira pernah meretas bank dan mencuri data" (BENAR — tapi sebagai whistleblower).</p>
+<p><span class="speaker niko">Niko</span> • Lana mendapat: "Niko tahu tentang Sang Penenun sejak awal" (PALSU — setengah) dan "Kai pernah meretas bank dan mencuri data" (BENAR — tapi sebagai whistleblower).</p>
 <p><span class="speaker niko">Niko</span> Pola muncul. Setiap kartu dirancang untuk memecah dua orang yang dekat. Sera vs Juno. Niko vs kelompok. Farah vs kepercayaan.</p>
 <p><span class="speaker sera">Sera</span>: "Ini bukan permainan informasi. Ini psyops. Serangan psikologis untuk menghancurkan kelompok dari dalam."</p>`,
   choices: [
@@ -414,7 +414,7 @@ const STORY_CH2 = {
 <p><span class="speaker farah">Farah</span>: makin panik. Minum wine meski kau memperingatkan — dua gelas sudah. Tangannya gemetar.</p>
 <p><span class="speaker niko">Niko</span>: berkeringat. Berusaha mengendalikan situasi tapi kehilangan grip. Dia bukan dalang — dia overwhelmed.</p>
 <p><span class="speaker vira">Vira</span>: absen. Kau baru sadar — Vira tidak ada di meja.</p>
-<p><span class="speaker kira">Kira</span>: di laptop, separuh perhatian di diskusi. Jarinya bergerak nonstop. Mencari sesuatu.</p>
+<p><span class="speaker kira">Kai</span>: di laptop, separuh perhatian di diskusi. Jarinya bergerak nonstop. Mencari sesuatu.</p>
 <p>Dan detail kecil: gelas <span class="speaker farah">Farah</span> terisi lebih banyak dari yang lain. Seolah seseorang menambahkan isi saat tidak ada yang memperhatikan.</p>`,
   shake: true,
   choices: [
@@ -600,10 +600,10 @@ const STORY_CH2 = {
       text += `<p><span class="speaker reza">Reza</span> menarik Dimas menjauh. "Kau JANGAN sentuh dia."</p>`;
       text += `<p><span class="speaker farah">Farah</span> Farah hidup — tapi unconscious. Satu korban, tanpa kematian. Untuk sekarang.</p>`;
     } else if (s.flags.savedFarahDrink || s.flags.stoppedDimasTea) {
-      text += `<p><span class="speaker kira">Kira</span> tergeletak di lantai dapur. Laptopnya pecah di sampingnya — seseorang menghantamkan sesuatu ke kepalanya.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> tergeletak di lantai dapur. Laptopnya pecah di sampingnya — seseorang menghantamkan sesuatu ke kepalanya.</p>`;
       text += `<p class="sound">— Darah. Nyata. Di lantai, di dinding, di counter. —</p>`;
       text += `<p><span class="speaker reza">Reza</span> memeriksa nadinya. "Hidup. Tapi cedera kepala parah. Dia butuh rumah sakit — SEKARANG."</p>`;
-      text += `<p><span class="speaker kira">Kira</span> Laptopnya hancur. Kira — satu-satunya yang bisa hack sistem — lumpuh.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> Laptopnya hancur. Kai — satu-satunya yang bisa hack sistem — lumpuh.</p>`;
     } else {
       text += `<p><span class="speaker farah">Farah</span> tergeletak di lantai dapur. <span class="speaker dimas">Dimas</span> memeriksa nadinya.</p>`;
       text += `<p><span class="speaker dimas">Dimas</span> "Tidak sadar. Reaksi terhadap substansi — bukan alami." Dimas bekerja dengan efisiensi klinis. "Perlu posisi recovery."</p>`;
@@ -647,7 +647,7 @@ const STORY_CH2 = {
       }
     },
     {
-      text: "Kira yang diserang. Sang Penenun mengincar hacker kita. Kita butuh plan B.",
+      text: "Kai yang diserang. Sang Penenun mengincar hacker kita. Kita butuh plan B.",
       condition: (s) => s.flags.savedFarahDrink || s.flags.stoppedDimasTea,
       next: 'ch3_start',
       effect: (s) => {

@@ -1,6 +1,6 @@
 /* ============================================================
    SIMPUL TERAKHIR — BAB 6: Konfrontasi
-   Pertempuran final dimulai. Arin dan yang tersisa melawan
+   Pertempuran final dimulai. Arya dan yang tersisa melawan
    sistem Sang Penenun. Siapa yang menang menentukan ending.
    ============================================================ */
 
@@ -10,7 +10,7 @@ const STORY_CH6 = {
   chapter: 4,
   text: (s) => {
     let text = `<p class="sound">— Countdown: <strong>00:30:00</strong>. Tiga puluh menit sebelum fajar. Tiga puluh menit yang akan menentukan apakah siklus ini berakhir — atau berlanjut. —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Yang tersisa: `;
+    text += `<p><span class="speaker arin">Arya</span> Yang tersisa: `;
     let aliveNames = [];
     Engine.CHARACTERS.forEach(c => { if (s.alive[c]) aliveNames.push(Engine.CHAR_DISPLAY[c]); });
     text += aliveNames.join(', ') + `.</p>`;
@@ -27,13 +27,13 @@ const STORY_CH6 = {
       text += `<p class="journal"><em>Terakhir kali kau turun ke sana, kau hampir tidak kembali. Tapi kali ini berbeda. Kali ini kau tidak sendirian. Kali ini kau punya sesuatu untuk diperjuangkan.</em></p>`;
     }
 
-    text += `<p><span class="speaker arin">Arin</span> Kau sudah tahu semuanya. Ragil Pramudya — Sang Penenun — hidup di bawah mansion. Operator-operatornya bermain ganda. Sistem ini beroperasi selama setengah abad. Dan malam ini bisa jadi yang terakhir — jika kau bisa menghancurkannya.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Tiga puluh menit. Dan dalam tiga puluh menit itu, setiap orang di ruangan ini menunjukkan siapa mereka sebenarnya:</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Kau sudah tahu semuanya. Ragil Pramudya — Sang Penenun — hidup di bawah mansion. Operator-operatornya bermain ganda. Sistem ini beroperasi selama setengah abad. Dan malam ini bisa jadi yang terakhir — jika kau bisa menghancurkannya.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Tiga puluh menit. Dan dalam tiga puluh menit itu, setiap orang di ruangan ini menunjukkan siapa mereka sebenarnya:</p>`;
 
     if (pc !== 'sera') {
-      text += `<p><span class="speaker sera">Sera</span> menarikmu ke samping. "${pc === 'arin' ? 'Arin' : Engine.playerName()}, jangan turun ke sana sendirian." Matanya merah. Psikolog yang akhirnya mengakui bahwa dia tidak bisa profesional malam ini.</p>`;
+      text += `<p><span class="speaker sera">Sera</span> menarikmu ke samping. "${pc === 'arin' ? 'Arya' : Engine.playerName()}, jangan turun ke sana sendirian." Matanya merah. Psikolog yang akhirnya mengakui bahwa dia tidak bisa profesional malam ini.</p>`;
     } else {
-      text += `<p><span class="speaker arin">Arin</span> Kau menarik Arin ke samping. "Jangan turun ke sana sendirian." Matamu merah — dan untuk pertama kalinya dalam kariermu, kau tidak berusaha menyembunyikannya.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Kau menarik Arya ke samping. "Jangan turun ke sana sendirian." Matamu merah — dan untuk pertama kalinya dalam kariermu, kau tidak berusaha menyembunyikannya.</p>`;
     }
 
     if (pc !== 'niko') {
@@ -50,15 +50,15 @@ const STORY_CH6 = {
       text += `<p><span class="speaker farah">Farah</span> "Aku akan menjaga yang di atas," katamu. Egoisme? Tidak. Strategi. Seseorang harus memastikan pintu keluar tetap ada.</p>`;
     }
     if (pc !== 'kira') {
-      text += `<p><span class="speaker kira">Kira</span> sudah menghubungkan laptopnya ke sistem. "Gue bisa shut down sistem dari sini. Kalau lo turun, gue cover dari atas."</p>`;
+      text += `<p><span class="speaker kira">Kai</span> sudah menghubungkan laptopnya ke sistem. "Gue bisa shut down sistem dari sini. Kalau lo turun, gue cover dari atas."</p>`;
     } else {
-      text += `<p><span class="speaker kira">Kira</span> Lo hubungkan laptop ke sistem. "Gue bisa shut down semuanya dari sini." Jari-jarimu sudah nge-map seluruh arsitektur digital mansion. Sekarang tinggal eksekusi.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> Lo hubungkan laptop ke sistem. "Gue bisa shut down semuanya dari sini." Jari-jarimu sudah nge-map seluruh arsitektur digital mansion. Sekarang tinggal eksekusi.</p>`;
     }
 
     if (s.flags.confrontedPenenun || s.flags.listenedToPenenun) {
-      text += `<p><span class="speaker kira">Kira</span> Kau sudah bertemu Ragil. Sudah melihat wajah monster di balik simpul. Sekarang pertanyaannya: bagaimana mengakhiri?</p>`;
+      text += `<p><span class="speaker kira">Kai</span> Kau sudah bertemu Ragil. Sudah melihat wajah monster di balik simpul. Sekarang pertanyaannya: bagaimana mengakhiri?</p>`;
     } else {
-      text += `<p><span class="speaker kira">Kira</span> Bukti digital dari lair B-3 ada di tanganmu. Tapi Ragil masih di bawah sana — masih mengendalikan.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> Bukti digital dari lair B-3 ada di tanganmu. Tapi Ragil masih di bawah sana — masih mengendalikan.</p>`;
     }
 
     text += `<p class="sound">— Tiga opsi. Tiga jalan menuju akhir. —</p>`;
@@ -112,17 +112,17 @@ const STORY_CH6 = {
 
     if (s.flags.confrontedPenenun || s.flags.listenedToPenenun) {
       text += `<p class="sound">— Ragil masih di kursi rodanya. Menunggu. Seolah dia TAHU kau akan kembali. —</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Arin. Kau kembali." Senyum tipis. "Aku tidak heran."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Arya. Kau kembali." Senyum tipis. "Aku tidak heran."</p>`;
     } else {
-      text += `<p><span class="speaker arin">Arin</span> Dan di sana — di kursi roda di tengah ruangan — pria tua. Ragil Pramudya. Sang Penenun.</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Ah. Tamu pertama yang sampai ke sini tanpa diundang." Suaranya serak tapi tajam. "Impressive."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Dan di sana — di kursi roda di tengah ruangan — pria tua. Ragil Pramudya. Sang Penenun.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Ah. Tamu pertama yang sampai ke sini tanpa diundang." Suaranya serak tapi tajam. "Impressive."</p>`;
     }
 
-    text += `<p><span class="speaker arin">Arin</span> "Ini berakhir, Ragil." Suaramu lebih stabil dari yang kau rasakan.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Ya, ini berakhir. Tapi bukan seperti yang kau bayangkan." Dia menekan tombol di kursi rodanya.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> Monitor berubah. Menampilkan feed langsung: beberapa wajah. Orang-orang yang kau tidak kenal, duduk di ruangan berbeda, menonton feed dari mansion ini.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Dewan Penenun," kata Ragil. "Aku hanya aktor. Mereka — sutradara, produser, dan penonton. Semuanya sekaligus."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Setiap orang kaya yang bosan. Setiap dalang yang butuh hiburan. Mereka membayar untuk menonton. Dan siklus berlanjut — bukan karena aku, tapi karena ADA PASAR."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Ini berakhir, Ragil." Suaramu lebih stabil dari yang kau rasakan.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Ya, ini berakhir. Tapi bukan seperti yang kau bayangkan." Dia menekan tombol di kursi rodanya.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Monitor berubah. Menampilkan feed langsung: beberapa wajah. Orang-orang yang kau tidak kenal, duduk di ruangan berbeda, menonton feed dari mansion ini.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Dewan Penenun," kata Ragil. "Aku hanya aktor. Mereka — sutradara, produser, dan penonton. Semuanya sekaligus."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Setiap orang kaya yang bosan. Setiap dalang yang butuh hiburan. Mereka membayar untuk menonton. Dan siklus berlanjut — bukan karena aku, tapi karena ADA PASAR."</p>`;
 
     return text;
   },
@@ -157,11 +157,11 @@ const STORY_CH6 = {
 },
 
 'ch6_cut_feed': {
-  text: `<p><span class="speaker arin">Arin</span> Kau menarik kabel. Satu per satu. Monitor mati. Ragil berteriak — suara seorang pria tua yang kehilangan satu-satunya hal yang masih dia kendalikan.</p>
-<p><span class="speaker arin">Arin</span> "JANGAN! Tanpa feed, mereka akan mengirim cleanup crew! Mereka akan MENGHILANGKAN SEGALANYA — termasuk kalian!"</p>
-<p><span class="speaker arin">Arin</span> "Biarkan mereka datang. Kita sudah punya bukti."</p>
-<p><span class="speaker arin">Arin</span> Monitor terakhir mati. Gelap. Ragil terdiam — lalu tertawa. Tawa yang mati di tengah-tengah.</p>
-<p><span class="speaker arin">Arin</span> "Kau pikir kau menang? Kau baru saja memotong satu benang. Jaring tetap utuh."</p>`,
+  text: `<p><span class="speaker arin">Arya</span> Kau menarik kabel. Satu per satu. Monitor mati. Ragil berteriak — suara seorang pria tua yang kehilangan satu-satunya hal yang masih dia kendalikan.</p>
+<p><span class="speaker arin">Arya</span> "JANGAN! Tanpa feed, mereka akan mengirim cleanup crew! Mereka akan MENGHILANGKAN SEGALANYA — termasuk kalian!"</p>
+<p><span class="speaker arin">Arya</span> "Biarkan mereka datang. Kita sudah punya bukti."</p>
+<p><span class="speaker arin">Arya</span> Monitor terakhir mati. Gelap. Ragil terdiam — lalu tertawa. Tawa yang mati di tengah-tengah.</p>
+<p><span class="speaker arin">Arya</span> "Kau pikir kau menang? Kau baru saja memotong satu benang. Jaring tetap utuh."</p>`,
   choices: [
     {
       text: "Bawa Ragil ke atas sebagai saksi hidup",
@@ -185,20 +185,20 @@ const STORY_CH6 = {
 
 'ch6_trace_back': {
   text: (s) => {
-    let text = `<p><span class="speaker arin">Arin</span> "Koneksi dua arah berarti metadata dua arah." Kau duduk di workstation Ragil.</p>`;
+    let text = `<p><span class="speaker arin">Arya</span> "Koneksi dua arah berarti metadata dua arah." Kau duduk di workstation Ragil.</p>`;
 
     if (s.alive.kira) {
-      text += `<p><span class="speaker kira">Kira</span> — masih hidup, masih jenius — duduk di sampingmu. "Aku bisa trace IP mereka. Berikan aku lima menit."</p>`;
-      text += `<p><span class="speaker kira">Kira</span> Lima menit yang terasa seperti seumur hidup. Kira mengetik. Ragil menonton — wajahnya berubah dari arogan menjadi... ketakutan.</p>`;
-      text += `<p><span class="speaker kira">Kira</span> "Stop. STOP. Kau tidak tahu apa yang kau lakukan—"</p>`;
-      text += `<p><span class="speaker kira">Kira</span> "IP locked. Enam lokasi. Dubai, Singapura, London, New York, Jakarta, dan..." Kira berhenti. "...gedung pemerintah?"</p>`;
+      text += `<p><span class="speaker kira">Kai</span> — masih hidup, masih jenius — duduk di sampingmu. "Aku bisa trace IP mereka. Berikan aku lima menit."</p>`;
+      text += `<p><span class="speaker kira">Kai</span> Lima menit yang terasa seperti seumur hidup. Kai mengetik. Ragil menonton — wajahnya berubah dari arogan menjadi... ketakutan.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> "Stop. STOP. Kau tidak tahu apa yang kau lakukan—"</p>`;
+      text += `<p><span class="speaker kira">Kai</span> "IP locked. Enam lokasi. Dubai, Singapura, London, New York, Jakarta, dan..." Kai berhenti. "...gedung pemerintah?"</p>`;
     } else {
-      text += `<p><span class="speaker kira">Kira</span> Tanpa Kira, kau harus melakukannya sendiri. Terbatas. Tapi kau cukup paham teknologi untuk membaca log koneksi.</p>`;
-      text += `<p><span class="speaker kira">Kira</span> Enam IP address yang terhubung malam ini. Enam lokasi. Enam penonton yang membayar untuk menyaksikan manusia mati.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> Tanpa Kai, kau harus melakukannya sendiri. Terbatas. Tapi kau cukup paham teknologi untuk membaca log koneksi.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> Enam IP address yang terhubung malam ini. Enam lokasi. Enam penonton yang membayar untuk menyaksikan manusia mati.</p>`;
     }
 
     text += `<p class="sound">— Ragil: "Mereka akan membunuhmu. Mereka akan membunuh semua orang yang tahu." —</p>`;
-    text += `<p><span class="speaker kira">Kira</span> "Mungkin. Tapi data ini sudah disimpan."</p>`;
+    text += `<p><span class="speaker kira">Kai</span> "Mungkin. Tapi data ini sudah disimpan."</p>`;
 
     return text;
   },
@@ -217,11 +217,11 @@ const STORY_CH6 = {
 },
 
 'ch6_destroy_lair': {
-  text: `<p><span class="speaker kira">Kira</span> Kau menghancurkan semuanya. Secara fisik. Server ditarik dari rak dan dihantam. Monitor diinjak. Kabel dicabut dan dipotong.</p>
-<p><span class="speaker kira">Kira</span> Ragil menangis. Bukan tangisan manipulatif — tangisan seseorang yang melihat karya hidupnya dihancurkan.</p>
-<p><span class="speaker kira">Kira</span> "Lima puluh tahun. Lima puluh tahun kerja. Kau menghancurkannya dalam lima menit."</p>
-<p><span class="speaker kira">Kira</span> "Kerja? Kau menyebutnya KERJA?" Suaramu bergetar dari amarah dan adrenalin.</p>
-<p><span class="speaker kira">Kira</span> Saat server terakhir mati, kau merasakan — sesuatu. Bukan kebebasan. Bukan kemenangan. Sesuatu yang lebih complicated. Kesadaran bahwa menghancurkan sistem tidak menghancurkan orang-orang yang membuatnya.</p>`,
+  text: `<p><span class="speaker kira">Kai</span> Kau menghancurkan semuanya. Secara fisik. Server ditarik dari rak dan dihantam. Monitor diinjak. Kabel dicabut dan dipotong.</p>
+<p><span class="speaker kira">Kai</span> Ragil menangis. Bukan tangisan manipulatif — tangisan seseorang yang melihat karya hidupnya dihancurkan.</p>
+<p><span class="speaker kira">Kai</span> "Lima puluh tahun. Lima puluh tahun kerja. Kau menghancurkannya dalam lima menit."</p>
+<p><span class="speaker kira">Kai</span> "Kerja? Kau menyebutnya KERJA?" Suaramu bergetar dari amarah dan adrenalin.</p>
+<p><span class="speaker kira">Kai</span> Saat server terakhir mati, kau merasakan — sesuatu. Bukan kebebasan. Bukan kemenangan. Sesuatu yang lebih complicated. Kesadaran bahwa menghancurkan sistem tidak menghancurkan orang-orang yang membuatnya.</p>`,
   shake: true,
   choices: [
     {
@@ -237,9 +237,9 @@ const STORY_CH6 = {
 
 'ch6_burn_mansion': {
   text: (s) => {
-    let text = `<p><span class="speaker kira">Kira</span> "Bakar semuanya."</p>`;
+    let text = `<p><span class="speaker kira">Kai</span> "Bakar semuanya."</p>`;
     text += `<p class="sound">— Reaksi: kengerian. Dari semua orang. —</p>`;
-    text += `<p><span class="speaker sera">Sera</span>: "Arin, itu menghancurkan bukti—"</p>`;
+    text += `<p><span class="speaker sera">Sera</span>: "Arya, itu menghancurkan bukti—"</p>`;
     text += `<p><span class="speaker sera">Sera</span> "Bukti untuk siapa? Polisi? Pengadilan? Sistem ini MENCAKUP mereka. Satu-satunya cara menghancurkan jaringan laba-laba adalah membakar jaringnya."</p>`;
 
     if (s.alive.lana) {
@@ -344,14 +344,14 @@ const STORY_CH6 = {
     let text = `<p><span class="speaker juno">Juno</span> "Sebelum kita menghancurkan apapun — kirim bukti ke luar. Server, cloud, email, media. Semuanya."</p>`;
 
     if (s.alive.kira) {
-      text += `<p><span class="speaker kira">Kira</span>: "Aku bisa setup broadcast darurat. Butuh koneksi internet — dan mansion ini punya."</p>`;
-      text += `<p><span class="speaker kira">Kira</span> "Tapi sinyal ke ponsel kita dipotong?"</p>`;
-      text += `<p><span class="speaker kira">Kira</span> "Sinyal SELULER dipotong. Mansion punya fiber optic — untuk streaming feed ke penonton. Aku bisa hijack koneksi itu."</p>`;
+      text += `<p><span class="speaker kira">Kai</span>: "Aku bisa setup broadcast darurat. Butuh koneksi internet — dan mansion ini punya."</p>`;
+      text += `<p><span class="speaker kira">Kai</span> "Tapi sinyal ke ponsel kita dipotong?"</p>`;
+      text += `<p><span class="speaker kira">Kai</span> "Sinyal SELULER dipotong. Mansion punya fiber optic — untuk streaming feed ke penonton. Aku bisa hijack koneksi itu."</p>`;
     } else {
-      text += `<p><span class="speaker kira">Kira</span> Tanpa Kira, opsi terbatas. Tapi server mansion memiliki koneksi internet untuk streaming feed ke "Dewan Penenun" — koneksi yang bisa di-hijack.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> Tanpa Kai, opsi terbatas. Tapi server mansion memiliki koneksi internet untuk streaming feed ke "Dewan Penenun" — koneksi yang bisa di-hijack.</p>`;
     }
 
-    text += `<p><span class="speaker arin">Arin</span> Rencana: upload semua bukti ke multiple cloud services, kirim ke media besar, police tip lines, dan podcast Arin sendiri — sebelum Ragil bisa memotong koneksi.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Rencana: upload semua bukti ke multiple cloud services, kirim ke media besar, police tip lines, dan podcast Arya sendiri — sebelum Ragil bisa memotong koneksi.</p>`;
     text += `<p><span class="speaker lana">Lana</span> "Kalau ini berhasil," , "tidak ada coverup yang bisa menghapus. Terlalu banyak salinan di terlalu banyak tempat."</p>`;
     text += `<p><span class="speaker lana">Lana</span> "Dan kalau gagal?"</p>`;
     text += `<p><span class="speaker lana">Lana</span> "Kita masih punya rencana B. Api."</p>`;
@@ -375,20 +375,20 @@ const STORY_CH6 = {
     let text = `<p class="sound">— Ruang server B-2. Workstation Ragil. —</p>`;
 
     if (s.alive.kira) {
-      text += `<p><span class="speaker kira">Kira</span> Kira mengetik dengan kecepatan yang seharusnya tidak mungkin dalam kondisi terluka dan kelelahan. Adrenalin dan purpose — campuran yang lebih kuat dari kafein manapun.</p>`;
+      text += `<p><span class="speaker kira">Kai</span> Kai mengetik dengan kecepatan yang seharusnya tidak mungkin dalam kondisi terluka dan kelelahan. Adrenalin dan purpose — campuran yang lebih kuat dari kafein manapun.</p>`;
     }
 
     text += `<p class="sound">— Upload dimulai. Progress bar bergerak — terlalu lambat untuk kondisi ini. —</p>`;
     text += `<p class="sound">— 10%... 25%... 40%... —</p>`;
     text += `<p class="sound">— Alarm baru. Ragil mendeteksi upload dari B-3. —</p>`;
-    text += `<p><span class="speaker kira">Kira</span> Speaker: <em>"Upload tidak diotorisasi terdeteksi. Counter-measure aktif dalam 60 detik."</em></p>`;
+    text += `<p><span class="speaker kira">Kai</span> Speaker: <em>"Upload tidak diotorisasi terdeteksi. Counter-measure aktif dalam 60 detik."</em></p>`;
     text += `<p class="sound">— 55%... 70%... —</p>`;
-    text += `<p><span class="speaker kira">Kira</span> Counter-measure: seluruh sistem akan di-wipe. Ragil lebih rela menghancurkan bukti daripada membiarkannya keluar.</p>`;
+    text += `<p><span class="speaker kira">Kai</span> Counter-measure: seluruh sistem akan di-wipe. Ragil lebih rela menghancurkan bukti daripada membiarkannya keluar.</p>`;
     text += `<p class="sound">— 85%... 90%... —</p>`;
     text += `<p class="sound">— Layar berkedip. Sistem mulai shutdown sequence. —</p>`;
     text += `<p class="sound">— 95%... 97%... 99%... —</p>`;
     text += `<p class="sound">— COMPLETE. Satu detik sebelum wipe. —</p>`;
-    text += `<p><span class="speaker kira">Kira</span> Data sudah di cloud. Di email. Di server yang tersebar di empat benua. Tidak bisa dihapus.</p>`;
+    text += `<p><span class="speaker kira">Kai</span> Data sudah di cloud. Di email. Di server yang tersebar di empat benua. Tidak bisa dihapus.</p>`;
 
     return text;
   },

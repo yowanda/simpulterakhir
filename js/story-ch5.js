@@ -11,16 +11,16 @@ const STORY_CH5 = {
   text: (s) => {
     let text = `<p class="sound">— Countdown: <strong>01:00:00</strong>. Satu jam sebelum fajar. Dan kebenaran — seperti fajar itu sendiri — mulai menyingsing melalui kegelapan. —</p>`;
 
-    text += `<p><span class="speaker arin">Arin</span> Yang tersisa berkumpul di perpustakaan — ruangan paling aman yang bisa dibarricade dari dalam. Kau berdiri di tengah, bukti-bukti tersebar di meja panjang seperti peta operasi perang.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> Yang tersisa berkumpul di perpustakaan — ruangan paling aman yang bisa dibarricade dari dalam. Kau berdiri di tengah, bukti-bukti tersebar di meja panjang seperti peta operasi perang.</p>`;
 
     // Player-specific ch5 perspective
     const pc = s.playerCharacter || 'arin';
     if (pc === 'arin') {
       text += `<p><span class="speaker sera">Sera</span> Sera duduk di sebelahmu. Tidak ada lagi pretense profesional — tangannya menggenggam tanganmu di bawah meja, dan kau menggenggam balik. Kalau ini malam terakhir, setidaknya kalian tidak harus melewatinya sendiri.</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Arin." Suara Sera berbisik, hanya untukmu. "Apapun yang terjadi setelah ini — aku ingin kau tahu bahwa aku..." Dia berhenti. Psikolog yang bisa membaca jiwa semua orang tapi tidak bisa mengucapkan tiga kata kepada satu orang. "...aku akan ada di sini."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Arya." Suara Sera berbisik, hanya untukmu. "Apapun yang terjadi setelah ini — aku ingin kau tahu bahwa aku..." Dia berhenti. Psikolog yang bisa membaca jiwa semua orang tapi tidak bisa mengucapkan tiga kata kepada satu orang. "...aku akan ada di sini."</p>`;
     } else if (pc === 'sera') {
-      text += `<p><span class="speaker arin">Arin</span> Arin berdiri di tengah ruangan, menyusun bukti. Kau duduk di sebelahnya — dan tanganmu menggenggam tangannya di bawah meja. Bukan sebagai kolega. Bukan sebagai psikolog. Sebagai seseorang yang akhirnya berhenti menganalisis perasaannya dan hanya membiarkannya ada.</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Arin," bisikmu. "Apapun yang terjadi setelah ini—" Kau berhenti. Kau yang selalu bisa membaca jiwa orang — tidak bisa mengucapkan tiga kata kepada satu orang. "...aku akan ada di sini."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Arya berdiri di tengah ruangan, menyusun bukti. Kau duduk di sebelahnya — dan tanganmu menggenggam tangannya di bawah meja. Bukan sebagai kolega. Bukan sebagai psikolog. Sebagai seseorang yang akhirnya berhenti menganalisis perasaannya dan hanya membiarkannya ada.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Arya," bisikmu. "Apapun yang terjadi setelah ini—" Kau berhenti. Kau yang selalu bisa membaca jiwa orang — tidak bisa mengucapkan tiga kata kepada satu orang. "...aku akan ada di sini."</p>`;
     } else if (pc === 'niko') {
       text += `<p><span class="speaker vira">Vira</span> Kau duduk di sudut. Kepala di tangan. Dalang yang topengnya hancur. Semua ini — mansion, undangan, permainan — tanggung jawabmu. Dan Vira berjalan ke arahmu.</p>`;
       text += `<p><span class="speaker niko">Niko</span> "Niko." Suaranya lembut. Kau mendongak. "Aku minta maaf," bisikmu. "Atas semuanya." Dia tidak menjawab. Tapi dia duduk di sampingmu. Dan itu — momen kecil itu — lebih berarti dari semua rencana besar yang pernah kau buat.</p>`;
@@ -33,7 +33,7 @@ const STORY_CH5 = {
     } else if (pc === 'vira') {
       text += `<p><span class="speaker niko">Niko</span> Kau berjalan ke arah Niko. Pelan. Seperti mendekati binatang yang terluka — karena memang itu yang dia sekarang. "Niko." Dia mendongak. Dan di matanya, kau melihat sesuatu yang belum pernah kau lihat: kejujuran. "Aku minta maaf," bisiknya. Kau tidak menjawab. Tapi kau duduk di sampingnya.</p>`;
     } else {
-      text += `<p><span class="speaker arin">Arin</span> Di sekeliling ruangan, drama-drama kecil bermain: Sera dan Arin duduk berdekatan, tangan bertemu di bawah meja. Niko dan Vira dalam percakapan bisik yang penuh sejarah. Juno mengambil flask dari tangan Reza yang gemetar.</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Di sekeliling ruangan, drama-drama kecil bermain: Sera dan Arya duduk berdekatan, tangan bertemu di bawah meja. Niko dan Vira dalam percakapan bisik yang penuh sejarah. Juno mengambil flask dari tangan Reza yang gemetar.</p>`;
     }
     if (pc !== 'niko' && pc !== 'vira') {
       text += `<p>Di sudut ruangan: <span class="speaker niko">Niko</span> duduk sendirian, kepala di tangan. <span class="speaker vira">Vira</span> berjalan ke arahnya — pelan, lembut. "Aku minta maaf," bisik Niko. Vira tidak menjawab. Tapi dia duduk di sampingnya.</p>`;
@@ -48,7 +48,7 @@ const STORY_CH5 = {
     if (s.flags.hasManuscript) evidenceList.push('Manuscript Lana');
     if (s.flags.hasWalkieRecording) evidenceList.push('Rekaman walkie-talkie');
     if (s.flags.hasInsuranceDrive) evidenceList.push('Flash drive Polis Asuransi');
-    if (s.flags.foundStalkerPhotos) evidenceList.push('Foto-foto stalker Arin');
+    if (s.flags.foundStalkerPhotos) evidenceList.push('Foto-foto stalker Arya');
     if (s.items.includes('shrine_photos')) evidenceList.push('Foto shrine korban');
 
     if (evidenceList.length > 0) {
@@ -100,7 +100,7 @@ const STORY_CH5 = {
       text += `<p><span class="speaker lana">Lana</span> "Tiga orang. Konspirasi lengkap. Penulis, Pemotong, dan..."</p>`;
       text += `<p>Kau menatap <span class="speaker niko">Niko</span>.</p>`;
       text += `<p><span class="speaker niko">Niko</span> "...dan Pewaris."</p>`;
-      text += `<p><span class="speaker arin">Arin</span> Niko pucat. "Arin, aku bisa—"</p>`;
+      text += `<p><span class="speaker arin">Arya</span> Niko pucat. "Arya, aku bisa—"</p>`;
       text += `<p><span class="speaker lana">Lana</span> "Kau memberikan akses. Kau mengundang target yang Lana minta. Kau TAHU."</p>`;
     }
 
@@ -135,7 +135,7 @@ const STORY_CH5 = {
     } else if (s.difficulty === 2) {
       text += `<p><span class="speaker lana">Lana</span> "Lana dan Dimas. Kalian berdua."</p>`;
       text += `<p><span class="speaker lana">Lana</span> bertepuk tangan — tiga kali, pelan, sarkastis.</p>`;
-      text += `<p><span class="speaker arin">Arin</span> "Briliant, Arin. Tapi incomplete. Kau tahu siapa kami. Kau tidak tahu KENAPA."</p>`;
+      text += `<p><span class="speaker arin">Arya</span> "Briliant, Arya. Tapi incomplete. Kau tahu siapa kami. Kau tidak tahu KENAPA."</p>`;
       if (s.alive.dimas) {
         text += `<p><span class="speaker dimas">Dimas</span>: "Dan kau tidak tahu apa yang terjadi kalau kau salah."</p>`;
       }
@@ -165,11 +165,11 @@ const STORY_CH5 = {
     let text = `<p class="sound">— Dan kemudian — Wahyu. Kebenaran yang lebih gelap dari yang kau bayangkan. —</p>`;
 
     text += `<p><span class="speaker lana">Lana</span> bicara. Bukan dengan suara penjahat — tapi dengan suara seseorang yang sudah menanggung terlalu lama.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Kau mau tahu siapa Sang Penenun, Arin? Sang Penenun bukan orang. Sang Penenun adalah <em>sistem</em>."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Selama 50 tahun, keluarga-keluarga kaya membiayai 'simpul' ini. Bukan hobi — bisnis. Setiap tamu yang 'terputus' adalah loose end dari transaksi gelap mereka. Whistle-blower potensial. Saksi. Aktivis. Jurnalis."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Kau mau tahu siapa Sang Penenun, Arya? Sang Penenun bukan orang. Sang Penenun adalah <em>sistem</em>."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Selama 50 tahun, keluarga-keluarga kaya membiayai 'simpul' ini. Bukan hobi — bisnis. Setiap tamu yang 'terputus' adalah loose end dari transaksi gelap mereka. Whistle-blower potensial. Saksi. Aktivis. Jurnalis."</p>`;
     text += `<p class="sound">— Kau merasakan darah mengalir dingin. —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Aku — ya, aku operator. Tapi bukan karena pilihan. Kakak laki-lakiku adalah 'Saksi Selamat' tujuh tahun lalu. Dia bercerita. Tidak ada yang percaya. Dia bunuh diri setahun kemudian."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Aku masuk ke dalam sistem untuk menghancurkannya dari dalam. Aku menulis 'skenario' malam ini — tapi skenario yang SENGAJA cacat. Agar tamu selamat. Agar ada cukup bukti untuk membawa ini ke publik."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Aku — ya, aku operator. Tapi bukan karena pilihan. Kakak laki-lakiku adalah 'Saksi Selamat' tujuh tahun lalu. Dia bercerita. Tidak ada yang percaya. Dia bunuh diri setahun kemudian."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Aku masuk ke dalam sistem untuk menghancurkannya dari dalam. Aku menulis 'skenario' malam ini — tapi skenario yang SENGAJA cacat. Agar tamu selamat. Agar ada cukup bukti untuk membawa ini ke publik."</p>`;
 
     if (s.difficulty >= 2) {
       text += `<p><span class="speaker dimas">Dimas</span>: "Dan aku dokter forensik yang ditugaskan untuk cleanup. Tapi Lana merekrut aku — untuk mengubah operasi ini menjadi dokumentasi. Bukan pembunuh — ` + (s.difficulty >= 2 ? 'pengumpul bukti.' : '') + `"</p>`;
@@ -207,7 +207,7 @@ const STORY_CH5 = {
 'ch5_doubt': {
   text: (s) => {
     let text = `<p><span class="speaker sera">Sera</span> mendukungmu: "Profil narcissistic manipulator — mereka bisa membuat diri mereka terlihat sebagai korban. Classic DARVO: Deny, Attack, Reverse Victim and Offender."</p>`;
-    text += `<p><span class="speaker lana">Lana</span>: "Sera, aku mengerti skeptisisme-mu. Tapi tanyakan ini: kalau aku pembunuh, kenapa aku belum membunuh Arin? Dia ancaman terbesarku. Aku punya kesempatan sepanjang malam."</p>`;
+    text += `<p><span class="speaker lana">Lana</span>: "Sera, aku mengerti skeptisisme-mu. Tapi tanyakan ini: kalau aku pembunuh, kenapa aku belum membunuh Arya? Dia ancaman terbesarku. Aku punya kesempatan sepanjang malam."</p>`;
     text += `<p class="sound">— Poin yang valid. —</p>`;
 
     if (s.flags.knowsArinIsPlanned) {
@@ -281,7 +281,7 @@ const STORY_CH5 = {
 <p><span class="speaker lana">Lana</span> "Dan karena..." matanya berkaca-kaca, "...karena orang terakhir yang diam — kakak Lana — berakhir menggantung dirinya. Aku tidak mau menjadi cerita yang sama."</p>
 <p><span class="speaker sera">Sera</span> Sera mendekat. "Vira, kapan terakhir kali adikmu menghubungimu?"</p>
 <p><span class="speaker sera">Sera</span> "Dua jam lalu. Sebelum sinyal dipotong. Dia aman — untuk sekarang."</p>
-<p><span class="speaker arin">Arin</span> "Maka kita punya waktu." Sera menatapmu. "Arin?"</p>`,
+<p><span class="speaker arin">Arya</span> "Maka kita punya waktu." Sera menatapmu. "Arya?"</p>`,
   choices: [
     {
       text: '"Ayo ke sarang Sang Penenun. Akhiri ini."',
@@ -349,14 +349,14 @@ const STORY_CH5 = {
     text += `<p class="sound">— Dan di sana — bukan monster. Bukan iblis. Hanya seorang pria tua. —</p>`;
     text += `<p><span class="speaker vira">Vira</span> Ragil Pramudya. Atau apa yang tersisa darinya. Tujuh puluhan, kurus, membungkuk, dengan mata yang masih tajam di balik kerutan. Kursi roda. Selang oksigen.</p>`;
     text += `<p><span class="speaker vira">Vira</span> Dia tersenyum. "Akhirnya," katanya. Suaranya — suara yang tadi ada di speaker, tanpa filter elektronik — serak dan tipis seperti kertas tua.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Kau tahu berapa lama aku menunggu seseorang yang cukup pintar untuk sampai ke sini? 48 tahun. 48 siklus. Dan akhirnya — Arin Prasetya. Podcaster yang tidak bisa berhenti menggali."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Kau tahu berapa lama aku menunggu seseorang yang cukup pintar untuk sampai ke sini? 48 tahun. 48 siklus. Dan akhirnya — Arya Prasetya. Podcaster yang tidak bisa berhenti menggali."</p>`;
 
-    text += `<p><span class="speaker arin">Arin</span> "Kenapa?" tanyamu. Pertanyaan paling sederhana dan paling penting.</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Kenapa? Karena dunia ini penuh benang-benang yang kusut. Orang-orang yang seharusnya tidak ada. Kekacauan yang tidak ada solusinya. Dan seseorang harus merapikan. Seseorang harus menenun."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Kau membunuh orang."</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "Aku MERAPIKAN. Setiap simpul yang terputus membuat dunia sedikit lebih rapi. Sedikit lebih mudah dikendalikan. Dan sekarang..."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Kenapa?" tanyamu. Pertanyaan paling sederhana dan paling penting.</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Kenapa? Karena dunia ini penuh benang-benang yang kusut. Orang-orang yang seharusnya tidak ada. Kekacauan yang tidak ada solusinya. Dan seseorang harus merapikan. Seseorang harus menenun."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Kau membunuh orang."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "Aku MERAPIKAN. Setiap simpul yang terputus membuat dunia sedikit lebih rapi. Sedikit lebih mudah dikendalikan. Dan sekarang..."</p>`;
     text += `<p class="sound">— Dia menatapmu. —</p>`;
-    text += `<p><span class="speaker arin">Arin</span> "...simpul terakhir."</p>`;
+    text += `<p><span class="speaker arin">Arya</span> "...simpul terakhir."</p>`;
 
     return text;
   },
@@ -383,13 +383,13 @@ const STORY_CH5 = {
 },
 
 'ch5_listen_penenun': {
-  text: `<p><span class="speaker arin">Arin</span> "Kau mau dengarkan?" Ragil terlihat genuinely terkejut. "Tidak ada yang pernah mau mendengarkan."</p>
-<p><span class="speaker arin">Arin</span> "Hendarto — dia partner-ku. Tapi dia lemah. Selalu lemah. Aku yang merancang semuanya. Mansion. Sistem. Simpul. Dan setiap tahun, aku menyaksikan dari bawah sini."</p>
+  text: `<p><span class="speaker arin">Arya</span> "Kau mau dengarkan?" Ragil terlihat genuinely terkejut. "Tidak ada yang pernah mau mendengarkan."</p>
+<p><span class="speaker arin">Arya</span> "Hendarto — dia partner-ku. Tapi dia lemah. Selalu lemah. Aku yang merancang semuanya. Mansion. Sistem. Simpul. Dan setiap tahun, aku menyaksikan dari bawah sini."</p>
 <p><span class="speaker lana">Lana</span> "Tapi tahun ini berbeda. Lana — gadis itu — dia datang dengan agenda sendiri. Skenario yang SENGAJA cacat. Dia pikir bisa menghancurkan sistem dari dalam."</p>
 <p class="sound">— Dia tertawa — suara yang mengerikan. —</p>
 <p><span class="speaker lana">Lana</span> "Jadi aku improvisasi. Membajak skenarionya. Menambahkan... variabel. Dan hasilnya — kau. Di sini. Di depanku."</p>
-<p><span class="speaker arin">Arin</span> "Tapi ada satu hal yang kau perlu tahu, Arin: aku sudah sekarat. Kanker. Enam bulan, kata dokter — tapi itu sudah delapan bulan lalu. Malam ini memang simpul yang terakhir. Bagiku, setidaknya."</p>
-<p><span class="speaker arin">Arin</span> "Tapi sistem... sistem akan bertahan. Karena ada pewaris. Ada selalu pewaris."</p>`,
+<p><span class="speaker arin">Arya</span> "Tapi ada satu hal yang kau perlu tahu, Arya: aku sudah sekarat. Kanker. Enam bulan, kata dokter — tapi itu sudah delapan bulan lalu. Malam ini memang simpul yang terakhir. Bagiku, setidaknya."</p>
+<p><span class="speaker arin">Arya</span> "Tapi sistem... sistem akan bertahan. Karena ada pewaris. Ada selalu pewaris."</p>`,
   choices: [
     {
       text: '"Siapa pewarismu?"',
@@ -403,8 +403,8 @@ const STORY_CH5 = {
 },
 
 'ch5_grab_evidence_run': {
-  text: `<p><span class="speaker arin">Arin</span> Kau mengambil hard drive dari workstation. Menarik kabel. Monitor mati satu per satu.</p>
-<p><span class="speaker arin">Arin</span> Di belakangmu, suara langkah dari ruangan sebelah. Sang Penenun tahu ada yang masuk.</p>
+  text: `<p><span class="speaker arin">Arya</span> Kau mengambil hard drive dari workstation. Menarik kabel. Monitor mati satu per satu.</p>
+<p><span class="speaker arin">Arya</span> Di belakangmu, suara langkah dari ruangan sebelah. Sang Penenun tahu ada yang masuk.</p>
 <p><span class="speaker vira">Vira</span> "LARI!" .</p>
 <p><span class="speaker vira">Vira</span> Kalian berlari ke tangga — naik ke B-2, ke B-1, ke lantai satu. Napas memburu, kaki berdentam di batu.</p>
 <p><span class="speaker vira">Vira</span> Di belakang, suara alarm. Berbeda dari sebelumnya — lebih intens, lebih mendesak.</p>
@@ -537,8 +537,8 @@ const STORY_CH5 = {
     return `<p><span class="speaker lana">Lana</span> Kalian berhasil keluar — melalui jendela yang pecah, melalui hutan, melalui pagar kawat yang kalian panjat dengan tangan berdarah.</p>
 <p><span class="speaker lana">Lana</span> Fajar menyingsing saat kalian sampai di jalan utama. Mobil truk pengangkut kayu berhenti. Kalian dibawa ke kota terdekat.</p>
 <p><span class="speaker lana">Lana</span> Polisi datang ke mansion. Tapi saat mereka masuk — kosong. Bersih. Tidak ada bukti kematian. Tidak ada B-3. Tidak ada shrine. Seolah segalanya tidak pernah terjadi.</p>
-<p><span class="speaker arin">Arin</span> Arin mempublikasikan podcast tentang malam itu. Viral. Tapi — seperti yang Lana prediksi — tidak ada yang percaya. "Creepypasta terbaik tahun ini," tulis reviewer.</p>
-<p><span class="speaker arin">Arin</span> Siklus berlanjut. Tapi sekarang kau tahu. Dan mengetahui tanpa bisa bertindak — itu hukuman yang lebih buruk dari kematian.</p>`;
+<p><span class="speaker arin">Arya</span> Arya mempublikasikan podcast tentang malam itu. Viral. Tapi — seperti yang Lana prediksi — tidak ada yang percaya. "Creepypasta terbaik tahun ini," tulis reviewer.</p>
+<p><span class="speaker arin">Arya</span> Siklus berlanjut. Tapi sekarang kau tahu. Dan mengetahui tanpa bisa bertindak — itu hukuman yang lebih buruk dari kematian.</p>`;
   },
   fates: {
     arin: 'Hidup — tapi dihantui kebenaran yang tidak dipercaya siapapun'

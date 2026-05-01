@@ -1908,8 +1908,8 @@ const CharBrain = (() => {
 
   // ---- Helpers ----
   function charName(name) {
-    const display = { arin: 'Arin', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira',
-      reza: 'Reza', lana: 'Lana', dimas: 'Dimas', kira: 'Kira', farah: 'Farah' };
+    const display = { arin: 'Arya', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira',
+      reza: 'Reza', lana: 'Lana', dimas: 'Dimas', kira: 'Kai', farah: 'Farah' };
     return display[name] || name;
   }
 
