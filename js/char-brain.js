@@ -1,0 +1,919 @@
+/* ============================================================
+   SIMPUL TERAKHIR — Character Brain Engine
+   Autonomous NPC behavior system with decision trees.
+   Each character has their own "mind" — goals, personality,
+   emotional state, and decision-making backed by branching logic.
+   ============================================================ */
+
+const CharBrain = (() => {
+  // ---- Emotional States (State Machine) ----
+  const EMOTIONAL_STATES = {
+    calm:       { tension: 0,   nextUp: 'wary',      canAct: ['investigate', 'socialize', 'observe', 'plan', 'rest'] },
+    wary:       { tension: 20,  nextUp: 'suspicious', nextDown: 'calm',    canAct: ['investigate', 'observe', 'guard', 'question', 'plan'] },
+    suspicious: { tension: 40,  nextUp: 'panicked',   nextDown: 'wary',    canAct: ['investigate', 'confront', 'accuse', 'search', 'hide'] },
+    panicked:   { tension: 65,  nextUp: 'hostile',    nextDown: 'suspicious', canAct: ['flee', 'hide', 'confront', 'barricade', 'plead'] },
+    hostile:    { tension: 85,  nextUp: null,          nextDown: 'panicked', canAct: ['attack', 'confront', 'betray', 'sabotage', 'flee'] },
+    // Killer-only states
+    stalking:   { tension: 30,  nextUp: 'hunting',    nextDown: 'calm',    canAct: ['stalk', 'isolate', 'frame', 'manipulate', 'plan'] },
+    hunting:    { tension: 60,  nextUp: 'executing',  nextDown: 'stalking', canAct: ['isolate', 'trap', 'sabotage', 'strike', 'frame'] },
+    executing:  { tension: 90,  nextUp: null,          nextDown: 'hunting', canAct: ['strike', 'eliminate', 'frame', 'flee', 'coverup'] }
+  };
+
+  // ---- Goal Types ----
+  const GOAL_TYPES = {
+    survive:      { priority: 90, group: 'survivor' },
+    escape:       { priority: 85, group: 'survivor' },
+    investigate:  { priority: 70, group: 'survivor' },
+    protect:      { priority: 75, group: 'survivor' },
+    expose_killer:{ priority: 80, group: 'survivor' },
+    gather_allies:{ priority: 60, group: 'survivor' },
+    hide:         { priority: 65, group: 'survivor' },
+    negotiate:    { priority: 55, group: 'survivor' },
+    // Killer goals
+    eliminate:    { priority: 90, group: 'killer' },
+    isolate:      { priority: 75, group: 'killer' },
+    frame:        { priority: 70, group: 'killer' },
+    maintain_cover:{ priority: 85, group: 'killer' },
+    sabotage:     { priority: 65, group: 'killer' },
+    divide:       { priority: 60, group: 'killer' },
+    // Emotional goals
+    confess:      { priority: 40, group: 'emotional' },
+    reconcile:    { priority: 45, group: 'emotional' },
+    confront:     { priority: 50, group: 'emotional' }
+  };
+
+  // ---- Locations in the Mansion ----
+  const LOCATIONS = [
+    'galeri_timur', 'galeri_barat', 'aula_utama', 'perpustakaan',
+    'dapur', 'basement', 'koridor_utara', 'koridor_selatan',
+    'taman_dalam', 'menara', 'bunker_b3', 'kamar_atas',
+    'ruang_penyimpanan', 'atap', 'lorong_rahasia'
+  ];
+
+  const LOCATION_NAMES = {
+    galeri_timur: 'Galeri Timur', galeri_barat: 'Galeri Barat',
+    aula_utama: 'Aula Utama', perpustakaan: 'Perpustakaan',
+    dapur: 'Dapur', basement: 'Basement',
+    koridor_utara: 'Koridor Utara', koridor_selatan: 'Koridor Selatan',
+    taman_dalam: 'Taman Dalam', menara: 'Menara',
+    bunker_b3: 'Bunker B-3', kamar_atas: 'Kamar Atas',
+    ruang_penyimpanan: 'Ruang Penyimpanan', atap: 'Atap',
+    lorong_rahasia: 'Lorong Rahasia'
+  };
+
+  // Connected locations for movement
+  const LOCATION_CONNECTIONS = {
+    galeri_timur:     ['aula_utama', 'koridor_utara', 'lorong_rahasia'],
+    galeri_barat:     ['aula_utama', 'koridor_selatan', 'taman_dalam'],
+    aula_utama:       ['galeri_timur', 'galeri_barat', 'perpustakaan', 'dapur', 'koridor_utara', 'koridor_selatan'],
+    perpustakaan:     ['aula_utama', 'lorong_rahasia', 'menara'],
+    dapur:            ['aula_utama', 'basement', 'taman_dalam'],
+    basement:         ['dapur', 'bunker_b3', 'ruang_penyimpanan'],
+    koridor_utara:    ['aula_utama', 'galeri_timur', 'kamar_atas', 'menara'],
+    koridor_selatan:  ['aula_utama', 'galeri_barat', 'kamar_atas', 'taman_dalam'],
+    taman_dalam:      ['galeri_barat', 'dapur', 'koridor_selatan', 'atap'],
+    menara:           ['perpustakaan', 'koridor_utara', 'atap'],
+    bunker_b3:        ['basement'],
+    kamar_atas:       ['koridor_utara', 'koridor_selatan'],
+    ruang_penyimpanan:['basement', 'lorong_rahasia'],
+    atap:             ['menara', 'taman_dalam'],
+    lorong_rahasia:   ['galeri_timur', 'perpustakaan', 'ruang_penyimpanan']
+  };
+
+  // ---- NPC Mind State ----
+  // Stored per-character in the game state
+  function createMind(charName, isKiller) {
+    return {
+      name: charName,
+      emotion: isKiller ? 'stalking' : 'calm',
+      tension: 0,
+      location: 'aula_utama',
+      goals: [],
+      memory: [],          // What this character has seen/learned
+      suspicions: {},      // Who they suspect and why
+      allies: [],          // Who they trust enough to work with
+      enemies: [],         // Who they actively oppose
+      target: null,        // Current action target (person or location)
+      lastAction: null,
+      actionCooldown: 0,
+      killerExposed: false,
+      hasClue: [],         // Clues this character has found
+      isHiding: false,
+      isTrapped: false,
+      roundsSurvived: 0,
+      killCount: 0,
+      betrayals: 0,
+      timesHelped: 0
+    };
+  }
+
+  // ---- Initialize all NPC minds ----
+  function initMinds(gameState) {
+    const minds = {};
+    const allChars = ['arin', 'niko', 'sera', 'juno', 'vira', 'reza', 'lana', 'dimas', 'kira', 'farah'];
+    const pc = gameState.playerCharacter || 'arin';
+
+    allChars.forEach(name => {
+      if (name === pc) return; // Player character doesn't need AI
+      const isK = gameState.killers && gameState.killers.includes(name);
+      minds[name] = createMind(name, isK);
+    });
+
+    // Set initial goals based on character personality
+    allChars.forEach(name => {
+      if (name === pc || !minds[name]) return;
+      const db = typeof CharDB !== 'undefined' ? CharDB.getProfile(name) : null;
+      if (db) {
+        minds[name].goals = db.initialGoals.slice();
+      } else {
+        const isK = gameState.killers && gameState.killers.includes(name);
+        minds[name].goals = isK
+          ? [{ type: 'maintain_cover', priority: 85 }, { type: 'isolate', priority: 70 }, { type: 'eliminate', priority: 90 }]
+          : [{ type: 'survive', priority: 90 }, { type: 'investigate', priority: 70 }];
+      }
+    });
+
+    return minds;
+  }
+
+  // ---- Evaluate Emotional State Transitions ----
+  function updateEmotion(mind, gameState) {
+    const st = EMOTIONAL_STATES[mind.emotion];
+    if (!st) return;
+
+    // Calculate tension change
+    let tensionDelta = 0;
+    const dangerLevel = gameState.dangerLevel || 10;
+    const deathCount = gameState.deathCount || 0;
+    const isK = gameState.killers && gameState.killers.includes(mind.name);
+
+    // Deaths increase tension for survivors
+    if (!isK) {
+      tensionDelta += deathCount * 12;
+      tensionDelta += Math.floor(dangerLevel / 5);
+      if (mind.memory.some(m => m.type === 'witnessed_death')) tensionDelta += 25;
+      if (mind.memory.some(m => m.type === 'found_clue')) tensionDelta += 5;
+      if (mind.allies.length > 0) tensionDelta -= mind.allies.length * 4;
+      if (mind.isHiding) tensionDelta -= 10;
+    } else {
+      // Killers get tense when suspected or exposed
+      const suspOnMe = Object.values(gameState.suspicion || {});
+      const mySusp = gameState.suspicion ? gameState.suspicion[mind.name] || 0 : 0;
+      if (mySusp > 50) tensionDelta += 20;
+      if (mind.killerExposed) tensionDelta += 40;
+      // Successful kills reduce killer tension
+      tensionDelta -= mind.killCount * 10;
+    }
+
+    mind.tension = Math.max(0, Math.min(100, mind.tension + tensionDelta));
+
+    // Transition emotional state
+    if (isK) {
+      if (mind.tension >= 80 && st.nextUp) mind.emotion = st.nextUp;
+      else if (mind.tension <= 15 && st.nextDown) mind.emotion = st.nextDown;
+    } else {
+      if (mind.tension >= EMOTIONAL_STATES[st.nextUp || mind.emotion]?.tension && st.nextUp) {
+        mind.emotion = st.nextUp;
+      } else if (st.nextDown && mind.tension < st.tension - 10) {
+        mind.emotion = st.nextDown;
+      }
+    }
+  }
+
+  // ---- Decision Making ----
+  // The core of the brain: given a mind state and game state,
+  // choose an action from the behavior database
+
+  function makeDecision(mind, gameState, allMinds) {
+    const db = typeof CharDB !== 'undefined' ? CharDB.getProfile(mind.name) : null;
+    const isK = gameState.killers && gameState.killers.includes(mind.name);
+    const st = EMOTIONAL_STATES[mind.emotion];
+    if (!st) return null;
+
+    const possibleActions = st.canAct;
+    const pc = gameState.playerCharacter || 'arin';
+
+    // Get character-specific decisions from database
+    if (db && db.decisions) {
+      const contextKey = buildContextKey(mind, gameState, allMinds);
+      const decision = matchDecision(db.decisions, contextKey, mind, gameState);
+      if (decision) return decision;
+    }
+
+    // Fallback: generic decision based on emotional state and goals
+    return genericDecision(mind, gameState, allMinds, possibleActions, isK);
+  }
+
+  function buildContextKey(mind, gameState, allMinds) {
+    return {
+      emotion: mind.emotion,
+      chapter: gameState.chapter,
+      dangerLevel: gameState.dangerLevel,
+      deathCount: gameState.deathCount,
+      aliveCount: Object.values(gameState.alive).filter(Boolean).length,
+      location: mind.location,
+      isAlone: !Object.values(allMinds).some(m => m !== mind && m.location === mind.location && gameState.alive[m.name]),
+      hasClue: mind.hasClue.length > 0,
+      isHiding: mind.isHiding,
+      nearbyChars: Object.values(allMinds).filter(m => m !== mind && m.location === mind.location && gameState.alive[m.name]).map(m => m.name),
+      tension: mind.tension,
+      allies: mind.allies,
+      enemies: mind.enemies
+    };
+  }
+
+  function matchDecision(decisions, ctx, mind, gameState) {
+    // decisions is an array of { condition, action, weight }
+    const matches = decisions.filter(d => {
+      if (d.condition.emotion && d.condition.emotion !== ctx.emotion) return false;
+      if (d.condition.chapter !== undefined && d.condition.chapter !== ctx.chapter) return false;
+      if (d.condition.minDanger && ctx.dangerLevel < d.condition.minDanger) return false;
+      if (d.condition.maxDanger && ctx.dangerLevel > d.condition.maxDanger) return false;
+      if (d.condition.isAlone !== undefined && d.condition.isAlone !== ctx.isAlone) return false;
+      if (d.condition.minTension && ctx.tension < d.condition.minTension) return false;
+      if (d.condition.minDeaths && ctx.deathCount < d.condition.minDeaths) return false;
+      if (d.condition.hasClue !== undefined && d.condition.hasClue !== ctx.hasClue) return false;
+      if (d.condition.location && d.condition.location !== ctx.location) return false;
+      if (d.condition.nearbyIncludes && !ctx.nearbyChars.includes(d.condition.nearbyIncludes)) return false;
+      if (d.condition.nearbyExcludes && ctx.nearbyChars.includes(d.condition.nearbyExcludes)) return false;
+      return true;
+    });
+
+    if (matches.length === 0) return null;
+
+    // Weighted random selection
+    const totalWeight = matches.reduce((sum, m) => sum + (m.weight || 10), 0);
+    let roll = Math.random() * totalWeight;
+    for (const m of matches) {
+      roll -= (m.weight || 10);
+      if (roll <= 0) return m.action;
+    }
+    return matches[matches.length - 1].action;
+  }
+
+  function genericDecision(mind, gameState, allMinds, possibleActions, isK) {
+    const nearby = Object.values(allMinds).filter(m =>
+      m !== mind && m.location === mind.location && gameState.alive[m.name]
+    );
+    const isAlone = nearby.length === 0;
+
+    if (isK) {
+      return killerFallback(mind, gameState, allMinds, nearby, isAlone);
+    }
+    return survivorFallback(mind, gameState, allMinds, nearby, isAlone);
+  }
+
+  function survivorFallback(mind, gameState, allMinds, nearby, isAlone) {
+    const deathCount = gameState.deathCount || 0;
+
+    // High tension → flee or hide
+    if (mind.tension >= 70) {
+      if (isAlone) {
+        return { type: 'flee', desc: fleeTo(mind), priority: 90 };
+      }
+      if (nearby.some(n => mind.enemies.includes(n.name))) {
+        return { type: 'flee', desc: fleeTo(mind), priority: 95 };
+      }
+      return { type: 'barricade', desc: `${charName(mind.name)} memblokir pintu ${locName(mind.location)}.`, priority: 80 };
+    }
+
+    // Mid tension → investigate or question
+    if (mind.tension >= 35) {
+      if (mind.hasClue.length > 0 && nearby.length > 0) {
+        const ally = nearby.find(n => mind.allies.includes(n.name));
+        if (ally) {
+          return { type: 'share_clue', desc: `${charName(mind.name)} membagi bukti dengan ${charName(ally.name)}.`, target: ally.name, priority: 70 };
+        }
+      }
+      if (isAlone) {
+        return { type: 'investigate', desc: `${charName(mind.name)} memeriksa ${locName(mind.location)} untuk mencari petunjuk.`, priority: 65 };
+      }
+      const suspect = nearby.find(n => mind.suspicions[n.name] > 40);
+      if (suspect) {
+        return { type: 'question', desc: `${charName(mind.name)} mengonfrontasi ${charName(suspect.name)}: "Di mana kau saat lampu mati?"`, target: suspect.name, priority: 75 };
+      }
+    }
+
+    // Low tension → socialize or observe
+    if (nearby.length > 0 && deathCount === 0) {
+      return { type: 'socialize', desc: `${charName(mind.name)} berbicara dengan ${charName(nearby[0].name)}.`, target: nearby[0].name, priority: 40 };
+    }
+
+    // Default: observe
+    return { type: 'observe', desc: `${charName(mind.name)} mengamati sekitar dengan waspada.`, priority: 30 };
+  }
+
+  function killerFallback(mind, gameState, allMinds, nearby, isAlone) {
+    const mySusp = gameState.suspicion ? gameState.suspicion[mind.name] || 0 : 0;
+
+    // Exposed → cover up or flee
+    if (mySusp > 60) {
+      if (nearby.length > 0) {
+        return { type: 'frame', desc: `${charName(mind.name)} mengalihkan kecurigaan ke orang lain.`, priority: 85 };
+      }
+      return { type: 'hide', desc: `${charName(mind.name)} menghilang ke bayangan.`, priority: 80 };
+    }
+
+    // Stalking → find isolated target
+    if (mind.emotion === 'stalking') {
+      const isolated = Object.values(allMinds).filter(m =>
+        m !== mind &&
+        gameState.alive[m.name] &&
+        !gameState.killers.includes(m.name) &&
+        Object.values(allMinds).filter(o => o.location === m.location && o !== m && gameState.alive[o.name]).length === 0
+      );
+      if (isolated.length > 0) {
+        const target = isolated[Math.floor(Math.random() * isolated.length)];
+        return { type: 'stalk', desc: `${charName(mind.name)} bergerak menuju ${locName(target.location)}, membuntuti ${charName(target.name)}.`, target: target.name, moveTo: target.location, priority: 80 };
+      }
+      return { type: 'manipulate', desc: `${charName(mind.name)} memainkan emosi kelompok untuk memecah aliansi.`, priority: 65 };
+    }
+
+    // Hunting → isolate and strike
+    if (mind.emotion === 'hunting') {
+      if (isAlone) {
+        return { type: 'trap', desc: `${charName(mind.name)} menyiapkan jebakan di ${locName(mind.location)}.`, priority: 75 };
+      }
+      if (nearby.length === 1 && !gameState.killers.includes(nearby[0].name)) {
+        return { type: 'strike', desc: `${charName(mind.name)} menyerang ${charName(nearby[0].name)} di ${locName(mind.location)}!`, target: nearby[0].name, priority: 95 };
+      }
+      return { type: 'isolate', desc: `${charName(mind.name)} mencoba memisahkan kelompok.`, priority: 70 };
+    }
+
+    // Executing → kill
+    if (mind.emotion === 'executing' && nearby.length === 1) {
+      return { type: 'eliminate', desc: `${charName(mind.name)} mengeksekusi ${charName(nearby[0].name)}!`, target: nearby[0].name, priority: 100 };
+    }
+
+    // Default: maintain cover
+    return { type: 'maintain_cover', desc: `${charName(mind.name)} bersikap normal, menyembunyikan niat.`, priority: 50 };
+  }
+
+  function fleeTo(mind) {
+    const connections = LOCATION_CONNECTIONS[mind.location] || [];
+    const safeLoc = connections[Math.floor(Math.random() * connections.length)] || 'aula_utama';
+    const name = charName(mind.name);
+    mind.location = safeLoc;
+    return `${name} lari ke ${locName(safeLoc)}!`;
+  }
+
+  // ---- Execute NPC Actions for a Round ----
+  function executeRound(gameState) {
+    if (!gameState.npcMinds) return { actions: [], events: [] };
+
+    const minds = gameState.npcMinds;
+    const actions = [];
+    const events = [];
+    const pc = gameState.playerCharacter || 'arin';
+
+    // Each alive NPC makes a decision
+    Object.keys(minds).forEach(name => {
+      if (!gameState.alive[name]) return;
+      if (name === pc) return;
+
+      const mind = minds[name];
+      mind.roundsSurvived++;
+
+      // Update emotional state
+      updateEmotion(mind, gameState);
+
+      // Make decision
+      const decision = makeDecision(mind, gameState, minds);
+      if (!decision) return;
+
+      mind.lastAction = decision;
+      actions.push({ character: name, action: decision });
+
+      // Apply consequences
+      const consequence = applyAction(mind, decision, gameState, minds);
+      if (consequence) events.push(consequence);
+    });
+
+    // Update NPC movements (NPCs that decided to move)
+    actions.forEach(a => {
+      if (a.action.moveTo && minds[a.character]) {
+        minds[a.character].location = a.action.moveTo;
+      }
+    });
+
+    // Check for NPC encounters (two NPCs in same location)
+    const locationGroups = {};
+    Object.keys(minds).forEach(name => {
+      if (!gameState.alive[name]) return;
+      const loc = minds[name].location;
+      if (!locationGroups[loc]) locationGroups[loc] = [];
+      locationGroups[loc].push(name);
+    });
+
+    // Generate encounter events
+    Object.entries(locationGroups).forEach(([loc, chars]) => {
+      if (chars.length >= 2) {
+        const encounter = resolveEncounter(chars, loc, gameState, minds);
+        if (encounter) events.push(encounter);
+      }
+    });
+
+    return { actions, events };
+  }
+
+  // ---- Apply Action Consequences ----
+  function applyAction(mind, action, gameState, allMinds) {
+    switch (action.type) {
+      case 'investigate': {
+        // Chance to find clue
+        const clueChance = 0.25 + (gameState.chapter * 0.05);
+        if (Math.random() < clueChance) {
+          const clueId = `clue_${mind.location}_${gameState.chapter}`;
+          if (!mind.hasClue.includes(clueId)) {
+            mind.hasClue.push(clueId);
+            mind.memory.push({ type: 'found_clue', clue: clueId, round: mind.roundsSurvived });
+            gameState.cluesFound = (gameState.cluesFound || 0) + 1;
+            return { type: 'clue_found', character: mind.name, location: mind.location,
+              desc: `${charName(mind.name)} menemukan petunjuk di ${locName(mind.location)}!` };
+          }
+        }
+        return null;
+      }
+
+      case 'strike':
+      case 'eliminate': {
+        if (!action.target) return null;
+        const targetMind = allMinds[action.target];
+        if (!targetMind || !gameState.alive[action.target]) return null;
+
+        // Can the target defend?
+        const defenseChance = calculateDefense(action.target, gameState, allMinds);
+        if (Math.random() < defenseChance) {
+          // Target survives!
+          mind.memory.push({ type: 'failed_kill', target: action.target, round: mind.roundsSurvived });
+          if (targetMind) {
+            targetMind.memory.push({ type: 'survived_attack', attacker: mind.name, round: mind.roundsSurvived });
+            targetMind.suspicions[mind.name] = 100;
+            targetMind.enemies.push(mind.name);
+          }
+          gameState.suspicion[mind.name] = Math.min(100, (gameState.suspicion[mind.name] || 0) + 30);
+          return { type: 'attack_failed', attacker: mind.name, target: action.target,
+            desc: `${charName(mind.name)} menyerang ${charName(action.target)}, tapi ${charName(action.target)} berhasil bertahan!` };
+        }
+
+        // Target dies
+        gameState.alive[action.target] = false;
+        gameState.deathCount++;
+        mind.killCount++;
+        mind.memory.push({ type: 'killed', target: action.target, round: mind.roundsSurvived });
+
+        // Witnesses
+        const witnesses = Object.values(allMinds).filter(m =>
+          m !== mind && m.name !== action.target &&
+          m.location === mind.location && gameState.alive[m.name]
+        );
+        witnesses.forEach(w => {
+          w.memory.push({ type: 'witnessed_death', victim: action.target, killer: mind.name, round: mind.roundsSurvived });
+          w.suspicions[mind.name] = 100;
+          w.tension += 30;
+          gameState.suspicion[mind.name] = Math.min(100, (gameState.suspicion[mind.name] || 0) + 40);
+          if (!gameState.killerRevealed.includes(mind.name)) {
+            gameState.killerRevealed.push(mind.name);
+          }
+          mind.killerExposed = true;
+        });
+
+        return { type: 'death', attacker: mind.name, victim: action.target,
+          witnessed: witnesses.map(w => w.name),
+          desc: `${charName(action.target)} ditemukan tewas di ${locName(mind.location)}!` };
+      }
+
+      case 'frame': {
+        // Redirect suspicion to someone else
+        const aliveNonKillers = Object.keys(allMinds).filter(n =>
+          gameState.alive[n] && !gameState.killers.includes(n) && n !== mind.name
+        );
+        if (aliveNonKillers.length > 0) {
+          const framed = aliveNonKillers[Math.floor(Math.random() * aliveNonKillers.length)];
+          gameState.suspicion[framed] = Math.min(100, (gameState.suspicion[framed] || 0) + 20);
+          gameState.suspicion[mind.name] = Math.max(0, (gameState.suspicion[mind.name] || 0) - 15);
+          return { type: 'framed', framer: mind.name, victim: framed,
+            desc: `Kecurigaan meningkat terhadap ${charName(framed)}...` };
+        }
+        return null;
+      }
+
+      case 'accuse': {
+        if (!action.target) return null;
+        const susp = mind.suspicions[action.target] || 0;
+        const isCorrect = gameState.killers.includes(action.target);
+        if (isCorrect) {
+          gameState.suspicion[action.target] = Math.min(100, (gameState.suspicion[action.target] || 0) + 25);
+          return { type: 'accusation', accuser: mind.name, accused: action.target, correct: true,
+            desc: `${charName(mind.name)} menuduh ${charName(action.target)}: "Aku tahu apa yang kau lakukan!"` };
+        } else {
+          gameState.suspicion[action.target] = Math.min(100, (gameState.suspicion[action.target] || 0) + 10);
+          return { type: 'accusation', accuser: mind.name, accused: action.target, correct: false,
+            desc: `${charName(mind.name)} salah menuduh ${charName(action.target)}.` };
+        }
+      }
+
+      case 'share_clue': {
+        if (!action.target || !allMinds[action.target]) return null;
+        const targetM = allMinds[action.target];
+        mind.hasClue.forEach(c => {
+          if (!targetM.hasClue.includes(c)) targetM.hasClue.push(c);
+        });
+        if (!mind.allies.includes(action.target)) mind.allies.push(action.target);
+        if (!targetM.allies.includes(mind.name)) targetM.allies.push(mind.name);
+        return { type: 'alliance_formed', members: [mind.name, action.target],
+          desc: `${charName(mind.name)} dan ${charName(action.target)} berbagi informasi dan membentuk aliansi.` };
+      }
+
+      case 'hide': {
+        mind.isHiding = true;
+        const hideLocs = ['lorong_rahasia', 'ruang_penyimpanan', 'kamar_atas'];
+        const safeLoc = hideLocs[Math.floor(Math.random() * hideLocs.length)];
+        mind.location = safeLoc;
+        return null;
+      }
+
+      case 'manipulate': {
+        // Try to turn allies against each other
+        const nearbyMinds = Object.values(allMinds).filter(m =>
+          m !== mind && m.location === mind.location && gameState.alive[m.name]
+        );
+        if (nearbyMinds.length >= 2) {
+          const a = nearbyMinds[0];
+          const b = nearbyMinds[1];
+          const tk = trustKeyFor(a.name, b.name);
+          if (gameState.trust[tk] !== undefined) {
+            gameState.trust[tk] = Math.max(0, gameState.trust[tk] - 15);
+          }
+          return { type: 'manipulation', manipulator: mind.name, targets: [a.name, b.name],
+            desc: `${charName(mind.name)} berbisik ke ${charName(a.name)} tentang ${charName(b.name)}, menanamkan benih ketidakpercayaan.` };
+        }
+        return null;
+      }
+
+      case 'sabotage': {
+        // Sabotage a location
+        const sabotageable = ['dapur', 'perpustakaan', 'galeri_timur', 'basement'];
+        if (sabotageable.includes(mind.location)) {
+          gameState.dangerLevel = Math.min(100, (gameState.dangerLevel || 10) + 8);
+          return { type: 'sabotage', saboteur: mind.name, location: mind.location,
+            desc: `Sesuatu di ${locName(mind.location)} telah disabotase...` };
+        }
+        return null;
+      }
+
+      case 'confront': {
+        if (!action.target || !allMinds[action.target]) return null;
+        const target = allMinds[action.target];
+        const tKey = trustKeyFor(mind.name, action.target);
+        if (gameState.trust[tKey] !== undefined) {
+          gameState.trust[tKey] = Math.max(0, gameState.trust[tKey] - 10);
+        }
+        target.tension += 10;
+        return { type: 'confrontation', aggressor: mind.name, target: action.target,
+          desc: `${charName(mind.name)} mengonfrontasi ${charName(action.target)} dengan keras!` };
+      }
+
+      case 'barricade': {
+        mind.isHiding = true;
+        return { type: 'barricade', character: mind.name, location: mind.location,
+          desc: `${charName(mind.name)} memblokir semua pintu di ${locName(mind.location)}.` };
+      }
+
+      case 'guard': {
+        // Protect location — makes it harder for killer to strike here
+        return { type: 'guarding', character: mind.name, location: mind.location,
+          desc: `${charName(mind.name)} berjaga di ${locName(mind.location)}.` };
+      }
+
+      default:
+        return null;
+    }
+  }
+
+  // ---- Defense Calculation ----
+  function calculateDefense(targetName, gameState, allMinds) {
+    let defense = 0.15; // Base 15% chance to survive
+
+    // Courage adds defense
+    const courage = gameState.courage ? gameState.courage[targetName] || 30 : 30;
+    defense += courage / 500; // Max +20% from courage
+
+    // Allies nearby add defense
+    const targetMind = allMinds[targetName];
+    if (targetMind) {
+      const nearbyAllies = Object.values(allMinds).filter(m =>
+        m.location === targetMind.location &&
+        m.name !== targetName &&
+        gameState.alive[m.name] &&
+        targetMind.allies.includes(m.name)
+      );
+      defense += nearbyAllies.length * 0.15;
+
+      // Guards nearby add defense
+      const guards = Object.values(allMinds).filter(m =>
+        m.location === targetMind.location &&
+        m.lastAction && m.lastAction.type === 'guard' &&
+        gameState.alive[m.name]
+      );
+      defense += guards.length * 0.25;
+
+      // If target is hiding, harder to kill
+      if (targetMind.isHiding) defense += 0.3;
+    }
+
+    // Difficulty modifier
+    const diff = gameState.difficulty || 2;
+    if (diff === 1) defense += 0.15;
+    if (diff === 3) defense -= 0.1;
+
+    return Math.min(0.85, Math.max(0.05, defense));
+  }
+
+  // ---- Encounter Resolution ----
+  function resolveEncounter(charNames, location, gameState, allMinds) {
+    const killers = charNames.filter(n => gameState.killers.includes(n));
+    const survivors = charNames.filter(n => !gameState.killers.includes(n));
+
+    // Killer meets lone survivor
+    if (killers.length > 0 && survivors.length === 1 && gameState.chapter >= 2) {
+      const killer = allMinds[killers[0]];
+      const victim = survivors[0];
+
+      if (killer && killer.emotion === 'hunting' || killer.emotion === 'executing') {
+        // Auto-attempt kill
+        const defenseChance = calculateDefense(victim, gameState, allMinds);
+        if (Math.random() > defenseChance) {
+          gameState.alive[victim] = false;
+          gameState.deathCount++;
+          killer.killCount++;
+          return { type: 'encounter_death', killer: killers[0], victim,
+            location, desc: `${charName(victim)} bertemu ${charName(killers[0])} sendirian di ${locName(location)}... dan tidak pernah terlihat lagi.` };
+        } else {
+          allMinds[victim].suspicions[killers[0]] = Math.min(100, (allMinds[victim].suspicions[killers[0]] || 0) + 50);
+          allMinds[victim].enemies.push(killers[0]);
+          return { type: 'encounter_escape', attacker: killers[0], escapee: victim,
+            location, desc: `${charName(victim)} nyaris mati di ${locName(location)}, tapi berhasil melarikan diri!` };
+        }
+      }
+    }
+
+    // Two survivors form alliance
+    if (killers.length === 0 && survivors.length === 2 && gameState.deathCount > 0) {
+      const a = allMinds[survivors[0]];
+      const b = allMinds[survivors[1]];
+      if (a && b && !a.allies.includes(b.name) && Math.random() < 0.3) {
+        a.allies.push(b.name);
+        b.allies.push(a.name);
+        const tk = trustKeyFor(a.name, b.name);
+        if (gameState.trust[tk] !== undefined) {
+          gameState.trust[tk] = Math.min(100, gameState.trust[tk] + 10);
+        }
+        return { type: 'alliance', members: [a.name, b.name],
+          desc: `${charName(a.name)} dan ${charName(b.name)} sepakat bekerja sama di ${locName(location)}.` };
+      }
+    }
+
+    return null;
+  }
+
+  // ---- Win/Loss Condition Checking ----
+  function checkWinLoss(gameState) {
+    const pc = gameState.playerCharacter || 'arin';
+    const isPlayerK = gameState.killers && gameState.killers.includes(pc);
+    const playerAlive = gameState.alive[pc];
+    const result = { ended: false, type: null, reason: null };
+
+    // Player dead → loss
+    if (!playerAlive) {
+      result.ended = true;
+      result.type = 'loss';
+      result.reason = isPlayerK ? 'killer_killed' : 'survivor_killed';
+      result.title = isPlayerK ? 'Mati Sebagai Predator' : 'Tidak Selamat';
+      result.desc = isPlayerK
+        ? 'Kau jatuh oleh mangsamu sendiri. Pemburu yang menjadi buruan.'
+        : 'Malam menelanmu. Kau tidak pernah melihat fajar.';
+      return result;
+    }
+
+    // All killers dead or exposed → survivor win
+    if (!isPlayerK) {
+      const allKillersDone = gameState.killers.every(k =>
+        !gameState.alive[k] || gameState.killerRevealed.includes(k)
+      );
+      const allSurvived = gameState.chapter >= 7;
+      if (allKillersDone && allSurvived) {
+        result.ended = true;
+        result.type = 'win';
+        result.reason = 'survivor_victory';
+        result.title = 'Selamat — Kebenaran Terungkap';
+        result.desc = 'Kau berhasil mengidentifikasi semua pembunuh dan bertahan hidup hingga fajar. Kebenaran menang.';
+        return result;
+      }
+      // Survived to dawn but killers not caught
+      if (allSurvived && !allKillersDone) {
+        result.ended = true;
+        result.type = 'partial_win';
+        result.reason = 'survived_unresolved';
+        result.title = 'Selamat — Tapi Misteri Belum Terjawab';
+        result.desc = 'Kau selamat, tapi pembunuh masih bebas. Bayangan masih mengintai.';
+        return result;
+      }
+    }
+
+    // Killer win conditions
+    if (isPlayerK) {
+      const aliveNonKillers = Object.keys(gameState.alive).filter(k =>
+        gameState.alive[k] && !gameState.killers.includes(k)
+      );
+      // All targets eliminated
+      if (aliveNonKillers.length <= 2 && gameState.chapter >= 5) {
+        result.ended = true;
+        result.type = 'win';
+        result.reason = 'killer_victory';
+        result.title = 'Kemenangan Gelap';
+        result.desc = 'Karya senimu selesai. Hampir semua bidak telah jatuh. Sang Penenun tersenyum.';
+        return result;
+      }
+      // Exposed too much
+      if (gameState.suspicion[pc] >= 90 && gameState.killerRevealed.includes(pc)) {
+        result.ended = true;
+        result.type = 'loss';
+        result.reason = 'killer_exposed';
+        result.title = 'Topeng Jatuh';
+        result.desc = 'Mereka tahu siapa kau. Identitasmu terungkap. Pemburu menjadi buruan.';
+        return result;
+      }
+    }
+
+    // Too many deaths → potential game over
+    const aliveTotal = Object.values(gameState.alive).filter(Boolean).length;
+    if (aliveTotal <= 2 && gameState.chapter >= 4) {
+      result.ended = true;
+      result.type = isPlayerK ? 'win' : 'loss';
+      result.reason = isPlayerK ? 'total_elimination' : 'total_massacre';
+      result.title = isPlayerK ? 'Pembantaian Sempurna' : 'Malam Tergelap';
+      result.desc = isPlayerK
+        ? 'Hampir tidak ada yang tersisa. Karyamu — menakutkan dan sempurna.'
+        : 'Terlalu banyak yang jatuh. Malam ini telah merenggut segalanya.';
+      return result;
+    }
+
+    return result;
+  }
+
+  // ---- Generate NPC Action Narrative ----
+  // Creates story text for what NPCs did this round
+  function generateNarrative(roundResult, gameState) {
+    if (!roundResult || !roundResult.events || roundResult.events.length === 0) {
+      return null;
+    }
+
+    let narrative = '<div class="npc-round-narrative">';
+    narrative += '<p class="narration"><em>Sementara itu...</em></p>';
+
+    // Sort events by priority
+    const sorted = roundResult.events.sort((a, b) => {
+      const priority = { death: 0, encounter_death: 0, attack_failed: 1, encounter_escape: 1, accusation: 2, alliance_formed: 3, alliance: 3, framed: 4, manipulation: 4, sabotage: 5, confrontation: 5, clue_found: 6 };
+      return (priority[a.type] || 10) - (priority[b.type] || 10);
+    });
+
+    sorted.forEach(event => {
+      let cssClass = 'npc-event';
+      if (event.type === 'death' || event.type === 'encounter_death') cssClass += ' npc-event-death';
+      else if (event.type === 'attack_failed' || event.type === 'encounter_escape') cssClass += ' npc-event-danger';
+      else if (event.type === 'alliance_formed' || event.type === 'alliance') cssClass += ' npc-event-alliance';
+      else if (event.type === 'clue_found') cssClass += ' npc-event-clue';
+      else if (event.type === 'framed' || event.type === 'manipulation') cssClass += ' npc-event-manipulation';
+
+      narrative += `<p class="${cssClass}">${event.desc}</p>`;
+    });
+
+    narrative += '</div>';
+    return narrative;
+  }
+
+  // ---- Action Log for Player Review ----
+  function getActionLog(gameState) {
+    if (!gameState.npcMinds) return [];
+    const log = [];
+    Object.keys(gameState.npcMinds).forEach(name => {
+      if (!gameState.alive[name]) return;
+      const mind = gameState.npcMinds[name];
+      log.push({
+        name,
+        displayName: charName(name),
+        emotion: mind.emotion,
+        location: locName(mind.location),
+        locationKey: mind.location,
+        lastAction: mind.lastAction ? mind.lastAction.desc : 'Tidak ada aksi',
+        tension: mind.tension,
+        allies: mind.allies.map(a => charName(a)),
+        clueCount: mind.hasClue.length,
+        isHiding: mind.isHiding,
+        roundsSurvived: mind.roundsSurvived
+      });
+    });
+    return log;
+  }
+
+  // ---- Player Actions that affect NPC minds ----
+  function playerAction(actionType, targetName, gameState) {
+    if (!gameState.npcMinds) return;
+    const pc = gameState.playerCharacter || 'arin';
+
+    switch (actionType) {
+      case 'accuse': {
+        const targetMind = gameState.npcMinds[targetName];
+        if (targetMind) {
+          targetMind.tension += 20;
+          targetMind.enemies.push(pc);
+          if (gameState.killers.includes(targetName)) {
+            gameState.suspicion[targetName] = Math.min(100, (gameState.suspicion[targetName] || 0) + 30);
+          }
+        }
+        break;
+      }
+      case 'ally': {
+        const targetMind = gameState.npcMinds[targetName];
+        if (targetMind) {
+          if (!targetMind.allies.includes(pc)) targetMind.allies.push(pc);
+          targetMind.tension -= 5;
+        }
+        break;
+      }
+      case 'intimidate': {
+        const targetMind = gameState.npcMinds[targetName];
+        if (targetMind) {
+          targetMind.tension += 15;
+          const tk = trustKeyFor(pc, targetName);
+          if (gameState.trust[tk] !== undefined) {
+            gameState.trust[tk] = Math.max(0, gameState.trust[tk] - 10);
+          }
+        }
+        break;
+      }
+      case 'investigate_location': {
+        // Player finds clue
+        const clueChance = 0.35;
+        if (Math.random() < clueChance) {
+          gameState.cluesFound = (gameState.cluesFound || 0) + 1;
+          return { found: true, desc: 'Kau menemukan petunjuk baru!' };
+        }
+        return { found: false, desc: 'Tidak ada yang menarik di sini.' };
+      }
+      case 'killer_strike': {
+        if (!gameState.killers.includes(pc)) return { success: false };
+        const targetMind = gameState.npcMinds[targetName];
+        if (!targetMind || !gameState.alive[targetName]) return { success: false };
+        const defense = calculateDefense(targetName, gameState, gameState.npcMinds);
+        if (Math.random() < defense) {
+          targetMind.suspicions[pc] = 100;
+          targetMind.enemies.push(pc);
+          gameState.suspicion[pc] = Math.min(100, (gameState.suspicion[pc] || 0) + 35);
+          return { success: false, desc: `${charName(targetName)} bertahan dari seranganmu!` };
+        }
+        gameState.alive[targetName] = false;
+        gameState.deathCount++;
+        return { success: true, desc: `${charName(targetName)} jatuh. Satu lagi bidak yang tereliminasi.` };
+      }
+    }
+    return null;
+  }
+
+  // ---- Helpers ----
+  function charName(name) {
+    const display = { arin: 'Arin', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira',
+      reza: 'Reza', lana: 'Lana', dimas: 'Dimas', kira: 'Kira', farah: 'Farah' };
+    return display[name] || name;
+  }
+
+  function locName(loc) {
+    return LOCATION_NAMES[loc] || loc;
+  }
+
+  function trustKeyFor(a, b) {
+    const sorted = [a, b].sort();
+    return sorted[0] + '_' + sorted[1];
+  }
+
+  // ---- Public API ----
+  return {
+    initMinds,
+    executeRound,
+    checkWinLoss,
+    generateNarrative,
+    getActionLog,
+    playerAction,
+    updateEmotion,
+    makeDecision,
+    createMind,
+    LOCATIONS,
+    LOCATION_NAMES,
+    LOCATION_CONNECTIONS,
+    EMOTIONAL_STATES,
+    GOAL_TYPES,
+    charName,
+    locName
+  };
+})();

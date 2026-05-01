@@ -197,7 +197,12 @@ const Engine = (() => {
       keyChoices: [],
       deathCount: 0,
       cluesFound: 0,
-      alliances: []
+      alliances: [],
+      npcMinds: null,
+      roundCount: 0,
+      playerLocation: 'aula_utama',
+      npcActionLog: [],
+      winLossResult: null
     };
   }
 
@@ -393,12 +398,82 @@ const Engine = (() => {
     if (callback) callback();
   }
 
+  // ---- NPC Brain Integration ----
+  function initNpcMinds() {
+    if (typeof CharBrain !== 'undefined') {
+      state.npcMinds = CharBrain.initMinds(state);
+    }
+  }
+
+  function runNpcRound() {
+    if (!state.npcMinds || typeof CharBrain === 'undefined') return null;
+    state.roundCount++;
+    const result = CharBrain.executeRound(state);
+    if (result && result.events && result.events.length > 0) {
+      state.npcActionLog.push({ round: state.roundCount, events: result.events });
+    }
+    // Sync deaths from NPC actions to engine
+    CHARACTERS.forEach(name => {
+      if (!state.alive[name] && state.npcMinds[name]) {
+        delete state.npcMinds[name];
+      }
+    });
+    return result;
+  }
+
+  function checkWinLossState() {
+    if (typeof CharBrain === 'undefined') return null;
+    const result = CharBrain.checkWinLoss(state);
+    if (result.ended) {
+      state.winLossResult = result;
+      return result;
+    }
+    return null;
+  }
+
+  function showWinLossScreen(result) {
+    const isWin = result.type === 'win' || result.type === 'partial_win';
+    const pc = playerChar();
+    const isK = state.killers && state.killers.includes(pc);
+    const ratingMap = {
+      survivor_victory: 'S',
+      killer_victory: 'S',
+      survived_unresolved: 'B',
+      total_elimination: 'A',
+      killer_killed: 'D',
+      survivor_killed: 'F',
+      killer_exposed: 'D',
+      total_massacre: 'F'
+    };
+    const rating = ratingMap[result.reason] || 'C';
+
+    const endingData = {
+      endingNumber: 26 + (isK ? 1 : 0),
+      title: result.title,
+      rating: rating,
+      isEnding: true,
+      endingText: `<p class="narration">${result.desc}</p>
+        <p class="journal"><em>${isK ? 'Sebagai pembunuh, kau ' + (isWin ? 'berhasil menyelesaikan misimu.' : 'gagal. Mangsamu terlalu kuat.') :
+        'Sebagai survivor, kau ' + (isWin ? 'mengalahkan kegelapan.' : 'jatuh ke dalam kegelapan.')}</em></p>
+        <p>Ronde bertahan: ${state.roundCount}</p>
+        <p>Kematian total: ${state.deathCount}</p>
+        <p>Petunjuk ditemukan: ${state.cluesFound}</p>`
+    };
+    showDirectEnding(endingData.endingNumber, endingData);
+  }
+
   // ---- Node Rendering ----
   function renderNode(nodeId) {
     const node = storyNodes[nodeId];
     if (!node) { console.error('Node not found:', nodeId); return; }
     currentNodeId = nodeId;
     state.nodeHistory.push(nodeId);
+
+    // Initialize NPC minds on first story node
+    if (!state.npcMinds && state.chapter >= 0 && typeof CharBrain !== 'undefined') {
+      initNpcMinds();
+    }
+
     if (node.onEnter) node.onEnter(state);
     if (node.chapter !== undefined && node.chapter !== state.chapter) {
       state.chapter = node.chapter;
@@ -414,20 +489,204 @@ const Engine = (() => {
     if (node.glitch) glitch();
     updateDangerAmbient();
 
-    const textContent = typeof node.text === 'function' ? node.text(state) : t(node.text);
+    let textContent = typeof node.text === 'function' ? node.text(state) : t(node.text);
+
+    // Run NPC round and append narrative
+    if (state.npcMinds && state.chapter >= 1 && !node.isEnding) {
+      const roundResult = runNpcRound();
+      if (roundResult) {
+        const narrative = CharBrain.generateNarrative(roundResult, state);
+        if (narrative) textContent += narrative;
+      }
+
+      // Check win/loss
+      const wl = checkWinLossState();
+      if (wl) {
+        textContent += `<div class="wl-alert ${wl.type === 'win' || wl.type === 'partial_win' ? 'wl-win' : 'wl-loss'}">
+          <p class="wl-title">${wl.title}</p>
+          <p>${wl.desc}</p>
+        </div>`;
+      }
+    }
+
     const storyText = $('story-text');
     const choicesContainer = $('choices-container');
 
     renderText(textContent, storyText, () => {
       $('story-area').scrollTop = 0;
+
+      // If win/loss triggered, show ending after delay
+      if (state.winLossResult) {
+        setTimeout(() => showWinLossScreen(state.winLossResult), 2500);
+        choicesContainer.innerHTML = '';
+        return;
+      }
+
       if (node.isEnding) {
         setTimeout(() => triggerEnding(node), 1500);
         choicesContainer.innerHTML = '';
         return;
       }
-      renderChoices(node.choices || []);
+
+      // Add NPC-driven dynamic choices
+      const allChoices = (node.choices || []).slice();
+      if (state.npcMinds && state.chapter >= 1) {
+        const dynamicChoices = generateDynamicChoices(state);
+        dynamicChoices.forEach(c => allChoices.push(c));
+      }
+      renderChoices(allChoices);
     });
+
+    updateNpcLogPanel();
     saveGame();
+  }
+
+  // ---- Dynamic Choices based on NPC brain state ----
+  function generateDynamicChoices(gameState) {
+    const choices = [];
+    if (!gameState.npcMinds || typeof CharBrain === 'undefined') return choices;
+
+    const pc = gameState.playerCharacter || 'arin';
+    const isK = gameState.killers && gameState.killers.includes(pc);
+    const playerLoc = gameState.playerLocation || 'aula_utama';
+
+    // Find NPCs at player's location
+    const nearbyNpcs = Object.keys(gameState.npcMinds).filter(name =>
+      gameState.alive[name] && gameState.npcMinds[name].location === playerLoc
+    );
+
+    // Accuse someone nearby (survivor)
+    if (!isK && nearbyNpcs.length > 0 && gameState.deathCount >= 1) {
+      const suspect = nearbyNpcs.find(n => (gameState.suspicion[n] || 0) > 30);
+      if (suspect) {
+        choices.push({
+          text: `[BRAIN] Tuduh ${CharBrain.charName(suspect)}: "Aku tahu apa yang kau lakukan."`,
+          type: 'brain',
+          hint: 'Kecurigaan tinggi — konfrontasi langsung',
+          effect: (s) => {
+            CharBrain.playerAction('accuse', suspect, s);
+            Engine.modSuspicion(suspect, 15);
+          },
+          next: (s) => currentNodeId // Stay at same node, trigger new round
+        });
+      }
+    }
+
+    // Investigate location (both roles)
+    if (nearbyNpcs.length === 0) {
+      choices.push({
+        text: `[BRAIN] Periksa ${CharBrain.locName(playerLoc)} lebih detail`,
+        type: 'brain',
+        hint: 'Mungkin ada petunjuk tersembunyi',
+        effect: (s) => {
+          const result = CharBrain.playerAction('investigate_location', null, s);
+          if (result && result.found) {
+            Engine.notify(result.desc);
+          }
+        },
+        next: (s) => currentNodeId
+      });
+    }
+
+    // Form alliance (survivor)
+    if (!isK && nearbyNpcs.length > 0 && gameState.deathCount >= 1) {
+      const potential = nearbyNpcs.find(n =>
+        !gameState.killers.includes(n) &&
+        (gameState.trust[trustKey(pc, n)] || 50) > 40 &&
+        (!gameState.npcMinds[n] || !gameState.npcMinds[n].allies.includes(pc))
+      );
+      if (potential) {
+        choices.push({
+          text: `[BRAIN] Ajak ${CharBrain.charName(potential)} beraliansi`,
+          type: 'brain',
+          hint: 'Bertahan bersama lebih aman',
+          effect: (s) => {
+            CharBrain.playerAction('ally', potential, s);
+            Engine.modTrust(pc, potential, 10);
+            Engine.notify(`Aliansi terbentuk dengan ${CharBrain.charName(potential)}!`);
+          },
+          next: (s) => currentNodeId
+        });
+      }
+    }
+
+    // Killer strike (if player is killer)
+    if (isK && nearbyNpcs.length === 1 && !gameState.killers.includes(nearbyNpcs[0])) {
+      const target = nearbyNpcs[0];
+      choices.push({
+        text: `[BRAIN] Serang ${CharBrain.charName(target)} — kau sendirian dengannya...`,
+        type: 'brain-killer',
+        danger: true,
+        hint: 'Risiko tinggi — bisa ketahuan jika gagal',
+        effect: (s) => {
+          const result = CharBrain.playerAction('killer_strike', target, s);
+          if (result) {
+            if (result.success) {
+              Engine.killChar(target);
+              Engine.notify(result.desc);
+            } else {
+              Engine.notify(result.desc);
+            }
+          }
+        },
+        next: (s) => currentNodeId
+      });
+    }
+
+    // Move to adjacent location
+    const connections = CharBrain.LOCATION_CONNECTIONS[playerLoc] || [];
+    if (connections.length > 0 && gameState.chapter >= 1) {
+      const moveLoc = connections[Math.floor(Math.random() * connections.length)];
+      choices.push({
+        text: `[BRAIN] Pindah ke ${CharBrain.locName(moveLoc)}`,
+        type: 'brain',
+        hint: 'Ubah posisimu di mansion',
+        effect: (s) => {
+          s.playerLocation = moveLoc;
+          Engine.notify(`Kau berpindah ke ${CharBrain.locName(moveLoc)}.`);
+        },
+        next: (s) => currentNodeId
+      });
+    }
+
+    return choices;
+  }
+
+  // ---- NPC Action Log Panel ----
+  function updateNpcLogPanel() {
+    const container = $('npc-log-list');
+    if (!container) return;
+    if (!state.npcMinds || typeof CharBrain === 'undefined') {
+      container.innerHTML = '<p class="npc-log-empty">Sistem NPC belum aktif.</p>';
+      return;
+    }
+
+    const log = CharBrain.getActionLog(state);
+    container.innerHTML = '';
+
+    log.forEach(entry => {
+      const mind = state.npcMinds[entry.name];
+      if (!mind) return;
+      const isK = state.killers && state.killers.includes(entry.name);
+      const statusText = typeof CharDB !== 'undefined' ? CharDB.getStatusText(entry.name, mind) : entry.emotion;
+
+      const div = document.createElement('div');
+      div.className = `npc-log-entry${isK && state.killerRevealed.includes(entry.name) ? ' npc-log-killer' : ''}`;
+      div.innerHTML = `
+        <div class="npc-log-header">
+          ${getPortraitHTML(entry.name, 'npc-log-portrait')}
+          <div class="npc-log-info">
+            <span class="npc-log-name speaker ${entry.name}">${entry.displayName}</span>
+            <span class="npc-log-status">${statusText}</span>
+          </div>
+        </div>
+        <div class="npc-log-location">Lokasi: ${entry.location}</div>
+        <div class="npc-log-action">${entry.lastAction}</div>
+        ${entry.allies.length > 0 ? `<div class="npc-log-allies">Aliansi: ${entry.allies.join(', ')}</div>` : ''}
+        ${entry.clueCount > 0 ? `<div class="npc-log-clues">Petunjuk: ${entry.clueCount}</div>` : ''}
+      `;
+      container.appendChild(div);
+    });
   }
 
   function renderChoices(choices) {
@@ -511,6 +770,22 @@ const Engine = (() => {
       const portraitHtml = getPortraitHTML(name, 'char-portrait');
       const isMainChar = MAIN_CHARACTERS.includes(name);
 
+      // NPC brain info
+      let brainHtml = '';
+      if (state.npcMinds && state.npcMinds[name] && alive) {
+        const mind = state.npcMinds[name];
+        const emotionLabel = typeof CharDB !== 'undefined' ? CharDB.getStatusText(name, mind) : mind.emotion;
+        const locLabel = typeof CharBrain !== 'undefined' ? CharBrain.locName(mind.location) : mind.location;
+        brainHtml = `
+          <div class="char-brain-info">
+            <div class="char-brain-emotion">Emosi: <span class="brain-${mind.emotion}">${emotionLabel}</span></div>
+            <div class="char-brain-loc">Lokasi: ${locLabel}</div>
+            ${mind.allies.length > 0 ? `<div class="char-brain-allies">Aliansi: ${mind.allies.map(a => CHAR_DISPLAY[a] || a).join(', ')}</div>` : ''}
+            ${mind.hasClue.length > 0 ? `<div class="char-brain-clues">Petunjuk: ${mind.hasClue.length}</div>` : ''}
+          </div>
+        `;
+      }
+
       div.innerHTML = `
         <div class="char-header">
           ${portraitHtml}
@@ -520,6 +795,7 @@ const Engine = (() => {
           </div>
         </div>
         ${awarenessBar}
+        ${brainHtml}
         ${alive ? relHtml : ''}
       `;
       container.appendChild(div);
@@ -810,13 +1086,13 @@ const Engine = (() => {
 
   // ---- Save / Load ----
   function saveGame() {
-    const saveData = { state, currentNodeId, lang, version: 4 };
+    const saveData = { state, currentNodeId, lang, version: 5 };
     localStorage.setItem('simpul_save', JSON.stringify(saveData));
   }
 
   function loadGame() {
     const data = JSON.parse(localStorage.getItem('simpul_save'));
-    if (!data || data.version < 4) { notify('Save lama tidak kompatibel. Mulai game baru.'); return false; }
+    if (!data || data.version < 5) { notify('Save lama tidak kompatibel. Mulai game baru.'); return false; }
     state = data.state;
     currentNodeId = data.currentNodeId;
     lang = data.lang || 'id';
@@ -826,7 +1102,7 @@ const Engine = (() => {
   function hasSave() {
     const d = localStorage.getItem('simpul_save');
     if (!d) return false;
-    try { return JSON.parse(d).version >= 4; } catch(e) { return false; }
+    try { return JSON.parse(d).version >= 5; } catch(e) { return false; }
   }
 
   // ---- Panel Toggle ----
@@ -883,8 +1159,12 @@ const Engine = (() => {
 
     $('btn-menu').addEventListener('click', () => togglePanel('panel-menu'));
     $('btn-status').addEventListener('click', () => togglePanel('panel-status'));
+    const npcLogBtn = $('btn-npc-log');
+    if (npcLogBtn) npcLogBtn.addEventListener('click', () => { togglePanel('panel-npc-log'); updateNpcLogPanel(); });
     $('btn-close-menu').addEventListener('click', () => togglePanel('panel-menu'));
     $('btn-close-status').addEventListener('click', () => togglePanel('panel-status'));
+    const closeNpcLogBtn = $('btn-close-npc-log');
+    if (closeNpcLogBtn) closeNpcLogBtn.addEventListener('click', () => togglePanel('panel-npc-log'));
     $('overlay').addEventListener('click', () => {
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('open'));
       $('overlay').classList.remove('active');
@@ -918,6 +1198,7 @@ const Engine = (() => {
     screenShake, bloodDrip, glitch, deathFlash, showChapterTitle, notify,
     showDirectEnding, renderNode, getPortraitHTML,
     isPlayer, playerChar, playerName, isPlayerKiller, getPlayerPerspective,
+    initNpcMinds, runNpcRound, checkWinLossState, updateNpcLogPanel,
     ROLE_DESCRIPTIONS,
     get state() { return state; },
     get lang() { return lang; },
