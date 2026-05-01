@@ -76,6 +76,149 @@ const STORY_CH3 = {
         s.flags.finalNegotiation = true;
         s.keyChoices.push('final_negotiation');
       }
+    },
+    {
+      text: "Berikan batu pada Sera — biarkan kepekaannya yang memimpin",
+      hint: "Sera bisa merasakan simpul lebih dari siapapun.",
+      next: 'ch3_sera_leads',
+      condition: (s) => s.alive.sera && (s.flags.seraSensitive || s.flags.seraFeelsVira || s.flags.seraAlliance),
+      effect: (s) => {
+        s.flags.seraLeadsRitual = true;
+        s.keyChoices.push('sera_leads');
+      }
+    },
+    {
+      text: "Minta Juno untuk menebus dosanya — dia yang punya hubungan paling dalam dengan Vira",
+      next: 'ch3_juno_redemption',
+      condition: (s) => s.alive.juno && (s.flags.junoConfessed || s.flags.comfortedJunoDeeply),
+      effect: (s) => {
+        s.flags.junoRedemption = true;
+        s.keyChoices.push('juno_redemption');
+      }
+    }
+  ]
+},
+
+'ch3_sera_leads': {
+  chapter: 3,
+  text: `<div class="scene-art scene-ritual"></div>
+<p>Kau menyerahkan batu pada Sera. Saat jari-jarinya menutup di sekitar permukaan batu, matanya berubah — tidak hijau seperti entitas, tapi biru terang. Biru langit. Biru harapan.</p>
+<p><span class="speaker sera">Sera</span> menarik napas tajam.</p>
+<p>"Aku bisa merasakan semuanya. Simpul, entitas, Vira, empat jiwa yang lama... semuanya terhubung. Dan aku bisa melihat..." suaranya bergetar, "...aku bisa melihat <em>cara</em>-nya."</p>
+<p>"Kita tidak perlu mengorbankan siapapun. Yang dibutuhkan simpul bukan jiwa. Yang dibutuhkan simpul adalah <em>ingatan</em>. Ingatan tentang koneksi yang tulus."</p>
+<p>"Entitas mengambil jiwa karena tidak mengerti. Dia sendiri tidak pernah punya teman. Tidak pernah punya koneksi manusiawi. Dia hanya tahu mengambil."</p>
+<p>Sera menatapmu dengan air mata dan senyum bersamaan.</p>
+<p>"Kita harus <em>memberikan</em> ingatan kita padanya. Bukan jiwa. Tapi momen-momen ketika kita benar-benar terhubung."</p>`,
+  choices: [
+    {
+      text: '"Aku siap. Tunjukkan caranya, Sera."',
+      next: 'ch3_memory_ritual',
+      effect: (s) => {
+        s.flags.memoryRitual = true;
+        s.moralScore += 20;
+        s.keyChoices.push('memory_ritual');
+      }
+    },
+    {
+      text: '"Bagaimana kalau itu menghapus ingatan kita?"',
+      next: 'ch3_memory_cost',
+      effect: (s) => {
+        s.flags.askedMemoryCost = true;
+      }
+    }
+  ]
+},
+
+'ch3_memory_cost': {
+  text: `<p>Sera terdiam. Batu di tangannya berdenyut lebih pelan.</p>
+<p>"Ya," bisiknya. "Mungkin. Mungkin kita akan lupa. Lupa malam di atap. Lupa es krim setelah ujian. Lupa betapa dalamnya kita saling peduli."</p>
+<p>"Tapi Vira akan bangun. Entitas akan puas. Hutan akan hidup. Dan meskipun kita lupa..."</p>
+<p>Sera menatapmu dengan keyakinan yang menakjubkan.</p>
+<p>"...kita akan jatuh cinta lagi pada persahabatan ini. Karena bukan ingatan yang membuat kita teman. Bukan kebiasaan. Bukan waktu. Itu <em>pilihan</em>. Dan kita akan memilih satu sama lain. Lagi. Dan lagi."</p>`,
+  choices: [
+    {
+      text: '"Kau benar. Lakukan."',
+      next: 'ch3_memory_ritual',
+      effect: (s) => {
+        s.flags.acceptedMemoryLoss = true;
+        s.moralScore += 25;
+        s.keyChoices.push('accepted_memory_loss');
+      }
+    },
+    {
+      text: '"Aku tidak bisa. Ingatan ini terlalu berharga."',
+      next: 'ch3_ritual_start',
+      effect: (s) => {
+        s.flags.keptMemories = true;
+        s.moralScore -= 5;
+      }
+    }
+  ]
+},
+
+'ch3_memory_ritual': {
+  text: (s) => {
+    const aliveCount = Engine.CHARACTERS.filter(c => s.alive[c]).length;
+
+    return `<p>Sera memimpin. Kalian berdiri melingkari pohon tua. Batu ada di tangan Sera, ditekan ke kulit kayu.</p>
+<p>"Ingat," bisik Sera. "Ingat momen terbaik kalian bersama."</p>
+<p>Dan kalian ingat.</p>
+<p>Niko mengingat malam saat dia menangis setelah ayahnya pergi — dan empat teman yang datang ke rumahnya pukul dua pagi tanpa diminta.</p>
+<p>Juno mengingat konser pertamanya yang gagal total — dan empat orang di baris depan yang tetap bertepuk tangan.</p>
+<p>Sera mengingat hari saat dia menunjukkan lukisannya untuk pertama kali — dan Vira yang berkata, "Ini cara kau melihat dunia? Cantik sekali."</p>
+<p>Kau mengingat... semuanya. Semua momen kecil yang menumpuk menjadi sesuatu yang lebih besar dari jumlah bagiannya.</p>
+<p>Pohon bercahaya. Bukan hijau — <em>emas</em>. Cahaya hangat yang mengalir dari akar ke puncak. Langit berubah warna.</p>
+<p>Dan entitas — dari kedalaman — menangis. Bukan karena kesakitan. Karena akhirnya, untuk pertama kalinya dalam lima ratus tahun, seseorang <em>berbagi</em> dengannya.</p>
+${aliveCount >= 4 ? '<p>Simpul terbentuk. Sempurna. Utuh. Diikat oleh hal yang tidak bisa diambil paksa: cinta yang diberikan dengan sukarela.</p><p>Akar membuka. Vira muncul. Hidup. Menangis. <em>Pulang</em>.</p>' : '<p>Simpul terbentuk — tidak sempurna, retak di beberapa tempat — tapi cukup. Cukup untuk membawa Vira kembali, meski lemah.</p>'}`;
+  },
+  choices: [
+    {
+      text: "...",
+      next: 'ending_compute',
+      effect: (s) => {
+        s.flags.memoryRitualComplete = true;
+        s.flags.viraRescued = true;
+        if (s.flags.acceptedMemoryLoss) {
+          s.flags.memoriesLost = true;
+          s.moralScore += 15;
+        }
+        s.keyChoices.push('memory_ritual_complete');
+      }
+    }
+  ]
+},
+
+'ch3_juno_redemption': {
+  chapter: 3,
+  text: `<p><span class="speaker juno">Juno</span> menatapmu. Air mata yang selama ini ditahan akhirnya jatuh.</p>
+<p>"Aku yang meninggalkannya, Arin. Malam itu di Halimun. Aku melihat sesuatu menariknya ke bawah tanah dan aku lari. <em>Lari</em>."</p>
+<p>"Enam bulan aku hidup dengan mimpi buruk itu. Enam bulan aku bertanya — bagaimana kalau aku tidak lari? Bagaimana kalau aku meraih tangannya?"</p>
+<p>Juno berjalan ke tepi clearing. Ke arah pohon tua. Entitas mengamatinya.</p>
+<p>"Sekarang aku tahu jawabannya." Dia berbalik. Senyumnya — di balik air mata — adalah senyum paling tulus yang pernah kau lihat dari Juno.</p>
+<p>"Aku tidak lari lagi."</p>
+<p>Dia berlutut di depan pohon dan menempelkan kedua tangannya ke kulit kayu. Akar-akar bergerak mengelilingi tangannya — tapi tidak mengancam. Seperti jari yang saling menggenggam.</p>
+<p>"Vira, aku di sini. Maaf aku terlambat enam bulan. Tapi aku di sini sekarang."</p>
+<p>Dari bawah tanah, bisikan:</p>
+<p class="journal"><em>"Juno... aku tahu kau akan datang."</em></p>`,
+  choices: [
+    {
+      text: "Berdiri di samping Juno. Bantu dia.",
+      next: 'ch3_ritual_truths',
+      effect: (s) => {
+        Engine.modTrust('arin', 'juno', 20);
+        s.flags.junoRedeemed = true;
+        s.moralScore += 20;
+        s.keyChoices.push('juno_redeemed');
+      }
+    },
+    {
+      text: '"Juno, jangan sendirian. Kita semua harus melakukan ini bersama."',
+      next: 'ch3_ritual_start',
+      effect: (s) => {
+        Engine.modTrust('arin', 'juno', 10);
+        s.flags.junoNotAlone = true;
+        s.moralScore += 10;
+      }
     }
   ]
 },
@@ -254,7 +397,8 @@ const STORY_CH3 = {
     const alive = Engine.CHARACTERS.filter(c => s.alive[c]);
     const aliveNames = alive.map(c => Engine.CHAR_DISPLAY[c]).join(', ');
 
-    return `<p class="narration">Bab 4: Simpul Terakhir</p>
+    return `<div class="scene-art scene-ritual"></div>
+<p class="narration">Bab 4: Simpul Terakhir</p>
 <p>Matahari terbit merah — merah seperti darah lama yang mengering.</p>
 <p>Kalian berjalan ke hutan. ${aliveNames}. ${alive.length < 5 ? 'Tidak lengkap. Tapi masih ada.' : 'Lima. Seperti yang dibutuhkan.'}</p>
 <p>Pohon tua menunggu. Altar di reruntuhan kuil menunggu. Cekungan untuk Inti Simpul terbuka seperti mulut yang kehausan.</p>
@@ -412,7 +556,8 @@ const STORY_CH3 = {
   text: (s) => {
     const alive = Engine.CHARACTERS.filter(c => s.alive[c]);
 
-    return `<p>"Kita pergi. Sekarang."</p>
+    return `<div class="scene-art scene-dawn"></div>
+<p>"Kita pergi. Sekarang."</p>
 <p>Kalian berlari ke arah jalan setapak. Hutan — seolah mendengar keputusan kalian — bereaksi. Pohon-pohon bergeser, menutup jalan. Akar menjulur. Kabut naik dari tanah.</p>
 <p>Tapi kalian terus berlari. ${alive.length} jiwa yang menolak permainan hutan.</p>
 <p>Entitas — dari kedalaman — berbicara untuk terakhir kalinya:</p>
@@ -445,7 +590,8 @@ const STORY_CH3 = {
 },
 
 'ch3_return': {
-  text: `<p>"Tidak." Kau berhenti. "Aku tidak bisa."</p>
+  text: `<div class="scene-art scene-dawn"></div>
+<p>"Tidak." Kau berhenti. "Aku tidak bisa."</p>
 <p>Sera menatapmu. "Arin..."</p>
 <p>"Vira masih di sana. Aku tidak bisa meninggalkannya. Kalian pergilah. Aku kembali."</p>
 <p>Keheningan. Lalu — satu per satu — mereka berbalik bersamamu.</p>

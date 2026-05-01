@@ -7,7 +7,8 @@ const STORY_CH1 = {
 
 'ch1_arrival': {
   chapter: 1,
-  text: `<p>Cabin itu lebih besar dari yang kau bayangkan. Dua lantai, dinding kayu gelap, atap berlumut. Tangga depan berderit saat Niko menaikinya.</p>
+  text: `<div class="scene-art scene-cabin"></div>
+<p>Cabin itu lebih besar dari yang kau bayangkan. Dua lantai, dinding kayu gelap, atap berlumut. Tangga depan berderit saat Niko menaikinya.</p>
 <p><span class="speaker niko">Niko</span> membuka pintu dengan kunci tua yang berkarat.</p>
 <p>"Selamat datang di Casa de Niko."</p>
 <p>Di dalam: ruang tamu dengan perapian batu, dapur kecil, dan tangga ke lantai dua. Perabotan tertutup kain putih berdebu. Bau kayu tua dan kelembaban.</p>
@@ -342,6 +343,25 @@ ${tension}
         s.moralScore += 15;
         s.keyChoices.push('early_truth');
       }
+    },
+    {
+      text: "Ajak Juno bicara berdua di beranda",
+      hint: "Juno menyembunyikan sesuatu. Kamu bisa merasakannya.",
+      next: 'ch1_juno_porch',
+      condition: (s) => !s.flags.junoConfessed,
+      effect: (s) => {
+        Engine.modTrust('arin', 'juno', 8);
+        s.flags.porchTalkJuno = true;
+      }
+    },
+    {
+      text: "Periksa kamar yang disiapkan Niko — ada yang janggal",
+      next: 'ch1_check_rooms',
+      condition: (s) => !s.flags.checkedFootprints,
+      effect: (s) => {
+        Engine.modAwareness('arin', 8);
+        s.flags.checkedRooms = true;
+      }
     }
   ]
 },
@@ -460,7 +480,8 @@ ${tension}
 },
 
 'ch1_early_confrontation': {
-  text: `<p>Vira berdiri perlahan. Senyumnya tidak berubah, tapi suhu ruangan turun beberapa derajat. Api di perapian berkedip.</p>
+  text: `<div class="scene-art scene-entity"></div>
+<p>Vira berdiri perlahan. Senyumnya tidak berubah, tapi suhu ruangan turun beberapa derajat. Api di perapian berkedip.</p>
 <p><span class="speaker vira">Vira</span></p>
 <p>"Arin, Arin..." Suaranya berlapis — suara Vira, dan sesuatu yang lain di bawahnya. Lebih tua. Lebih dalam.</p>
 <p>"Kalian pikir ini tentang aku? Ini tentang <em>kalian</em>. Lima benang yang terikat. Lima simpul yang hutan butuhkan."</p>
@@ -505,8 +526,158 @@ ${tension}
   ]
 },
 
+'ch1_juno_porch': {
+  text: `<p>Beranda cabin menghadap ke hutan. Bulan menerangi pucuk-pucuk pinus dengan cahaya pucat. Juno duduk di anak tangga, menggosok-gosok gelang di pergelangan tangannya — kebiasaan nervousnya.</p>
+<p>"Hei." Kau duduk di sampingnya.</p>
+<p><span class="speaker juno">Juno</span> tidak langsung merespons. Matanya terpaku pada hutan.</p>
+<p>"Arin... kamu percaya pada hantu?"</p>
+<p>"Tergantung konteksnya."</p>
+<p>"Konteksnya..." Juno menelan ludah. "Konteksnya aku pernah melihat sahabatku berubah menjadi sesuatu yang bukan manusia. Di hutan yang persis seperti ini."</p>
+<p>Dia menoleh padamu. Air mata mengalir tanpa suara.</p>
+<p>"Aku ada di Halimun bersama Vira. Malam itu... malam Vira menghilang... aku ada di sana, Arin. Dan aku <em>lari</em>."</p>
+<p>Suaranya pecah. Candaan, tawa, sarkasme — semua topeng itu jatuh. Yang tersisa hanya seorang gadis yang sudah menyimpan rasa bersalah selama enam bulan.</p>
+<p>"Aku melihat sesuatu menelannya. Dari bawah tanah. Dan aku lari seperti pengecut."</p>`,
+  choices: [
+    {
+      text: "Peluk Juno. Dia butuh ini lebih dari kata-kata.",
+      next: 'ch1_bonfire_stories',
+      effect: (s) => {
+        Engine.modTrust('arin', 'juno', 15);
+        s.flags.junoConfessed = true;
+        s.flags.comfortedJunoDeeply = true;
+        s.moralScore += 15;
+        s.keyChoices.push('comforted_juno_deep');
+      }
+    },
+    {
+      text: '"Kau harus ceritakan ini pada semua orang. Malam ini."',
+      next: 'ch1_bonfire_stories',
+      effect: (s) => {
+        s.flags.junoConfessed = true;
+        s.flags.junoWillConfess = true;
+        s.moralScore += 10;
+        s.keyChoices.push('juno_will_confess');
+      }
+    },
+    {
+      text: '"Kenapa kau tetap datang ke sini kalau kau tahu bahayanya?"',
+      next: 'ch1_juno_guilt',
+      effect: (s) => {
+        s.flags.junoConfessed = true;
+        Engine.modAwareness('arin', 10);
+      }
+    }
+  ]
+},
+
+'ch1_juno_guilt': {
+  text: `<p><span class="speaker juno">Juno</span> tertawa — tawa pahit yang lebih menyakitkan dari tangisan.</p>
+<p>"Karena aku tidak bisa tidur lagi, Arin. Setiap malam, aku bermimpi tentang Vira. Berdiri di lubang itu. Menatapku. Berkata, 'Kenapa kau meninggalkanku?'"</p>
+<p>"Dan ketika Niko bilang dia mau ke hutan yang terhubung dengan Halimun — aku tahu. Ini kesempatanku. Bukan untuk menyelamatkan Vira. Tapi untuk <em>menebus</em>."</p>
+<p>"Kalau aku harus mati di hutan ini untuk membebaskan Vira — aku bersedia."</p>
+<p>Kau menatap Juno — orang yang selalu bersembunyi di balik lelucon — dan untuk pertama kalinya kau melihat kedalaman yang tidak pernah kau duga ada di sana.</p>
+<p>Dari dalam cabin, suara tertawa yang lain terdengar samar. Normal. Hangat. Tapi di beranda ini, dunia sudah berubah.</p>`,
+  choices: [
+    {
+      text: '"Tidak ada yang akan mati. Kita cari jalan lain."',
+      next: 'ch1_bonfire_stories',
+      effect: (s) => {
+        Engine.modTrust('arin', 'juno', 12);
+        s.flags.promisedNoDeaths = true;
+        s.moralScore += 10;
+      }
+    },
+    {
+      text: '"Kita lawan ini bersama. Aku bersamamu, Juno."',
+      next: 'ch1_bonfire_stories',
+      effect: (s) => {
+        Engine.modTrust('arin', 'juno', 15);
+        s.flags.junoAlliance = true;
+        s.keyChoices.push('juno_alliance');
+      }
+    }
+  ]
+},
+
+'ch1_check_rooms': {
+  text: `<p>Kau naik ke lantai dua sementara yang lain masih di perapian. Lorong sempit dengan tiga pintu kamar.</p>
+<p>Kamar pertama — milik Niko dan Juno. Biasa.</p>
+<p>Kamar kedua — milik Sera dan Vira. Kau membuka pintunya. Di dalamnya, dua tempat tidur berhadapan. Tapi ada sesuatu di bawah tempat tidur Vira — kau menunduk dan melihatnya.</p>
+<p>Tanah. Gundukan kecil tanah hitam lembab. <em>Di bawah tempat tidur</em>. Dan dari tanah itu, akar kecil — akar yang hidup — menjulur ke atas, melilit kaki tempat tidur.</p>
+<p>Hutan sudah masuk ke dalam cabin.</p>
+<p>Kau juga melihat sesuatu di dinding — goresan samar, nyaris tidak terlihat. Kau menyalakan senter ponsel dan mendekatkan. Goresan itu membentuk kata-kata dalam bahasa yang tidak kau kenal, tapi satu kata bisa kau baca:</p>
+<p class="journal"><em>"TOLONG"</em></p>
+<p>Ditulis dengan kuku. Di permukaan bagian dalam dinding. Dari sisi yang seharusnya tidak bisa dijangkau.</p>`,
+  shake: true,
+  choices: [
+    {
+      text: "Cabut akar-akar itu",
+      next: 'ch1_bonfire_stories',
+      danger: true,
+      effect: (s) => {
+        Engine.modEntity(8);
+        s.flags.pulledRoots = true;
+        s.secretsFound++;
+        Engine.modAwareness('arin', 12);
+      }
+    },
+    {
+      text: "Foto semuanya dengan ponsel lalu turun",
+      next: 'ch1_bonfire_stories',
+      effect: (s) => {
+        s.flags.documentedRoom = true;
+        s.secretsFound++;
+        Engine.modAwareness('arin', 10);
+        s.keyChoices.push('documented_evidence');
+      }
+    },
+    {
+      text: "Ceritakan pada Sera — dia tidur di kamar ini",
+      next: 'ch1_warn_sera',
+      effect: (s) => {
+        Engine.modTrust('arin', 'sera', 10);
+        s.flags.warnedSeraRoom = true;
+      }
+    }
+  ]
+},
+
+'ch1_warn_sera': {
+  text: `<p>Kau menarik Sera ke samping dan membawanya ke lantai dua.</p>
+<p><span class="speaker sera">Sera</span> melihat akar-akar itu dan mundur ke dinding.</p>
+<p>"Aku tidak tidur di kamar ini. Tidak. Tidak mungkin."</p>
+<p>"Sera—"</p>
+<p>"Arin, <em>lihat</em>." Dia menunjuk ke akar-akar itu. "Mereka bergerak."</p>
+<p>Benar. Akar-akar itu — pelan, hampir tidak terlihat — bergerak. Menjalar. Seperti jari yang meraba dalam gelap.</p>
+<p>"Ini bukan normal. Ini bukan jamur atau apapun. Hutan ini <em>hidup</em> dan sedang masuk ke dalam cabin."</p>
+<p>Sera menatapmu dengan ketakutan dan tekad yang bersamaan.</p>
+<p>"Aku tidur di kamarmu malam ini. Dan besok pagi, kita paksa Niko menjelaskan <em>semuanya</em>."</p>`,
+  choices: [
+    {
+      text: "Setuju. Kalian perlu saling jaga.",
+      next: 'ch1_bonfire_stories',
+      effect: (s) => {
+        Engine.modTrust('arin', 'sera', 12);
+        s.flags.seraRoomSwitch = true;
+        s.flags.seraPartner = true;
+        s.keyChoices.push('sera_room_switch');
+      }
+    },
+    {
+      text: '"Jangan tunjukkan ketakutanmu pada Vira. Dia mungkin bisa merasakannya."',
+      next: 'ch1_bonfire_stories',
+      effect: (s) => {
+        Engine.modTrust('arin', 'sera', 8);
+        Engine.modAwareness('arin', 5);
+        s.flags.warnedAboutVira = true;
+      }
+    }
+  ]
+},
+
 'ch1_basement': {
-  text: `<p>Kau menemukan pintu jebakan di bawah karpet ruang tamu. Engselnya baru diminyaki — seseorang sudah membukanya belum lama ini.</p>
+  text: `<div class="scene-art scene-ritual"></div>
+<p>Kau menemukan pintu jebakan di bawah karpet ruang tamu. Engselnya baru diminyaki — seseorang sudah membukanya belum lama ini.</p>
 <p>Di bawahnya, tangga kayu menuju kegelapan. Bau tanah naik seperti napas makhluk yang tertidur.</p>
 <p>Kau menyalakan senter ponselmu dan turun.</p>
 <p>Ruang bawah tanah kecil — dinding batu lembab, lantai tanah. Di tengahnya, ada <em>lingkaran</em> yang digambar di lantai dengan sesuatu yang berwarna merah gelap. Di dalam lingkaran itu ada lima titik — persis seperti simbol di kotak Niko, di pohon tua, di kertas yang Sera temukan.</p>
@@ -601,7 +772,8 @@ ${tension}
 },
 
 'ch1_follow_vira_forest': {
-  text: `<p>Kau mengikutinya. Hutan terbuka untukmu juga — cabang-cabang menyingkir, akar-akar merata.</p>
+  text: `<div class="scene-art scene-forest"></div>
+<p>Kau mengikutinya. Hutan terbuka untukmu juga — cabang-cabang menyingkir, akar-akar merata.</p>
 <p>Vira membawamu ke sebuah clearing kecil. Di tengahnya, pohon tua yang sama — yang kau temukan (atau hampir temukan) sebelumnya. Akar-akarnya memeluk tanah seperti jari-jari raksasa.</p>
 <p>Vira berbalik menghadapmu. Di bawah cahaya bulan, wajahnya berubah. Bukan Vira lagi — sesuatu yang lebih tua, lebih transparan, dengan fitur-fitur yang terlalu simetris untuk menjadi manusia.</p>
 <p>"Arin." Suaranya berlapis — puluhan suara dalam satu. "Aku ingin kamu mengerti. Aku bukan monster."</p>
@@ -769,6 +941,16 @@ ${tension}
         s.chapter = 2;
         s.flags.forcedNikoTruth = true;
         s.keyChoices.push('forced_niko');
+      }
+    },
+    {
+      text: '"Sera, kau tahu sesuatu. Ceritakan."',
+      next: 'ch2_sera_reveals',
+      condition: (s) => s.flags.seraPartner || s.flags.warnedSeraRoom || s.flags.confirmedToSera,
+      effect: (s) => {
+        s.chapter = 2;
+        s.flags.seraRevealed = true;
+        s.keyChoices.push('sera_revealed');
       }
     }
   ]

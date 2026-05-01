@@ -8,7 +8,8 @@ const STORY_PROLOG = {
 
 'prologue_start': {
   chapter: 0,
-  text: `<p class="narration">Enam bulan lalu, Vira pergi camping sendirian ke Gunung Halimun. Dia menghilang selama tiga minggu. Ketika dia kembali, dia tersenyum seperti tidak terjadi apa-apa. Tidak ada yang berani bertanya mengapa.</p>
+  text: `<div class="scene-art scene-forest"></div>
+<p class="narration">Enam bulan lalu, Vira pergi camping sendirian ke Gunung Halimun. Dia menghilang selama tiga minggu. Ketika dia kembali, dia tersenyum seperti tidak terjadi apa-apa. Tidak ada yang berani bertanya mengapa.</p>
 <p>Mobil Niko berhenti di ujung jalan setapak. Hutan pinus menjulang di depan kalian seperti dinding hidup — gelap, dalam, dan bernapas.</p>
 <p><span class="speaker niko">Niko</span> mematikan mesin dan tersenyum lebar.</p>
 <p>"Cabin keluargaku cuma dua jam jalan kaki dari sini. Kita butuh ini — kalian semua butuh ini. Kapan terakhir kali kita berlima berkumpul?"</p>
@@ -647,12 +648,165 @@ ${extra}
 <p>Satu jam kemudian, pepohonan menipis dan kalian melihatnya — cabin kayu dua lantai yang berdiri di tepi clearing. Cat coklatnya mengelupas, jendelanya berkabut, tapi strukturnya masih kokoh.</p>
 <p><span class="speaker niko">Niko</span></p>
 <p>"Kita sampai."</p>
-<p>Rumput di sekitar cabin terlalu hijau. Terlalu subur. Seolah sesuatu di bawah tanah memberi makan akarnya.</p>`,
+<p>Rumput di sekitar cabin terlalu hijau. Terlalu subur. Seolah sesuatu di bawah tanah memberi makan akarnya.</p>
+<p>Tapi sebelum kalian sampai di pintu, Sera menghentikan langkahnya. Di tanah di depan cabin, setengah tertanam lumut, ada batu nisan kecil. Tanpa nama. Hanya angka: <em>1973</em>.</p>
+<p><span class="speaker juno">Juno</span> meliriknya. "Kuburan binatang peliharaan?"</p>
+<p><span class="speaker niko">Niko</span> memucat. "Aku... tidak pernah lihat itu sebelumnya."</p>`,
   choices: [
     {
-      text: "Masuk ke cabin",
+      text: "Gali sedikit tanah di sekitar batu nisan",
+      next: 'prologue_grave_dig',
+      effect: (s) => {
+        Engine.modAwareness('arin', 12);
+        s.flags.foundGrave = true;
+        s.secretsFound++;
+      }
+    },
+    {
+      text: "Abaikan dan masuk ke cabin",
       next: 'ch1_arrival',
       effect: (s) => { s.chapter = 1; }
+    },
+    {
+      text: "Tanya Niko — apa hubungan angka 1973 dengan cabin ini?",
+      next: 'prologue_niko_1973',
+      effect: (s) => {
+        Engine.modTrust('arin', 'niko', 5);
+        s.flags.asked1973 = true;
+      }
+    }
+  ]
+},
+
+'prologue_grave_dig': {
+  text: `<p>Kau berlutut dan menyingkirkan lumut dari sekitar batu nisan. Di bawah angka 1973, ada ukiran yang nyaris terhapus waktu — lima lingkaran kecil, terhubung garis.</p>
+<p>Simbol yang sama. Selalu simbol yang sama.</p>
+<p>Tanganmu menggali sedikit lebih dalam. Tanah di sini lembut — terlalu lembut, terlalu gelap. Dan baunya... bukan bau tanah biasa. Bau ini manis dan pahit sekaligus, seperti bunga yang membusuk.</p>
+<p>Jarimu menyentuh sesuatu keras. Kau menariknya — sebuah <em>medali militer</em> berkarat. Di belakangnya, nama yang terlalu pudar untuk dibaca, tapi ada satu kata yang masih jelas:</p>
+<p class="journal"><em>"Pengkhianat"</em></p>
+<p>Diukir dengan tangan, bukan dicetak. Seseorang menulis ini dengan kemarahan.</p>
+<p><span class="speaker sera">Sera</span> mundur selangkah. "Arin, aku rasa kita tidak seharusnya di sini."</p>
+<p>Dari dalam cabin, kau mendengar suara — <em>ketukan</em>. Dari dalam. Padahal belum ada yang masuk.</p>`,
+  shake: true,
+  choices: [
+    {
+      text: "Simpan medali itu dan masuk ke cabin",
+      next: 'ch1_arrival',
+      effect: (s) => {
+        s.chapter = 1;
+        s.items.push('old_medal');
+        s.flags.hasMedal = true;
+        Engine.modAwareness('arin', 10);
+        s.keyChoices.push('found_medal');
+      }
+    },
+    {
+      text: "Tunjukkan medali itu pada semua orang sebelum masuk",
+      next: 'prologue_medal_reveal',
+      effect: (s) => {
+        s.items.push('old_medal');
+        s.flags.hasMedal = true;
+        s.flags.medalRevealed = true;
+      }
+    }
+  ]
+},
+
+'prologue_medal_reveal': {
+  text: `<p>Kalian berdiri di depan cabin dalam lingkaran kecil. Medali berkarat ada di telapak tanganmu.</p>
+<p><span class="speaker niko">Niko</span> mengambilnya dan memeriksanya dengan mata yang makin gelap.</p>
+<p>"Kakekku... adalah veteran." Suaranya pelan. "Dia bercerita sekali — hanya sekali — tentang ekspedisi ke Halimun. Tahun 1973. Lima orang tentara ditugaskan memeriksa laporan penduduk desa tentang 'hutan yang berjalan'. Satu orang kembali."</p>
+<p>"Kakekmu," bisik Sera.</p>
+<p>Niko mengangguk. "Dan dia membawa sesuatu dari hutan. Sesuatu yang seharusnya tidak dibawa."</p>
+<p><span class="speaker vira">Vira</span> mengamati medali itu dengan tatapan yang terlalu lama, terlalu fokus. Jarinya bergerak — nyaris menyentuh, tapi berhenti.</p>
+<p>"Empat jiwa." Suaranya berbisik. "Empat jiwa yang <em>diserahkan</em>. Dan satu pengkhianat yang <em>melarikan diri</em>."</p>
+<p>Keheningan yang mengikuti bukan keheningan biasa. Ini keheningan yang memiliki berat.</p>`,
+  choices: [
+    {
+      text: '"Vira, dari mana kau tahu soal empat jiwa?"',
+      next: 'ch1_arrival',
+      danger: true,
+      effect: (s) => {
+        s.chapter = 1;
+        Engine.modEntity(8);
+        Engine.modAwareness('arin', 15);
+        s.flags.questionedViraMedal = true;
+        s.keyChoices.push('questioned_vira_medal');
+      }
+    },
+    {
+      text: "Masuk ke cabin. Terlalu banyak pertanyaan, terlalu sedikit jawaban.",
+      next: 'ch1_arrival',
+      effect: (s) => {
+        s.chapter = 1;
+        s.flags.overwhelmed = true;
+      }
+    }
+  ]
+},
+
+'prologue_escape_attempt': {
+  text: `<p>"Kita seharusnya tidak di sini," katamu. "Terlalu banyak tanda bahaya. Batu nisan, nyanyian, Vira yang—"</p>
+<p><span class="speaker niko">Niko</span> menggeleng keras. "Arin, kita sudah dua jam jalan kaki. Hari hampir gelap. Kita tidak bisa kembali malam-malam — jalurnya bahkan tidak terlihat."</p>
+<p><span class="speaker juno">Juno</span> menatap hutan di belakang kalian. "Dia benar. Aku bahkan tidak ingat jalan kembali."</p>
+<p>Kau melihat jalur yang kalian lalui — dan hatimu jatuh. Jalur itu... <em>hilang</em>. Bukan tertutup semak. Hilang. Seolah hutan menutup dirinya di belakang kalian seperti mulut yang mengunyah.</p>
+<p><span class="speaker sera">Sera</span> mencengkeram lenganmu. "Arin, lihat."</p>
+<p>Cabin itu berdiri di depan kalian. Satu-satunya tempat berlindung dalam lautan gelap yang mendekat.</p>
+<p><span class="speaker vira">Vira</span> sudah berdiri di pintu cabin. Tersenyum. Menunggu.</p>
+<p>"Kalian datang juga." Suaranya hangat — terlalu hangat untuk situasi ini. "Tenang saja. Cabin ini aman. Aku jamin."</p>`,
+  choices: [
+    {
+      text: "Masuk ke cabin. Tidak ada pilihan lain.",
+      next: 'ch1_arrival',
+      effect: (s) => {
+        s.chapter = 1;
+        s.flags.forcedEntry = true;
+        s.flags.noPathBack = true;
+      }
+    },
+    {
+      text: '"Vira, bagaimana kau bisa sampai di sana duluan?"',
+      next: 'ch1_arrival',
+      effect: (s) => {
+        s.chapter = 1;
+        Engine.modAwareness('arin', 10);
+        Engine.modEntity(5);
+        s.flags.noticedViraFast = true;
+        s.keyChoices.push('noticed_vira_fast');
+      }
+    }
+  ]
+},
+
+'prologue_niko_1973': {
+  text: `<p>Niko menatap batu nisan itu lama. Wajahnya berubah — bukan ketakutan, tapi pengakuan. Seolah melihat pecahan puzzle yang selama ini dia cari.</p>
+<p><span class="speaker niko">Niko</span></p>
+<p>"1973. Tahun kakekku pertama datang ke sini. Dia membangun cabin ini setahun kemudian — katanya untuk 'menjaga' sesuatu. Aku tidak pernah tahu apa."</p>
+<p>Dia berjongkok dan menyentuh batu nisan dengan jari yang gemetar.</p>
+<p>"Tapi dalam jurnal terakhirnya, dia menulis satu kalimat yang membuatku tidak bisa tidur berminggu-minggu."</p>
+<p>Niko menatapmu.</p>
+<p class="journal"><em>"Mereka masih ada di bawah sana. Menunggu empat lagi. Dan yang kelima — yang kelima sudah datang sendiri."</em></p>
+<p>"Arin, aku pikir 'yang kelima' itu Vira."</p>
+<p>Di belakang kalian, Vira tersenyum ke arah hutan. Jarinya menelusuri udara — seolah menyentuh sesuatu yang tidak bisa kalian lihat.</p>`,
+  choices: [
+    {
+      text: '"Niko, apa yang sebenarnya kakekmu ambil dari hutan?"',
+      next: 'ch1_arrival',
+      effect: (s) => {
+        s.chapter = 1;
+        Engine.modAwareness('arin', 10);
+        Engine.modTrust('arin', 'niko', 8);
+        s.flags.nikoCryptic = true;
+        s.keyChoices.push('niko_1973');
+      }
+    },
+    {
+      text: '"Kita seharusnya tidak di sini."',
+      next: 'prologue_escape_attempt',
+      effect: (s) => {
+        s.flags.wantedToLeaveEarly = true;
+        s.moralScore += 5;
+      }
     }
   ]
 },

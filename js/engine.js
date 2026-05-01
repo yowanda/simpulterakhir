@@ -77,6 +77,7 @@ const Engine = (() => {
     state.deathCount++;
     bloodDrip();
     screenShake();
+    deathFlash();
   }
 
   // ---- Check if can die (difficulty gating) ----
@@ -136,6 +137,50 @@ const Engine = (() => {
     const el = $('story-text');
     if (el) { el.classList.add('glitch-effect'); setTimeout(() => el.classList.remove('glitch-effect'), 600); }
   }
+  function deathFlash() {
+    const div = document.createElement('div');
+    div.className = 'death-flash';
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 800);
+  }
+  function showChapterTitle(title) {
+    const div = document.createElement('div');
+    div.className = 'chapter-transition';
+    div.innerHTML = '<span>' + title + '</span>';
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 3200);
+  }
+  function initParticles() {
+    let container = document.querySelector('.particle-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.className = 'particle-container';
+      document.body.appendChild(container);
+    }
+    container.innerHTML = '';
+    for (let i = 0; i < 15; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (8 + Math.random() * 12) + 's';
+      p.style.animationDelay = (Math.random() * 10) + 's';
+      p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+      container.appendChild(p);
+    }
+  }
+  function updateEntityAmbient() {
+    let el = document.querySelector('.entity-ambient');
+    if (state.entityPower > 30) {
+      if (!el) {
+        el = document.createElement('div');
+        el.className = 'entity-ambient';
+        document.body.appendChild(el);
+      }
+      el.style.opacity = Math.min(1, (state.entityPower - 30) / 70);
+    } else if (el) {
+      el.remove();
+    }
+  }
 
   // ---- Text Rendering ----
   function renderText(html, container, callback) {
@@ -151,10 +196,19 @@ const Engine = (() => {
     currentNodeId = nodeId;
     state.nodeHistory.push(nodeId);
     if (node.onEnter) node.onEnter(state);
-    if (node.chapter !== undefined) { state.chapter = node.chapter; updateChapterIndicator(); }
+    if (node.chapter !== undefined && node.chapter !== state.chapter) {
+      state.chapter = node.chapter;
+      updateChapterIndicator();
+      const chTitle = (CHAPTERS[lang] || CHAPTERS.id)[state.chapter];
+      if (chTitle) showChapterTitle(chTitle);
+    } else if (node.chapter !== undefined) {
+      state.chapter = node.chapter;
+      updateChapterIndicator();
+    }
     if (node.shake) screenShake();
     if (node.blood) bloodDrip();
     if (node.glitch) glitch();
+    updateEntityAmbient();
 
     const textContent = typeof node.text === 'function' ? node.text(state) : t(node.text);
     const storyText = $('story-text');
@@ -393,6 +447,7 @@ const Engine = (() => {
         currentNodeId = null;
         showScreen('screen-game');
         updateChapterIndicator();
+        initParticles();
         renderNode('prologue_start');
       });
     });
@@ -440,7 +495,7 @@ const Engine = (() => {
 
   return {
     init, t, getTrust, modTrust, modAwareness, modEntity, killChar, canDie,
-    screenShake, bloodDrip, glitch, notify, showDirectEnding, renderNode,
+    screenShake, bloodDrip, glitch, deathFlash, showChapterTitle, notify, showDirectEnding, renderNode,
     get state() { return state; },
     get lang() { return lang; },
     CHARACTERS, CHAR_DISPLAY, diffMult
