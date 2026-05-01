@@ -6,7 +6,7 @@
 const STORY_CH7 = {
 
 'ch7_start': {
-  chapter: 7,
+  chapter: 4,
   text: (s) => {
     let text = `<p class="sound">— Tengah malam lewat. —</p>`;
     text += `<p class="sound">— Jam dinding besar di aula berhenti berdentang. Keheningan yang tersisa lebih mengerikan dari suara apapun malam ini. —</p>`;
@@ -194,7 +194,7 @@ const STORY_CH7 = {
 },
 
 'ch7_resolution': {
-  chapter: 7,
+  chapter: 4,
   text: (s) => {
     let text = `<p class="sound">— Konfrontasi besar telah terjadi. Tapi malam belum berakhir. —</p>`;
     text += `<p class="sound">— Di luar, langit masih gelap. Masih ada waktu. Masih ada darah yang harus ditumpahkan — atau nyawa yang harus diselamatkan. —</p>`;

@@ -7,7 +7,7 @@
 const STORY_CH5 = {
 
 'ch5_start': {
-  chapter: 5,
+  chapter: 3,
   text: (s) => {
     let text = `<p class="sound">— Countdown: <strong>01:00:00</strong>. Satu jam sebelum fajar. Dan kebenaran — seperti fajar itu sendiri — mulai menyingsing melalui kegelapan. —</p>`;
 
@@ -160,7 +160,7 @@ const STORY_CH5 = {
 },
 
 'ch5_revelation': {
-  chapter: 5,
+  chapter: 3,
   text: (s) => {
     let text = `<p class="sound">— Dan kemudian — Wahyu. Kebenaran yang lebih gelap dari yang kau bayangkan. —</p>`;
 
@@ -232,7 +232,7 @@ const STORY_CH5 = {
 },
 
 'ch5_penenun_identity': {
-  chapter: 5,
+  chapter: 3,
   text: (s) => {
     let text = `<p class="sound">— Identitas Sang Penenun. —</p>`;
 
@@ -423,7 +423,7 @@ const STORY_CH5 = {
 },
 
 'ch5_second_death': {
-  chapter: 5,
+  chapter: 3,
   text: (s) => {
     let text = `<p class="sound">— Kematian kedua datang tanpa peringatan — tapi bukan tanpa alasan. —</p>`;
 
@@ -528,7 +528,7 @@ const STORY_CH5 = {
 },
 
 'ending_incomplete_escape': {
-  chapter: 5,
+  chapter: 3,
   isEnding: true,
   endingNumber: 19,
   title: 'Pelarian Tanpa Akhir',

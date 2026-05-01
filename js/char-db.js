@@ -191,16 +191,16 @@ const CharDB = (() => {
       { condition: { minDeaths: 2, emotion: 'hostile' }, action: { type: 'accuse', desc: 'Arin menunjuk jari: "AKU TAHU SIAPA KAU." Matanya berkilat — ini bukan tuduhan, ini fakta.' }, weight: 25 },
 
       // Mid-game investigation
-      { condition: { chapter: 3 }, action: { type: 'investigate', desc: 'Arin menyusun timeline di dinding — foto, catatan, benang merah menghubungkan semuanya.' }, weight: 16 },
-      { condition: { chapter: 4 }, action: { type: 'investigate', desc: 'Arin menemukan pola: setiap kematian terjadi saat korban sendirian. Ini bukan acak.' }, weight: 18 },
-      { condition: { chapter: 5 }, action: { type: 'confront', desc: 'Arin mengumpulkan semua bukti. Saatnya mengungkap kebenaran di depan semua orang.' }, weight: 20 },
+      { condition: { chapter: 2 }, action: { type: 'investigate', desc: 'Arin menyusun timeline di dinding — foto, catatan, benang merah menghubungkan semuanya.' }, weight: 16 },
+      { condition: { chapter: 3 }, action: { type: 'investigate', desc: 'Arin menemukan pola: setiap kematian terjadi saat korban sendirian. Ini bukan acak.' }, weight: 18 },
+      { condition: { chapter: 3 }, action: { type: 'confront', desc: 'Arin mengumpulkan semua bukti. Saatnya mengungkap kebenaran di depan semua orang.' }, weight: 20 },
 
       // Emotional moments
       { condition: { nearbyIncludes: 'sera', minDeaths: 3 }, action: { type: 'socialize', desc: 'Arin menggenggam tangan Sera. "Kalau kita tidak selamat..." — "Kita akan selamat," potong Sera.' }, weight: 12 },
 
       // --- NEW: Progressive investigation chain ---
       { condition: { chapter: 2, hasClue: true }, action: { type: 'confront', desc: 'Arin menunjukkan bukti ke kelompok: "Dengarkan. Ada pola di semua ini — kematian tidak acak."' }, weight: 18 },
-      { condition: { chapter: 4, minDeaths: 2 }, action: { type: 'accuse', desc: 'Arin menyusun semua bukti di dinding. "Aku sudah tahu siapa. Dan aku bisa buktikan."' }, weight: 22 },
+      { condition: { chapter: 3, minDeaths: 2 }, action: { type: 'accuse', desc: 'Arin menyusun semua bukti di dinding. "Aku sudah tahu siapa. Dan aku bisa buktikan."' }, weight: 22 },
 
       // --- NEW: Movement & exploration decisions ---
       { condition: { isAlone: true, emotion: 'calm' }, action: { type: 'move', desc: 'Arin bergerak ke ruangan lain, mengikuti insting jurnalisnya. Ada sesuatu yang belum ditemukan.', moveTo: 'perpustakaan' }, weight: 14 },
@@ -223,17 +223,17 @@ const CharDB = (() => {
       { condition: { minDeaths: 2, emotion: 'hostile', minTension: 60 }, action: { type: 'trust_kill', desc: '"AKU SUDAH MUAK DENGAN KEBOHONGAN." Arin menyerang orang yang paling dia curigai — apapun konsekuensinya.' }, weight: 20 },
       { condition: { minDeaths: 3, emotion: 'panicked', minTension: 70 }, action: { type: 'trust_kill', desc: 'Paranoia mengambil alih. Arin tidak bisa mempercayai siapapun lagi. "Salah satu dari kalian pasti pembunuh."' }, weight: 18 },
 
-      // --- Chapters 7-10: Escalation & endgame ---
-      { condition: { chapter: 7, hasClue: true, isAlone: false }, action: { type: 'rally', desc: 'Arin mengumpulkan semua bukti. "Dengarkan! Aku tahu siapa dalangnya. Kita akhiri malam ini."' }, weight: 24 },
-      { condition: { chapter: 7, emotion: 'suspicious', isAlone: false }, action: { type: 'coordinate_defense', desc: '"Kita sudah kehilangan terlalu banyak. Mulai sekarang, TIDAK ADA yang pergi sendirian." Arin mengambil komando.' }, weight: 22 },
-      { condition: { chapter: 7, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Waktu hampir habis. Arin mencari petunjuk pelarian dengan intensitas yang meningkat.' }, weight: 20 },
-      { condition: { chapter: 8, minDeaths: 2, isAlone: false }, action: { type: 'accuse', desc: 'Arin menyusun semua timeline di dinding. "INI DIA. Semua bukti menunjuk ke satu orang."' }, weight: 26 },
-      { condition: { chapter: 8, emotion: 'hostile', hasClue: true }, action: { type: 'rally', desc: '"SEMUANYA BERKUMPUL! Aku tahu jalannya — kita keluar atau mati mencoba!"' }, weight: 24 },
-      { condition: { chapter: 8, isAlone: true, minDanger: 50 }, action: { type: 'scout', desc: 'Endgame. Arin bergerak cepat, memeriksa setiap sudut terakhir mansion. Recorder masih menyala.' }, weight: 20 },
-      { condition: { chapter: 9, isAlone: false, minDeaths: 3 }, action: { type: 'coordinate_defense', desc: '"Formasi terakhir. Kita keluar bersama atau tidak sama sekali." Arin memimpin evakuasi.' }, weight: 28 },
-      { condition: { chapter: 9, emotion: 'panicked', hasClue: true }, action: { type: 'secure_exit', desc: 'Arin menemukan jalur keluar berkat petunjuk yang dikumpulkan. "DI SINI! JALAN KELUARNYA!"' }, weight: 26 },
-      { condition: { chapter: 10, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Arin mengumpulkan siapa pun yang tersisa. "Ini simpul terakhir. Putuskan sekarang."' }, weight: 30 },
-      { condition: { chapter: 10, hasClue: true }, action: { type: 'accuse', desc: 'Semua benang merah terhubung. Arin mengungkap SEMUANYA — nama, motif, rencana. Final confrontation.' }, weight: 28 },
+      // --- Chapters 4-5: Escalation & endgame ---
+      { condition: { chapter: 4, hasClue: true, isAlone: false }, action: { type: 'rally', desc: 'Arin mengumpulkan semua bukti. "Dengarkan! Aku tahu siapa dalangnya. Kita akhiri malam ini."' }, weight: 24 },
+      { condition: { chapter: 4, emotion: 'suspicious', isAlone: false }, action: { type: 'coordinate_defense', desc: '"Kita sudah kehilangan terlalu banyak. Mulai sekarang, TIDAK ADA yang pergi sendirian." Arin mengambil komando.' }, weight: 22 },
+      { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Waktu hampir habis. Arin mencari petunjuk pelarian dengan intensitas yang meningkat.' }, weight: 20 },
+      { condition: { chapter: 4, minDeaths: 2, isAlone: false }, action: { type: 'accuse', desc: 'Arin menyusun semua timeline di dinding. "INI DIA. Semua bukti menunjuk ke satu orang."' }, weight: 26 },
+      { condition: { chapter: 4, emotion: 'hostile', hasClue: true }, action: { type: 'rally', desc: '"SEMUANYA BERKUMPUL! Aku tahu jalannya — kita keluar atau mati mencoba!"' }, weight: 24 },
+      { condition: { chapter: 4, isAlone: true, minDanger: 50 }, action: { type: 'scout', desc: 'Endgame. Arin bergerak cepat, memeriksa setiap sudut terakhir mansion. Recorder masih menyala.' }, weight: 20 },
+      { condition: { chapter: 5, isAlone: false, minDeaths: 3 }, action: { type: 'coordinate_defense', desc: '"Formasi terakhir. Kita keluar bersama atau tidak sama sekali." Arin memimpin evakuasi.' }, weight: 28 },
+      { condition: { chapter: 5, emotion: 'panicked', hasClue: true }, action: { type: 'secure_exit', desc: 'Arin menemukan jalur keluar berkat petunjuk yang dikumpulkan. "DI SINI! JALAN KELUARNYA!"' }, weight: 26 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Arin mengumpulkan siapa pun yang tersisa. "Ini simpul terakhir. Putuskan sekarang."' }, weight: 30 },
+      { condition: { chapter: 5, hasClue: true }, action: { type: 'accuse', desc: 'Semua benang merah terhubung. Arin mengungkap SEMUANYA — nama, motif, rencana. Final confrontation.' }, weight: 28 },
 
       // --- Broad catch-all: different for every emotion so brain ALWAYS triggers ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Arin diam-diam mencatat siapa bicara dengan siapa dan siapa yang menghindari kontak mata.' }, weight: 10 },
@@ -266,7 +266,7 @@ const CharDB = (() => {
 
       // Use knowledge of mansion
       { condition: { isAlone: true, chapter: 2 }, action: { type: 'investigate', desc: 'Niko membuka panel rahasia yang hanya keluarganya tahu. Di baliknya — dokumen yang menjelaskan segalanya.' }, weight: 25 },
-      { condition: { isAlone: true, chapter: 4 }, action: { type: 'investigate', desc: 'Niko mengakses CCTV lama di ruang kontrol kakeknya. Rekaman menunjukkan siapa yang bergerak malam itu.' }, weight: 20 },
+      { condition: { isAlone: true, chapter: 3 }, action: { type: 'investigate', desc: 'Niko mengakses CCTV lama di ruang kontrol kakeknya. Rekaman menunjukkan siapa yang bergerak malam itu.' }, weight: 20 },
 
       // Vira relationship
       { condition: { nearbyIncludes: 'vira', minDeaths: 1 }, action: { type: 'socialize', desc: '"Vira... maafkan aku." Untuk pertama kalinya, topeng Niko retak.' }, weight: 15 },
@@ -278,17 +278,17 @@ const CharDB = (() => {
       { condition: { minDeaths: 2, hasClue: true }, action: { type: 'accuse', desc: 'Niko mengeluarkan bukti yang dia simpan sejak awal. "Aku sudah tahu sejak tadi. Aku hanya menunggu konfirmasi."' }, weight: 20 },
 
       // Late game
-      { condition: { chapter: 6 }, action: { type: 'confront', desc: 'Niko akhirnya mengungkap semua kartunya. "Cukup bermain-main. Ini yang sebenarnya terjadi."' }, weight: 22 },
+      { condition: { chapter: 4 }, action: { type: 'confront', desc: 'Niko akhirnya mengungkap semua kartunya. "Cukup bermain-main. Ini yang sebenarnya terjadi."' }, weight: 22 },
 
-      // --- Chapters 7-10: Escalation ---
-      { condition: { chapter: 7, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Niko menggunakan pengetahuan mansionnya untuk mencari petunjuk pelarian di tempat tersembunyi.' }, weight: 24 },
-      { condition: { chapter: 7, isAlone: false, minDeaths: 2 }, action: { type: 'coordinate_defense', desc: '"Ini mansionku. Ikuti instruksiku atau mati." Niko mengambil kendali absolut.' }, weight: 22 },
-      { condition: { chapter: 8, hasClue: true, isAlone: false }, action: { type: 'share_clue', desc: 'Niko membuka semua rahasia mansion. "Dengar, aku sembunyikan ini karena takut — tapi sekarang tidak ada pilihan."' }, weight: 24 },
-      { condition: { chapter: 8, emotion: 'hostile' }, action: { type: 'confront', desc: '"AKU TAHU SIAPA KAU." Niko menggunakan CCTV mansion untuk mengungkap killer.' }, weight: 26 },
-      { condition: { chapter: 9, minDeaths: 3, isAlone: false }, action: { type: 'rally', desc: 'Niko mengumpulkan survivor terakhir. "Mansion ini punya jalan keluar darurat. Ikut aku — SEKARANG."' }, weight: 28 },
-      { condition: { chapter: 9, emotion: 'panicked' }, action: { type: 'secure_exit', desc: 'Niko membuka bunker darurat kakeknya. Jalur pelarian terakhir.' }, weight: 26 },
-      { condition: { chapter: 10, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Niko berdiri di aula utama. "Mansion ini dimulai dengan permainanku. Berakhir dengan pilihanku."' }, weight: 30 },
-      { condition: { chapter: 10, hasClue: true }, action: { type: 'secure_exit', desc: 'Niko mengaktifkan protokol darurat mansion. Semua pintu terbuka. "SEKARANG ATAU TIDAK PERNAH!"' }, weight: 28 },
+      // --- Chapters 4-5: Escalation ---
+      { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Niko menggunakan pengetahuan mansionnya untuk mencari petunjuk pelarian di tempat tersembunyi.' }, weight: 24 },
+      { condition: { chapter: 4, isAlone: false, minDeaths: 2 }, action: { type: 'coordinate_defense', desc: '"Ini mansionku. Ikuti instruksiku atau mati." Niko mengambil kendali absolut.' }, weight: 22 },
+      { condition: { chapter: 4, hasClue: true, isAlone: false }, action: { type: 'share_clue', desc: 'Niko membuka semua rahasia mansion. "Dengar, aku sembunyikan ini karena takut — tapi sekarang tidak ada pilihan."' }, weight: 24 },
+      { condition: { chapter: 4, emotion: 'hostile' }, action: { type: 'confront', desc: '"AKU TAHU SIAPA KAU." Niko menggunakan CCTV mansion untuk mengungkap killer.' }, weight: 26 },
+      { condition: { chapter: 5, minDeaths: 3, isAlone: false }, action: { type: 'rally', desc: 'Niko mengumpulkan survivor terakhir. "Mansion ini punya jalan keluar darurat. Ikut aku — SEKARANG."' }, weight: 28 },
+      { condition: { chapter: 5, emotion: 'panicked' }, action: { type: 'secure_exit', desc: 'Niko membuka bunker darurat kakeknya. Jalur pelarian terakhir.' }, weight: 26 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Niko berdiri di aula utama. "Mansion ini dimulai dengan permainanku. Berakhir dengan pilihanku."' }, weight: 30 },
+      { condition: { chapter: 5, hasClue: true }, action: { type: 'secure_exit', desc: 'Niko mengaktifkan protokol darurat mansion. Semua pintu terbuka. "SEKARANG ATAU TIDAK PERNAH!"' }, weight: 28 },
 
       // --- NEW: Movement decisions ---
       { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Niko bergerak ke ruang kontrol mansion. Rumahnya, keuntungannya.', moveTo: 'basement' }, weight: 16 },
@@ -304,7 +304,7 @@ const CharDB = (() => {
 
       // --- Tactical protagonist actions ---
       { condition: { minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Ini mansionku. Aku tahu setiap lorong, setiap pintu. Ikuti aku \u2014 kita amankan perimeter."' }, weight: 20 },
-      { condition: { isAlone: true, emotion: 'suspicious' }, action: { type: 'scout', desc: 'Niko menyusuri lorong rahasia yang hanya keluarganya tahu. Tuan rumah selalu punya keuntungan.' }, weight: 18 },
+      { condition: { isAlone: true, emotion: 'suspicious' }, action: { type: 'scout', desc: 'Niko menyusuri bunker tersembunyi yang hanya keluarganya tahu. Tuan rumah selalu punya keuntungan.' }, weight: 18 },
       { condition: { minDanger: 60, isAlone: false }, action: { type: 'secure_exit', desc: 'Niko membuka jalur pelarian melalui terowongan bawah tanah mansion. "Kakekku membangun ini untuk keadaan darurat."' }, weight: 22 },
       { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'ambush', desc: 'Niko mengatur jebakan di koridor utama. "Rumahku, aturanku. Pembunuh akan melewati sini."' }, weight: 18 },
       { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Niko menghilang ke ruangan rahasia, meninggalkan yang lain. Survival of the fittest.' }, weight: 10 },
@@ -343,7 +343,7 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'arin', minDeaths: 2 }, action: { type: 'socialize', desc: 'Sera menggenggam tangan Arin di bawah meja. "Aku... aku tidak bisa menganalisis ini. Aku hanya tahu aku tidak mau kehilanganmu."' }, weight: 18 },
 
       // Read the room
-      { condition: { isAlone: false, chapter: 3 }, action: { type: 'observe', desc: 'Sera memperhatikan dinamika kelompok berubah. Kepercayaan runtuh. Tapi satu orang — satu orang terlalu tenang.' }, weight: 20 },
+      { condition: { isAlone: false, chapter: 2 }, action: { type: 'observe', desc: 'Sera memperhatikan dinamika kelompok berubah. Kepercayaan runtuh. Tapi satu orang — satu orang terlalu tenang.' }, weight: 20 },
 
       // Confront Dimas
       { condition: { nearbyIncludes: 'dimas', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Dimas, tatap mataku." Sera membaca kekosongan di balik senyum sopannya. "Aku tahu apa yang kau sembunyikan."' }, weight: 22 },
@@ -356,7 +356,7 @@ const CharDB = (() => {
       { condition: { minDanger: 70, emotion: 'panicked' }, action: { type: 'hide', desc: 'Sera berhenti menganalisis. Untuk pertama kalinya, dia hanya lari. Otak yang selalu berpikir akhirnya menyerah pada insting primitif.' }, weight: 18 },
 
       // Late game revelation
-      { condition: { chapter: 5 }, action: { type: 'accuse', desc: 'Sera berdiri di depan kelompok. "Aku sudah cukup mengumpulkan data. Pembunuhnya adalah—"' }, weight: 25 },
+      { condition: { chapter: 3 }, action: { type: 'accuse', desc: 'Sera berdiri di depan kelompok. "Aku sudah cukup mengumpulkan data. Pembunuhnya adalah—"' }, weight: 25 },
 
       // --- NEW: Movement decisions ---
       { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Sera bergerak ke tempat yang lebih aman, mencari posisi di mana dia bisa mengamati tanpa terlihat.', moveTo: 'perpustakaan' }, weight: 14 },
@@ -380,15 +380,15 @@ const CharDB = (() => {
       // Trust-kill: Sera membaca tanda-tanda dan bertindak jika yakin seseorang berbahaya
       { condition: { minDeaths: 2, emotion: 'hostile', minTension: 60 }, action: { type: 'trust_kill', desc: '"Profilmu konsisten dengan seorang pembunuh. Maaf — tapi aku tidak bisa mengambil risiko." Sera bertindak berdasarkan analisisnya.' }, weight: 18 },
 
-      // --- Chapters 7-10: Escalation ---
-      { condition: { chapter: 7, isAlone: false, hasClue: true }, action: { type: 'accuse', desc: 'Sera berdiri. Profilnya lengkap. "Aku sudah analisis setiap perilaku, setiap kebohongan. INILAH pembunuhnya."' }, weight: 26 },
-      { condition: { chapter: 7, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Sera mencari petunjuk pelarian, menggunakan pola perilaku killer untuk memprediksi lokasi yang aman.' }, weight: 22 },
-      { condition: { chapter: 8, nearbyIncludes: 'arin', minDeaths: 3 }, action: { type: 'coordinate_defense', desc: '"Arin, dengar. Aku sudah profil semua orang. Kita berdua yang tersisa yang bisa dipercaya."' }, weight: 26 },
-      { condition: { chapter: 8, emotion: 'hostile' }, action: { type: 'confront', desc: '"CUKUP." Sera melempar catatannya ke lantai. "Profil sudah lengkap. Pembunuh ada di ruangan ini."' }, weight: 24 },
-      { condition: { chapter: 9, isAlone: false }, action: { type: 'rally', desc: '"Aku psikolog. Aku tahu bagaimana predator berpikir. Dan aku tahu cara menghentikannya. IKUT AKU."' }, weight: 28 },
-      { condition: { chapter: 9, emotion: 'panicked', nearbyIncludes: 'arin' }, action: { type: 'guard', desc: 'Sera berdiri di depan Arin. Tidak peduli risikonya. "Aku tidak akan kehilanganmu."' }, weight: 26 },
-      { condition: { chapter: 10, hasClue: true }, action: { type: 'accuse', desc: 'Final profiling. Sera mengungkap setiap kebohongan, setiap alibi palsu. "INILAH KEBENARAN MALAM INI."' }, weight: 30 },
-      { condition: { chapter: 10, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. "Aku sudah baca setiap wajah di mansion ini. Simpul terakhir ada di tangan kita."' }, weight: 28 },
+      // --- Chapters 4-5: Escalation ---
+      { condition: { chapter: 4, isAlone: false, hasClue: true }, action: { type: 'accuse', desc: 'Sera berdiri. Profilnya lengkap. "Aku sudah analisis setiap perilaku, setiap kebohongan. INILAH pembunuhnya."' }, weight: 26 },
+      { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Sera mencari petunjuk pelarian, menggunakan pola perilaku killer untuk memprediksi lokasi yang aman.' }, weight: 22 },
+      { condition: { chapter: 4, nearbyIncludes: 'arin', minDeaths: 3 }, action: { type: 'coordinate_defense', desc: '"Arin, dengar. Aku sudah profil semua orang. Kita berdua yang tersisa yang bisa dipercaya."' }, weight: 26 },
+      { condition: { chapter: 4, emotion: 'hostile' }, action: { type: 'confront', desc: '"CUKUP." Sera melempar catatannya ke lantai. "Profil sudah lengkap. Pembunuh ada di ruangan ini."' }, weight: 24 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: '"Aku psikolog. Aku tahu bagaimana predator berpikir. Dan aku tahu cara menghentikannya. IKUT AKU."' }, weight: 28 },
+      { condition: { chapter: 5, emotion: 'panicked', nearbyIncludes: 'arin' }, action: { type: 'guard', desc: 'Sera berdiri di depan Arin. Tidak peduli risikonya. "Aku tidak akan kehilanganmu."' }, weight: 26 },
+      { condition: { chapter: 5, hasClue: true }, action: { type: 'accuse', desc: 'Final profiling. Sera mengungkap setiap kebohongan, setiap alibi palsu. "INILAH KEBENARAN MALAM INI."' }, weight: 30 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. "Aku sudah baca setiap wajah di mansion ini. Simpul terakhir ada di tangan kita."' }, weight: 28 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Sera menganalisis dinamika kelompok — siapa memimpin, siapa mengikuti, siapa yang terlalu diam.' }, weight: 10 },
@@ -427,13 +427,13 @@ const CharDB = (() => {
       { condition: { minDeaths: 2 }, action: { type: 'investigate', desc: 'Juno berhenti bicara dan mulai bertindak. Memeriksa setiap ruangan, mencari jejak. Insting jalanan lebih berguna dari debat.' }, weight: 20 },
 
       // Escape attempt
-      { condition: { chapter: 4, emotion: 'panicked' }, action: { type: 'flee', desc: 'Juno berlari ke jendela terdekat dan mencoba memecahkannya. "KITA KELUAR SEKARANG!"' }, weight: 18 },
+      { condition: { chapter: 3, emotion: 'panicked' }, action: { type: 'flee', desc: 'Juno berlari ke jendela terdekat dan mencoba memecahkannya. "KITA KELUAR SEKARANG!"' }, weight: 18 },
 
       // Late game
-      { condition: { chapter: 6, emotion: 'hostile' }, action: { type: 'confront', desc: '"Sini lo." Juno sudah tidak takut. Yang tersisa hanya kemarahan dan tekad untuk bertahan hidup.' }, weight: 25 },
+      { condition: { chapter: 4, emotion: 'hostile' }, action: { type: 'confront', desc: '"Sini lo." Juno sudah tidak takut. Yang tersisa hanya kemarahan dan tekad untuk bertahan hidup.' }, weight: 25 },
 
       // --- NEW: Movement ---
-      { condition: { emotion: 'hostile', isAlone: true }, action: { type: 'move', desc: 'Juno bergerak agresif menyusuri mansion, mencari konfrontasi langsung.', moveTo: 'koridor_utara' }, weight: 16 },
+      { condition: { emotion: 'hostile', isAlone: true }, action: { type: 'move', desc: 'Juno bergerak agresif menyusuri mansion, mencari konfrontasi langsung.', moveTo: 'aula_utama' }, weight: 16 },
 
       // --- NEW: Unique interactions ---
       { condition: { nearbyIncludes: 'arin', emotion: 'wary' }, action: { type: 'socialize', desc: '"Arin, lo selalu nyari bukti. Kadang bukti itu di depan mata — cuma butuh orang yang berani ngambil." Juno mendorong Arin bertindak.' }, weight: 14 },
@@ -455,15 +455,15 @@ const CharDB = (() => {
       { condition: { minDeaths: 2, emotion: 'hostile' }, action: { type: 'trust_kill', desc: 'Juno meledak. "GUE NGGAK PERCAYA SIAPAPUN DI SINI." Tinju melayang sebelum siapapun sempat bereaksi.' }, weight: 24 },
       { condition: { minDeaths: 1, emotion: 'panicked' }, action: { type: 'trust_kill', desc: 'Ketakutan berubah jadi kemarahan. Juno menyerang orang terdekat. "LO PASTI SALAH SATUNYA!"' }, weight: 20 },
 
-      // --- Chapters 7-10: Escalation ---
-      { condition: { chapter: 7, emotion: 'hostile', isAlone: false }, action: { type: 'ambush', desc: '"Gue balik ke sini bukan buat kabur. Gue balik buat ngebales." Juno menyiapkan jebakan.' }, weight: 24 },
-      { condition: { chapter: 7, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Juno mendobrak lemari dan membongkar lantai. "Kalau ada jalan keluar, gue PASTI nemu."' }, weight: 22 },
-      { condition: { chapter: 8, minDeaths: 3, isAlone: false }, action: { type: 'coordinate_defense', desc: '"DENGERIN GUE. Gue tau cara bertahan hidup. Lo semua ikutin gue atau mati sendiri-sendiri."' }, weight: 24 },
-      { condition: { chapter: 8, nearbyIncludes: 'reza', emotion: 'hostile' }, action: { type: 'guard', desc: 'Juno berdiri di depan Reza. "Lo satu-satunya yang gue percaya di sini, old man. Gue jaga lo."' }, weight: 22 },
-      { condition: { chapter: 9, emotion: 'hostile', isAlone: false }, action: { type: 'rally', desc: '"GUE NGGAK MAU MATI DI MANSION BANGSAT INI. SIAPA YANG MAU IKUT GUE KELUAR?!"' }, weight: 28 },
-      { condition: { chapter: 9, isAlone: true, minDanger: 60 }, action: { type: 'secure_exit', desc: 'Juno menemukan ventilasi besar di basement. "Ini dia. Ini jalan keluarnya."' }, weight: 26 },
-      { condition: { chapter: 10, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. "GUE MULAI DARI JALANAN. GUE NGGAK BAKAL MATI DI SINI." Juno memimpin serangan terakhir.' }, weight: 30 },
-      { condition: { chapter: 10, emotion: 'hostile' }, action: { type: 'confront', desc: 'Konfrontasi final. Juno meraih senjata apapun yang ada. "Lo dan gue. SEKARANG."' }, weight: 28 },
+      // --- Chapters 4-5: Escalation ---
+      { condition: { chapter: 4, emotion: 'hostile', isAlone: false }, action: { type: 'ambush', desc: '"Gue balik ke sini bukan buat kabur. Gue balik buat ngebales." Juno menyiapkan jebakan.' }, weight: 24 },
+      { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Juno mendobrak lemari dan membongkar lantai. "Kalau ada jalan keluar, gue PASTI nemu."' }, weight: 22 },
+      { condition: { chapter: 4, minDeaths: 3, isAlone: false }, action: { type: 'coordinate_defense', desc: '"DENGERIN GUE. Gue tau cara bertahan hidup. Lo semua ikutin gue atau mati sendiri-sendiri."' }, weight: 24 },
+      { condition: { chapter: 4, nearbyIncludes: 'reza', emotion: 'hostile' }, action: { type: 'guard', desc: 'Juno berdiri di depan Reza. "Lo satu-satunya yang gue percaya di sini, old man. Gue jaga lo."' }, weight: 22 },
+      { condition: { chapter: 5, emotion: 'hostile', isAlone: false }, action: { type: 'rally', desc: '"GUE NGGAK MAU MATI DI MANSION BANGSAT INI. SIAPA YANG MAU IKUT GUE KELUAR?!"' }, weight: 28 },
+      { condition: { chapter: 5, isAlone: true, minDanger: 60 }, action: { type: 'secure_exit', desc: 'Juno menemukan ventilasi besar di basement. "Ini dia. Ini jalan keluarnya."' }, weight: 26 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. "GUE MULAI DARI JALANAN. GUE NGGAK BAKAL MATI DI SINI." Juno memimpin serangan terakhir.' }, weight: 30 },
+      { condition: { chapter: 5, emotion: 'hostile' }, action: { type: 'confront', desc: 'Konfrontasi final. Juno meraih senjata apapun yang ada. "Lo dan gue. SEKARANG."' }, weight: 28 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Juno memeriksa jendela dan pintu. "Kalau ada jalan keluar, gue yang pertama nemu."' }, weight: 10 },
@@ -487,11 +487,11 @@ const CharDB = (() => {
 
       // Use mansion knowledge
       { condition: { emotion: 'wary' }, action: { type: 'investigate', desc: 'Vira menyentuh dinding dengan familiaritas. "Ada ruangan di balik sini. Aku pernah—" Dia berhenti. Kenangan terlalu menyakitkan.' }, weight: 20 },
-      { condition: { isAlone: true }, action: { type: 'investigate', desc: 'Vira membuka lorong rahasia yang hanya dia tahu. Enam bulan lalu, lorong ini menyelamatkan hidupnya.' }, weight: 22 },
+      { condition: { isAlone: true }, action: { type: 'investigate', desc: 'Vira membuka bunker tersembunyi yang hanya dia tahu. Enam bulan lalu, lorong ini menyelamatkan hidupnya.' }, weight: 22 },
 
       // PTSD episodes
       { condition: { minDanger: 50 }, action: { type: 'hide', desc: 'Flashback. Vira membeku — enam bulan lalu kembali dalam gelombang. Napasnya tersendat. Trauma yang tidak pernah sembuh.' }, weight: 20 },
-      { condition: { emotion: 'panicked' }, action: { type: 'flee', desc: 'Vira berlari ke lorong rahasia. Tubuhnya ingat jalan keluar meskipun pikirannya tidak.' }, weight: 25 },
+      { condition: { emotion: 'panicked' }, action: { type: 'flee', desc: 'Vira berlari ke bunker tersembunyi. Tubuhnya ingat jalan keluar meskipun pikirannya tidak.' }, weight: 25 },
 
       // Niko relationship
       { condition: { nearbyIncludes: 'niko', emotion: 'calm' }, action: { type: 'observe', desc: 'Vira menatap Niko dari kejauhan. Pria yang dulu dia cintai. Pria yang membuangnya. Dan sekarang — pria yang mungkin tahu lebih banyak dari yang dia tunjukkan.' }, weight: 15 },
@@ -504,11 +504,11 @@ const CharDB = (() => {
       { condition: { hasClue: true }, action: { type: 'share_clue', desc: 'Vira akhirnya bicara: "Enam bulan lalu, aku hampir mati di sini. Ini yang aku tahu tentang sang dalang..."' }, weight: 20 },
 
       // Late game
-      { condition: { chapter: 5 }, action: { type: 'investigate', desc: 'Vira kembali ke tempat di mana dia hampir mati enam bulan lalu. Kali ini, dengan tekad berbeda.' }, weight: 22 },
+      { condition: { chapter: 3 }, action: { type: 'investigate', desc: 'Vira kembali ke tempat di mana dia hampir mati enam bulan lalu. Kali ini, dengan tekad berbeda.' }, weight: 22 },
 
       // --- NEW: Movement ---
-      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'move', desc: 'Vira berlari ke lorong rahasia yang hanya dia tahu. Tubuhnya mengingat jalan meskipun pikirannya chaos.', moveTo: 'lorong_rahasia' }, weight: 20 },
-      { condition: { emotion: 'calm', chapter: 3 }, action: { type: 'move', desc: 'Vira memimpin kelompok kecil melalui jalan tersembunyi di dinding mansion.', moveTo: 'bunker_b3' }, weight: 16 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'move', desc: 'Vira berlari ke bunker tersembunyi yang hanya dia tahu. Tubuhnya mengingat jalan meskipun pikirannya chaos.', moveTo: 'bunker_b3' }, weight: 20 },
+      { condition: { emotion: 'calm', chapter: 2 }, action: { type: 'move', desc: 'Vira memimpin kelompok kecil melalui jalan tersembunyi di dinding mansion.', moveTo: 'bunker_b3' }, weight: 16 },
 
       // --- NEW: Unique interactions ---
       { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'socialize', desc: '"Arin, aku percaya padamu. Kau mengingatkanku pada diriku sendiri enam bulan lalu — sebelum semuanya berubah." Vira terbuka.' }, weight: 16 },
@@ -520,22 +520,22 @@ const CharDB = (() => {
 
       // --- Tactical protagonist actions ---
       { condition: { minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Aku tahu mansion ini. Ikuti aku ke tempat yang aman — ada ruangan yang tidak bisa ditembus."' }, weight: 20 },
-      { condition: { isAlone: true, emotion: 'wary' }, action: { type: 'scout', desc: 'Vira menyusuri lorong rahasia, tubuhnya mengingat setiap belokan dari enam bulan lalu.' }, weight: 18 },
+      { condition: { isAlone: true, emotion: 'wary' }, action: { type: 'scout', desc: 'Vira menyusuri bunker tersembunyi, tubuhnya mengingat setiap belokan dari enam bulan lalu.' }, weight: 18 },
       { condition: { minDanger: 60, isAlone: false }, action: { type: 'secure_exit', desc: 'Vira membuka jalur pelarian tersembunyi. "Ada jalan keluar yang tidak diketahui siapapun. Lewat sini."' }, weight: 22 },
-      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'ambush', desc: 'Vira mengatur jebakan di lorong rahasia. "Dia pasti lewat sini. Aku tahu cara berpikirnya."' }, weight: 16 },
-      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Vira menutup pintu lorong rahasia — dari dalam. "Maaf. Aku sudah pernah hampir mati. Tidak lagi."' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'ambush', desc: 'Vira mengatur jebakan di bunker tersembunyi. "Dia pasti lewat sini. Aku tahu cara berpikirnya."' }, weight: 16 },
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Vira menutup pintu bunker tersembunyi — dari dalam. "Maaf. Aku sudah pernah hampir mati. Tidak lagi."' }, weight: 12 },
       // Trust-kill: Vira yang sudah trauma — bertindak defensif jika merasa terancam
       { condition: { minDeaths: 2, emotion: 'panicked', minTension: 55 }, action: { type: 'trust_kill', desc: '"Aku sudah pernah hampir mati di sini. TIDAK LAGI." Vira menyerang orang yang paling dia curigai — insting bertahan hidup yang gelap.' }, weight: 18 },
 
-      // --- Chapters 7-10: Escalation ---
-      { condition: { chapter: 7, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Vira menyusuri lorong rahasia mansion, mencari petunjuk pelarian yang tersembunyi di tempat yang hanya dia tahu.' }, weight: 24 },
-      { condition: { chapter: 7, isAlone: false, hasClue: true }, action: { type: 'share_clue', desc: '"Dengarkan. Enam bulan lalu, aku menemukan ini." Vira membuka semua rahasia yang dia simpan.' }, weight: 22 },
-      { condition: { chapter: 8, emotion: 'panicked', isAlone: false }, action: { type: 'coordinate_defense', desc: '"AKU TAHU MANSION INI. Ikut aku — ada bunker di bawah yang tidak diketahui siapapun."' }, weight: 24 },
-      { condition: { chapter: 8, nearbyIncludes: 'niko' }, action: { type: 'confront', desc: '"Niko, aku tahu apa yang kau lakukan enam bulan lalu. SEMUA ORANG HARUS TAHU." Vira mengungkap segalanya.' }, weight: 26 },
-      { condition: { chapter: 9, isAlone: false }, action: { type: 'secure_exit', desc: 'Vira membuka pintu rahasia terakhir mansion. "Ini jalan keluar yang kugunakan terakhir kali."' }, weight: 28 },
-      { condition: { chapter: 9, emotion: 'hostile' }, action: { type: 'rally', desc: '"AKU SUDAH SELAMAT SEKALI. AKU AKAN SELAMAT LAGI. SIAPA YANG IKUT?!" Vira memimpin evakuasi.' }, weight: 26 },
-      { condition: { chapter: 10, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Vira berdiri di depan pintu mansion. "Simpul terakhir. Kali ini, AKU yang putuskan akhirnya."' }, weight: 30 },
-      { condition: { chapter: 10, hasClue: true }, action: { type: 'secure_exit', desc: 'Vira mengaktifkan jalur pelarian terakhir. "SEMUA IKUT AKU. SEKARANG!" Survivor dari masa lalu memimpin yang hidup.' }, weight: 28 },
+      // --- Chapters 4-5: Escalation ---
+      { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Vira menyusuri bunker tersembunyi mansion, mencari petunjuk pelarian yang tersembunyi di tempat yang hanya dia tahu.' }, weight: 24 },
+      { condition: { chapter: 4, isAlone: false, hasClue: true }, action: { type: 'share_clue', desc: '"Dengarkan. Enam bulan lalu, aku menemukan ini." Vira membuka semua rahasia yang dia simpan.' }, weight: 22 },
+      { condition: { chapter: 4, emotion: 'panicked', isAlone: false }, action: { type: 'coordinate_defense', desc: '"AKU TAHU MANSION INI. Ikut aku — ada bunker di bawah yang tidak diketahui siapapun."' }, weight: 24 },
+      { condition: { chapter: 4, nearbyIncludes: 'niko' }, action: { type: 'confront', desc: '"Niko, aku tahu apa yang kau lakukan enam bulan lalu. SEMUA ORANG HARUS TAHU." Vira mengungkap segalanya.' }, weight: 26 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'secure_exit', desc: 'Vira membuka pintu rahasia terakhir mansion. "Ini jalan keluar yang kugunakan terakhir kali."' }, weight: 28 },
+      { condition: { chapter: 5, emotion: 'hostile' }, action: { type: 'rally', desc: '"AKU SUDAH SELAMAT SEKALI. AKU AKAN SELAMAT LAGI. SIAPA YANG IKUT?!" Vira memimpin evakuasi.' }, weight: 26 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Vira berdiri di depan pintu mansion. "Simpul terakhir. Kali ini, AKU yang putuskan akhirnya."' }, weight: 30 },
+      { condition: { chapter: 5, hasClue: true }, action: { type: 'secure_exit', desc: 'Vira mengaktifkan jalur pelarian terakhir. "SEMUA IKUT AKU. SEKARANG!" Survivor dari masa lalu memimpin yang hidup.' }, weight: 28 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Vira duduk di sudut, memeluk lututnya. Matanya tidak pernah lepas dari pintu keluar.' }, weight: 10 },
@@ -577,10 +577,10 @@ const CharDB = (() => {
       { condition: { minDeaths: 2, hasClue: true }, action: { type: 'accuse', desc: 'Reza mengeluarkan semua bukti. "Aku sudah menyusun kasus. Pelakunya jelas." Suara detektif yang tidak pernah benar-benar pensiun.' }, weight: 25 },
 
       // Late game
-      { condition: { chapter: 6 }, action: { type: 'guard', desc: 'Reza menjadi benteng terakhir kelompok. "Aku tidak akan kehilangan siapapun lagi malam ini."' }, weight: 22 },
+      { condition: { chapter: 4 }, action: { type: 'guard', desc: 'Reza menjadi benteng terakhir kelompok. "Aku tidak akan kehilangan siapapun lagi malam ini."' }, weight: 22 },
 
       // --- NEW: Movement ---
-      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'move', desc: 'Reza melakukan patroli perimeter. Kebiasaan lama tidak pernah mati.', moveTo: 'koridor_utara' }, weight: 16 },
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'move', desc: 'Reza melakukan patroli perimeter. Kebiasaan lama tidak pernah mati.', moveTo: 'aula_utama' }, weight: 16 },
 
       // --- NEW: Unique interactions ---
       { condition: { nearbyIncludes: 'kira', hasClue: true }, action: { type: 'share_clue', desc: '"Kira, cross-reference data digitalmu dengan bukti fisik ini. Aku butuh timeline yang akurat." Reza dan Kira berkolaborasi.', target: 'kira' }, weight: 18 },
@@ -601,14 +601,14 @@ const CharDB = (() => {
       { condition: { minDeaths: 2, emotion: 'hostile', minTension: 55 }, action: { type: 'trust_kill', desc: '"Bukti cukup. Aku tidak butuh pengadilan di sini." Reza mengeksekusi keadilan sendiri — detektif yang sudah melampaui batas hukum.' }, weight: 18 },
       { condition: { minDeaths: 3, emotion: 'suspicious', minTension: 65 }, action: { type: 'trust_kill', desc: 'Reza menarik napas. Dua puluh tahun di kepolisian mengajarkan satu hal: kadang kau harus bertindak sebelum bukti lengkap. Dan malam ini... dia bertindak.' }, weight: 16 },
 
-      // --- Chapters 7-10: Escalation ---
-      { condition: { chapter: 7, hasClue: true, isAlone: false }, action: { type: 'accuse', desc: '"Aku sudah cukup lama jadi detektif. Buktinya mengarah ke satu orang." Reza menunjuk tersangka utama.' }, weight: 26 },
-      { condition: { chapter: 7, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Reza memeriksa setiap ruangan dengan ketelitian detektif. "Pasti ada yang terlewat."' }, weight: 22 },
-      { condition: { chapter: 8, isAlone: false, minDeaths: 3 }, action: { type: 'coordinate_defense', desc: '"Posisi defensif. Semua di sini. Tidak ada yang keluar sampai aku bilang aman." Reza memimpin seperti kopral.' }, weight: 26 },
-      { condition: { chapter: 8, nearbyIncludes: 'juno' }, action: { type: 'guard', desc: 'Reza berdiri di samping Juno. "Nak, aku sudah lihat terlalu banyak orang mati. Kau tidak akan jadi yang berikutnya."' }, weight: 22 },
-      { condition: { chapter: 9, isAlone: false }, action: { type: 'rally', desc: '"Dua puluh tahun di kepolisian. Aku pernah menghadapi yang lebih buruk. IKUT AKU ATAU MATI."' }, weight: 28 },
-      { condition: { chapter: 10, hasClue: true }, action: { type: 'accuse', desc: 'Final verdict. Reza mengungkap semua bukti. "Kasus ditutup. Pembunuhnya adalah—"' }, weight: 30 },
-      { condition: { chapter: 10, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Reza mengambil napas. "Ini kasus terakhirku. Dan aku AKAN menyelesaikannya."' }, weight: 28 },
+      // --- Chapters 4-5: Escalation ---
+      { condition: { chapter: 4, hasClue: true, isAlone: false }, action: { type: 'accuse', desc: '"Aku sudah cukup lama jadi detektif. Buktinya mengarah ke satu orang." Reza menunjuk tersangka utama.' }, weight: 26 },
+      { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Reza memeriksa setiap ruangan dengan ketelitian detektif. "Pasti ada yang terlewat."' }, weight: 22 },
+      { condition: { chapter: 4, isAlone: false, minDeaths: 3 }, action: { type: 'coordinate_defense', desc: '"Posisi defensif. Semua di sini. Tidak ada yang keluar sampai aku bilang aman." Reza memimpin seperti kopral.' }, weight: 26 },
+      { condition: { chapter: 4, nearbyIncludes: 'juno' }, action: { type: 'guard', desc: 'Reza berdiri di samping Juno. "Nak, aku sudah lihat terlalu banyak orang mati. Kau tidak akan jadi yang berikutnya."' }, weight: 22 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: '"Dua puluh tahun di kepolisian. Aku pernah menghadapi yang lebih buruk. IKUT AKU ATAU MATI."' }, weight: 28 },
+      { condition: { chapter: 5, hasClue: true }, action: { type: 'accuse', desc: 'Final verdict. Reza mengungkap semua bukti. "Kasus ditutup. Pembunuhnya adalah—"' }, weight: 30 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Reza mengambil napas. "Ini kasus terakhirku. Dan aku AKAN menyelesaikannya."' }, weight: 28 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Reza memeriksa ruangan secara metodis. "Standard sweep — cek setiap sudut, setiap celah."' }, weight: 10 },
@@ -648,12 +648,12 @@ const CharDB = (() => {
       { condition: { isAlone: false, minDeaths: 2 }, action: { type: 'confront', desc: '"Menarik." Lana memiringkan kepala. "Kematian selalu mengungkap sisi terburuk manusia. Sekarang, siapa yang berikutnya?"' }, weight: 20 },
 
       // Late game
-      { condition: { chapter: 5 }, action: { type: 'manipulate', desc: 'Lana mengatur final act-nya. Setiap orang di mansion ini adalah karakter dalam novelnya — dan dia yang menulis endingnya.' }, weight: 22 },
+      { condition: { chapter: 3 }, action: { type: 'manipulate', desc: 'Lana mengatur final act-nya. Setiap orang di mansion ini adalah karakter dalam novelnya — dan dia yang menulis endingnya.' }, weight: 22 },
 
       // --- Tactical survivor Lana ---
       { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'distract', desc: 'Lana membuat distraksi — menjatuhkan vas antik dengan "tidak sengaja". Semua menoleh. Persis seperti yang dia rencanakan.' }, weight: 18 },
       { condition: { minDeaths: 2, emotion: 'panicked' }, action: { type: 'coordinate_defense', desc: '"Dengarkan aku. Aku tahu cara berpikir seperti pembunuh — aku menulisnya." Lana memimpin strategi pertahanan.' }, weight: 20 },
-      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Lana menuju lorong yang sepi. Keahliannya membaca narasi membawanya ke tempat yang belum dijelajahi.', moveTo: 'lorong_rahasia' }, weight: 14 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Lana menuju lorong yang sepi. Keahliannya membaca narasi membawanya ke tempat yang belum dijelajahi.', moveTo: 'bunker_b3' }, weight: 14 },
       { condition: { nearbyIncludes: 'sera', emotion: 'wary' }, action: { type: 'socialize', desc: '"Sera, gabungkan profilingmu dengan intuisi naratifku. Pembunuh ini punya pola — dan aku tahu pola cerita."' }, weight: 16 },
       // Trust-kill: Lana manipulatif — membunuh sambil berpura-pura itu self-defense
       { condition: { minDeaths: 2, emotion: 'hostile', minTension: 50 }, action: { type: 'trust_kill', desc: '"Kau plot twist terburuk dalam ceritaku." Lana menyerang dengan tenang — membunuh sambil tersenyum. "Self-defense, tentu saja."' }, weight: 20 },
@@ -695,7 +695,7 @@ const CharDB = (() => {
       { condition: { minDanger: 50 }, action: { type: 'observe', desc: 'Sementara orang lain panik, Dimas tetap tenang. Ketenangan yang bukan keberanian — tapi sesuatu yang lebih dingin.' }, weight: 18 },
 
       // Late game
-      { condition: { chapter: 5 }, action: { type: 'investigate', desc: 'Dimas menganalisis semua kematian secara klinis. "Pola ini konsisten dengan satu profil psikologis. Aku tahu siapa dalangnya."' }, weight: 22 },
+      { condition: { chapter: 3 }, action: { type: 'investigate', desc: 'Dimas menganalisis semua kematian secara klinis. "Pola ini konsisten dengan satu profil psikologis. Aku tahu siapa dalangnya."' }, weight: 22 },
 
       // --- Tactical survivor Dimas ---
       { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'move', desc: 'Dimas bergerak dengan tenang ke lokasi strategis. Pengetahuan forensiknya mengajarkan pentingnya posisi.', moveTo: 'basement' }, weight: 14 },
@@ -739,10 +739,10 @@ const CharDB = (() => {
       { condition: { hasClue: true, nearbyIncludes: 'reza' }, action: { type: 'share_clue', desc: 'Kira memperlihatkan rekaman CCTV ke Reza. "Ini bukti digital. Tidak bisa dibantah."', target: 'reza' }, weight: 18 },
 
       // Disable traps
-      { condition: { chapter: 4 }, action: { type: 'investigate', desc: 'Kira meng-hack door lock system mansion. "Aku bisa membuka semua pintu... atau mengunci semuanya. Pilihan kita."' }, weight: 22 },
+      { condition: { chapter: 3 }, action: { type: 'investigate', desc: 'Kira meng-hack door lock system mansion. "Aku bisa membuka semua pintu... atau mengunci semuanya. Pilihan kita."' }, weight: 22 },
 
       // Late game
-      { condition: { chapter: 6 }, action: { type: 'investigate', desc: 'Kira menemukan pesan terenkripsi terakhir di server. Ketika di-decrypt, isinya mengubah segalanya.' }, weight: 25 },
+      { condition: { chapter: 4 }, action: { type: 'investigate', desc: 'Kira menemukan pesan terenkripsi terakhir di server. Ketika di-decrypt, isinya mengubah segalanya.' }, weight: 25 },
 
       // --- NEW: Movement ---
       { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Kira bergerak ke basement mencari server room. "Semua jawaban ada di data."', moveTo: 'basement' }, weight: 16 },
@@ -764,14 +764,14 @@ const CharDB = (() => {
       // Trust-kill: Kira paranoid — menyerang jika data "membuktikan" seseorang berbahaya
       { condition: { minDeaths: 2, emotion: 'panicked', minTension: 60 }, action: { type: 'trust_kill', desc: '"Data tidak bohong. Log CCTV, posisi GPS, timeline — semuanya menunjuk ke kau." Kira menyerang berdasarkan bukti digitalnya.' }, weight: 16 },
 
-      // --- Chapters 7-10: Escalation ---
-      { condition: { chapter: 7, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Kira meng-crack file terenkripsi terakhir mansion. Di dalamnya — peta jalan keluar.' }, weight: 24 },
-      { condition: { chapter: 7, hasClue: true, isAlone: false }, action: { type: 'share_clue', desc: '"Aku berhasil decrypt SEMUA file mansion. Dengarkan — ini blueprint jalan keluarnya."' }, weight: 22 },
-      { condition: { chapter: 8, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Aku bisa kunci semua door lock dari laptop. Kita bikin safe zone di sini. TIDAK ADA yang bisa masuk."' }, weight: 24 },
-      { condition: { chapter: 8, emotion: 'hostile', hasClue: true }, action: { type: 'accuse', desc: '"Log CCTV, door access, GPS tracking — SEMUANYA menunjuk ke satu orang." Kira mengungkap data.' }, weight: 26 },
-      { condition: { chapter: 9, isAlone: false }, action: { type: 'rally', desc: '"Aku punya akses ke seluruh sistem mansion. Aku bisa buka SEMUA pintu sekaligus. READY?!"' }, weight: 28 },
-      { condition: { chapter: 10, hasClue: true }, action: { type: 'secure_exit', desc: 'Kira meng-hack door lock terakhir. "SEMUA PINTU TERBUKA. INI KESEMPATAN TERAKHIR!"' }, weight: 30 },
-      { condition: { chapter: 10, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. "Aku sudah crack semuanya. Simpul terakhir ada di server ini."' }, weight: 28 },
+      // --- Chapters 4-5: Escalation ---
+      { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Kira meng-crack file terenkripsi terakhir mansion. Di dalamnya — peta jalan keluar.' }, weight: 24 },
+      { condition: { chapter: 4, hasClue: true, isAlone: false }, action: { type: 'share_clue', desc: '"Aku berhasil decrypt SEMUA file mansion. Dengarkan — ini blueprint jalan keluarnya."' }, weight: 22 },
+      { condition: { chapter: 4, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Aku bisa kunci semua door lock dari laptop. Kita bikin safe zone di sini. TIDAK ADA yang bisa masuk."' }, weight: 24 },
+      { condition: { chapter: 4, emotion: 'hostile', hasClue: true }, action: { type: 'accuse', desc: '"Log CCTV, door access, GPS tracking — SEMUANYA menunjuk ke satu orang." Kira mengungkap data.' }, weight: 26 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: '"Aku punya akses ke seluruh sistem mansion. Aku bisa buka SEMUA pintu sekaligus. READY?!"' }, weight: 28 },
+      { condition: { chapter: 5, hasClue: true }, action: { type: 'secure_exit', desc: 'Kira meng-hack door lock terakhir. "SEMUA PINTU TERBUKA. INI KESEMPATAN TERAKHIR!"' }, weight: 30 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. "Aku sudah crack semuanya. Simpul terakhir ada di server ini."' }, weight: 28 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Kira scan jaringan WiFi. "Hm, ada device baru yang terkoneksi... siapa yang bawa phone ke sini?"' }, weight: 10 },
@@ -799,20 +799,20 @@ const CharDB = (() => {
 
       // Hide in safe room
       { condition: { emotion: 'panicked' }, action: { type: 'hide', desc: 'Farah berlari ke safe room keluarga Aldridge. Ruangan berlapisan baja yang dibangun kakeknya — satu-satunya warisan yang berguna malam ini.' }, weight: 25 },
-      { condition: { minDanger: 50 }, action: { type: 'hide', desc: 'Farah mengunci diri di kamar atas. "Aku tidak keluar sampai ini selesai." Survival strategy pewaris — biarkan orang lain mengambil risiko.' }, weight: 22 },
+      { condition: { minDanger: 50 }, action: { type: 'hide', desc: 'Farah mengunci diri di perpustakaan atas. "Aku tidak keluar sampai ini selesai." Survival strategy pewaris — biarkan orang lain mengambil risiko.' }, weight: 22 },
 
       // Family secrets
-      { condition: { isAlone: true, chapter: 3 }, action: { type: 'investigate', desc: 'Farah menemukan brankas keluarga Aldridge. Di dalamnya — surat-surat yang menghubungkan keluarganya dengan mansion ini 50 tahun lalu.' }, weight: 22 },
+      { condition: { isAlone: true, chapter: 2 }, action: { type: 'investigate', desc: 'Farah menemukan brankas keluarga Aldridge. Di dalamnya — surat-surat yang menghubungkan keluarganya dengan mansion ini 50 tahun lalu.' }, weight: 22 },
       { condition: { hasClue: true }, action: { type: 'observe', desc: 'Farah membaca dokumen keluarga dengan tangan gemetar. Kakeknya membiayai pembangunan mansion ini. Dan alasannya... mengerikan.' }, weight: 20 },
 
       // Egois tapi eventually helpful
       { condition: { minDeaths: 3 }, action: { type: 'share_clue', desc: '"Baiklah. Aku akan bicara." Farah akhirnya mengungkap rahasia keluarganya. "Kakekku tahu tentang mansion ini. Dan ini yang dia sembunyikan."' }, weight: 20 },
 
       // Late game
-      { condition: { chapter: 6 }, action: { type: 'negotiate', desc: 'Farah membuat penawaran terakhir: "Aku tahu siapa pemilik asli mansion ini. Informasi ini berharga — tapi aku akan memberikannya gratis. Karena tidak ada gunanya kaya kalau kau mati."' }, weight: 22 },
+      { condition: { chapter: 4 }, action: { type: 'negotiate', desc: 'Farah membuat penawaran terakhir: "Aku tahu siapa pemilik asli mansion ini. Informasi ini berharga — tapi aku akan memberikannya gratis. Karena tidak ada gunanya kaya kalau kau mati."' }, weight: 22 },
 
       // --- NEW: Movement ---
-      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'move', desc: 'Farah berlari ke kamar atas, mencari safe room keluarga Aldridge.', moveTo: 'kamar_atas' }, weight: 18 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'move', desc: 'Farah berlari ke perpustakaan atas, mencari safe room keluarga Aldridge.', moveTo: 'perpustakaan' }, weight: 18 },
 
       // --- NEW: Unique interactions ---
       { condition: { nearbyIncludes: 'niko', emotion: 'calm' }, action: { type: 'negotiate', desc: '"Niko, keluarga kita terikat oleh mansion ini. Aku punya dokumen yang membuktikannya. Ayo bekerja sama."' }, weight: 16 },
@@ -832,14 +832,14 @@ const CharDB = (() => {
       // Trust-kill: Farah yang ketakutan — menyerang jika merasa nyawanya terancam
       { condition: { minDeaths: 3, emotion: 'panicked', minTension: 65 }, action: { type: 'trust_kill', desc: '"JANGAN MENDEKAT!" Farah meraih tongkat golf dan menyerang. Ketakutan mengubah pewaris menjadi pembunuh.' }, weight: 14 },
 
-      // --- Chapters 7-10: Escalation ---
-      { condition: { chapter: 7, hasClue: true, isAlone: false }, action: { type: 'share_clue', desc: '"Dengar, keluargaku mendanai ini semua. AKU TAHU rahasia mansion ini." Farah membuka segalanya.' }, weight: 24 },
-      { condition: { chapter: 7, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Farah mencari di brankas keluarga. "Pasti ada kunci atau peta yang ditinggalkan kakek."' }, weight: 22 },
-      { condition: { chapter: 8, isAlone: false, minDeaths: 3 }, action: { type: 'coordinate_defense', desc: '"Keluargaku punya safe room di mansion ini. SEMUA pindah ke sana. SEKARANG." Farah memimpin evakuasi.' }, weight: 24 },
-      { condition: { chapter: 9, isAlone: false }, action: { type: 'rally', desc: '"AKU TIDAK PEDULI LAGI TENTANG UANG. AKU TIDAK PEDULI TENTANG REPUTASI. AKU MAU HIDUP."' }, weight: 28 },
-      { condition: { chapter: 9, hasClue: true }, action: { type: 'secure_exit', desc: 'Farah membuka kunci master warisan keluarga. "SEMUA PINTU TERBUKA. PERGI SEKARANG!"' }, weight: 26 },
-      { condition: { chapter: 10, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Farah melepas cincin keluarganya. "Aku pewaris. Dan ini warisanku — menyelamatkan kalian semua."' }, weight: 30 },
-      { condition: { chapter: 10, hasClue: true }, action: { type: 'secure_exit', desc: 'Farah mengaktifkan protokol evakuasi keluarga. "Kakek membangun ini untuk keadaan darurat. INI keadaan darurat."' }, weight: 28 },
+      // --- Chapters 4-5: Escalation ---
+      { condition: { chapter: 4, hasClue: true, isAlone: false }, action: { type: 'share_clue', desc: '"Dengar, keluargaku mendanai ini semua. AKU TAHU rahasia mansion ini." Farah membuka segalanya.' }, weight: 24 },
+      { condition: { chapter: 4, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Farah mencari di brankas keluarga. "Pasti ada kunci atau peta yang ditinggalkan kakek."' }, weight: 22 },
+      { condition: { chapter: 4, isAlone: false, minDeaths: 3 }, action: { type: 'coordinate_defense', desc: '"Keluargaku punya safe room di mansion ini. SEMUA pindah ke sana. SEKARANG." Farah memimpin evakuasi.' }, weight: 24 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: '"AKU TIDAK PEDULI LAGI TENTANG UANG. AKU TIDAK PEDULI TENTANG REPUTASI. AKU MAU HIDUP."' }, weight: 28 },
+      { condition: { chapter: 5, hasClue: true }, action: { type: 'secure_exit', desc: 'Farah membuka kunci master warisan keluarga. "SEMUA PINTU TERBUKA. PERGI SEKARANG!"' }, weight: 26 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Farah melepas cincin keluarganya. "Aku pewaris. Dan ini warisanku — menyelamatkan kalian semua."' }, weight: 30 },
+      { condition: { chapter: 5, hasClue: true }, action: { type: 'secure_exit', desc: 'Farah mengaktifkan protokol evakuasi keluarga. "Kakek membangun ini untuk keadaan darurat. INI keadaan darurat."' }, weight: 28 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'socialize', desc: '"Aku bisa membayar siapapun untuk membantu." Farah menggunakan satu-satunya senjata yang dia tahu — uang.' }, weight: 10 },
@@ -892,28 +892,28 @@ const CharDB = (() => {
       { condition: { emotion: 'executing', minTension: 80 }, action: { type: 'flee', desc: 'Topeng jatuh. Lana berjalan pergi dengan anggun. "Setiap cerita butuh villain."' }, weight: 20 },
 
       // === LATE GAME: Fokus isolasi dan eksekusi ===
-      { condition: { chapter: 5, minDeaths: 2, isAlone: false }, action: { type: 'divide', desc: 'Late game. Lana memecah kelompok survivor yang tersisa — isolasi sebelum eksekusi.' }, weight: 28 },
-      { condition: { chapter: 5, minDeaths: 2, isAlone: false }, action: { type: 'isolate', desc: 'Late game. Lana memisahkan survivor terakhir dari kelompok — eksekusi butuh kesendirian.' }, weight: 25 },
-      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Endgame. Lana memutuskan hanya satu yang boleh selamat — Dimas hanyalah bidak.', target: 'dimas' }, weight: 28 },
-      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Niko harus disingkirkan.', target: 'niko' }, weight: 28 },
+      { condition: { chapter: 3, minDeaths: 2, isAlone: false }, action: { type: 'divide', desc: 'Late game. Lana memecah kelompok survivor yang tersisa — isolasi sebelum eksekusi.' }, weight: 28 },
+      { condition: { chapter: 3, minDeaths: 2, isAlone: false }, action: { type: 'isolate', desc: 'Late game. Lana memisahkan survivor terakhir dari kelompok — eksekusi butuh kesendirian.' }, weight: 25 },
+      { condition: { chapter: 4, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Endgame. Lana memutuskan hanya satu yang boleh selamat — Dimas hanyalah bidak.', target: 'dimas' }, weight: 28 },
+      { condition: { chapter: 4, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Niko harus disingkirkan.', target: 'niko' }, weight: 28 },
 
       // === PENGHILANGAN PETUNJUK (prioritas tinggi) ===
-      { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Lana mencari dan menghancurkan petunjuk pelarian. Kalau survivor menemukan 8, semuanya tamat.' }, weight: 26 },
+      { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Lana mencari dan menghancurkan petunjuk pelarian. Kalau survivor menemukan 5, semuanya tamat.' }, weight: 26 },
 
       // === SIASAT LANJUTAN: Cari target terisolasi ===
       { condition: { emotion: 'stalking', isAlone: true }, action: { type: 'move', desc: 'Lana membuntuti survivor yang sendirian — predator sabar yang menunggu momen sempurna.' }, weight: 20 },
       { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'manipulate', desc: '"Aku dengar suara aneh di sayap timur." Lana membuat alasan agar survivor berpencar.' }, weight: 22 },
       { condition: { minDeaths: 1, isAlone: false }, action: { type: 'distract', desc: 'Lana berpura-pura menemukan sesuatu penting. "LIHAT INI!" — mengalihkan perhatian dari rekan killernya.' }, weight: 20 },
 
-      // === Chapters 7-10: Late-game killer escalation ===
-      { condition: { chapter: 7, isAlone: false, minDeaths: 2 }, action: { type: 'divide', desc: 'Chapter 7. Lana menggunakan semua kartu dramanya. "ADA YANG DI BALIK DINDING INI!" — pisahkan survivor.' }, weight: 26 },
-      { condition: { chapter: 7, emotion: 'hunting', isAlone: true }, action: { type: 'destroy_clue', desc: 'Lana memprioritaskan penghancuran petunjuk. Kalau survivor menemukan 8, novelnya berakhir.' }, weight: 24 },
-      { condition: { chapter: 8, isAlone: false }, action: { type: 'frame', desc: 'Chapter 8. Lana menangis histeris. "DIA YANG MEMBUNUH MEREKA SEMUA!" — frame survivor terkuat.' }, weight: 26 },
-      { condition: { chapter: 8, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Endgame. Lana berhenti berpura-pura. Penulisnya menutup buku — dengan darah.' }, weight: 28 },
-      { condition: { chapter: 9, minTension: 70 }, action: { type: 'sabotage', desc: 'Lana menyabotase jalur pelarian. Kalau dia tidak bisa menang, tidak ada yang boleh kabur.' }, weight: 26 },
-      { condition: { chapter: 9, isAlone: true }, action: { type: 'destroy_clue', desc: 'Desperate. Lana menghancurkan semua petunjuk yang bisa dia temukan sebelum terlambat.' }, weight: 24 },
-      { condition: { chapter: 10, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Bab terakhir. "Setiap cerita butuh ending. Dan aku yang menulis milikmu." Lana menyerang.' }, weight: 30 },
-      { condition: { chapter: 10, isAlone: false }, action: { type: 'divide', desc: 'Final chapter. Lana membuat kepanikan terakhir — ledakan emosi yang memecah kelompok.' }, weight: 28 },
+      // === Chapters 4-5: Late-game killer escalation ===
+      { condition: { chapter: 4, isAlone: false, minDeaths: 2 }, action: { type: 'divide', desc: 'Chapter 7. Lana menggunakan semua kartu dramanya. "ADA YANG DI BALIK DINDING INI!" — pisahkan survivor.' }, weight: 26 },
+      { condition: { chapter: 4, emotion: 'hunting', isAlone: true }, action: { type: 'destroy_clue', desc: 'Lana memprioritaskan penghancuran petunjuk. Kalau survivor menemukan 5, novelnya berakhir.' }, weight: 24 },
+      { condition: { chapter: 4, isAlone: false }, action: { type: 'frame', desc: 'Chapter 8. Lana menangis histeris. "DIA YANG MEMBUNUH MEREKA SEMUA!" — frame survivor terkuat.' }, weight: 26 },
+      { condition: { chapter: 4, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Endgame. Lana berhenti berpura-pura. Penulisnya menutup buku — dengan darah.' }, weight: 28 },
+      { condition: { chapter: 5, minTension: 70 }, action: { type: 'sabotage', desc: 'Lana menyabotase jalur pelarian. Kalau dia tidak bisa menang, tidak ada yang boleh kabur.' }, weight: 26 },
+      { condition: { chapter: 5, isAlone: true }, action: { type: 'destroy_clue', desc: 'Desperate. Lana menghancurkan semua petunjuk yang bisa dia temukan sebelum terlambat.' }, weight: 24 },
+      { condition: { chapter: 5, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Bab terakhir. "Setiap cerita butuh ending. Dan aku yang menulis milikmu." Lana menyerang.' }, weight: 30 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'divide', desc: 'Final chapter. Lana membuat kepanikan terakhir — ledakan emosi yang memecah kelompok.' }, weight: 28 },
 
       // --- Broad catch-all killer ---
       { condition: { emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Lana tersenyum dan bersosialisasi. Serigala di antara domba.' }, weight: 8 },
@@ -955,10 +955,10 @@ const CharDB = (() => {
       { condition: { minTension: 80 }, action: { type: 'flee', desc: 'Dimas meninggalkan segalanya. Insting survival lebih kuat dari instruksi.' }, weight: 18 },
 
       // === LATE GAME ===
-      { condition: { chapter: 5, minDeaths: 2, isAlone: false }, action: { type: 'divide', desc: 'Late game. Dimas memecah kelompok survivor — isolasi target untuk kill.' }, weight: 28 },
-      { condition: { chapter: 5, minDeaths: 2, isAlone: false }, action: { type: 'isolate', desc: 'Late game. Dimas mencari target yang bisa dipisahkan — harus sendirian untuk eksekusi.' }, weight: 25 },
-      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Lana demi keselamatannya sendiri.', target: 'lana' }, weight: 28 },
-      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Niko — hanya satu yang boleh menang.', target: 'niko' }, weight: 28 },
+      { condition: { chapter: 3, minDeaths: 2, isAlone: false }, action: { type: 'divide', desc: 'Late game. Dimas memecah kelompok survivor — isolasi target untuk kill.' }, weight: 28 },
+      { condition: { chapter: 3, minDeaths: 2, isAlone: false }, action: { type: 'isolate', desc: 'Late game. Dimas mencari target yang bisa dipisahkan — harus sendirian untuk eksekusi.' }, weight: 25 },
+      { condition: { chapter: 4, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Lana demi keselamatannya sendiri.', target: 'lana' }, weight: 28 },
+      { condition: { chapter: 4, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Niko — hanya satu yang boleh menang.', target: 'niko' }, weight: 28 },
 
       // === PENGHILANGAN PETUNJUK ===
       { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Dimas mencari dan membakar petunjuk pelarian dengan presisi klinis.' }, weight: 24 },
@@ -968,15 +968,15 @@ const CharDB = (() => {
       { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'distract', desc: 'Dimas berpura-pura mendengar sesuatu. "Ada suara dari basement..." — mengalihkan perhatian kelompok.' }, weight: 20 },
       { condition: { isAlone: false, minDeaths: 1 }, action: { type: 'manipulate', desc: 'Dimas memanfaatkan rasa takut. "Siapa yang terakhir bersama korban? Kita perlu interogasi terpisah."' }, weight: 22 },
 
-      // === Chapters 7-10: Late-game killer escalation ===
-      { condition: { chapter: 7, isAlone: false, minDeaths: 2 }, action: { type: 'divide', desc: 'Chapter 7. Dimas memanipulasi rasa takut. "Pembunuh masih di antara kita. Kita perlu berpencar untuk mencari."' }, weight: 26 },
-      { condition: { chapter: 7, isAlone: true }, action: { type: 'destroy_clue', desc: 'Dimas menghancurkan petunjuk pelarian dengan efisiensi klinis — tanpa emosi, hanya prosedur.' }, weight: 24 },
-      { condition: { chapter: 8, isAlone: false }, action: { type: 'frame', desc: 'Chapter 8. Dimas menempatkan bukti palsu dengan presisi bedah. "Lihat apa yang kutemukan di tasnya..."' }, weight: 26 },
-      { condition: { chapter: 8, emotion: 'executing', isAlone: true }, action: { type: 'trap', desc: 'Endgame. Dimas menyiapkan jebakan farmakologis terakhir di koridor.' }, weight: 24 },
-      { condition: { chapter: 9, minTension: 70 }, action: { type: 'sabotage', desc: 'Dimas meracuni persediaan air. Pengetahuan farmakologi yang digunakan untuk hal terburuk.' }, weight: 26 },
-      { condition: { chapter: 9, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Dimas bergerak. Tanpa ragu. Tanpa emosi. Prosedur terakhir.' }, weight: 28 },
-      { condition: { chapter: 10, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Bab terakhir. Dimas menunjukkan wajah aslinya. "Aku bukan mahasiswa. Aku instrumen."' }, weight: 30 },
-      { condition: { chapter: 10, isAlone: false }, action: { type: 'divide', desc: 'Final. Dimas membuat kepanikan terakhir — sabotase sistem mansion untuk memecah kelompok.' }, weight: 28 },
+      // === Chapters 4-5: Late-game killer escalation ===
+      { condition: { chapter: 4, isAlone: false, minDeaths: 2 }, action: { type: 'divide', desc: 'Chapter 7. Dimas memanipulasi rasa takut. "Pembunuh masih di antara kita. Kita perlu berpencar untuk mencari."' }, weight: 26 },
+      { condition: { chapter: 4, isAlone: true }, action: { type: 'destroy_clue', desc: 'Dimas menghancurkan petunjuk pelarian dengan efisiensi klinis — tanpa emosi, hanya prosedur.' }, weight: 24 },
+      { condition: { chapter: 4, isAlone: false }, action: { type: 'frame', desc: 'Chapter 8. Dimas menempatkan bukti palsu dengan presisi bedah. "Lihat apa yang kutemukan di tasnya..."' }, weight: 26 },
+      { condition: { chapter: 4, emotion: 'executing', isAlone: true }, action: { type: 'trap', desc: 'Endgame. Dimas menyiapkan jebakan farmakologis terakhir di koridor.' }, weight: 24 },
+      { condition: { chapter: 5, minTension: 70 }, action: { type: 'sabotage', desc: 'Dimas meracuni persediaan air. Pengetahuan farmakologi yang digunakan untuk hal terburuk.' }, weight: 26 },
+      { condition: { chapter: 5, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Dimas bergerak. Tanpa ragu. Tanpa emosi. Prosedur terakhir.' }, weight: 28 },
+      { condition: { chapter: 5, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Bab terakhir. Dimas menunjukkan wajah aslinya. "Aku bukan mahasiswa. Aku instrumen."' }, weight: 30 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'divide', desc: 'Final. Dimas membuat kepanikan terakhir — sabotase sistem mansion untuk memecah kelompok.' }, weight: 28 },
 
       // --- Broad catch-all killer ---
       { condition: { emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Dimas berdiri diam, mengamati. Ketenangan klinis yang menyembunyikan predator.' }, weight: 8 },
@@ -994,7 +994,7 @@ const CharDB = (() => {
       { condition: { emotion: 'stalking', isAlone: false }, action: { type: 'divide', desc: '"Kita harus berpencar untuk cari clue." Niko memecah kelompok — kambing menjauhi kawanan.' }, weight: 28 },
       { condition: { isAlone: false }, action: { type: 'sabotage', desc: 'Niko mematikan lampu di sayap mansion. Dalam kegelapan, kelompok terpisah — persis seperti yang dia rencanakan.' }, weight: 24 },
       { condition: { isAlone: false }, action: { type: 'distract', desc: '"ADA SUARA DI LANTAI ATAS!" Niko membuat kepanikan palsu untuk memecah kelompok.' }, weight: 22 },
-      { condition: { emotion: 'stalking', chapter: 2 }, action: { type: 'move', desc: 'Niko bergerak ke panel kontrol rahasia mansion.', moveTo: 'ruang_penyimpanan' }, weight: 16 },
+      { condition: { emotion: 'stalking', chapter: 2 }, action: { type: 'move', desc: 'Niko bergerak ke panel kontrol rahasia mansion.', moveTo: 'basement' }, weight: 16 },
 
       // === HUNTING: Sabotase infrastruktur, isolasi ===
       { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'isolate', desc: '"Vira, kita perlu bicara." Niko mencoba memisahkan seseorang — lebih mudah dibunuh sendirian.' }, weight: 24 },
@@ -1013,10 +1013,10 @@ const CharDB = (() => {
       { condition: { minTension: 70 }, action: { type: 'confront', desc: 'Niko berhenti berpura-pura. "Mansion ini milikku. Kalian tamu."' }, weight: 20 },
 
       // === LATE GAME ===
-      { condition: { chapter: 6, minDeaths: 2, isAlone: false }, action: { type: 'divide', desc: 'Endgame. Niko menggunakan mansion untuk memisahkan survivor — matikan listrik, kunci pintu.' }, weight: 28 },
-      { condition: { chapter: 6, minDeaths: 2, isAlone: false }, action: { type: 'sabotage', desc: 'Endgame. Niko mematikan listrik sayap barat mansion — dalam kegelapan, kelompok terpisah.' }, weight: 25 },
-      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Niko mengorbankan Lana demi menjadi satu-satunya yang selamat.', target: 'lana' }, weight: 28 },
-      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Niko mengkhianati Dimas — mansion ini hanya untuk satu pemenang.', target: 'dimas' }, weight: 28 },
+      { condition: { chapter: 4, minDeaths: 2, isAlone: false }, action: { type: 'divide', desc: 'Endgame. Niko menggunakan mansion untuk memisahkan survivor — matikan listrik, kunci pintu.' }, weight: 28 },
+      { condition: { chapter: 4, minDeaths: 2, isAlone: false }, action: { type: 'sabotage', desc: 'Endgame. Niko mematikan listrik sayap barat mansion — dalam kegelapan, kelompok terpisah.' }, weight: 25 },
+      { condition: { chapter: 4, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Niko mengorbankan Lana demi menjadi satu-satunya yang selamat.', target: 'lana' }, weight: 28 },
+      { condition: { chapter: 4, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Niko mengkhianati Dimas — mansion ini hanya untuk satu pemenang.', target: 'dimas' }, weight: 28 },
 
       // === PENGHILANGAN PETUNJUK ===
       { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Niko menggunakan pengetahuan mansionnya untuk menemukan dan menghancurkan petunjuk pelarian.' }, weight: 26 },
@@ -1026,15 +1026,15 @@ const CharDB = (() => {
       { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'distract', desc: '"ADA YANG MENCURIGAKAN DI SAYAP UTARA!" Niko mengarahkan kelompok ke arah berbeda.' }, weight: 22 },
       { condition: { isAlone: false, minDeaths: 1 }, action: { type: 'manipulate', desc: 'Niko menggunakan otoritas tuan rumah. "Aku sarankan kita berpencar — aku tahu mansion ini." Jebakan sempurna.' }, weight: 24 },
 
-      // === Chapters 7-10: Late-game killer escalation ===
-      { condition: { chapter: 7, isAlone: false }, action: { type: 'sabotage', desc: 'Chapter 7. Niko mengaktifkan sistem keamanan mansion — mengunci sayap-sayap tertentu, memisahkan survivor.' }, weight: 26 },
-      { condition: { chapter: 7, isAlone: true }, action: { type: 'destroy_clue', desc: 'Niko menggunakan pengetahuan mansionnya untuk menemukan dan menghancurkan petunjuk pelarian.' }, weight: 24 },
-      { condition: { chapter: 8, isAlone: false }, action: { type: 'frame', desc: 'Chapter 8. "AKU LIHAT DIA MEMBUNUH KORBAN!" Niko berpura-pura panik dan menuduh survivor.' }, weight: 26 },
-      { condition: { chapter: 8, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Niko menghentikan semua akting. "Mansion ini MILIKKU. Dan kalian semua tamu yang tak diundang."' }, weight: 28 },
-      { condition: { chapter: 9, minTension: 70 }, action: { type: 'sabotage', desc: 'Niko mematikan semua listrik mansion. Dalam kegelapan absolut — tuan rumah memiliki keuntungan.' }, weight: 26 },
-      { condition: { chapter: 9, isAlone: true }, action: { type: 'trap', desc: 'Niko mengaktifkan jebakan-jebakan tersembunyi mansion — warisan keluarganya yang mematikan.' }, weight: 24 },
-      { condition: { chapter: 10, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Bab terakhir. Niko berdiri di aula utama. "Selamat datang di endgame. Mansion ini kuburan kalian."' }, weight: 30 },
-      { condition: { chapter: 10, isAlone: false }, action: { type: 'sabotage', desc: 'Final. Niko mengunci semua pintu mansion dari panel kontrol. "Tidak ada yang keluar."' }, weight: 28 },
+      // === Chapters 4-5: Late-game killer escalation ===
+      { condition: { chapter: 4, isAlone: false }, action: { type: 'sabotage', desc: 'Chapter 7. Niko mengaktifkan sistem keamanan mansion — mengunci sayap-sayap tertentu, memisahkan survivor.' }, weight: 26 },
+      { condition: { chapter: 4, isAlone: true }, action: { type: 'destroy_clue', desc: 'Niko menggunakan pengetahuan mansionnya untuk menemukan dan menghancurkan petunjuk pelarian.' }, weight: 24 },
+      { condition: { chapter: 4, isAlone: false }, action: { type: 'frame', desc: 'Chapter 8. "AKU LIHAT DIA MEMBUNUH KORBAN!" Niko berpura-pura panik dan menuduh survivor.' }, weight: 26 },
+      { condition: { chapter: 4, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Niko menghentikan semua akting. "Mansion ini MILIKKU. Dan kalian semua tamu yang tak diundang."' }, weight: 28 },
+      { condition: { chapter: 5, minTension: 70 }, action: { type: 'sabotage', desc: 'Niko mematikan semua listrik mansion. Dalam kegelapan absolut — tuan rumah memiliki keuntungan.' }, weight: 26 },
+      { condition: { chapter: 5, isAlone: true }, action: { type: 'trap', desc: 'Niko mengaktifkan jebakan-jebakan tersembunyi mansion — warisan keluarganya yang mematikan.' }, weight: 24 },
+      { condition: { chapter: 5, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Bab terakhir. Niko berdiri di aula utama. "Selamat datang di endgame. Mansion ini kuburan kalian."' }, weight: 30 },
+      { condition: { chapter: 5, isAlone: false }, action: { type: 'sabotage', desc: 'Final. Niko mengunci semua pintu mansion dari panel kontrol. "Tidak ada yang keluar."' }, weight: 28 },
 
       // --- Broad catch-all killer ---
       { condition: { emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Niko tersenyum. Tuan rumah yang sempurna. Tidak ada yang curiga.' }, weight: 8 },

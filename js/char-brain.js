@@ -51,41 +51,29 @@ const CharBrain = (() => {
   };
 
   // ---- Locations in the Mansion ----
+  // ---- 8 Room Mansion Layout ----
   const LOCATIONS = [
-    'galeri_timur', 'galeri_barat', 'aula_utama', 'perpustakaan',
-    'dapur', 'basement', 'koridor_utara', 'koridor_selatan',
-    'taman_dalam', 'menara', 'bunker_b3', 'kamar_atas',
-    'ruang_penyimpanan', 'atap', 'lorong_rahasia'
+    'aula_utama', 'perpustakaan', 'dapur', 'basement',
+    'menara', 'taman_dalam', 'galeri_timur', 'bunker_b3'
   ];
 
   const LOCATION_NAMES = {
-    galeri_timur: 'Galeri Timur', galeri_barat: 'Galeri Barat',
     aula_utama: 'Aula Utama', perpustakaan: 'Perpustakaan',
     dapur: 'Dapur', basement: 'Basement',
-    koridor_utara: 'Koridor Utara', koridor_selatan: 'Koridor Selatan',
-    taman_dalam: 'Taman Dalam', menara: 'Menara',
-    bunker_b3: 'Bunker B-3', kamar_atas: 'Kamar Atas',
-    ruang_penyimpanan: 'Ruang Penyimpanan', atap: 'Atap',
-    lorong_rahasia: 'Lorong Rahasia'
+    menara: 'Menara', taman_dalam: 'Taman Dalam',
+    galeri_timur: 'Galeri Timur', bunker_b3: 'Bunker B-3'
   };
 
-  // Connected locations for movement
+  // Connected locations for movement (8-room compact layout)
   const LOCATION_CONNECTIONS = {
-    galeri_timur:     ['aula_utama', 'koridor_utara', 'lorong_rahasia'],
-    galeri_barat:     ['aula_utama', 'koridor_selatan', 'taman_dalam'],
-    aula_utama:       ['galeri_timur', 'galeri_barat', 'perpustakaan', 'dapur', 'koridor_utara', 'koridor_selatan'],
-    perpustakaan:     ['aula_utama', 'lorong_rahasia', 'menara'],
-    dapur:            ['aula_utama', 'basement', 'taman_dalam'],
-    basement:         ['dapur', 'bunker_b3', 'ruang_penyimpanan'],
-    koridor_utara:    ['aula_utama', 'galeri_timur', 'kamar_atas', 'menara'],
-    koridor_selatan:  ['aula_utama', 'galeri_barat', 'kamar_atas', 'taman_dalam'],
-    taman_dalam:      ['galeri_barat', 'dapur', 'koridor_selatan', 'atap'],
-    menara:           ['perpustakaan', 'koridor_utara', 'atap'],
-    bunker_b3:        ['basement'],
-    kamar_atas:       ['koridor_utara', 'koridor_selatan'],
-    ruang_penyimpanan:['basement', 'lorong_rahasia'],
-    atap:             ['menara', 'taman_dalam'],
-    lorong_rahasia:   ['galeri_timur', 'perpustakaan', 'ruang_penyimpanan']
+    aula_utama:    ['perpustakaan', 'dapur', 'galeri_timur', 'taman_dalam'],
+    perpustakaan:  ['aula_utama', 'menara', 'bunker_b3'],
+    dapur:         ['aula_utama', 'basement', 'taman_dalam'],
+    basement:      ['dapur', 'bunker_b3'],
+    menara:        ['perpustakaan', 'galeri_timur'],
+    taman_dalam:   ['aula_utama', 'dapur', 'galeri_timur'],
+    galeri_timur:  ['aula_utama', 'menara', 'taman_dalam'],
+    bunker_b3:     ['basement', 'perpustakaan']
   };
 
   // ---- NPC Mind State ----
@@ -528,7 +516,7 @@ const CharBrain = (() => {
     if (isRevealed) {
       if (!isAlone && canDo('flee')) {
         const moveTo = pickNewLocation(mind);
-        return { type: 'flee', desc: `${charName(mind.name)} melarikan diri — harus bersembunyi sendirian!`, moveTo: moveTo || 'lorong_rahasia', priority: 98 };
+        return { type: 'flee', desc: `${charName(mind.name)} melarikan diri — harus bersembunyi sendirian!`, moveTo: moveTo || 'bunker_b3', priority: 98 };
       }
       // If alone, hide and wait
       if (isAlone && canDo('hide')) {
@@ -552,8 +540,8 @@ const CharBrain = (() => {
     // === STRATEGIC: Never attack when 2+ survivors present (will die) ===
     // Killer must focus on ISOLATING targets and SEPARATING groups
 
-    // TERDESAK: Khianati killer lain jika suspicion tinggi (chapter 3+)
-    if (gameState.chapter >= 3 && mySusp > 50 && canDo('sabotage_killer')) {
+    // TERDESAK: Khianati killer lain jika suspicion tinggi (chapter 2+)
+    if (gameState.chapter >= 2 && mySusp > 50 && canDo('sabotage_killer')) {
       const rivalKillers = nearby.filter(n => gameState.killers.includes(n.name) && n.name !== mind.name);
       if (rivalKillers.length > 0) {
         const rival = rivalKillers[0];
@@ -1138,7 +1126,7 @@ const CharBrain = (() => {
 
       case 'hide': {
         mind.isHiding = true;
-        const hideLocs = ['lorong_rahasia', 'ruang_penyimpanan', 'kamar_atas'];
+        const hideLocs = ['bunker_b3', 'basement', 'menara'];
         const safeLoc = hideLocs[Math.floor(Math.random() * hideLocs.length)];
         mind.location = safeLoc;
         return null;
@@ -1655,7 +1643,7 @@ const CharBrain = (() => {
       result.type = 'win';
       result.reason = 'mansion_escape';
       result.title = 'Petunjuk Terkumpul — Killer Terungkap!';
-      result.desc = '8 petunjuk ditemukan! Identitas semua killer terungkap — mereka dieksekusi oleh tim protagonis!';
+      result.desc = 'Petunjuk pelarian cukup terkumpul! Identitas semua killer terungkap — mereka dieksekusi oleh tim protagonis!';
       return result;
     }
 
@@ -1672,12 +1660,12 @@ const CharBrain = (() => {
     }
 
     // Killer destroyed/hid enough clues that protagonist can't reach 8
-    const totalClues = gameState.totalEscapeClues || 15;
+    const totalClues = gameState.totalEscapeClues || 8;
     const destroyed = (gameState.destroyedClues || []).length;
     const found = (gameState.escapeClues || []).length;
-    const cluesNeeded = gameState.cluesNeededToWin || 8;
+    const cluesNeeded = gameState.cluesNeededToWin || 5;
     const available = totalClues - destroyed;
-    if (available < cluesNeeded && found < cluesNeeded && gameState.chapter >= 3) {
+    if (available < cluesNeeded && found < cluesNeeded && gameState.chapter >= 2) {
       result.ended = true;
       result.type = isPlayerK ? 'win' : 'loss';
       result.reason = 'killer_clues_destroyed';
@@ -1686,8 +1674,8 @@ const CharBrain = (() => {
       return result;
     }
 
-    // Dawn reached (chapter 10+) — game ends with current state
-    if (gameState.chapter >= 10) {
+    // Dawn reached (chapter 5+) — game ends with current state
+    if (gameState.chapter >= 5) {
       result.ended = true;
       result.type = allKillersDead ? 'win' : 'partial_win';
       result.reason = 'dawn_reached';

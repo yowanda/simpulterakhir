@@ -1896,6 +1896,20 @@ body {
 }
 .ps-location .loc-icon { margin-right: 0.2rem; }
 .ps-location .loc-nearby { color: #aebac1; }
+/* Team roster */
+.ps-team {
+  width: 100%;
+  margin-top: 0.15rem;
+  padding: 0.2rem 0.45rem;
+  background: rgba(128,128,128,0.08);
+  border-radius: 4px;
+  font-size: 0.6rem;
+  line-height: 1.5;
+}
+.ps-team-row { color: #8696a0; }
+.ps-team .team-label { font-weight: 600; }
+.ps-team .team-alive { color: #e9edef; }
+.ps-team .team-dead { color: #555; text-decoration: line-through; }
 @keyframes psThrob {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
