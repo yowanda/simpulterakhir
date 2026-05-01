@@ -24,7 +24,7 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 
 ### Gameplay & Cerita
 - **10 chapter** dengan percabangan kompleks (Prolog + Bab 1-10)
-- **Escalation System (Bab 8-10)** — kill/search chance naik 10-20%, cooldown turun, endgame lebih intens
+- **Escalation System (Bab 8-10)** — endgame lebih intens dengan pacing yang seimbang
 - **Hasil akhir dinamis** — bukan ending pre-scripted, tapi berdasarkan hasil permainan sebenarnya
 - **Ringkasan game otomatis** — tampilkan siapa yang tereliminasi, siapa yang menang, dan statistik permainan
 - **Auto-simulasi** — jika player mati, NPC melanjutkan permainan sampai ada pemenang
@@ -102,13 +102,30 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 - **Dynamic Choices** — pilihan baru muncul berdasarkan aksi NPC (tuduh, aliansi, serang, investigasi)
 - **Tidak pakai AI live** — semua diatur oleh branching database, bukan generative AI
 
+### Chatbox-Style UI
+- **Dialog sebagai Chat Bubble** — setiap dialog karakter ditampilkan sebagai bubble chat dengan avatar
+- **Player di Kanan** — pesan karakter yang dimainkan muncul di sisi kanan dengan tint hijau
+- **NPC di Kiri** — pesan NPC lain muncul di sisi kiri dengan background gelap
+- **Killer Bubble** — karakter killer punya bubble dengan tint merah subtle
+- **Narasi Centered** — deskripsi dan narasi non-dialog muncul di tengah dengan garis dekoratif
+- **Location Context** — info lokasi tampil sebagai pill-shaped system message
+- **Responsive** — avatar dan font otomatis mengecil di mobile
+
+### Framing & Divide Mechanic
+- **Framing** — killer bisa menanamkan bukti palsu ke target (45% chance sukses):
+  - **Sukses**: Target suspicion +25-40%, trust dengan NPC lain hancur (-25), NPC tandai target sebagai MUSUH, target kehilangan semua allies, tension +20
+  - **Gagal**: Suspicion KILLER naik +20%, NPC sekitar jadi curiga ke killer (+15)
+- **Divide** — killer NPC bisa memecah kelompok survivor (60% chance pindahkan survivor ke lokasi random)
+
 ### Anti-Looping System
 - **Player Action Tracking** — setiap brain action hanya bisa dilakukan **1x per target per node**
-- **Max 5 Brain Actions** per node — gameplay interaktif prioritas, plot mendukung ending
-- **NPC Cooldown System** — setiap tipe aksi NPC punya cooldown 1-3 ronde
+- **Max Brain Actions** per node — Survivor: 5 aksi, Killer: 3 aksi (pacing lebih lambat untuk killer)
+- **NPC Cooldown System** — setiap tipe aksi NPC punya cooldown 1-4 ronde (killer cooldown lebih tinggi: eliminate/strike 3 ronde, divide/isolate 4 ronde)
+- **NPC Killer Hesitation** — 35% chance killer NPC skip round (ragu-ragu), memperlambat momentum killer
 - **Escalation Mechanism** — jika semua aksi on cooldown, NPC otomatis pindah lokasi
 - **Location-Based Reset** — pindah ke lokasi baru me-reset aksi spesifik lokasi
-- **Max 6 Opsi** — player melihat 6 pilihan per node (brain interactive prioritas, 1 story max), shuffled setiap game
+- **Max Opsi** — Survivor: 6 pilihan, Killer: 4 pilihan per node (brain interactive prioritas, 1 story max), shuffled setiap game
+- **Killer Movement Restriction** — Killer hanya bisa pilih 2 lokasi pindah (vs 3 untuk survivor)
 
 ### 7 Alat Unik
 Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat event terpicu di lokasi tertentu.
