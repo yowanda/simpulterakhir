@@ -693,25 +693,26 @@ const Engine = (() => {
     staggerTimers = [];
   }
 
+  const NARRATION_VISIBLE_MAX = 2;
+
   function convertToChatbox(html) {
     const temp = document.createElement('div');
     temp.innerHTML = html;
-    let chatHtml = '';
     const pc = playerChar();
-    let narrationCount = 0;
 
+    // First pass: build a list of typed items
+    const items = [];
     Array.from(temp.childNodes).forEach(node => {
       if (node.nodeType === 3 && !node.textContent.trim()) return;
 
-      // Preserve non-<p> elements (divs like location-context, npc-round-narrative, wl-alert, etc.)
       if (node.nodeType === 1 && node.tagName !== 'P') {
-        chatHtml += `<div class="chat-item">${node.outerHTML}</div>`;
+        items.push({ type: 'other', html: node.outerHTML });
         return;
       }
 
       if (node.nodeType === 3) {
         const txt = node.textContent.trim();
-        if (txt) chatHtml += `<div class="chat-item chat-narration">${txt}</div>`;
+        if (txt) items.push({ type: 'narration', html: txt, cls: '' });
         return;
       }
 
@@ -722,59 +723,93 @@ const Engine = (() => {
           const charClasses = Array.from(speakerEl.classList).filter(c => c !== 'speaker');
           const charKey = charClasses[0] || '';
           const charDisplayName = CHAR_DISPLAY[charKey] || speakerEl.textContent.trim();
-
           const msgContent = node.innerHTML
             .replace(/<img[^>]*class="speaker-portrait"[^>]*>/g, '')
             .replace(/<span class="speaker [^"]*">[^<]*<\/span>/g, '')
             .trim();
-
           const isPlayer = charKey === pc;
           const isKiller = KILLER_CHARS.includes(charKey);
           const isEntity = charKey === 'entity';
-          const side = isPlayer ? 'right' : 'left';
-          let bubbleClass = `chat-item chat-bubble chat-bubble-${side}`;
-          if (isKiller) bubbleClass += ' chat-bubble-killer';
-          if (isEntity) bubbleClass += ' chat-bubble-entity';
-
-          const avatar = charKey ? getChatAvatarHTML(charKey) : '';
-          chatHtml += `<div class="${bubbleClass}">`;
-          chatHtml += avatar;
-          chatHtml += `<div class="chat-content">`;
-          chatHtml += `<div class="chat-name ${charKey}">${charDisplayName}</div>`;
-          chatHtml += `<div class="chat-msg">${msgContent}</div>`;
-          chatHtml += `</div></div>`;
-          narrationCount = 0;
+          items.push({ type: 'bubble', charKey, charDisplayName, msgContent, isPlayer, isKiller, isEntity });
         } else {
           const text = node.innerHTML.trim();
           if (!text) return;
-
           const pClasses = Array.from(node.classList);
 
-          // Journal entries get their own styling without narration treatment
           if (pClasses.includes('journal')) {
-            chatHtml += `<div class="chat-item">${node.outerHTML}</div>`;
-            narrationCount = 0;
+            items.push({ type: 'journal', html: node.outerHTML });
             return;
           }
-
-          let narrationClass = 'chat-item chat-narration';
-          if (pClasses.includes('horror') || text.includes('class="horror"')) narrationClass += ' chat-narration-horror';
           if (pClasses.includes('sound') || node.querySelector('.sound')) {
-            chatHtml += `<div class="chat-item chat-sound">${text}</div>`;
-            narrationCount = 0;
+            items.push({ type: 'sound', html: text });
             return;
           }
 
-          // Add scene break before consecutive narration blocks (after 2nd)
-          narrationCount++;
-          if (narrationCount === 3) {
-            chatHtml += `<div class="chat-item chat-scene-break"><span class="break-icon">···</span></div>`;
-          }
-
-          chatHtml += `<div class="${narrationClass}">${text}</div>`;
+          let cls = '';
+          if (pClasses.includes('horror') || text.includes('class="horror"')) cls = ' chat-narration-horror';
+          items.push({ type: 'narration', html: text, cls });
         }
       }
     });
+
+    // Second pass: group consecutive narrations and collapse if > NARRATION_VISIBLE_MAX
+    let chatHtml = '';
+    let i = 0;
+    while (i < items.length) {
+      const item = items[i];
+
+      if (item.type === 'narration') {
+        // Collect consecutive narrations
+        const group = [];
+        while (i < items.length && items[i].type === 'narration') {
+          group.push(items[i]);
+          i++;
+        }
+
+        if (group.length <= NARRATION_VISIBLE_MAX) {
+          group.forEach(n => {
+            chatHtml += `<div class="chat-item chat-narration${n.cls}">${n.html}</div>`;
+          });
+        } else {
+          // Show first NARRATION_VISIBLE_MAX, collapse rest
+          for (let j = 0; j < NARRATION_VISIBLE_MAX; j++) {
+            chatHtml += `<div class="chat-item chat-narration${group[j].cls}">${group[j].html}</div>`;
+          }
+          const collapseId = 'nc-' + Math.random().toString(36).substr(2, 6);
+          chatHtml += `<div class="chat-item chat-narration-collapsed" id="${collapseId}">`;
+          chatHtml += `<button class="narration-expand-btn" onclick="document.getElementById('${collapseId}').classList.toggle('expanded')">`;
+          chatHtml += `<span class="expand-dots">···</span> <span class="expand-label">${group.length - NARRATION_VISIBLE_MAX} lagi</span>`;
+          chatHtml += `</button>`;
+          chatHtml += `<div class="narration-hidden-content">`;
+          for (let j = NARRATION_VISIBLE_MAX; j < group.length; j++) {
+            chatHtml += `<div class="chat-narration${group[j].cls}">${group[j].html}</div>`;
+          }
+          chatHtml += `</div></div>`;
+        }
+        continue;
+      }
+
+      if (item.type === 'bubble') {
+        const side = item.isPlayer ? 'right' : 'left';
+        let bubbleClass = `chat-item chat-bubble chat-bubble-${side}`;
+        if (item.isKiller) bubbleClass += ' chat-bubble-killer';
+        if (item.isEntity) bubbleClass += ' chat-bubble-entity';
+        const avatar = item.charKey ? getChatAvatarHTML(item.charKey) : '';
+        chatHtml += `<div class="${bubbleClass}">`;
+        chatHtml += avatar;
+        chatHtml += `<div class="chat-content">`;
+        chatHtml += `<div class="chat-name ${item.charKey}">${item.charDisplayName}</div>`;
+        chatHtml += `<div class="chat-msg">${item.msgContent}</div>`;
+        chatHtml += `</div></div>`;
+      } else if (item.type === 'sound') {
+        chatHtml += `<div class="chat-item chat-sound">${item.html}</div>`;
+      } else if (item.type === 'journal') {
+        chatHtml += `<div class="chat-item">${item.html}</div>`;
+      } else {
+        chatHtml += `<div class="chat-item">${item.html}</div>`;
+      }
+      i++;
+    }
 
     return chatHtml;
   }

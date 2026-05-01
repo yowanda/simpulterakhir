@@ -1853,7 +1853,7 @@ body {
 .story-text {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.45rem;
 }
 .story-text p { margin-bottom: 0; }
 
@@ -2031,14 +2031,14 @@ body {
   letter-spacing: 0.3em;
 }
 
-/* Narration (system message style) */
+/* Narration (system message style — compact) */
 .chat-narration {
   text-align: center;
-  color: #9a9488;
-  font-size: 0.88rem;
-  line-height: 1.7;
-  padding: 0.5rem 1.4rem;
-  max-width: 82%;
+  color: #8a8478;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  padding: 0.2rem 1rem;
+  max-width: 85%;
   align-self: center;
   font-style: italic;
   position: relative;
@@ -2048,12 +2048,60 @@ body {
   content: '';
   position: absolute;
   top: 50%;
-  width: 24px;
+  width: 20px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(138, 132, 120, 0.35));
+  background: linear-gradient(90deg, transparent, rgba(138, 132, 120, 0.25));
 }
-.chat-narration::before { right: 100%; margin-right: 6px; background: linear-gradient(90deg, transparent, rgba(138, 132, 120, 0.35)); }
-.chat-narration::after { left: 100%; margin-left: 6px; background: linear-gradient(270deg, transparent, rgba(138, 132, 120, 0.35)); }
+.chat-narration::before { right: 100%; margin-right: 4px; background: linear-gradient(90deg, transparent, rgba(138, 132, 120, 0.25)); }
+.chat-narration::after { left: 100%; margin-left: 4px; background: linear-gradient(270deg, transparent, rgba(138, 132, 120, 0.25)); }
+
+/* Collapsible narration group */
+.chat-narration-collapsed {
+  align-self: center;
+  text-align: center;
+}
+.narration-expand-btn {
+  background: none;
+  border: 1px solid rgba(200, 169, 110, 0.2);
+  border-radius: 16px;
+  padding: 0.25rem 1rem;
+  color: rgba(200, 169, 110, 0.6);
+  font-size: 0.7rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 auto;
+}
+.narration-expand-btn:hover {
+  border-color: rgba(200, 169, 110, 0.4);
+  color: rgba(200, 169, 110, 0.9);
+  background: rgba(200, 169, 110, 0.06);
+}
+.expand-dots {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+}
+.narration-hidden-content {
+  display: none;
+  margin-top: 0.5rem;
+}
+.chat-narration-collapsed.expanded .narration-hidden-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.chat-narration-collapsed.expanded .narration-expand-btn .expand-label {
+  display: none;
+}
+.chat-narration-collapsed.expanded .narration-expand-btn .expand-dots::after {
+  content: ' sembunyikan';
+  letter-spacing: normal;
+  font-size: 0.7rem;
+}
 
 /* Horror narration — pulsing red glow */
 .chat-narration-horror {
