@@ -1852,3 +1852,209 @@ body {
   font-style: italic;
   margin-top: 0.5rem;
 }
+
+/* ========== CHATBOX-STYLE STORY TEXT ========== */
+.story-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.story-text p { margin-bottom: 0; }
+
+/* Chat bubble container */
+.chat-bubble {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  animation: chatSlideIn 0.35s ease-out;
+  max-width: 92%;
+}
+.chat-bubble-right {
+  flex-direction: row-reverse;
+  align-self: flex-end;
+}
+.chat-bubble-left {
+  align-self: flex-start;
+}
+
+/* Avatar in chat */
+.chat-avatar {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(200, 54, 45, 0.35);
+  box-shadow: 0 0 8px rgba(200, 54, 45, 0.15);
+  margin-top: 0.15rem;
+}
+.chat-avatar.css-avatar {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  font-size: 0.75rem;
+}
+
+/* Chat message content */
+.chat-content {
+  flex: 1;
+  min-width: 0;
+}
+.chat-name {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+  opacity: 0.85;
+}
+.chat-name.arin { color: #5b9bd5; }
+.chat-name.niko { color: #e69138; }
+.chat-name.sera { color: #c27ba0; }
+.chat-name.juno { color: #6aa84f; }
+.chat-name.vira { color: #8e7cc3; }
+.chat-name.reza { color: #a09070; }
+.chat-name.lana { color: #e05050; }
+.chat-name.dimas { color: #5a9bbc; }
+.chat-name.kira { color: #00cce8; }
+.chat-name.farah { color: #d8a620; }
+.chat-name.entity { color: #00cc66; text-shadow: 0 0 8px rgba(0,204,102,0.4); }
+
+/* Player bubble (right side) */
+.chat-bubble-right .chat-msg {
+  background: linear-gradient(135deg, rgba(74, 124, 89, 0.25), rgba(74, 124, 89, 0.15));
+  border: 1px solid rgba(74, 124, 89, 0.3);
+  border-radius: 14px 14px 4px 14px;
+  padding: 0.55rem 0.85rem;
+  color: #d0ccc4;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+.chat-bubble-right .chat-name {
+  text-align: right;
+}
+
+/* NPC bubble (left side) */
+.chat-bubble-left .chat-msg {
+  background: linear-gradient(135deg, rgba(40, 35, 50, 0.7), rgba(30, 25, 40, 0.6));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px 14px 14px 4px;
+  padding: 0.55rem 0.85rem;
+  color: #c8c0b4;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+/* Killer bubble — slightly red tint */
+.chat-bubble-killer .chat-msg {
+  background: linear-gradient(135deg, rgba(80, 20, 20, 0.35), rgba(60, 15, 15, 0.25));
+  border: 1px solid rgba(200, 54, 45, 0.2);
+}
+
+/* Entity/system speaker bubble */
+.chat-bubble-entity .chat-msg {
+  background: linear-gradient(135deg, rgba(0, 60, 40, 0.35), rgba(0, 40, 30, 0.25));
+  border: 1px solid rgba(0, 204, 102, 0.2);
+  color: #a0e8c0;
+}
+
+/* Narration (system message style) */
+.chat-narration {
+  text-align: center;
+  color: #8a8478;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  padding: 0.4rem 1.2rem;
+  max-width: 85%;
+  align-self: center;
+  font-style: italic;
+  position: relative;
+  animation: chatSlideIn 0.35s ease-out;
+}
+.chat-narration::before,
+.chat-narration::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 30px;
+  height: 1px;
+  background: rgba(138, 132, 120, 0.3);
+}
+.chat-narration::before { right: 100%; margin-right: 8px; }
+.chat-narration::after { left: 100%; margin-left: 8px; }
+
+/* Horror narration */
+.chat-narration-horror {
+  color: #c8362d;
+  text-shadow: 0 0 5px rgba(200, 54, 45, 0.25);
+}
+.chat-narration-horror::before,
+.chat-narration-horror::after {
+  background: rgba(200, 54, 45, 0.3);
+}
+
+/* Sound effects in chat */
+.chat-sound {
+  text-align: center;
+  color: #6b6359;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.3rem 1rem;
+  align-self: center;
+  animation: chatSlideIn 0.35s ease-out;
+}
+
+/* Location context as chat system msg */
+.location-context {
+  text-align: center;
+  background: rgba(200, 169, 110, 0.08);
+  border: 1px solid rgba(200, 169, 110, 0.15);
+  border-radius: 20px;
+  padding: 0.3rem 1rem;
+  font-size: 0.78rem;
+  color: #c8a96e;
+  align-self: center;
+  margin-bottom: 0.3rem;
+  animation: chatSlideIn 0.35s ease-out;
+}
+
+/* NPC event narratives in chatbox */
+.npc-round-narrative {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(20, 10, 30, 0.45);
+  border-left: 3px solid #6a3d9a;
+  border-radius: 8px;
+  align-self: stretch;
+}
+
+/* Chat timestamp separator */
+.chat-time-sep {
+  text-align: center;
+  font-size: 0.65rem;
+  color: #5a554e;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0;
+  align-self: center;
+}
+
+@keyframes chatSlideIn {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive chat */
+@media (max-width: 480px) {
+  .chat-bubble { max-width: 96%; gap: 0.4rem; }
+  .chat-avatar { width: 30px; height: 30px; min-width: 30px; }
+  .chat-avatar.css-avatar { width: 30px; height: 30px; min-width: 30px; font-size: 0.65rem; }
+  .chat-msg { font-size: 0.85rem !important; padding: 0.45rem 0.7rem !important; }
+  .chat-narration { font-size: 0.8rem; max-width: 92%; }
+}
