@@ -331,9 +331,10 @@ const STORY_PROLOG = {
 },
 
 'prologue_sera_talk': {
-  text: `<p>Kau duduk di samping Sera. Dia langsung berbicara tanpa basa-basi — kebiasaannya saat sedang dalam "mode analisis".</p>
+  text: `<p>Kau duduk di samping Sera. Tanganmu menyentuh tangannya — tidak sengaja, atau mungkin sengaja. Sera tidak menarik tangannya. Selama satu detik yang terlalu panjang, kalian hanya duduk seperti itu, jari-jari yang hampir bertautan di sofa velvet mansion orang asing.</p>
+<p>Lalu Sera berdeham dan masuk ke "mode analisis" — batas profesional yang kalian berdua gunakan sebagai tameng dari perasaan yang terlalu rumit untuk malam seperti ini.</p>
 <p><span class="speaker sera">Sera</span></p>
-<p>"Tiga hal." Jarinya menghitung. "Satu — aku menghitung sepuluh undangan tapi sebelas tempat duduk di meja makan. Untuk siapa kursi kosong itu?"</p>
+<p>"Tiga hal." Jarinya menghitung — jari yang tadi hampir menggenggam milikmu. "Satu — aku menghitung sepuluh undangan tapi sebelas tempat duduk di meja makan. Untuk siapa kursi kosong itu?"</p>
 <p>"Dua — pria di dekat bar." Matanya bergerak ke arah Dimas. "Microexpression-nya tidak sinkron. Dia tersenyum tapi pupilnya tidak melebar. Itu bukan senyum sosial — itu masking. Tipe yang aku pelajari di bab psychopathology."</p>
 <p>"Dan tiga..." Sera melepas kacamatanya. Tangannya gemetar sangat sedikit. "Vira. Aku sudah mengobservasi Vira selama dua puluh menit sejak datang. Body language-nya... Arin, Vira yang aku kenal itu orang yang <em>tidak bisa diam</em>. Dia selalu bergerak, selalu ekspresif. Vira yang ini — posturnya terlalu terkontrol. Gerakan matanya terlalu sistematis. Seperti sedang mengevaluasi ruangan. Bukan sebagai tamu — sebagai <em>predator</em>."</p>
 <p>Sera menatapmu.</p>
@@ -456,13 +457,16 @@ const STORY_PROLOG = {
 
 'prologue_vira_talk': {
   text: `<p>Kau berjalan ke pojok di mana Vira berdiri sendirian. Setiap langkah terasa lebih berat dari yang seharusnya — seolah gravitasi di sekitar Vira sedikit berbeda.</p>
+<p>Dari sudut matamu, kau melihat Niko mengamati kalian berdua. Rahangnya mengeras — ekspresi yang kau kenal dari masa kuliah: posesif, cemburu, dan berusaha menyembunyikan keduanya.</p>
 <p><span class="speaker vira">Vira</span></p>
 <p>"Arin." Suaranya seperti sutra yang disobek — indah tapi dengan tepi yang tajam. "Aku tahu kau akan datang. Kau selalu datang."</p>
+<p>Ada sesuatu di cara dia mengucapkan namamu — sesuatu yang mengingatkanmu pada malam-malam di atap kampus, saat batas antara teman dan sesuatu yang lebih kabur seperti asap rokok di antara kalian.</p>
 <p>"Vira. Enam bulan."</p>
 <p>"Enam bulan, dua minggu, empat hari." Senyum. "Tapi siapa yang menghitung?"</p>
+<p>Matanya bergerak sekilas ke arah Niko. Kilatan sesuatu — sakit, marah, rindu? — melintas di wajahnya sebelum topeng kembali terpasang.</p>
 <p>"Di mana kau—"</p>
 <p>"Pertanyaan yang salah." Dia mengangkat jari — kuku panjang, cat hitam sempurna. "Pertanyaan yang benar adalah: kenapa aku kembali <em>sekarang</em>? Kenapa di <em>tempat ini</em>?"</p>
-<p>Dia mendekat. Kau bisa mencium parfumnya — vanilla dan sesuatu yang lebih gelap, metalik, seperti darah kering.</p>
+<p>Dia mendekat. Kau bisa mencium parfumnya — vanilla dan sesuatu yang lebih gelap, metalik, seperti darah kering. Di belakangmu, kau merasakan tatapan Sera — tajam, analitis, dan mungkin sedikit cemburu.</p>
 <p>"Aku kembali karena ini belum selesai, Arin. Yang dimulai di mansion ini lima puluh tahun lalu — siklus itu masih berjalan. Dan malam ini..." matanya berkilat dalam cahaya chandelier, "...malam ini kita semua bagian darinya. Mau tidak mau."</p>
 <p>"Kau bicara seperti orang yang tahu apa yang akan terjadi."</p>
 <p>"Mungkin aku tahu." Vira memiringkan kepala. "Mungkin aku <em>sudah melihatnya</em>. Atau mungkin aku gila. Pilih yang membuat kau bisa tidur malam ini."</p>`,
@@ -698,7 +702,10 @@ const STORY_PROLOG = {
 <p>Dia menunjuk foto di dinding. "Kau tahu apa yang menarik dari foto-foto ini? Mereka semua dari lokasi yang sama. Mansion ini. Berbeda tahun, berbeda ruangan, tapi tempat yang sama."</p>
 <p>"Bagaimana kau tahu?"</p>
 <p>"Karena aku pernah meneliti mansion Wardhana untuk novel terakhirku yang belum terbit." Mata Lana berkilat. "Novel tentang sepuluh orang yang diundang ke sebuah mansion. Dan satu per satu..."</p>
-<p>Dia tidak menyelesaikan kalimatnya. Tidak perlu.</p>`,
+<p>Dia tidak menyelesaikan kalimatnya. Tidak perlu.</p>
+<p>Lana mendekat. Parfumnya mahal — tapi ada sesuatu di bawahnya. Kalkulasi. Setiap kata, setiap gesture, setiap kontak mata adalah manipulasi yang sudah diperhitungkan. Dalang yang melihat orang sebagai karakter dalam novelnya.</p>
+<p>"Kau tahu, Arin..." Jarinya menyentuh bahumu — ringan, intim, disengaja. "Aku suka jurnalis. Kalian dan novelis — dua sisi mata uang yang sama. Bedanya, aku menciptakan monster. Kau mencari mereka." Senyum. "Pertanyaannya: siapa yang lebih bahaya?"</p>
+<p>Di belakang Lana, kau melihat <span class="speaker dimas">Dimas</span> mengamati interaksi ini. Ada kilatan sesuatu di matanya — cemburu? Possessiveness? Lana adalah pusat gravitasinya, dan setiap orang yang mendekati Lana adalah ancaman.</p>`,
   choices: [
     {
       text: '"Novel yang belum terbit tentang skenario yang mirip malam ini. Kebetulan?"',
@@ -745,15 +752,17 @@ const STORY_PROLOG = {
 },
 
 'prologue_bar_talk': {
-  text: `<p>Kau bergabung dengan <span class="speaker farah">Farah</span> dan <span class="speaker dimas">Dimas</span> di bar. Farah menuangkan wine dengan tangan yang sedikit gemetar. Dimas berdiri di sampingnya — posturnya sempurna, rileks tapi waspada, seperti kucing yang sedang berpura-pura tidur.</p>
+  text: `<p>Kau bergabung dengan <span class="speaker farah">Farah</span> dan <span class="speaker dimas">Dimas</span> di bar. Farah menuangkan wine dengan tangan yang sedikit gemetar — tangan seorang heiress yang terbiasa pegang gelas kristal tapi malam ini gelasnya terasa terlalu berat. Dimas berdiri di sampingnya — posturnya sempurna, rileks tapi waspada, seperti kucing yang sedang berpura-pura tidur.</p>
+<p>Kau menangkap sesuatu: mata Dimas tidak menatap Farah saat bicara dengannya. Matanya terus bergerak ke arah sofa sudut — ke arah Sera. Ada intensitas di sana yang bukan sekedar ketertarikan kasual. Itu obsesi.</p>
 <p><span class="speaker farah">Farah</span></p>
-<p>"Oh, kau pasti Arin. Niko cerita tentang kau — podcaster, kan? Sangat... berani." Nada yang susah diterjemahkan. Pujian atau hinaan halus.</p>
+<p>"Oh, kau pasti Arin. Niko cerita tentang kau — podcaster, kan? Sangat... berani." Nada yang susah diterjemahkan. Pujian atau hinaan halus. Farah adalah tipe yang bisa membunuhmu dengan sopan santun dan membuatmu berterima kasih.</p>
 <p>"Dan kau Farah Aldridge. Keluarga yang co-founded mansion ini bersama keluarga Wardhana."</p>
-<p>Farah menenggak wine-nya terlalu cepat.</p>
-<p>"Keluargaku <em>mendanai</em> pembangunan mansion ini. Yang membangun adalah keluarga Wardhana." Koreksi yang terasa penting baginya. "Aku di sini karena Niko bilang akan ada pengumuman tentang properti ini. Sebagai co-owner, aku harus hadir."</p>
+<p>Farah menenggak wine-nya terlalu cepat. Di balik armor old money-nya, ada sesuatu yang retak — ego seorang pewaris yang terbiasa membeli jalan keluar tapi malam ini merasakan bahwa uangnya tidak akan cukup.</p>
+<p>"Keluargaku <em>mendanai</em> pembangunan mansion ini. Yang membangun adalah keluarga Wardhana." Koreksi yang terasa penting baginya — negosiator sejati selalu mulai dengan menetapkan posisi. "Aku di sini karena Niko bilang akan ada pengumuman tentang properti ini. Sebagai co-owner, aku harus hadir."</p>
+<p>Di ujung bar, <span class="speaker lana">Lana</span> mendekati Niko. Kau melihat tangannya menyentuh lengan Niko — gesture yang terlalu intim untuk orang yang baru kenal. Niko tidak menolak. Mereka berbisik, dan Lana tertawa — tawa rendah, seduktif, penuh kalkulasi. Manipulator mengenali manipulator.</p>
 <p><span class="speaker dimas">Dimas</span> mengulurkan tangan. Jabat tangannya dingin dan kering — tangan orang yang terlalu sering dicuci.</p>
-<p>"Dimas Surya. Mahasiswa kedokteran forensik. Aku di sini karena Lana mengundangku sebagai konsultan untuk novel barunya." Senyum tipis. "Ironis ya — forensik di pameran seni."</p>
-<p>"Atau sangat pas," gumam Farah, memandang foto-foto kriminal di dinding.</p>`,
+<p>"Dimas Surya. Mahasiswa kedokteran forensik. Aku di sini karena Lana mengundangku sebagai konsultan untuk novel barunya." Saat menyebut nama Lana, ada perubahan di matanya — kepatuhan, ketergantungan. Seperti anjing yang terlatih menyebut nama tuannya. Senyum tipis. "Ironis ya — forensik di pameran seni."</p>
+<p>"Atau sangat pas," gumam Farah, memandang foto-foto kriminal di dinding. Tangannya gemetar lagi — tapi kali ini dia menyembunyikannya di balik gelas.</p>`,
   choices: [
     {
       text: '"Farah, kau tahu sejarah lengkap mansion ini? Ada rumor soal orang hilang."',

@@ -16,6 +16,12 @@ const STORY_CH6 = {
     text += aliveNames.join(', ') + `.</p>`;
 
     text += `<p>Kau sudah tahu semuanya. Ragil Pramudya — Sang Penenun — hidup di bawah mansion. Operator-operatornya bermain ganda. Sistem ini beroperasi selama setengah abad. Dan malam ini bisa jadi yang terakhir — jika kau bisa menghancurkannya.</p>`;
+    text += `<p>Tiga puluh menit. Dan dalam tiga puluh menit itu, setiap orang di ruangan ini menunjukkan siapa mereka sebenarnya — bukan topeng, bukan persona, tapi kebenaran yang mentah:</p>`;
+    text += `<p><span class="speaker sera">Sera</span> menarikmu ke samping. Tangannya di wajahmu — gesture yang tidak profesional, tidak objektif, dan sangat jujur. "Arin, jangan turun ke sana sendirian." Matanya merah. Psikolog yang akhirnya mengakui bahwa dia tidak bisa profesional tentang orang yang dia cintai. "Kalau kau mati di bawah sana, aku—" Suaranya pecah. Dan kau melihat Sera — benar-benar melihatnya — untuk pertama kalinya malam ini tanpa filter analisis.</p>`;
+    text += `<p><span class="speaker niko">Niko</span> berdiri. Dalang yang akhirnya memilih untuk menjadi manusia. "Ini salahku. Mansion ini, undangan ini, semua ini — tanggung jawabku. Aku yang turun." Egonya masih di sana — tapi untuk pertama kalinya, egonya mendorongnya ke arah yang benar. Vira menatapnya dengan ekspresi yang kau tidak bisa baca — campuran cinta, marah, dan respek yang menyakitkan.</p>`;
+    text += `<p><span class="speaker juno">Juno</span> mengambil pipa besi dari tumpukan puing. "Gue ikut." Ceroboh. Impulsif. Tapi berani sampai ke tulang. Reza berdiri di belakangnya — tidak menghentikan, tapi memastikan dia tidak sendiri. Negosiator yang akhirnya memilih tindakan.</p>`;
+    text += `<p><span class="speaker farah">Farah</span> menelan ludah. "Aku... aku akan menjaga yang di atas." Egoisme? Atau realistis? Sulit dibedakan. Tapi ada air mata di matanya — pertama kalinya malam ini.</p>`;
+    text += `<p><span class="speaker kira">Kira</span> sudah menghubungkan laptopnya ke sistem. "Gue bisa shut down sistem dari sini. Remote. Kalau lo turun, gue cover dari atas." Eksentrik tapi reliable. Wildcard yang akhirnya menemukan tempatnya.</p>`;
 
     if (s.flags.confrontedPenenun || s.flags.listenedToPenenun) {
       text += `<p>Kau sudah bertemu Ragil. Sudah melihat wajah monster di balik simpul. Sekarang pertanyaannya: bagaimana mengakhiri?</p>`;

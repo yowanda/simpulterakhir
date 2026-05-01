@@ -228,10 +228,14 @@ const STORY_CH2 = {
     text += `<p>Kartu 1 — <em>"KEBENARAN atau KEBOHONGAN: Niko Wardhana secara sadar merencanakan event malam ini sebagai perangkap untuk mengumpulkan semua orang yang terhubung dengan dosa keluarganya."</em></p>`;
     text += `<p>Kartu 2 — <em>"KEBENARAN atau KEBOHONGAN: Reza Hartono dipecat dari kepolisian karena membunuh tersangka yang ternyata tidak bersalah."</em></p>`;
     text += `<p>Satu benar, satu palsu. Tapi mana?</p>`;
-    text += `<p>Di sekeliling meja, semua orang membaca kartu masing-masing. Ekspresi-ekspresi berubah — shock, marah, bingung, takut.</p>`;
-    text += `<p><span class="speaker farah">Farah</span> menaruh kartunya di atas meja dengan tangan gemetar. "Ini... ini tidak adil."</p>`;
-    text += `<p><span class="speaker lana">Lana</span> membaca kartunya dan tersenyum — senyum yang membuat bulu kudukmu berdiri.</p>`;
-    text += `<p><span class="speaker juno">Juno</span> meremas kartunya jadi bola. "Ini bullshit manipulatif."</p>`;
+    text += `<p>Di sekeliling meja, semua orang membaca kartu masing-masing. Ekspresi-ekspresi berubah — dan setiap ekspresi adalah cerita:</p>`;
+    text += `<p><span class="speaker farah">Farah</span> menaruh kartunya di atas meja dengan tangan gemetar. "Ini... ini tidak adil." Suaranya pecah — armor pewaris retak. Di balik kemarahan, ada ketakutan seseorang yang tahu rahasianya hampir terbongkar. Matanya bergerak ke Niko — mencari sekutu, atau seseorang yang bisa dia beli kesetiaannya.</p>`;
+    text += `<p><span class="speaker lana">Lana</span> membaca kartunya dan tersenyum — senyum yang membuat bulu kudukmu berdiri. Dalang menikmati permainan. Jarinya menelusuri tepi kartu seperti membelai naskah novel barunya. Di balik meja, kakinya menyentuh kaki Niko — dan kau melihat Niko tidak bergeser.</p>`;
+    text += `<p><span class="speaker dimas">Dimas</span> membaca kartunya tanpa ekspresi. Tapi matanya — lagi-lagi — bergerak ke Sera. Saat Sera tidak melihat, Dimas menatapnya dengan intensitas yang melebihi ketertarikan normal. Kau mengenali tatapan itu dari kasus-kasus yang pernah kau liput: obsesi.</p>`;
+    text += `<p><span class="speaker juno">Juno</span> meremas kartunya jadi bola. "Ini bullshit manipulatif." Suaranya keras, impulsif — Juno si pemantik konflik, yang selalu bereaksi dengan api. Reza di sebelahnya menyentuh lengannya pelan — gesture yang tenang, menenangkan. Juno berhenti. Mereka saling pandang selama satu detik. Lalu Juno menghembuskan napas.</p>`;
+    text += `<p><span class="speaker vira">Vira</span> membaca kartunya dan tertawa kecil — tawa yang terlalu pelan, terlalu gelap. Eksentrik sampai di ujung. "Menarik," bisiknya. Matanya bertemu mata Niko dari ujung meja — dan di antara mereka, seluruh sejarah toxic love mereka mengalir: rindu, marah, sakit, dan sesuatu yang lebih berbahaya dari semua itu.</p>`;
+    text += `<p><span class="speaker kira">Kira</span> sudah memfoto kartunya dan menjalankan sesuatu di laptopnya. "Font di kartu ini dicetak dengan printer laser. Kertas acid-free, 120 gram. Bukan barang murah." Eksentrik dan brilliant — Kira hidup di dunia detail yang tidak dilihat orang lain.</p>`;
+    text += `<p>Di bawah meja, kau merasakan tangan Sera menyentuh tanganmu. Bukan genggaman — hanya ujung jari yang bertemu. Komunikasi tanpa kata. <em>Aku di sini.</em></p>`;
     text += `<p>Speaker: <em>"Diskusikanlah. Tiga puluh menit dimulai."</em></p>`;
 
     return text;

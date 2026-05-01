@@ -36,9 +36,16 @@ const STORY_CH3 = {
 
     text += factions;
 
-    text += `<p><span class="speaker juno">Juno</span> berdiri. "Gue udah cukup. Gue nggak mau main detective lagi. Gue mau KELUAR."</p>`;
+    text += `<p><span class="speaker juno">Juno</span> berdiri. Kursinya terjungkal ke belakang. Api yang selama ini dia tahan — kecerobohan impulsif yang mendefinisikan dirinya — akhirnya meledak.</p>`;
+    text += `<p>"Gue udah cukup. Gue nggak mau main detective lagi. Gue mau KELUAR."</p>`;
     text += `<p><span class="speaker sera">Sera</span>: "Juno—"</p>`;
-    text += `<p>"Nggak. Lo semua boleh stay dan solve mystery. Gue mau pecahin jendela, dobrak pintu, apapun. Siapa yang ikut?"</p>`;
+    text += `<p>"Nggak." Mata Juno basah tapi suaranya keras. Pemantik konflik yang tidak bisa menahan diri. "Lo semua boleh stay dan solve mystery kayak ini film Netflix. Gue mau pecahin jendela, dobrak pintu, apapun. Siapa yang ikut?"</p>`;
+    text += `<p><span class="speaker reza">Reza</span> berdiri pelan. Tenang. Negosiator veteran yang tahu bahwa membentak orang yang panik hanya memperburuk situasi.</p>`;
+    text += `<p>"Juno." Suaranya rendah, steady — suara yang terbiasa bicara dengan orang yang memegang pisau di leher sandera. "Aku ikut kamu. Tapi kita lakukan dengan strategi, bukan dengan emosi."</p>`;
+    text += `<p>Juno menatap Reza. Dan sesuatu yang kau lihat di sana bukan sekedar rasa terima kasih — tapi koneksi yang lebih dalam. Dua orang yang sama-sama gagal menyelamatkan seseorang di masa lalu, menemukan satu sama lain di malam yang paling berbahaya.</p>`;
+    text += `<p><span class="speaker niko">Niko</span> bersandar di dinding, tangan di saku. Dalang yang kehilangan kontrol tapi terlalu egois untuk mengakuinya. "Perpecahan adalah strategi terburuk," katanya — tapi matanya bergerak ke Vira, dan kau tahu yang dia maksud bukan tentang strategi. Dia tidak mau Vira pergi.</p>`;
+    text += `<p><span class="speaker lana">Lana</span> mengamati semuanya dari sudut, jari menelusuri pinggiran gelas wine-nya. Dalang mengobservasi. Setiap konflik, setiap emosi, setiap keretakan — material untuk skenario berikutnya. "Ini menarik," bisiknya pada Dimas. "Persis seperti Bab 7 dari naskahku." Dimas mengangguk — patuh, selalu patuh.</p>`;
+    text += `<p>Di tengah kekacauan itu, <span class="speaker farah">Farah</span> menghitung. Bukan orang — tapi opsi. Negosiator egois menghitung cost dan benefit. Siapa yang bisa dia manfaatkan. Siapa yang expendable. Survival of the richest.</p>`;
 
     return text;
   },

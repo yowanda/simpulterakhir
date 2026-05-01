@@ -21,12 +21,13 @@ const STORY_CH1 = {
       text += `<p class="journal"><em>"Selamat malam, para tamu. Selamat datang di Pameran Simpul Terakhir. Dalam enam jam, pintu akan terbuka. Tapi sebelum itu — setiap jam, sebuah 'karya seni' baru akan terungkap. Karya pertama dimulai dalam tiga menit. Silakan menuju Galeri Timur."</em></p>`;
     }
 
-    text += `<p>Reaksi berantai di ruangan:</p>`;
-    text += `<p><span class="speaker farah">Farah</span> mencengkeram lengan sofa. "Aku tidak mau ke mana-mana."</p>`;
-    text += `<p><span class="speaker lana">Lana</span> sudah berjalan ke arah Galeri Timur. "Aku ingin lihat."</p>`;
-    text += `<p><span class="speaker dimas">Dimas</span> mengikuti Lana tanpa kata.</p>`;
-    text += `<p><span class="speaker juno">Juno</span> menatapmu. "Arin, ini trap yang obvious banget. Kita nggak harus ikut."</p>`;
-    text += `<p><span class="speaker niko">Niko</span>: "Atau justru di situlah jawabannya."</p>`;
+    text += `<p>Reaksi berantai di ruangan — dan setiap reaksi menceritakan lebih banyak dari yang dimaksudkan:</p>`;
+    text += `<p><span class="speaker farah">Farah</span> mencengkeram lengan sofa. "Aku tidak mau ke mana-mana." Egoisme survival — instingnya sebagai pewaris yang terbiasa mengirim orang lain ke zona bahaya sementara dia menunggu di tempat aman.</p>`;
+    text += `<p><span class="speaker lana">Lana</span> sudah berjalan ke arah Galeri Timur, tumit stiletto-nya berdetak seperti metronom. "Aku ingin lihat." Matanya berkilat — bukan ketakutan, tapi ketertarikan. Dalang yang menikmati pertunjukan bahkan saat pertunjukan itu miliknya sendiri.</p>`;
+    text += `<p><span class="speaker dimas">Dimas</span> mengikuti Lana tanpa kata — patuh, otomatis. Seperti anjing yang sudah terlatih oleh satu tuan. Tapi matanya sempat bergeser ke Sera selama satu detik penuh — dan ada sesuatu di sana yang membuat perutmu melilit.</p>`;
+    text += `<p><span class="speaker juno">Juno</span> menatapmu. "Arin, ini trap yang obvious banget. Kita nggak harus ikut." Di belakangnya, Reza berdiri diam — dan kau menangkap momen kecil: Juno menyentuh siku Reza tanpa sadar, dan Reza... tidak menolak. Dua orang yang rusak, menemukan sesuatu yang stabil di satu sama lain tanpa menyadarinya.</p>`;
+    text += `<p><span class="speaker niko">Niko</span>: "Atau justru di situlah jawabannya." Niko melirik Vira saat mengatakannya — pesan ganda yang hanya bisa ditangkap oleh seseorang yang pernah berbagi bantal dengannya. Vira membalas tatapannya. Dan di antara mereka, listrik lama yang seharusnya sudah mati — berderak hidup lagi.</p>`;
+    text += `<p><span class="speaker kira">Kira</span> sudah mengeluarkan laptopnya. "Gue nge-trace frekuensi audio dari speaker itu. Kalau ini dikendalikan remote, gue bisa..." Jarinya menari di keyboard dengan kecepatan eksentrik. "...trace IP-nya. Atau setidaknya tahu apakah si suara ini di dalam mansion atau di luar."</p>`;
 
     return text;
   },
