@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Simpul Terakhir — Game cerita horor dengan 25 ending, 5 sahabat, dan pilihan yang mengubah segalanya">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Simpul Terakhir</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- TITLE SCREEN -->
+  <div id="screen-title" class="screen active">
+    <div class="title-container">
+      <div class="title-flicker">
+        <h1 class="game-title">SIMPUL TERAKHIR</h1>
+        <p class="game-subtitle" id="title-subtitle">Lima Sahabat. Dua Rahasia. Satu Hutan yang Menunggu.</p>
+      </div>
+      <p class="tagline" id="title-tagline">Setiap ikatan adalah benang. Setiap benang bisa putus.</p>
+      <div class="title-menu">
+        <button class="btn-main" id="btn-new-game">Permainan Baru</button>
+        <button class="btn-main" id="btn-continue" style="display:none">Lanjutkan</button>
+        <button class="btn-secondary" id="btn-endings-gallery">Ending: <span id="endings-count">0</span>/25</button>
+      </div>
+      <p class="credits">Cerita horor interaktif dengan 25 ending</p>
+    </div>
+  </div>
+
+  <!-- DIFFICULTY SELECTOR -->
+  <div id="screen-difficulty" class="screen">
+    <div class="title-container">
+      <h2 class="diff-heading">Pilih Tingkat Kesulitan</h2>
+      <p class="diff-subheading">Kesulitan mempengaruhi kompleksitas cerita dan konsekuensi pilihan</p>
+      <div class="diff-buttons">
+        <button class="diff-btn" data-diff="1">
+          <span class="diff-label">Mudah</span>
+          <span class="diff-desc">Karakter lebih sulit mati. Petunjuk lebih banyak. Konsekuensi lebih ringan.</span>
+        </button>
+        <button class="diff-btn" data-diff="2">
+          <span class="diff-label">Normal</span>
+          <span class="diff-desc">Pengalaman yang seimbang. Pilihan berdampak nyata. Kematian mungkin terjadi.</span>
+        </button>
+        <button class="diff-btn" data-diff="3">
+          <span class="diff-label">Sulit</span>
+          <span class="diff-desc">Kepercayaan lebih rapuh. Kematian lebih mudah. Entitas lebih kuat. Tidak ada petunjuk.</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="screen-game" class="screen">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <button class="icon-btn" id="btn-menu" title="Menu">&#9776;</button>
+      <div class="chapter-indicator" id="chapter-indicator">Prolog</div>
+      <button class="icon-btn" id="btn-status" title="Karakter">&#9829;</button>
+    </div>
+
+    <!-- Story Area -->
+    <div class="story-area" id="story-area">
+      <div class="story-text" id="story-text"></div>
+      <div class="choices-container" id="choices-container"></div>
+    </div>
+
+    <!-- Character Status Panel (slide-in) -->
+    <div class="panel panel-right" id="panel-status">
+      <div class="panel-header">
+        <h3 id="panel-status-title">Karakter</h3>
+        <button class="icon-btn panel-close" id="btn-close-status">&times;</button>
+      </div>
+      <div class="panel-body" id="character-list"></div>
+    </div>
+
+    <!-- Menu Panel (slide-in) -->
+    <div class="panel panel-left" id="panel-menu">
+      <div class="panel-header">
+        <h3 id="panel-menu-title">Menu</h3>
+        <button class="icon-btn panel-close" id="btn-close-menu">&times;</button>
+      </div>
+      <div class="panel-body">
+        <button class="btn-menu-item" id="btn-save">Simpan</button>
+        <button class="btn-menu-item" id="btn-load">Muat</button>
+        <button class="btn-menu-item" id="btn-quit">Kembali ke Judul</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENDING SCREEN -->
+  <div id="screen-ending" class="screen">
+    <div class="ending-container">
+      <div class="ending-badge" id="ending-badge">ENDING</div>
+      <h2 class="ending-number" id="ending-number">#1</h2>
+      <h3 class="ending-title" id="ending-title"></h3>
+      <div class="ending-rating" id="ending-rating"></div>
+      <div class="ending-text" id="ending-text"></div>
+      <div class="ending-fates" id="ending-fates"></div>
+      <div class="ending-actions">
+        <button class="btn-main" id="btn-play-again">Main Lagi</button>
+        <button class="btn-secondary" id="btn-title-screen">Layar Judul</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENDINGS GALLERY -->
+  <div id="screen-gallery" class="screen">
+    <div class="gallery-container">
+      <div class="gallery-header">
+        <h2 id="gallery-title">Galeri Ending</h2>
+        <button class="icon-btn" id="btn-close-gallery">&times;</button>
+      </div>
+      <div class="gallery-grid" id="gallery-grid"></div>
+    </div>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Notification -->
+  <div class="notification" id="notification"></div>
+
+  <script src="js/engine.js"></script>
+  <script src="js/story-prolog.js"></script>
+  <script src="js/story-ch1.js"></script>
+  <script src="js/story-ch2.js"></script>
+  <script src="js/story-ch3.js"></script>
+  <script src="js/story-endings.js"></script>
+  <script>
+    const STORY = Object.assign({},
+      typeof STORY_PROLOG !== 'undefined' ? STORY_PROLOG : {},
+      typeof STORY_CH1 !== 'undefined' ? STORY_CH1 : {},
+      typeof STORY_CH2 !== 'undefined' ? STORY_CH2 : {},
+      typeof STORY_CH3 !== 'undefined' ? STORY_CH3 : {},
+      typeof STORY_ENDINGS !== 'undefined' ? STORY_ENDINGS : {}
+    );
+    Engine.init(STORY);
+  </script>
+</body>
+</html>
