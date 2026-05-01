@@ -582,7 +582,11 @@ const CharDB = (() => {
       // --- NEW: Diverse killer actions ---
       { condition: { emotion: 'stalking', chapter: 2 }, action: { type: 'move', desc: 'Lana berpindah ke posisi strategis. Penulis yang tahu setting cerita sama pentingnya dengan karakter.', moveTo: 'galeri_timur' }, weight: 16 },
       { condition: { emotion: 'hunting', nearbyIncludes: 'arin' }, action: { type: 'manipulate', desc: '"Arin, aku punya informasi penting." Lana menyeret Arin ke percakapan private — menjauhkan investigator dari kebenaran.' }, weight: 22 },
-      { condition: { emotion: 'stalking', minDeaths: 2 }, action: { type: 'observe', desc: 'Lana mengamati reaksi kelompok terhadap kematian. Setiap ekspresi, setiap air mata — semua jadi data untuk langkah selanjutnya.' }, weight: 18 }
+      { condition: { emotion: 'stalking', minDeaths: 2 }, action: { type: 'observe', desc: 'Lana mengamati reaksi kelompok terhadap kematian. Setiap ekspresi, setiap air mata — semua jadi data untuk langkah selanjutnya.' }, weight: 18 },
+
+      // --- Killer vs Killer: Self-preservation ---
+      { condition: { chapter: 4, nearbyIncludes: 'dimas', minTension: 50 }, action: { type: 'sabotage_killer', desc: '"Dimas menjadi beban. Saatnya melepas bidak yang tidak berguna." Lana merencanakan untuk mengekspos Dimas demi keselamatannya sendiri.', target: 'dimas' }, weight: 24 },
+      { condition: { chapter: 5, nearbyIncludes: 'niko', minTension: 60 }, action: { type: 'sabotage_killer', desc: 'Lana meninggalkan bukti yang mengarah ke Niko. "Tuan rumah selalu jadi tersangka pertama."', target: 'niko' }, weight: 22 }
     ],
 
     dimas: [
@@ -613,7 +617,10 @@ const CharDB = (() => {
       // --- NEW: Diverse killer actions ---
       { condition: { emotion: 'stalking', chapter: 3 }, action: { type: 'move', desc: 'Dimas bergerak ke dapur mansion. Pengetahuan farmakologinya memerlukan akses ke bahan kimia rumah tangga.', moveTo: 'dapur' }, weight: 16 },
       { condition: { emotion: 'hunting', nearbyIncludes: 'reza' }, action: { type: 'maintain_cover', desc: 'Dimas sengaja menunjukkan "ketakutan" di depan Reza. Akting yang dirancang untuk membuat detektif itu mengabaikannya.' }, weight: 20 },
-      { condition: { emotion: 'stalking', isAlone: false }, action: { type: 'socialize', desc: '"Aku khawatir tentang keselamatan kita semua." Dimas memainkan peran mahasiswa yang concerned. Sempurna.' }, weight: 18 }
+      { condition: { emotion: 'stalking', isAlone: false }, action: { type: 'socialize', desc: '"Aku khawatir tentang keselamatan kita semua." Dimas memainkan peran mahasiswa yang concerned. Sempurna.' }, weight: 18 },
+
+      // --- Killer vs Killer: Self-preservation ---
+      { condition: { chapter: 4, nearbyIncludes: 'lana', minTension: 50 }, action: { type: 'sabotage_killer', desc: 'Dimas sudah muak diperintah. "Lana, kali ini AKU yang menulis ending." Dia meninggalkan bukti yang mengarah ke Lana.', target: 'lana' }, weight: 24 }
     ],
 
     niko: [
@@ -643,7 +650,11 @@ const CharDB = (() => {
       // --- NEW: Diverse killer actions ---
       { condition: { emotion: 'stalking', chapter: 2 }, action: { type: 'move', desc: 'Niko bergerak ke panel kontrol rahasia mansion. Tuan rumah selalu punya keuntungan.', moveTo: 'ruang_penyimpanan' }, weight: 16 },
       { condition: { emotion: 'hunting', nearbyIncludes: 'vira' }, action: { type: 'manipulate', desc: '"Vira, kau ingat malam itu? Aku bisa menjelaskan segalanya. Ikut aku." Niko mencoba memisahkan Vira dari kelompok — berbahaya.' }, weight: 22 },
-      { condition: { emotion: 'stalking', isAlone: false, minDeaths: 1 }, action: { type: 'socialize', desc: '"Kita harus tetap tenang. Aku pemilik mansion ini — aku akan melindungi kalian." Ironi yang menyakitkan.' }, weight: 18 }
+      { condition: { emotion: 'stalking', isAlone: false, minDeaths: 1 }, action: { type: 'socialize', desc: '"Kita harus tetap tenang. Aku pemilik mansion ini — aku akan melindungi kalian." Ironi yang menyakitkan.' }, weight: 18 },
+
+      // --- Killer vs Killer: Self-preservation ---
+      { condition: { chapter: 5, nearbyIncludes: 'lana', minTension: 60 }, action: { type: 'sabotage_killer', desc: '"Lana, kau sudah bukan bagian dari rencana ini." Niko menggunakan keuntungan tuan rumah untuk mengekspos Lana.', target: 'lana' }, weight: 24 },
+      { condition: { chapter: 5, nearbyIncludes: 'dimas', minTension: 60 }, action: { type: 'sabotage_killer', desc: 'Niko mengaktifkan CCTV yang merekam Dimas. "Maaf Dimas. Hanya satu yang boleh selamat."', target: 'dimas' }, weight: 22 }
     ]
   };
 
