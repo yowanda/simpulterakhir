@@ -693,7 +693,8 @@ const Engine = (() => {
     staggerTimers = [];
   }
 
-  const NARRATION_VISIBLE_MAX = 2;
+  // Max chars for a narration to be shown inline (short scene-setting only)
+  const NARRATION_SHORT_LIMIT = 80;
 
   function convertToChatbox(html) {
     const temp = document.createElement('div');
@@ -712,7 +713,7 @@ const Engine = (() => {
 
       if (node.nodeType === 3) {
         const txt = node.textContent.trim();
-        if (txt) items.push({ type: 'narration', html: txt, cls: '' });
+        if (txt) items.push({ type: 'narration', html: txt, plain: txt, cls: '' });
         return;
       }
 
@@ -735,6 +736,7 @@ const Engine = (() => {
           const text = node.innerHTML.trim();
           if (!text) return;
           const pClasses = Array.from(node.classList);
+          const plainText = node.textContent.trim();
 
           if (pClasses.includes('journal')) {
             items.push({ type: 'journal', html: node.outerHTML });
@@ -747,12 +749,12 @@ const Engine = (() => {
 
           let cls = '';
           if (pClasses.includes('horror') || text.includes('class="horror"')) cls = ' chat-narration-horror';
-          items.push({ type: 'narration', html: text, cls });
+          items.push({ type: 'narration', html: text, plain: plainText, cls });
         }
       }
     });
 
-    // Second pass: group consecutive narrations and collapse if > NARRATION_VISIBLE_MAX
+    // Second pass: dialogue-focused — hide long narrations, keep only short scene-setting
     let chatHtml = '';
     let i = 0;
     while (i < items.length) {
@@ -766,25 +768,39 @@ const Engine = (() => {
           i++;
         }
 
-        if (group.length <= NARRATION_VISIBLE_MAX) {
-          group.forEach(n => {
-            chatHtml += `<div class="chat-item chat-narration${n.cls}">${n.html}</div>`;
-          });
-        } else {
-          // Show first NARRATION_VISIBLE_MAX, collapse rest
-          for (let j = 0; j < NARRATION_VISIBLE_MAX; j++) {
-            chatHtml += `<div class="chat-item chat-narration${group[j].cls}">${group[j].html}</div>`;
+        // Horror narrations always shown (important for atmosphere)
+        const horrorItems = group.filter(n => n.cls.includes('horror'));
+        const normalItems = group.filter(n => !n.cls.includes('horror'));
+
+        // Show horror narrations
+        horrorItems.forEach(n => {
+          chatHtml += `<div class="chat-item chat-narration${n.cls}">${n.html}</div>`;
+        });
+
+        // For normal narrations: only show the shortest one as scene-setting
+        if (normalItems.length > 0) {
+          // Pick the shortest narration as scene context
+          const shortest = normalItems.reduce((a, b) => a.plain.length < b.plain.length ? a : b);
+          const totalHidden = normalItems.length - 1;
+
+          if (shortest.plain.length <= NARRATION_SHORT_LIMIT) {
+            // Short enough to show inline
+            chatHtml += `<div class="chat-item chat-narration-brief">${shortest.html}</div>`;
           }
-          const collapseId = 'nc-' + Math.random().toString(36).substr(2, 6);
-          chatHtml += `<div class="chat-item chat-narration-collapsed" id="${collapseId}">`;
-          chatHtml += `<button class="narration-expand-btn" onclick="document.getElementById('${collapseId}').classList.toggle('expanded')">`;
-          chatHtml += `<span class="expand-dots">···</span> <span class="expand-label">${group.length - NARRATION_VISIBLE_MAX} lagi</span>`;
-          chatHtml += `</button>`;
-          chatHtml += `<div class="narration-hidden-content">`;
-          for (let j = NARRATION_VISIBLE_MAX; j < group.length; j++) {
-            chatHtml += `<div class="chat-narration${group[j].cls}">${group[j].html}</div>`;
+
+          // If there are hidden narrations, show a small expandable hint
+          if (normalItems.length > 0) {
+            const collapseId = 'nc-' + Math.random().toString(36).substr(2, 6);
+            chatHtml += `<div class="chat-item chat-narration-collapsed" id="${collapseId}">`;
+            chatHtml += `<button class="narration-expand-btn" onclick="document.getElementById('${collapseId}').classList.toggle('expanded')">`;
+            chatHtml += `<span class="expand-dots">📖</span> <span class="expand-label">narasi</span>`;
+            chatHtml += `</button>`;
+            chatHtml += `<div class="narration-hidden-content">`;
+            normalItems.forEach(n => {
+              chatHtml += `<div class="chat-narration${n.cls}">${n.html}</div>`;
+            });
+            chatHtml += `</div></div>`;
           }
-          chatHtml += `</div></div>`;
         }
         continue;
       }

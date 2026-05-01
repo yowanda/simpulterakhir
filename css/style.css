@@ -2031,29 +2031,30 @@ body {
   letter-spacing: 0.3em;
 }
 
-/* Narration (system message style — compact) */
+/* Narration (hidden inside expand — compact style) */
 .chat-narration {
   text-align: center;
   color: #8a8478;
-  font-size: 0.78rem;
-  line-height: 1.55;
-  padding: 0.2rem 1rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  padding: 0.15rem 0.8rem;
+  max-width: 90%;
+  align-self: center;
+  font-style: italic;
+}
+
+/* Brief narration — short scene-setting shown inline */
+.chat-narration-brief {
+  text-align: center;
+  color: #706a60;
+  font-size: 0.68rem;
+  line-height: 1.4;
+  padding: 0.15rem 0.8rem;
   max-width: 85%;
   align-self: center;
   font-style: italic;
-  position: relative;
+  letter-spacing: 0.02em;
 }
-.chat-narration::before,
-.chat-narration::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 20px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(138, 132, 120, 0.25));
-}
-.chat-narration::before { right: 100%; margin-right: 4px; background: linear-gradient(90deg, transparent, rgba(138, 132, 120, 0.25)); }
-.chat-narration::after { left: 100%; margin-left: 4px; background: linear-gradient(270deg, transparent, rgba(138, 132, 120, 0.25)); }
 
 /* Collapsible narration group */
 .chat-narration-collapsed {
