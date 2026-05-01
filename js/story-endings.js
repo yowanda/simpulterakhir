@@ -553,6 +553,152 @@ const STORY_ENDINGS = {
   fates: {
     arin: 'Diam. Seperti semua Saksi Selamat sebelumnya.'
   }
+},
+
+// ============================================================
+// NEW ENDINGS — Escape & Elimination Victory
+// ============================================================
+
+'ending_mansion_escape': {
+  chapter: 5,
+  isEnding: true,
+  endingNumber: 26,
+  title: 'Pelarian dari Mansion',
+  rating: 'S',
+  endingText: (s) => {
+    const pc = s.playerCharacter || 'arin';
+    let text = `<p class="narration ending-s">ENDING #26: Pelarian dari Mansion</p>`;
+    text += `<p>Semua petunjuk terkumpul. Peta rahasia, kode pintu, blueprint terowongan, frekuensi radio, kunci berkarat, jurnal pendiri, dan jalur pelarian atap — semuanya membentuk satu gambaran utuh.</p>`;
+    text += `<p>Jalan keluar ada di bawah basement — terowongan yang dibangun Hendarto Wardhana 50 tahun lalu sebagai rencana darurat. Terowongan yang sengaja disembunyikan oleh Sang Penenun.</p>`;
+    text += `<p>Saat pintu terowongan terbuka, mansion mengaktifkan protokol lockdown. Tapi lockdown itu bekerja dua arah — para killer terjebak di dalam, sementara protagonis berlari menuju kebebasan.</p>`;
+    text += `<p>Di ujung terowongan, cahaya fajar menyambut. Udara laut. Suara ombak. Dan di belakang — mansion yang perlahan menjadi kuburan bagi mereka yang menenun jaring kematian.</p>`;
+
+    let survivors = [];
+    (typeof Engine !== 'undefined' ? Engine.CHARACTERS : []).forEach(c => { if (s.alive[c]) survivors.push(c); });
+
+    if (survivors.length > 3) {
+      text += `<p>Kalian keluar bersama — ${survivors.length} orang yang saling menyelamatkan. Bukan pahlawan. Hanya manusia yang memilih untuk tidak menyerah.</p>`;
+    } else {
+      text += `<p>Hanya sedikit yang selamat. Tapi kalian selamat bersama — dan itu sudah cukup.</p>`;
+    }
+
+    text += `<p>Polisi tiba dua jam kemudian. Mansion dikepung. Terowongan menjadi bukti utama. Dan untuk pertama kalinya dalam 50 tahun — siklus simpul benar-benar berakhir.</p>`;
+    text += `<p><em>"Simpul terakhir bukan tentang memutus benang — tapi menemukan jalan keluar dari jaring yang ditenun untukmu."</em></p>`;
+    return text;
+  },
+  fates: {
+    arin: 'Melarikan diri bersama yang tersisa. Menulis tentang terowongan yang menjadi harapan.',
+    sera: 'Membaca pola mansion lebih cepat dari siapapun. Petunjuk-petunjuknya menyelamatkan semua.',
+    niko: 'Pengetahuan tentang mansion kakeknya akhirnya berguna — untuk melarikan diri.',
+    juno: 'Yang pertama masuk terowongan. Yang terakhir memeriksa semua orang sudah keluar.',
+    vira: 'Ingatan tentang mansion yang dulu menghantui — kini menjadi kompas pelarian.'
+  }
+},
+
+'ending_all_killers_dead': {
+  chapter: 4,
+  isEnding: true,
+  endingNumber: 27,
+  title: 'Pembantai Pembunuh',
+  rating: 'S',
+  endingText: (s) => {
+    const pc = s.playerCharacter || 'arin';
+    const killerCount = (s.killers || []).length;
+    let text = `<p class="narration ending-s">ENDING #27: Pembantai Pembunuh</p>`;
+    text += `<p>${killerCount} killer. Semuanya dieliminasi. Bukan oleh keberuntungan — tapi oleh keberanian, strategi, dan tekad yang tak tergoyahkan.</p>`;
+
+    // Show how each killer fell
+    (s.killers || []).forEach(k => {
+      const name = { lana: 'Lana', dimas: 'Dimas', niko: 'Niko' }[k] || k;
+      if (k === 'lana') {
+        text += `<p><strong>${name}</strong> — Sang "Penulis" — jatuh saat skenarionya sendiri berbalik melawannya. Novelis yang akhirnya menjadi karakter di cerita orang lain.</p>`;
+      } else if (k === 'dimas') {
+        text += `<p><strong>${name}</strong> — Sang "Pemotong" — dikalahkan oleh empati yang tidak pernah dia miliki. Dingin dan klinis sampai akhir.</p>`;
+      } else if (k === 'niko') {
+        text += `<p><strong>${name}</strong> — pewaris yang mewarisi dosa — akhirnya membayar harga warisan keluarganya.</p>`;
+      }
+    });
+
+    text += `<p>Tanpa operator, Sang Penenun tidak berdaya. Ragil Pramudya ditemukan di Bunker B-3 — pria tua di kursi roda, tanpa bidak, tanpa skenario, tanpa kekuasaan.</p>`;
+    text += `<p>Mansion ini akhirnya aman. Bukan karena jalan keluar ditemukan — tapi karena ancaman di dalamnya telah dimusnahkan.</p>`;
+
+    let survivors = [];
+    (typeof Engine !== 'undefined' ? Engine.CHARACTERS : []).forEach(c => {
+      if (s.alive[c] && !(s.killers || []).includes(c)) survivors.push(c);
+    });
+
+    text += `<p><strong>Yang Selamat:</strong> ${survivors.map(c => ({ arin: 'Arin', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira', reza: 'Reza', lana: 'Lana', dimas: 'Dimas', kira: 'Kira', farah: 'Farah' }[c] || c)).join(', ')}</p>`;
+    text += `<p><em>"Kadang satu-satunya cara mengakhiri permainan adalah menghancurkan pemainnya. Bukan papannya."</em></p>`;
+    return text;
+  },
+  fates: {
+    arin: 'Pemburu kebenaran yang menjadi pemburu pembunuh. Podcast-nya menjadi legenda.',
+    sera: 'Profiler yang membaca jiwa gelap — dan memutuskan bahwa beberapa jiwa tidak layak diselamatkan.',
+    juno: 'Pemberontak yang akhirnya menemukan musuh yang layak dilawan.',
+    vira: 'Saksi Selamat yang kembali bukan untuk lari — tapi untuk mengakhiri.',
+    reza: 'Detektif yang akhirnya menyelesaikan kasus terbesarnya.'
+  }
+},
+
+'ending_killer_betrayal_victory': {
+  chapter: 5,
+  isEnding: true,
+  endingNumber: 28,
+  title: 'Pengkhianatan Sempurna',
+  rating: 'A',
+  endingText: (s) => {
+    const pc = s.playerCharacter || 'arin';
+    let text = `<p class="narration ending-a">ENDING #28: Pengkhianatan Sempurna</p>`;
+    text += `<p>Killer mengkhianati killer. Dalam kegelapan mansion, aliansi gelap runtuh dari dalam.</p>`;
+    text += `<p>Saat identitas satu killer terungkap, yang lain memilih untuk mengorbankan rekannya demi bertahan. Tapi pengkhianatan itu membuka celah — dan protagonis memanfaatkannya.</p>`;
+    text += `<p>Satu per satu, killer jatuh — bukan hanya oleh tangan protagonis, tapi oleh tangan sesama killer. Ironi yang menakutkan dan indah sekaligus.</p>`;
+    text += `<p><em>"Simpul yang diikat oleh pengkhianatan — hanya bisa diputus oleh pengkhianatan yang lebih besar."</em></p>`;
+    return text;
+  },
+  fates: {
+    arin: 'Menyaksikan killer saling menghancurkan. Kadang, keadilan datang dari sumber yang paling gelap.'
+  }
+},
+
+'ending_clues_destroyed': {
+  chapter: 6,
+  isEnding: true,
+  endingNumber: 29,
+  title: 'Jejak yang Terhapus',
+  rating: 'D',
+  endingText: (s) => {
+    let text = `<p class="narration ending-d">ENDING #29: Jejak yang Terhapus</p>`;
+    text += `<p>Petunjuk pelarian — satu per satu — dihancurkan oleh tangan-tangan gelap. Peta dibakar. Kode dihapus. Blueprint dirobek. Kunci dibuang ke kegelapan.</p>`;
+    text += `<p>Tanpa petunjuk, tidak ada jalan keluar. Mansion ini menjadi labirin tanpa pintu keluar.</p>`;
+    text += `<p>Yang tersisa hanya dua pilihan: bunuh semua killer... atau mati mencoba.</p>`;
+    text += `<p><em>"Saat semua jalan tertutup, satu-satunya arah adalah menghadapi kegelapan itu sendiri."</em></p>`;
+    return text;
+  },
+  fates: {
+    arin: 'Terjebak tanpa petunjuk. Harus menghadapi killer secara langsung.'
+  }
+},
+
+'ending_last_standing': {
+  chapter: 6,
+  isEnding: true,
+  endingNumber: 30,
+  title: 'Yang Terakhir Berdiri',
+  rating: 'A',
+  endingText: (s) => {
+    const pc = s.playerCharacter || 'arin';
+    const pcName = { arin: 'Arin', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira', reza: 'Reza', lana: 'Lana', dimas: 'Dimas', kira: 'Kira', farah: 'Farah' }[pc] || pc;
+    let text = `<p class="narration ending-a">ENDING #30: Yang Terakhir Berdiri</p>`;
+    text += `<p>${pcName} — satu-satunya protagonis yang tersisa. Semua teman telah jatuh. Tapi semua killer juga telah dieliminasi.</p>`;
+    text += `<p>Kemenangan ini tidak terasa seperti kemenangan. Ini terasa seperti bertahan hidup di reruntuhan. Setiap langkah di atas abu teman-teman yang tidak sempat diselamatkan.</p>`;
+    text += `<p>Tapi kau berdiri. Di tengah kegelapan, di antara mayat-mayat, kau masih berdiri.</p>`;
+    text += `<p>Dan itu sudah cukup.</p>`;
+    text += `<p><em>"Yang terakhir berdiri bukan yang terkuat — tapi yang paling keras kepala untuk tidak jatuh."</em></p>`;
+    return text;
+  },
+  fates: {
+    arin: 'Satu-satunya yang tersisa. Terluka, trauma, tapi hidup.'
+  }
 }
 
 };

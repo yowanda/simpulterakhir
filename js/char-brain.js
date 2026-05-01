@@ -208,7 +208,8 @@ const CharBrain = (() => {
       confront: 2, accuse: 3, barricade: 3, sabotage_killer: 3, move: 1,
       coordinate_defense: 3, scout: 2, rally: 3, ambush: 3,
       secure_exit: 3, betray: 3, distract: 3, divide: 3,
-      isolate: 2, eliminate: 1, strike: 1, share_clue: 2
+      isolate: 2, eliminate: 1, strike: 1, share_clue: 2,
+      destroy_clue: 2, search_escape_clue: 2, attack_killer: 2
     };
     mind.actionCooldowns[type] = cooldownMap[type] || 1;
   }
@@ -382,6 +383,25 @@ const CharBrain = (() => {
       }
     }
 
+    // Search for escape clues (survivor priority action)
+    if (typeof Engine !== 'undefined' && Engine.getEscapeClueAtLocation && canDo('search_escape_clue')) {
+      const escClue = Engine.getEscapeClueAtLocation(mind.location);
+      if (escClue) {
+        candidates.push({ type: 'search_escape_clue', desc: `${charName(mind.name)} mencari petunjuk pelarian di ${locName(mind.location)}.`, clueId: escClue.id, priority: 82 });
+      }
+    }
+
+    // Attack exposed killer (if nearby and revealed)
+    if (deathCount >= 1 && !isAlone && canDo('attack_killer')) {
+      const exposedKiller = nearby.find(n =>
+        gameState.killers.includes(n.name) &&
+        (gameState.killerRevealed && gameState.killerRevealed.includes(n.name))
+      );
+      if (exposedKiller) {
+        candidates.push({ type: 'attack_killer', desc: `${charName(mind.name)} menyerang killer ${charName(exposedKiller.name)}!`, target: exposedKiller.name, priority: 90 });
+      }
+    }
+
     // Mid tension → tactical: scout, ambush, investigate, question
     if (mind.tension >= 35 && candidates.length === 0) {
       if (canDo('scout') && isAlone) {
@@ -494,6 +514,14 @@ const CharBrain = (() => {
         if (moveTo) {
           candidates.push({ type: 'move', desc: `${charName(mind.name)} berpindah posisi.`, moveTo, priority: 55 });
         }
+      }
+    }
+
+    // Destroy escape clue if at a location with one (any killer state, high priority)
+    if (typeof Engine !== 'undefined' && Engine.getEscapeClueAtLocation && canDo('destroy_clue')) {
+      const escClue = Engine.getEscapeClueAtLocation(mind.location);
+      if (escClue) {
+        candidates.push({ type: 'destroy_clue', desc: `${charName(mind.name)} menghancurkan ${escClue.name} di ${locName(mind.location)}.`, clueId: escClue.id, priority: 88 });
       }
     }
 
@@ -904,6 +932,49 @@ const CharBrain = (() => {
           desc: `${charName(mind.name)} memecah kelompok. Beberapa orang berpencar.` };
       }
 
+      case 'destroy_clue': {
+        if (!action.clueId || typeof Engine === 'undefined') return null;
+        const destroyChance = 0.55;
+        if (Math.random() < destroyChance) {
+          Engine.destroyEscapeClue(action.clueId);
+          return { type: 'clue_destroyed', character: mind.name, location: mind.location,
+            desc: `${charName(mind.name)} menghancurkan petunjuk pelarian di ${locName(mind.location)}!` };
+        }
+        return { type: 'destroy_failed', character: mind.name, location: mind.location,
+          desc: `${charName(mind.name)} mencoba menghancurkan sesuatu di ${locName(mind.location)}, tapi gagal.` };
+      }
+
+      case 'search_escape_clue': {
+        if (!action.clueId || typeof Engine === 'undefined') return null;
+        const searchChance = 0.35 + (gameState.chapter * 0.05);
+        if (Math.random() < searchChance) {
+          Engine.findEscapeClue(action.clueId);
+          gameState.cluesFound = (gameState.cluesFound || 0) + 1;
+          return { type: 'escape_clue_found', character: mind.name, location: mind.location,
+            desc: `${charName(mind.name)} menemukan petunjuk pelarian di ${locName(mind.location)}!` };
+        }
+        return null;
+      }
+
+      case 'attack_killer': {
+        if (!action.target) return null;
+        const targetMind = allMinds[action.target];
+        if (!targetMind || !gameState.alive[action.target]) return null;
+        const atkChance = 0.35;
+        if (Math.random() < atkChance) {
+          gameState.alive[action.target] = false;
+          gameState.deathCount++;
+          if (!gameState.killersDead) gameState.killersDead = [];
+          if (!gameState.killersDead.includes(action.target)) gameState.killersDead.push(action.target);
+          mind.killCount = (mind.killCount || 0) + 1;
+          return { type: 'killer_eliminated', attacker: mind.name, victim: action.target,
+            desc: `${charName(mind.name)} berhasil mengeliminasi killer ${charName(action.target)}!` };
+        }
+        mind.tension += 15;
+        return { type: 'attack_failed', attacker: mind.name, target: action.target,
+          desc: `${charName(mind.name)} menyerang ${charName(action.target)} tapi gagal!` };
+      }
+
       case 'plan': {
         return null;
       }
@@ -1036,71 +1107,99 @@ const CharBrain = (() => {
       return result;
     }
 
-    // Survivor win: all killers dead or exposed (can win even as the LAST survivor)
+    // === SURVIVOR WIN CONDITIONS ===
     if (!isPlayerK) {
-      const allKillersDone = gameState.killers.every(k =>
-        !gameState.alive[k] || gameState.killerRevealed.includes(k)
-      );
+      const allKillersDead = gameState.killers.every(k => !gameState.alive[k]);
 
-      // Victory: all killers neutralized, player alive (even if only 1 protagonist remains)
-      if (allKillersDone && gameState.chapter >= 3) {
+      // WIN PATH A: All killers eliminated (killed, not just exposed)
+      if (allKillersDead && gameState.chapter >= 2) {
         const aliveNonKillerCount = Object.keys(gameState.alive).filter(k =>
           gameState.alive[k] && !gameState.killers.includes(k)
         ).length;
 
         if (aliveNonKillerCount === 1) {
-          // Solo survivor victory — the last protagonist standing
           result.ended = true;
           result.type = 'win';
           result.reason = 'sole_survivor_victory';
           result.title = 'Penyintas Terakhir';
-          result.desc = 'Kau satu-satunya yang tersisa. Semua pembunuh telah jatuh. Kau menang — tapi dengan harga yang tak terhitung.';
+          result.desc = 'Kau satu-satunya yang tersisa. Semua killer telah dieliminasi. Kau menang — tapi dengan harga yang tak terhitung.';
           return result;
         }
 
-        if (gameState.chapter >= 7) {
-          result.ended = true;
-          result.type = 'win';
-          result.reason = 'survivor_victory';
-          result.title = 'Selamat — Kebenaran Terungkap';
-          result.desc = 'Kau berhasil mengidentifikasi semua pembunuh dan bertahan hidup hingga fajar. Kebenaran menang.';
-          return result;
-        }
+        result.ended = true;
+        result.type = 'win';
+        result.reason = 'all_killers_eliminated';
+        result.title = 'Pembantai Pembunuh';
+        result.desc = 'Semua killer telah dieliminasi! Protagonis berdiri di atas kemenangan berdarah. Mansion akhirnya aman.';
+        return result;
       }
 
-      // Survived to dawn but killers not caught
-      if (gameState.chapter >= 7 && !allKillersDone) {
+      // WIN PATH B: Mansion escape (all escape clues found + triggered)
+      if (typeof Engine !== 'undefined' && Engine.canEscape && Engine.canEscape()) {
+        result.ended = true;
+        result.type = 'win';
+        result.reason = 'mansion_escape';
+        result.title = 'Pelarian dari Mansion';
+        result.desc = 'Semua petunjuk terkumpul! Jalan keluar terbuka — dan saat protagonis melarikan diri, mansion menjadi kuburan bagi para killer. Mereka terjebak selamanya.';
+        return result;
+      }
+
+      // Survived to dawn but killers still alive
+      if (gameState.chapter >= 7 && !allKillersDead) {
         result.ended = true;
         result.type = 'partial_win';
         result.reason = 'survived_unresolved';
-        result.title = 'Selamat — Tapi Misteri Belum Terjawab';
-        result.desc = 'Kau selamat, tapi pembunuh masih bebas. Bayangan masih mengintai.';
+        result.title = 'Selamat — Tapi Killer Masih Hidup';
+        result.desc = 'Kau selamat hingga fajar, tapi tidak semua killer tereliminasi. Ancaman belum berakhir.';
         return result;
       }
     }
 
-    // Killer win conditions
+    // === KILLER WIN CONDITIONS ===
     if (isPlayerK) {
       const aliveNonKillers = Object.keys(gameState.alive).filter(k =>
         gameState.alive[k] && !gameState.killers.includes(k)
       );
-      // All non-killer targets eliminated or only 1 left
-      if (aliveNonKillers.length <= 1 && gameState.chapter >= 4) {
+
+      // WIN: Only 1 protagonist remains
+      if (aliveNonKillers.length <= 1 && gameState.chapter >= 3) {
         result.ended = true;
         result.type = 'win';
         result.reason = 'killer_victory';
         result.title = 'Kemenangan Gelap';
-        result.desc = 'Karya senimu selesai. Bidak terakhir telah jatuh. Sang Penenun tersenyum.';
+        result.desc = aliveNonKillers.length === 0
+          ? 'Tidak ada protagonis yang tersisa. Karya senimu sempurna. Sang Penenun tersenyum.'
+          : `Hanya ${charName(aliveNonKillers[0])} yang tersisa — satu mangsa terakhir yang tak berdaya. Kemenangan totalmu.`;
         return result;
       }
-      // Exposed too much
-      if (gameState.suspicion[pc] >= 90 && gameState.killerRevealed.includes(pc)) {
+
+      // WIN: All escape clues destroyed
+      const totalClues = gameState.totalEscapeClues || 6;
+      const destroyed = (gameState.destroyedClues || []).length;
+      const found = (gameState.escapeClues || []).length;
+      const remaining = totalClues - destroyed - found;
+      if (remaining <= 0 && destroyed > 0 && found < totalClues && gameState.chapter >= 3) {
         result.ended = true;
-        result.type = 'loss';
-        result.reason = 'killer_exposed';
-        result.title = 'Topeng Jatuh';
-        result.desc = 'Mereka tahu siapa kau. Identitasmu terungkap. Pemburu menjadi buruan.';
+        result.type = 'win';
+        result.reason = 'killer_clues_destroyed';
+        result.title = 'Jejak Terhapus';
+        result.desc = 'Semua petunjuk pelarian telah dihancurkan. Survivor tidak punya jalan keluar. Mansion ini adalah kuburan mereka.';
         return result;
+      }
+
+      // Exposed too much — but killers can still betray each other to survive
+      if (gameState.suspicion[pc] >= 90 && gameState.killerRevealed.includes(pc)) {
+        // Check if there are other alive killers who might save you
+        const otherAliveKillers = gameState.killers.filter(k => k !== pc && gameState.alive[k]);
+        if (otherAliveKillers.length === 0) {
+          result.ended = true;
+          result.type = 'loss';
+          result.reason = 'killer_exposed';
+          result.title = 'Topeng Jatuh';
+          result.desc = 'Mereka tahu siapa kau. Tidak ada sekutu tersisa. Pemburu menjadi buruan.';
+          return result;
+        }
+        // If other killers alive, give a chance — game continues (they might help or betray)
       }
     }
 
@@ -1150,7 +1249,7 @@ const CharBrain = (() => {
 
     // Sort events by priority
     const sorted = roundResult.events.sort((a, b) => {
-      const priority = { death: 0, encounter_death: 0, killer_sabotage: 1, attack_failed: 1, encounter_escape: 1, tool_found: 2, accusation: 2, alliance_formed: 3, alliance: 3, framed: 4, manipulation: 4, sabotage: 5, confrontation: 5, clue_found: 6 };
+      const priority = { death: 0, encounter_death: 0, killer_eliminated: 0, killer_sabotage: 1, attack_failed: 1, encounter_escape: 1, clue_destroyed: 1, escape_clue_found: 1, tool_found: 2, accusation: 2, alliance_formed: 3, alliance: 3, framed: 4, manipulation: 4, sabotage: 5, confrontation: 5, clue_found: 6 };
       return (priority[a.type] || 10) - (priority[b.type] || 10);
     });
 
