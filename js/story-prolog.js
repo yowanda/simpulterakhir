@@ -8,29 +8,98 @@ const STORY_PROLOG = {
 
 'prologue_start': {
   chapter: 0,
-  text: `<div class="scene-art scene-forest"></div>
-<p class="narration">Undangan itu datang dalam amplop hitam, tanpa perangko, tanpa alamat pengirim. Hanya nama dan satu kalimat:</p>
-<p class="journal"><em>"Kau diundang untuk menyaksikan kebenaran. Mansion Wardhana, Sabtu, 21:00. Datang sendirian. Jangan beritahu siapapun."</em></p>
-<p class="narration">Sepuluh orang menerima amplop yang sama. Sepuluh orang dengan rahasia yang saling terhubung oleh benang-benang yang belum mereka sadari. Dan malam ini, benang-benang itu akan ditarik.</p>
-<p>Mobilmu memasuki jalan berbatu yang membelah hutan pinus. Lampu kota sudah lama menghilang di kaca spion. Yang tersisa hanya gelap, pohon-pohon yang terlalu rapat, dan suara kerikil di bawah ban.</p>
-<p>Mansion Wardhana muncul di ujung jalan seperti makhluk yang menunggu — tiga lantai batu granit yang menghitam oleh usia, jendela-jendela tinggi yang memantulkan cahaya bulan, dan menara observasi di sayap timur yang menjulang seperti jari telunjuk menuduh langit.</p>
-<p>Di halaman depan, beberapa mobil sudah terparkir. Kau bukan yang pertama. Juga bukan yang terakhir.</p>
-<p><span class="speaker niko">Niko</span> berdiri di tangga depan mansion, senyumnya cerah seperti iklan — terlalu cerah untuk tempat segelap ini.</p>
-<p>"Arin! Kau datang. Aku tahu kau tidak bisa menolak misteri."</p>
-<p>Di belakangnya, melalui pintu terbuka, kau bisa melihat hall besar dengan chandelier kristal yang bergoyang pelan meski tidak ada angin. Suara-suara samar — percakapan, musik klasik, gemerincing gelas — mengalir keluar seperti undangan kedua.</p>`,
+  text: (s) => {
+    const pc = s.playerCharacter || 'arin';
+    const pcName = Engine.CHAR_DISPLAY[pc] || 'Arin';
+    let text = `<div class="scene-art scene-forest"></div>`;
+    text += `<p class="narration">Undangan itu datang dalam amplop hitam, tanpa perangko, tanpa alamat pengirim. Hanya nama dan satu kalimat:</p>`;
+    text += `<p class="journal"><em>"Kau diundang untuk menyaksikan kebenaran. Mansion Wardhana, Sabtu, 21:00. Datang sendirian. Jangan beritahu siapapun."</em></p>`;
+    text += `<p class="narration">Sepuluh orang menerima amplop yang sama. Sepuluh orang dengan rahasia yang saling terhubung oleh benang-benang yang belum mereka sadari. Dan malam ini, benang-benang itu akan ditarik.</p>`;
+
+    // Character-specific arrival perspective
+    const perspective = Engine.getPlayerPerspective();
+    if (pc === 'arin') {
+      text += `<p>Mobilmu memasuki jalan berbatu yang membelah hutan pinus. Lampu kota sudah lama menghilang di kaca spion. Yang tersisa hanya gelap, pohon-pohon yang terlalu rapat, dan suara kerikil di bawah ban.</p>`;
+    } else if (pc === 'niko') {
+      text += `<p>Kau sudah di sini sejak siang — mempersiapkan semuanya. Mansion kakekmu. Dosa keluargamu. Dan malam ini, kau akan membuka kotak Pandora yang sudah tertutup selama setengah abad. Tamu-tamu mulai berdatangan. Setiap mobil yang melewati gerbang membawa seseorang dengan potongan puzzle yang kau butuhkan.</p>`;
+    } else if (pc === 'sera') {
+      text += `<p>Mobilmu memasuki jalan berbatu. Sebagai psikolog, kau terbiasa membaca manusia — tapi undangan ini tidak bisa kau baca. Siapa yang mengundang sepuluh orang asing ke mansion terpencil? Lebih penting lagi: mengapa kau, seorang psikolog klinis, termasuk di antaranya?</p>`;
+    } else if (pc === 'juno') {
+      text += `<p>Lo naik motor — bukan mobil. Motor tua yang suaranya kayak macan batuk. Lo hampir nggak datang. Tapi undangan itu... ada sesuatu di dalamnya yang bikin lo nggak bisa tidur. Lo bukan tipe orang yang suka misteri. Lo tipe orang yang suka memecahkan sesuatu — secara literal.</p>`;
+    } else if (pc === 'vira') {
+      text += `<p>Kau mengenal jalan ini. Kau pernah melewatinya — enam bulan lalu, di malam yang hampir membunuhmu. Mansion Wardhana muncul di ujung jalan, dan perutmu melilit. Kau kembali. Bukan karena mau — tapi karena dia mengancam adikmu. Dan untuk adikmu, kau bersedia masuk ke neraka untuk kedua kalinya.</p>`;
+    } else if (pc === 'reza') {
+      text += `<p>Mobilmu — sedan tua yang sudah melihat terlalu banyak malam — memasuki jalan berbatu. Dua puluh tahun sebagai detektif, dan kasus ini yang tidak pernah bisa kau selesaikan. Keluarga Wardhana. Mansion ini. Orang-orang yang menghilang. Kau dipecat karena terlalu dekat dengan kebenaran. Sekarang undangan ini menarikmu kembali.</p>`;
+    } else if (pc === 'lana') {
+      text += `<p>Mobilmu memasuki jalan berbatu. Kau tersenyum. Skenarionya berjalan sempurna — persis seperti Bab 1 dari naskah yang kau tulis untuk Sang Penenun. Sepuluh karakter, satu mansion, satu malam. Bedanya: ini bukan fiksi. Dan peranmu di sini bukan sebagai tamu. Kau adalah operator. Dalang di balik tirai.</p>`;
+      text += `<p class="journal"><em>[Kau tahu kebenaran: kau bekerja untuk Sang Penenun. Malam ini, kau punya agenda tersembunyi. Bagaimana kau memainkan peranmu — itu keputusanmu.]</em></p>`;
+    } else if (pc === 'dimas') {
+      text += `<p>Kau duduk di kursi penumpang — Lana yang menyetir. Selalu Lana yang memimpin. Kau mengamati pohon-pohon pinus melewati jendela dengan detachment klinis. Malam ini ada pekerjaan yang harus diselesaikan. Lana menyebutnya "seni". Kau menyebutnya... kau tidak menyebutnya apa-apa. Kau hanya melakukan.</p>`;
+      if (s.difficulty >= 2) {
+        text += `<p class="journal"><em>[Kau adalah operator Sang Penenun. "Pemotong." Tapi di bawah topeng kepatuhan, ada sesuatu yang mulai bergeser.]</em></p>`;
+      }
+    } else if (pc === 'kira') {
+      text += `<p>Lo di belakang taxi — laptop terbuka di pangkuan, masih nge-trace anomali digital dari undangan itu. QR code tersembunyi di watermark amplop mengarah ke server di Estonia yang di-route melalui tiga proxy. Siapapun yang mengirim undangan ini — dia bukan amatir. Lo mungkin hacker terbaik di ruangan nanti, tapi lo bukan satu-satunya yang paham teknologi di permainan ini.</p>`;
+    } else if (pc === 'farah') {
+      text += `<p>Limousine-mu berhenti di depan mansion. Driver membukakan pintu, tapi kau tidak segera keluar. Kau menatap bangunan itu — mansion yang dibangun dengan uang keluarga Aldridge. Uang kakekmu. Dan rahasia di bawah fondasinya... rahasia yang sekarang mengancam seluruh warisan keluargamu.</p>`;
+    }
+
+    text += `<p>Mansion Wardhana muncul di ujung jalan seperti makhluk yang menunggu — tiga lantai batu granit yang menghitam oleh usia, jendela-jendela tinggi yang memantulkan cahaya bulan, dan menara observasi di sayap timur yang menjulang seperti jari telunjuk menuduh langit.</p>`;
+
+    if (pc === 'niko') {
+      text += `<p>Kau berdiri di tangga depan mansion, memasang senyum — senyum CEO muda yang kau latih di depan cermin. <span class="speaker arin">Arin</span> tiba. Jurnalis itu. Kau mengundangnya karena kau butuh seseorang yang bisa menggali kebenaran. Tapi kau juga takut dengan apa yang akan dia temukan.</p>`;
+      text += `<p>"Arin! Kau datang. Aku tahu kau tidak bisa menolak misteri."</p>`;
+    } else {
+      text += `<p>Di halaman depan, beberapa mobil sudah terparkir. Kau bukan yang pertama. Juga bukan yang terakhir.</p>`;
+      text += `<p><span class="speaker niko">Niko</span> berdiri di tangga depan mansion, senyumnya cerah seperti iklan — terlalu cerah untuk tempat segelap ini.</p>`;
+      if (pc === 'arin') {
+        text += `<p>"Arin! Kau datang. Aku tahu kau tidak bisa menolak misteri."</p>`;
+      } else {
+        text += `<p>"${pcName}! Senang kau datang. Masuk, yang lain sudah menunggu."</p>`;
+      }
+    }
+    text += `<p>Di belakangnya, melalui pintu terbuka, kau bisa melihat hall besar dengan chandelier kristal yang bergoyang pelan meski tidak ada angin. Suara-suara samar — percakapan, musik klasik, gemerincing gelas — mengalir keluar seperti undangan kedua.</p>`;
+
+    // Player-specific inner thought
+    text += `<p class="journal"><em>${perspective.openingThought}</em></p>`;
+
+    return text;
+  },
   choices: [
     {
-      text: '"Niko, kau yang kirim amplop hitam itu?"',
-      hint: "Langsung ke inti. Kau bukan tipe basa-basi.",
+      text: (s) => {
+        const pc = s.playerCharacter || 'arin';
+        if (pc === 'arin') return '"Niko, kau yang kirim amplop hitam itu?"';
+        if (pc === 'sera') return '"Menarik — micro-expression Niko menunjukkan dia menyembunyikan sesuatu."';
+        if (pc === 'juno') return '"Gue nggak suka basa-basi. Siapa yang ngundang kita?"';
+        if (pc === 'reza') return '"Dua puluh tahun pengalaman bilang ini jebakan. Tapi justru itu yang membuatmu masuk."';
+        if (pc === 'lana') return '"Persis seperti skenario. Waktunya masuk ke karakter."';
+        if (pc === 'kira') return '"WiFi mansion ini... ada yang aneh. Lo perlu scan lebih dalam."';
+        return '"Siapa yang mengirim undangan ini sebenarnya?"';
+      },
+      hint: (s) => {
+        const pc = s.playerCharacter || 'arin';
+        if (pc === 'sera') return "Gunakan keahlian profiling-mu.";
+        if (pc === 'reza') return "Insting detektifmu berderak.";
+        if (pc === 'lana') return "Kau tahu jawabannya. Tapi mereka tidak perlu tahu itu.";
+        return "Langsung ke inti.";
+      },
       next: 'prologue_confront_niko',
       effect: (s) => {
-        Engine.modTrust('arin', 'niko', -5);
+        const pc = s.playerCharacter || 'arin';
+        Engine.modTrust(pc, 'niko', -5);
         Engine.modAwareness('arin', 10);
         s.flags.confrontedNikoEarly = true;
       }
     },
     {
-      text: "Masuk dan observasi siapa saja yang hadir",
+      text: (s) => {
+        const pc = s.playerCharacter || 'arin';
+        if (pc === 'juno') return "Masuk dan cari exit — lo selalu punya plan B";
+        if (pc === 'kira') return "Masuk dan scan jaringan WiFi mansion";
+        if (pc === 'farah') return "Masuk dengan otoritas — ini properti yang dibangun keluargamu";
+        return "Masuk dan observasi siapa saja yang hadir";
+      },
       hint: "Kumpulkan intel dulu. Reaksi bisa menunggu.",
       next: 'prologue_enter_hall',
       effect: (s) => {
@@ -39,13 +108,21 @@ const STORY_PROLOG = {
       }
     },
     {
-      text: "Periksa mobil-mobil yang terparkir — siapa saja yang datang?",
+      text: (s) => {
+        const pc = s.playerCharacter || 'arin';
+        if (pc === 'reza') return "Periksa perimeter — kebiasaan lama dari kepolisian";
+        if (pc === 'kira') return "Scan plat nomor dan trace database online";
+        return "Periksa mobil-mobil yang terparkir — siapa saja yang datang?";
+      },
       hint: "Plat nomor dan model mobil bisa bercerita banyak.",
       next: 'prologue_check_cars',
       effect: (s) => {
+        const pc = s.playerCharacter || 'arin';
         Engine.modAwareness('arin', 8);
         s.cluesFound++;
         s.flags.checkedCars = true;
+        if (pc === 'reza') { s.cluesFound++; s.flags.rezaPerimeter = true; }
+        if (pc === 'kira') { s.cluesFound++; s.flags.kiraScanned = true; }
       }
     },
     {

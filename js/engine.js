@@ -48,6 +48,103 @@ const Engine = (() => {
     farah: 'Pewaris — melindungi rahasia keluarga dengan nyawa'
   };
 
+  // ---- Role Selection System ----
+  const ROLE_DESCRIPTIONS = {
+    arin: {
+      role: 'Investigator',
+      perk: 'Clue ekstra & insting jurnalis tajam',
+      desc: 'Jurnalis investigasi yang mengejar kebenaran. Perspektif default — kau mencari jawaban, mengumpulkan bukti, dan mengungkap konspirasi.',
+      icon: 'pencarian'
+    },
+    niko: {
+      role: 'Tuan Rumah',
+      perk: 'Akses area rahasia & pengetahuan mansion',
+      desc: 'Pewaris mansion dengan dosa keluarga. Kau tahu lebih banyak tentang mansion ini dari siapapun — tapi pengetahuan itu datang dengan beban.',
+      icon: 'kunci',
+      warning: 'Di Hard mode, kau adalah salah satu killer.'
+    },
+    sera: {
+      role: 'Profiler',
+      perk: 'Baca emosi & deteksi kebohongan',
+      desc: 'Psikolog klinis yang bisa membaca jiwa. Kau melihat apa yang orang lain sembunyikan — ketakutan, kebohongan, dan cinta yang tidak terucapkan.',
+      icon: 'jiwa'
+    },
+    juno: {
+      role: 'Pemberontak',
+      perk: 'Aksi langsung & jalur pelarian',
+      desc: 'Seniman jalanan dengan naluri bertarung. Kau tidak main tebak-tebakan — kau dobrak pintu, pecahkan jendela, dan hadapi masalah head-on.',
+      icon: 'api'
+    },
+    vira: {
+      role: 'Saksi Selamat',
+      perk: 'Pengetahuan mansion & rute tersembunyi',
+      desc: 'Kau pernah di sini sebelumnya. Kau tahu di mana Sang Penenun bersembunyi. Tapi kebenaran itu datang dengan harga — trauma yang tidak pernah sembuh.',
+      icon: 'bayangan'
+    },
+    reza: {
+      role: 'Detektif',
+      perk: 'Analisis taktis & negosiasi',
+      desc: 'Mantan detektif yang dipecat karena kasus ini. Kau kembali untuk menyelesaikan apa yang dulu gagal. Insting polisi tidak pernah mati.',
+      icon: 'lencana'
+    },
+    lana: {
+      role: 'Dalang',
+      perk: 'Manipulasi & pengetahuan gelap',
+      desc: 'Novelis horor yang bukunya terlalu akurat. Kau melihat dunia sebagai narasi — dan setiap orang sebagai karakter yang bisa dimanipulasi.',
+      icon: 'pena',
+      warning: 'Kau adalah operator Sang Penenun. Pengalaman bermain berbeda total.'
+    },
+    dimas: {
+      role: 'Operator',
+      perk: 'Pengetahuan forensik & ketahanan mental',
+      desc: 'Mahasiswa forensik yang terlalu tenang di dekat kematian. Di bawah topeng sopan, ada kekosongan yang menakutkan.',
+      icon: 'pisau',
+      warning: 'Di Normal/Hard, kau adalah operator Sang Penenun.'
+    },
+    kira: {
+      role: 'Hacker',
+      perk: 'Hack sistem & akses digital',
+      desc: 'Ethical hacker yang menemukan anomali digital. Kau hidup di dunia data — dan di mansion ini, data adalah senjata paling berbahaya.',
+      icon: 'terminal'
+    },
+    farah: {
+      role: 'Pewaris',
+      perk: 'Pengaruh, negosiasi & rahasia keluarga',
+      desc: 'Pewaris estate Aldridge. Keluargamu membiayai mansion ini 50 tahun lalu. Kau tahu rahasianya — dan rahasiamu sendiri lebih kelam.',
+      icon: 'mahkota'
+    }
+  };
+
+  // Perspective text helpers
+  function isPlayer(charName) {
+    return state.playerCharacter === charName;
+  }
+  function playerChar() {
+    return state.playerCharacter || 'arin';
+  }
+  function playerName() {
+    return CHAR_DISPLAY[playerChar()] || 'Arin';
+  }
+  function isPlayerKiller() {
+    return state.killers && state.killers.includes(playerChar());
+  }
+  function getPlayerPerspective() {
+    const pc = playerChar();
+    const perspectives = {
+      arin: { openingThought: 'Insting jurnalismu berderak — ada cerita di sini, dan kau akan menemukannya.', strength: 'investigasi' },
+      niko: { openingThought: 'Ini mansionmu. Dosa keluargamu. Dan malam ini, kau akan menghadapinya.', strength: 'pengetahuan mansion' },
+      sera: { openingThought: 'Kau membaca ruangan — setiap ekspresi mikro, setiap gesture, setiap kebohongan yang tersembunyi di balik senyum.', strength: 'profiling' },
+      juno: { openingThought: 'Tempat ini bikin lo gerah. Terlalu banyak orang pake topeng. Lo cuma mau satu hal: jalan keluar.', strength: 'aksi langsung' },
+      vira: { openingThought: 'Kau pernah di sini. Kau ingat lorong-lorong ini. Kau ingat bau ini. Kau ingat ketakutan ini.', strength: 'pengetahuan rahasia' },
+      reza: { openingThought: 'Dua puluh tahun di kepolisian mengajarimu satu hal: kalau sesuatu terasa salah, biasanya memang salah.', strength: 'taktik' },
+      lana: { openingThought: 'Sempurna. Skenarionya berjalan persis seperti yang kau tulis. Sekarang, bab selanjutnya.', strength: 'manipulasi' },
+      dimas: { openingThought: 'Tenang. Klinis. Observasi tanpa emosi. Seperti di ruang autopsi — hanya saja subjeknya masih hidup. Untuk sekarang.', strength: 'forensik' },
+      kira: { openingThought: 'WiFi mansion ini punya 14 perangkat terhubung. Seharusnya 10 — satu per tamu. Empat sisanya... menarik.', strength: 'hacking' },
+      farah: { openingThought: 'Mansion ini dibangun dengan uang keluargamu. Setiap batu bata, setiap lorong — milikmu. Dan rahasia di bawahnya juga.', strength: 'influence' }
+    };
+    return perspectives[pc] || perspectives.arin;
+  }
+
   // Killer assignments per difficulty
   const KILLER_CONFIG = {
     1: { killers: ['lana'], accomplices: [] },
@@ -55,12 +152,14 @@ const Engine = (() => {
     3: { killers: ['lana', 'dimas', 'niko'], accomplices: [] }
   };
 
-  function defaultState(difficulty) {
+  function defaultState(difficulty, playerCharacter) {
     const diff = difficulty || 2;
+    const pc = playerCharacter || 'arin';
     const killerConf = KILLER_CONFIG[diff] || KILLER_CONFIG[2];
     return {
       chapter: 0,
       difficulty: diff,
+      playerCharacter: pc,
       nodeHistory: [],
       alive: {
         arin: true, niko: true, sera: true, juno: true, vira: true,
@@ -339,6 +438,8 @@ const Engine = (() => {
       if (c.condition && !c.condition(state)) return false;
       if (c.minDifficulty && state.difficulty < c.minDifficulty) return false;
       if (c.maxDifficulty && state.difficulty > c.maxDifficulty) return false;
+      const txt = typeof c.text === 'function' ? c.text(state) : c.text;
+      if (txt === null || txt === undefined) return false;
       return true;
     });
 
@@ -349,9 +450,11 @@ const Engine = (() => {
       btn.className = 'choice-btn';
       if (choice.type) btn.classList.add('choice-' + choice.type);
 
-      let html = t(choice.text);
+      const choiceText = typeof choice.text === 'function' ? choice.text(state) : t(choice.text);
+      let html = choiceText;
       if (choice.hint && state.difficulty <= 2) {
-        html += `<span class="choice-hint">${t(choice.hint)}</span>`;
+        const hintText = typeof choice.hint === 'function' ? choice.hint(state) : t(choice.hint);
+        html += `<span class="choice-hint">${hintText}</span>`;
       }
       if (choice.danger && state.difficulty === 1) {
         html += `<span class="choice-danger">\u26A0 Berbahaya</span>`;
@@ -401,7 +504,9 @@ const Engine = (() => {
         relHtml += `<div class="char-rel">${otherDisplay}: ${tr}%<div class="char-rel-bar"><div class="char-rel-fill ${color}" style="width:${tr}%"></div></div></div>`;
       });
 
-      const awarenessBar = name === 'arin' ? `<div class="char-awareness">Kewaspadaan: ${state.awareness.arin}%<div class="char-rel-bar"><div class="char-rel-fill awareness" style="width:${state.awareness.arin}%"></div></div></div>` : '';
+      const pc = playerChar();
+      const isPC = name === pc;
+      const awarenessBar = name === 'arin' || isPC ? `<div class="char-awareness">Kewaspadaan: ${state.awareness[name] || state.awareness.arin || 0}%<div class="char-rel-bar"><div class="char-rel-fill awareness" style="width:${state.awareness[name] || state.awareness.arin || 0}%"></div></div></div>` : '';
 
       const portraitHtml = getPortraitHTML(name, 'char-portrait');
       const isMainChar = MAIN_CHARACTERS.includes(name);
@@ -410,7 +515,7 @@ const Engine = (() => {
         <div class="char-header">
           ${portraitHtml}
           <div class="char-info">
-            <div class="char-name speaker ${name}">${displayName}${isMainChar ? '' : ' <small>(side)</small>'}</div>
+            <div class="char-name speaker ${name}">${displayName}${isPC ? ' <small class="player-tag">(KAMU)</small>' : ''}${!isMainChar && !isPC ? ' <small>(side)</small>' : ''}</div>
             <div class="char-status ${statusClass}">${statusLabel}</div>
           </div>
         </div>
@@ -430,6 +535,59 @@ const Engine = (() => {
       `;
       container.appendChild(dangerDiv);
     }
+  }
+
+  // ---- Role Selection Screen ----
+  let selectedDifficulty = 2;
+
+  function renderRoleSelect() {
+    const container = $('role-grid');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const roleOrder = ['arin', 'sera', 'niko', 'juno', 'vira', 'reza', 'kira', 'farah', 'lana', 'dimas'];
+
+    roleOrder.forEach((name, idx) => {
+      const role = ROLE_DESCRIPTIONS[name];
+      const profile = typeof CHARACTER_PROFILES !== 'undefined' ? CHARACTER_PROFILES[name] : null;
+      const color = CHAR_COLORS[name] || '#666';
+      const displayName = CHAR_DISPLAY[name];
+
+      const card = document.createElement('div');
+      card.className = 'role-card';
+      card.style.animationDelay = (idx * 0.08) + 's';
+      card.style.setProperty('--role-color', color);
+
+      const isKillerRole = KILLER_CONFIG[selectedDifficulty].killers.includes(name);
+      const portraitContent = CHAR_PORTRAITS[name]
+        ? `<img class="role-portrait" src="${CHAR_PORTRAITS[name]}" alt="${displayName}">`
+        : `<span class="role-portrait css-avatar-role" style="background:${color}">${CHAR_INITIALS[name] || displayName.charAt(0)}</span>`;
+
+      let warningHtml = '';
+      if (isKillerRole) {
+        warningHtml = `<div class="role-warning">Peran Gelap: Kau bermain sebagai antagonis</div>`;
+      }
+
+      card.innerHTML = `
+        ${portraitContent}
+        <div class="role-info">
+          <div class="role-name" style="color:${color}">${displayName}</div>
+          <div class="role-title">${role.role}</div>
+          <div class="role-perk">${role.perk}</div>
+          <div class="role-desc">${role.desc}</div>
+          ${warningHtml}
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        state = defaultState(selectedDifficulty, name);
+        currentNodeId = null;
+        showScreen('screen-characters');
+        renderCharacterIntro();
+      });
+
+      container.appendChild(card);
+    });
   }
 
   // ---- Character Introduction Screen ----
@@ -652,13 +810,13 @@ const Engine = (() => {
 
   // ---- Save / Load ----
   function saveGame() {
-    const saveData = { state, currentNodeId, lang, version: 3 };
+    const saveData = { state, currentNodeId, lang, version: 4 };
     localStorage.setItem('simpul_save', JSON.stringify(saveData));
   }
 
   function loadGame() {
     const data = JSON.parse(localStorage.getItem('simpul_save'));
-    if (!data || data.version < 3) { notify('Save lama tidak kompatibel. Mulai game baru.'); return false; }
+    if (!data || data.version < 4) { notify('Save lama tidak kompatibel. Mulai game baru.'); return false; }
     state = data.state;
     currentNodeId = data.currentNodeId;
     lang = data.lang || 'id';
@@ -668,7 +826,7 @@ const Engine = (() => {
   function hasSave() {
     const d = localStorage.getItem('simpul_save');
     if (!d) return false;
-    try { return JSON.parse(d).version >= 3; } catch(e) { return false; }
+    try { return JSON.parse(d).version >= 4; } catch(e) { return false; }
   }
 
   // ---- Panel Toggle ----
@@ -697,11 +855,9 @@ const Engine = (() => {
 
     document.querySelectorAll('.diff-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const diff = parseInt(btn.dataset.diff);
-        state = defaultState(diff);
-        currentNodeId = null;
-        showScreen('screen-characters');
-        renderCharacterIntro();
+        selectedDifficulty = parseInt(btn.dataset.diff);
+        showScreen('screen-role-select');
+        renderRoleSelect();
       });
     });
 
@@ -761,6 +917,8 @@ const Engine = (() => {
     killChar, canDie, isKiller, aliveCount, aliveMainCount, addAlliance,
     screenShake, bloodDrip, glitch, deathFlash, showChapterTitle, notify,
     showDirectEnding, renderNode, getPortraitHTML,
+    isPlayer, playerChar, playerName, isPlayerKiller, getPlayerPerspective,
+    ROLE_DESCRIPTIONS,
     get state() { return state; },
     get lang() { return lang; },
     CHARACTERS, MAIN_CHARACTERS, SIDE_CHARACTERS, CHAR_DISPLAY, diffMult

@@ -21,10 +21,30 @@ const STORY_ENDINGS = {
     text += `<p>Bukti tersebar ke seluruh dunia. Ragil Pramudya ditangkap — pria tua di kursi roda yang mengakui puluhan tahun kejahatan. "Dewan Penenun" teridentifikasi satu per satu: enam individu berkuasa yang dulu merasa tak tersentuh.</p>`;
     text += `<p>Investigasi berlangsung dua tahun. Tujuh negara terlibat. Interpol. FBI. Jaksa Agung.</p>`;
     text += `<p>Hasilnya: 47 kasus kematian terungkap. 23 terpidana. Dan siklus yang telah beroperasi selama setengah abad — berakhir.</p>`;
-    text += `<p>Arin Prasetya tidak membuat podcast tentang malam itu. Dia menulis buku. Non-fiksi. 600 halaman. Best-seller internasional.</p>`;
-    text += `<p>Judul: <em>Simpul Terakhir</em>.</p>`;
-
-    text += `<p>Di acara peluncuran buku, Arin berdiri di podium. Sera duduk di barisan depan, mata tidak meninggalkan wajahnya. Mereka tidak pernah mengucapkan "aku cinta kamu" di mansion itu — situasi selalu terlalu genting untuk kata-kata. Tapi ketika Arin membaca bagian tentang Sera dalam buku — gambaran seorang wanita yang bisa membaca jiwa dalam kegelapan — Sera tersenyum. Dan Arin tahu. Mereka sudah mengikat simpul lain. Simpul yang tidak perlu kata-kata.</p>`;
+    // Player-specific S-rank epilogue
+    const pc = s.playerCharacter || 'arin';
+    if (pc === 'arin') {
+      text += `<p>Kau tidak membuat podcast tentang malam itu. Kau menulis buku. Non-fiksi. 600 halaman. Best-seller internasional. Judul: <em>Simpul Terakhir</em>.</p>`;
+      text += `<p>Di acara peluncuran, Sera duduk di barisan depan. Saat kau membaca bagian tentangnya — wanita yang bisa membaca jiwa dalam kegelapan — dia tersenyum. Dan kau tahu: simpul baru terikat. Simpul yang tidak perlu kata-kata.</p>`;
+    } else if (pc === 'sera') {
+      text += `<p>Kau menulis paper psikologi tentang malam itu — "Deindividuasi dan Kohesi Kelompok dalam Situasi Ancaman Nyata." 200 sitasi dalam setahun. Tapi yang lebih penting: Arin menulis buku tentang malam itu. Dan bab tentangmu — 40 halaman — adalah surat cinta yang tidak pernah dia kirim secara langsung.</p>`;
+    } else if (pc === 'niko') {
+      text += `<p>Kau menjual mansion. Setiap batu bata, setiap memori. Hasilnya mendanai yayasan untuk korban. Dalang yang memilih menjadi manusia. Prosesnya lambat. Menyakitkan. Tapi untuk pertama kalinya dalam hidupmu, kau merasa bebas.</p>`;
+    } else if (pc === 'juno') {
+      text += `<p>Lo bikin instalasi seni tentang malam itu. Pameran di enam kota. Kritikus bilang itu "masterpiece." Lo bilang itu "terapi." Reza datang ke setiap pameran. Lo nggak bilang apa-apa. Lo nggak perlu.</p>`;
+    } else if (pc === 'vira') {
+      text += `<p>Kau menjadi saksi kunci di pengadilan. Dua tahun bersaksi. Adikmu selamat. Dan perlahan — sangat perlahan — kau mulai memaafkan. Bukan Sang Penenun. Bukan Niko. Tapi dirimu sendiri, untuk bertahan hidup ketika yang lain tidak.</p>`;
+    } else if (pc === 'reza') {
+      text += `<p>Kau kembali ke kepolisian sebagai konsultan cold case. Kasus Wardhana adalah yang terakhir — dan terbesar. Kau berhenti minum. Menghubungi putrimu lagi. Dan Juno datang ke kantor setiap Jumat dengan kopi. Dua orang yang menemukan ketenangan.</p>`;
+    } else if (pc === 'lana') {
+      text += `<p>Kau memberikan kesaksian selama enam bulan. Setiap detail. Setiap instruksi yang kau terima dari Sang Penenun. Novel terakhirmu: non-fiksi. Bukan tentang horor — tentang rasa bersalah. Dan untuk pertama kalinya, kau menulis sesuatu yang jujur.</p>`;
+    } else if (pc === 'dimas') {
+      text += `<p>Kau menyerahkan diri. Sera — psikolog yang mengubahmu — bersaksi atas namamu. "Dia bukan monster," katanya di pengadilan. "Dia anak yang tidak pernah diajarkan empati." Hukumanmu dikurangi. Dan di penjara, kau mulai merasakan sesuatu yang tidak pernah kau rasakan: penyesalan.</p>`;
+    } else if (pc === 'kira') {
+      text += `<p>Bukti digital yang lo upload malam itu menjadi fondasi kasus Interpol. Lo ditawari kerja di cybersecurity pemerintah. Lo tolak. Lo bikin startup sendiri — ethical hacking firm. Moto-nya: "Data nggak bohong." Lo tersenyum setiap kali baca moto itu di kartu nama.</p>`;
+    } else if (pc === 'farah') {
+      text += `<p>Kau melepaskan warisan Aldridge. Semua aset, semua koneksi, semua privilege. Prosesnya menyakitkan — seperti melepas kulit. Tapi di ujungnya, kau menemukan sesuatu yang uang tidak bisa beli: tidur tanpa mimpi buruk.</p>`;
+    }
 
     if (s.alive.niko && s.alive.vira) {
       text += `<p>Niko dan Vira tidak kembali bersama — terlalu banyak luka, terlalu banyak toxic history. Tapi di pengadilan, saat Niko memberikan kesaksian tentang keluarganya, Vira ada di galeri. Dan saat Vira memberikan kesaksian tentang penculikannya, Niko ada di sana. Mereka tidak berbicara. Tapi mereka hadir. Kadang, itu sudah cukup.</p>`;
@@ -405,14 +425,30 @@ const STORY_ENDINGS = {
   title: 'Simpul Terputus Total',
   rating: 'F',
   endingText: (s) => {
-    return `<p class="narration ending-f">ENDING #18: Simpul Terputus Total</p>
-<p>Semua simpul terputus. Setiap orang yang seharusnya kau lindungi — hilang. Satu per satu. Seperti lilin yang ditiup oleh angin yang sama.</p>
-<p>Arin selamat. Sendirian. Seperti yang direncanakan.</p>
-<p>Saksi Selamat yang sempurna: cukup pintar untuk menggali, cukup naif untuk gagal, cukup rusak untuk tidak dipercaya.</p>
-<p>Sera ada di antara yang hilang. Tangan yang pernah mencari tanganmu di bawah meja — tangan yang kau genggam terlalu sedikit, terlalu terlambat. Sekarang tidak ada lagi yang menggenggam. Tidak ada lagi "aku di sini." Hanya kekosongan di tempat yang seharusnya ada kehangatan.</p>
-<p>Podcast episode #47: "Malam di Mansion Wardhana." Download tertinggi. Rating tertinggi. Dan di menit ke-42, kau menangis. On air. Untuk pertama kalinya. Bukan untuk korban — tapi untuk satu nama yang kau sebut tanpa sadar: "Sera."</p>
-<p>Tidak ada satu pun yang mengarah pada keadilan. Siklus berlanjut. Dan Arin — Saksi Selamat — menjadi bagian dari cerita yang dia gagal hentikan. Egoismenya, kecerobohannya, obsesinya pada kebenaran yang membuatnya buta terhadap orang-orang yang mencintainya — semua itu memiliki harga. Dan harganya adalah sepi.</p>
-<p><em>"Simpul terakhir bukan kematian — tapi hidup sendirian dengan ingatan semua orang yang pernah mengulurkan tangan, dan kau terlalu sibuk mengejar kebenaran untuk menggenggamnya."</em></p>`;
+    const pc = s.playerCharacter || 'arin';
+    let text = `<p class="narration ending-f">ENDING #18: Simpul Terputus Total</p>`;
+    text += `<p>Semua simpul terputus. Setiap orang yang seharusnya kau lindungi — hilang. Satu per satu. Seperti lilin yang ditiup oleh angin yang sama.</p>`;
+
+    if (pc === 'arin') {
+      text += `<p>Kau selamat. Sendirian. Seperti yang direncanakan. Saksi Selamat yang sempurna: cukup pintar untuk menggali, cukup naif untuk gagal.</p>`;
+      text += `<p>Sera ada di antara yang hilang. Tangan yang pernah mencari tanganmu — tangan yang kau genggam terlalu sedikit, terlalu terlambat.</p>`;
+      text += `<p>Podcast episode #47: "Malam di Mansion Wardhana." Di menit ke-42, kau menangis on air. Untuk satu nama: "Sera."</p>`;
+    } else if (pc === 'sera') {
+      text += `<p>Kau selamat. Psikolog yang bisa membaca semua orang — kecuali masa depan. Arin ada di antara yang hilang. Tangan yang pernah kau genggam di bawah meja — tidak akan pernah kau genggam lagi.</p>`;
+      text += `<p>Kau menulis paper tentang malam itu. Tapi setiap kali sampai di bagian tentang Arin, jarimu berhenti. Ada hal-hal yang tidak bisa direduksi menjadi data.</p>`;
+    } else if (pc === 'niko') {
+      text += `<p>Mansionmu. Dosamu. Dan sekarang — kuburanmu. Semua orang yang kau undang, hilang karena keputusanmu. Dalang yang menjadi korban dari permainan yang dia mulai sendiri.</p>`;
+    } else if (pc === 'juno') {
+      text += `<p>Lo selamat. Lo selalu selamat — itu yang lo lakukan. Lari. Tapi kali ini, lo lari dari orang-orang yang seharusnya lo lindungi. Reza di antara yang hilang. Dan sepi yang ditinggalkannya lebih keras dari ledakan manapun.</p>`;
+    } else if (pc === 'lana') {
+      text += `<p>Skenariomu berjalan sempurna. Semua simpul terputus. Sang Penenun puas. Tapi kau — untuk pertama kalinya — tidak puas. Kemenangan terasa seperti kekalahan. Dan karakter yang kau tulis... mereka punya wajah sekarang. Mereka punya tangan yang pernah kau sentuh.</p>`;
+    } else {
+      text += `<p>Kau selamat. Tapi selamat bukan berarti menang. Semua orang yang pernah mengulurkan tangan — hilang. Dan kau berdiri sendirian di fajar yang seharusnya membawa harapan, tapi hanya membawa bayangan panjang.</p>`;
+    }
+
+    text += `<p>Siklus berlanjut. Dan harganya adalah sepi.</p>`;
+    text += `<p><em>"Simpul terakhir bukan kematian — tapi hidup sendirian dengan ingatan semua orang yang pernah mengulurkan tangan, dan kau terlalu sibuk untuk menggenggamnya."</em></p>`;
+    return text;
   },
   fates: {
     arin: 'Saksi Selamat. Monster jenis baru: yang tahu dan tidak bertindak cukup.'

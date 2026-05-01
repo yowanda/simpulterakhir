@@ -16,6 +16,17 @@ const STORY_CH4 = {
     }
 
     text += `<p>Countdown: <strong>02:00:00</strong>. Dua jam sebelum fajar.</p>`;
+
+    // Player perspective
+    const pc = s.playerCharacter || 'arin';
+    if (pc === 'sera') text += `<p class="journal"><em>Fight-or-flight response aktif di setiap orang. Amygdala override prefrontal cortex. Mereka tidak lagi berpikir — mereka bereaksi. Dan kau harus menjadi otak yang dingin di tengah kepanikan.</em></p>`;
+    else if (pc === 'juno') text += `<p class="journal"><em>Perburuan? Oke. Lo bisa diburu, atau lo bisa jadi pemburu. Lo milih yang kedua.</em></p>`;
+    else if (pc === 'lana') text += `<p class="journal"><em>Fase berikutnya sudah dimulai. Kau harus menyelesaikan tugasmu — tapi pertanyaan yang mengganggumu: apakah kau masih mau?</em></p>`;
+    else if (pc === 'reza') text += `<p class="journal"><em>Perburuan. Kau tahu taktiknya — kau pernah ada di kedua sisi. Pemburu dan mangsa. Malam ini, kau menolak menjadi mangsa.</em></p>`;
+    else if (pc === 'vira') text += `<p class="journal"><em>Koridor-koridor ini... kau mengenalnya. Terakhir kali kau lari di sini, kau sendirian. Kali ini tidak. Dan itu membuatmu lebih takut — karena sekarang kau punya orang-orang yang bisa kau kehilangan.</em></p>`;
+    else if (pc === 'kira') text += `<p class="journal"><em>Mansion ini punya sistem otomasi. Lo bisa hack-nya — kalau lo bisa menemukan hub controller-nya. Pintu-pintu, kunci, bahkan lampu — semua terhubung ke satu sistem.</em></p>`;
+    else if (pc === 'dimas') text += `<p class="journal"><em>Lana memberimu instruksi terakhir: "Simpul kedua malam ini." Tapi tanganmu gemetar untuk pertama kalinya. Sera menatapmu tadi — dan sesuatu di tatapan itu... merusak programmu.</em></p>`;
+
     text += `<p>Sang Penenun sudah mendapat simpul pertamanya. Dua lagi yang dijanjikan. Dan sekarang, permainan berubah — bukan lagi tentang manipulasi psikologis. Ini <em>perburuan</em>.</p>`;
 
     if (s.flags.presentedEvidence) {

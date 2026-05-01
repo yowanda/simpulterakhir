@@ -16,6 +16,17 @@ const STORY_CH3 = {
       text += `<p><span class="speaker dimas">Dimas</span> terkunci di kamar mandi lantai satu. Reza memasang kursi di depan pintu — improvisasi, tapi efektif. Dari dalam, tidak ada suara. Entah Dimas sedang merencanakan sesuatu, atau menunggu.</p>`;
     }
 
+    // Player perspective
+    const pc = s.playerCharacter || 'arin';
+    if (pc === 'sera') text += `<p class="journal"><em>Kelompok ini sedang mengalami deindividuasi — mereka berhenti berpikir sebagai individu dan mulai bergerak berdasarkan ketakutan kolektif. Kau harus menjadi jangkar sebelum semua orang tenggelam.</em></p>`;
+    else if (pc === 'juno') text += `<p class="journal"><em>Cukup. Lo udah cukup duduk dan dengerin. Saatnya bertindak — dobrak, pecahkan, lari. Apapun selain duduk dan menunggu mati.</em></p>`;
+    else if (pc === 'lana') text += `<p class="journal"><em>Perpecahan. Persis sesuai rencana. Kelompok yang terpecah lebih mudah dikendalikan. Sekarang tinggal memilih: siapa yang menjadi simpul berikutnya?</em></p>`;
+    else if (pc === 'reza') text += `<p class="journal"><em>Perpecahan kelompok adalah awal dari spiral. Kau sudah melihat ini di lapangan — hostage situation yang memburuk karena sandera mulai saling curiga. Kau harus bernegosiasi.</em></p>`;
+    else if (pc === 'niko') text += `<p class="journal"><em>Mansionmu. Tamu-tamumu. Tanggung jawabmu. Dan sekarang kelompok terpecah — dan kau mulai kehilangan kontrol yang selama ini kau genggam erat.</em></p>`;
+    else if (pc === 'vira') text += `<p class="journal"><em>Terakhir kali kelompok terpecah di mansion ini, tiga orang tidak pernah ditemukan. Kau tahu apa yang terjadi pada mereka. Kau tidak bisa membiarkan itu terulang.</em></p>`;
+    else if (pc === 'kira') text += `<p class="journal"><em>Lo menemukan sesuatu di jaringan mansion — pattern komunikasi antara dua device yang nggak seharusnya ada. Seseorang di sini mengirim pesan ke luar.</em></p>`;
+    else if (pc === 'farah') text += `<p class="journal"><em>Perpecahan berarti negosiasi. Dan negosiasi berarti leverage. Kau punya keduanya — pertanyaannya: seberapa banyak yang bersedia kau korbankan untuk bertahan?</em></p>`;
+
     text += `<p>Kelompok secara alami terpecah menjadi faksi:</p>`;
 
     let factions = '';
