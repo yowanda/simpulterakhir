@@ -31,6 +31,15 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - **Normal**: 2 killers (Lana + Dimas)
   - **Sulit**: 3 killers (Lana + Dimas + Niko)
 - **10 karakter** (5 main + 5 side) dengan profil mendalam dan hubungan kompleks
+- **Layer emosional mendalam:**
+  - **Percintaan** — Arin↔Sera (unspoken love), Niko↔Vira (toxic ex), Juno↔Reza (unexpected connection), Dimas→Sera (obsesi), Lana↔Niko (seductive manipulation)
+  - **Egoisme** — self-preservation vs group survival, setiap karakter punya harga
+  - **Manipulasi** — gaslighting, misdirection, psychological control (terutama Lana & Niko)
+  - **Dalang** — puppet master moves, hidden agendas, karakter yang mengontrol narasi
+  - **Negosiator** — Reza & Farah broker deals under life-or-death pressure
+  - **Ceroboh** — fatal mistakes dari keputusan impulsif (Juno, Dimas)
+  - **Eksentrik** — unpredictable wildcard behavior (Kira, Vira)
+  - **Pemantik Konflik** — Juno yang meledak-ledak, Lana yang provokatif dengan dark humor
 - **Sistem trust** — kepercayaan antar karakter berubah berdasarkan pilihan
 - **Sistem moral** — pilihan etis mempengaruhi ending
 - **Sistem awareness** — seberapa banyak Arin mengetahui kebenaran
