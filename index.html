@@ -77,6 +77,7 @@
       <button class="icon-btn" id="btn-menu" title="Menu">&#9776;</button>
       <div class="chapter-indicator" id="chapter-indicator">Prolog</div>
       <button class="icon-btn" id="btn-status" title="Karakter">&#9829;</button>
+      <button class="icon-btn" id="btn-npc-log" title="NPC Log">&#9881;</button>
     </div>
 
     <!-- Story Area -->
@@ -92,6 +93,15 @@
         <button class="icon-btn panel-close" id="btn-close-status">&times;</button>
       </div>
       <div class="panel-body" id="character-list"></div>
+    </div>
+
+    <!-- NPC Action Log Panel (slide-in) -->
+    <div class="panel panel-right panel-npc-log" id="panel-npc-log">
+      <div class="panel-header">
+        <h3>NPC Brain Log</h3>
+        <button class="icon-btn panel-close" id="btn-close-npc-log">&times;</button>
+      </div>
+      <div class="panel-body" id="npc-log-list"></div>
     </div>
 
     <!-- Menu Panel (slide-in) -->
@@ -142,6 +152,8 @@
   <div class="notification" id="notification"></div>
 
   <script src="js/characters.js"></script>
+  <script src="js/char-db.js"></script>
+  <script src="js/char-brain.js"></script>
   <script src="js/engine.js"></script>
   <script src="js/story-prolog.js"></script>
   <script src="js/story-ch1.js"></script>
