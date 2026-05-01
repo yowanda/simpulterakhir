@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="description" content="Simpul Terakhir — Game cerita horor dengan 25 ending, 5 sahabat, dan pilihan yang mengubah segalanya">
+  <meta name="description" content="Simpul Terakhir — Post-modern psychological horror thriller. 10 karakter, 7 chapter, 25 ending, dan keputusan yang menentukan siapa pembunuhnya.">
   <meta name="theme-color" content="#0a0a0a">
   <title>Simpul Terakhir</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,15 +17,15 @@
     <div class="title-container">
       <div class="title-flicker">
         <h1 class="game-title">SIMPUL TERAKHIR</h1>
-        <p class="game-subtitle" id="title-subtitle">Lima Sahabat. Dua Rahasia. Satu Hutan yang Menunggu.</p>
+        <p class="game-subtitle" id="title-subtitle">Sepuluh Tamu. Satu Mansion. Tiga Simpul yang Harus Terputus.</p>
       </div>
-      <p class="tagline" id="title-tagline">Setiap ikatan adalah benang. Setiap benang bisa putus.</p>
+      <p class="tagline" id="title-tagline">Siapa Sang Penenun? Setiap keputusan mendekatkanmu pada jawaban — atau kematian.</p>
       <div class="title-menu">
         <button class="btn-main" id="btn-new-game">Permainan Baru</button>
         <button class="btn-main" id="btn-continue" style="display:none">Lanjutkan</button>
         <button class="btn-secondary" id="btn-endings-gallery">Ending: <span id="endings-count">0</span>/25</button>
       </div>
-      <p class="credits">Cerita horor interaktif dengan 25 ending</p>
+      <p class="credits">Post-modern psychological horror thriller &bull; 7 chapter &bull; 25 ending</p>
     </div>
   </div>
 
@@ -37,15 +37,15 @@
       <div class="diff-buttons">
         <button class="diff-btn" data-diff="1">
           <span class="diff-label">Mudah</span>
-          <span class="diff-desc">Karakter lebih sulit mati. Petunjuk lebih banyak. Konsekuensi lebih ringan.</span>
+          <span class="diff-desc">1 killer. Petunjuk lebih banyak. Lebih mudah selamat.</span>
         </button>
         <button class="diff-btn" data-diff="2">
           <span class="diff-label">Normal</span>
-          <span class="diff-desc">Pengalaman yang seimbang. Pilihan berdampak nyata. Kematian mungkin terjadi.</span>
+          <span class="diff-desc">2 killers. Konspirasi lebih dalam. Siapa yang bisa dipercaya?</span>
         </button>
         <button class="diff-btn" data-diff="3">
           <span class="diff-label">Sulit</span>
-          <span class="diff-desc">Kepercayaan lebih rapuh. Kematian lebih mudah. Entitas lebih kuat. Tidak ada petunjuk.</span>
+          <span class="diff-desc">3 killers. Konspirasi total. Tidak ada yang aman. Tidak ada petunjuk.</span>
         </button>
       </div>
     </div>
@@ -55,7 +55,7 @@
   <div id="screen-characters" class="screen">
     <div class="char-intro-container">
       <h2 class="char-intro-heading">Kenali Mereka</h2>
-      <p class="char-intro-subheading">Lima sahabat. Masing-masing menyimpan rahasia. Klik untuk mengenal mereka lebih dekat.</p>
+      <p class="char-intro-subheading">Sepuluh tamu mansion. Masing-masing menyimpan agenda. Klik untuk mengenal mereka lebih dekat.</p>
       <div class="characters-grid" id="characters-grid"></div>
       <button class="btn-main btn-start-story" id="btn-skip-chars">Mulai Cerita</button>
     </div>
@@ -138,6 +138,10 @@
   <script src="js/story-ch1.js"></script>
   <script src="js/story-ch2.js"></script>
   <script src="js/story-ch3.js"></script>
+  <script src="js/story-ch4.js"></script>
+  <script src="js/story-ch5.js"></script>
+  <script src="js/story-ch6.js"></script>
+  <script src="js/story-ch7.js"></script>
   <script src="js/story-endings.js"></script>
   <script>
     const STORY = Object.assign({},
@@ -145,6 +149,10 @@
       typeof STORY_CH1 !== 'undefined' ? STORY_CH1 : {},
       typeof STORY_CH2 !== 'undefined' ? STORY_CH2 : {},
       typeof STORY_CH3 !== 'undefined' ? STORY_CH3 : {},
+      typeof STORY_CH4 !== 'undefined' ? STORY_CH4 : {},
+      typeof STORY_CH5 !== 'undefined' ? STORY_CH5 : {},
+      typeof STORY_CH6 !== 'undefined' ? STORY_CH6 : {},
+      typeof STORY_CH7 !== 'undefined' ? STORY_CH7 : {},
       typeof STORY_ENDINGS !== 'undefined' ? STORY_ENDINGS : {}
     );
     Engine.init(STORY);

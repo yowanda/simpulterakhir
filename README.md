@@ -1,200 +1,192 @@
-# 🌿 Simpul Terakhir
+# SIMPUL TERAKHIR
 
-**Text-based interactive horror story game — Bahasa Indonesia**
+**Post-modern psychological horror/thriller interactive story — Bahasa Indonesia**
 
-> *Lima sahabat. Satu cabin di hutan terkutuk. Dua puluh lima ending. Siapa yang akan selamat?*
-
-[▶ Mainkan Sekarang](https://the-hollow-soojoloi.devinapps.com/)
+> *Sepuluh tamu. Satu mansion. Tiga simpul yang harus terputus. Siapa Sang Penenun?*
 
 ---
 
-## 📖 Sinopsis
+## Sinopsis
 
-Enam bulan lalu, **Vira** pergi camping sendirian ke Gunung Halimun. Dia menghilang selama tiga minggu. Ketika kembali, dia tersenyum seperti tidak terjadi apa-apa — tapi sesuatu telah berubah.
+Undangan itu datang dalam amplop hitam, tanpa perangko, tanpa alamat pengirim. Sepuluh orang — masing-masing dengan alasan berbeda — tiba di **Mansion Wardhana**, estate terisolasi di tebing yang menghadap lautan.
 
-Sekarang, **Niko** mengajak lima sahabat lama ke cabin keluarganya di tepi hutan yang terhubung dengan Halimun. Alasannya: reuni. Tapi Niko menyimpan rahasia — warisan kakeknya, sebuah batu misterius yang berdenyut seperti jantung, dan jurnal yang menceritakan perjanjian kuno antara manusia dan hutan.
+**Niko Wardhana**, pewaris mansion, mengklaim ini adalah pameran seni imersif. Tapi saat pintu-pintu terkunci dan countdown dimulai, kebenaran terungkap: mansion ini telah menjadi arena **"simpul"** selama 50 tahun. Setiap tahun, tamu diundang. Beberapa tidak pernah kembali.
 
-Di cabin itu, kebenaran mulai terungkap. Entitas kuno yang menjaga hutan selama lima ratus tahun menginginkan sesuatu: **lima simpul baru**. Lima ikatan yang tulus. Dan dia sudah mengambil Vira sebagai jembatan.
+Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jaringan kematian selama setengah abad. Dan malam ini, tiga simpul harus terputus sebelum fajar.
 
-Setiap pilihan yang kamu buat menentukan siapa yang hidup, siapa yang mati, dan apakah simpul terakhir akan menyelamatkan — atau menghancurkan — segalanya.
+**Genre:** Post-modern psychological horror/thriller — terinspirasi *Scream*, *Knives Out*, *Saw*, dan *Black Mirror*. Bukan horor supernatural klasik, tapi mind-games, konspirasi, dan keputusan moral yang menentukan siapa yang hidup dan siapa yang mati.
 
 ---
 
-## 🎮 Fitur
+## Fitur
 
-### Cerita & Gameplay
+### Gameplay & Cerita
+- **7 chapter** dengan percabangan kompleks (Prolog + Bab 1-7)
 - **25 ending unik** dengan rating S / A / B / C / D / F
-- **3 tingkat kesulitan** — Mudah, Normal, Sulit (mempengaruhi kematian karakter, kekuatan entitas, dan petunjuk)
-- **5 karakter** dengan profil mendalam, portrait, dan hubungan kompleks
-- **Layar perkenalan karakter** — kenali setiap karakter sebelum cerita dimulai
-- **Portrait karakter inline** — wajah karakter muncul saat mereka berbicara
-- **Sistem trust** — kepercayaan antar karakter berubah berdasarkan pilihanmu
+- **Ending bisa trigger di chapter manapun** — keputusan menentukan kapan cerita berakhir
+- **3 tingkat kesulitan** yang mengubah jumlah killer:
+  - **Mudah**: 1 killer (Lana)
+  - **Normal**: 2 killers (Lana + Dimas)
+  - **Sulit**: 3 killers (Lana + Dimas + Niko)
+- **10 karakter** (5 main + 5 side) dengan profil mendalam dan hubungan kompleks
+- **Sistem trust** — kepercayaan antar karakter berubah berdasarkan pilihan
 - **Sistem moral** — pilihan etis mempengaruhi ending
 - **Sistem awareness** — seberapa banyak Arin mengetahui kebenaran
-- **Karakter bisa mati** — keputusan berisiko tinggi punya konsekuensi nyata
+- **Sistem danger** — level bahaya meningkat berdasarkan keputusan berisiko
+- **Karakter bisa mati** — keputusan salah punya konsekuensi permanen
 - **Auto-save** — progress tersimpan otomatis di browser
 
 ---
 
-## 🧑‍🤝‍🧑 Karakter
+## Karakter
 
-Lima sahabat, masing-masing menyimpan rahasia. Semua bisa menjadi pahlawan — atau korban.
+### 5 Karakter Utama
 
-### Arin Prasetya — *Sang Penjaga*
+#### Arin Prasetya — *Investigative Journalist*
 <img src="img/arin.png" width="150" alt="Arin">
 
-> *"Kalau aku tidak menjaga mereka, siapa yang akan?"*
+> *"Setiap cerita punya kebenaran. Dan kebenaran tidak peduli apakah kau siap mendengarnya."*
 
-Protagonis — kamu. Rambut hitam berantakan, mata cokelat hangat, jaket hiking hijau tua — hadiah terakhir dari almarhum ayahnya. Arin adalah lem yang menyatukan kelompok. Di balik sikapnya yang tenang, dia memikul beban tanggung jawab sejak kehilangan ayahnya saat ekspedisi geologi di hutan. Tidak pernah mengutamakan dirinya sendiri — dan itulah kelemahannya.
+Protagonis — kamu. Host podcast investigasi "Thread by Thread". Diundang ke mansion karena episodenya tentang orang hilang yang terhubung dengan keluarga Wardhana. Insting jurnalisnya adalah kekuatan terbesar — dan target terbesar Sang Penenun.
 
-**Sifat:** Pelindung • Empatik • Pemberani • Terlalu Bertanggung Jawab
+**Sifat:** Investigatif | Berani | Idealis | Kadang Keras Kepala
 
 ---
 
-### Niko Wardhana — *Sang Pewaris*
+#### Niko Wardhana — *Pewaris Mansion*
 <img src="img/niko.png" width="150" alt="Niko">
 
-> *"Kekuatan bukan milik yang pantas. Kekuatan milik yang berani mengambilnya."*
+> *"Aku mewarisi lebih dari properti. Aku mewarisi dosa."*
 
-Pemimpin ambisius dengan rahang tegas dan rambut hitam tersisir rapi. Karisma alami yang membuat orang mengikutinya — meski kadang secara tidak sadar. Cucu Kolonel Wardhana yang terlibat dalam ekspedisi militer 1973 di hutan Halimun. Niko merencanakan perjalanan ini bukan untuk liburan, tapi untuk mengakses kekuatan yang kakeknya temukan.
+Cucu Hendarto Wardhana, pendiri mansion. Merencanakan "pameran dokumenter" untuk mengekspos dosa keluarganya — tapi seseorang membajak acaranya. Di difficulty Hard, Niko adalah salah satu operator Sang Penenun.
 
-**Sifat:** Karismatik • Kalkulatif • Ambisius • Manipulatif
+**Sifat:** Conflicted | Charming | Guilt-ridden | Secretive
 
 ---
 
-### Sera Amalina — *Cahaya yang Lembut* ✿
+#### Sera Amalina — *Psikolog Klinis*
 <img src="img/sera.png" width="150" alt="Sera">
 
-> *"Aku tidak perlu melihat untuk tahu. Aku merasakannya."*
+> *"Aku tidak perlu melihat untuk tahu. Perilaku kalian sudah cukup bercerita."*
 
-Cantik dengan cara yang membuat orang ingin melindunginya. Rambut cokelat bergelombang dihiasi jepit bunga, mata besar bersinar dengan kepolosan, sweater krem lembut. Sera adalah matahari kecil di tengah kelompok — manis, lembut, dan selalu peduli. Tapi di balik kelembutannya, ada intuisi tajam yang hampir supernatural. Neneknya dukun desa terkenal, dan hutan Halimun membangkitkan kemampuannya lebih kuat dari sebelumnya.
+Psikolog yang bisa membaca orang seperti buku terbuka. Kemampuannya mem-profil predator membuat dia aset terbesar kelompok — dan ancaman terbesar bagi Sang Penenun.
 
-**Sifat:** Manis • Intuitif • Empatik • Spiritual
+**Sifat:** Analytical | Empathetic | Observant | Vulnerable
 
 ---
 
-### Juno Kirana — *Tawa yang Menyembunyikan Air Mata*
+#### Juno Kirana — *Street Artist*
 <img src="img/juno.png" width="150" alt="Juno">
 
-> *"Tertawa itu gratis. Menangis? Itu mahal — karena orang akan bertanya kenapa."*
+> *"Gue nggak mau main detective. Gue mau KELUAR."*
 
-Cantik dengan gaya tomboy — rambut hitam pendek bob, mata gelap ekspresif, kemeja flannel merah. Pelawak kelompok yang selalu punya lelucon dan komentar tajam. Tapi humornya adalah perisai. Juno adalah saksi ketika Vira ditarik ke kegelapan hutan — dan dia membeku. Tidak berteriak. Tidak menolong. Rasa bersalah itu memakan jiwanya.
+Seniman jalanan dengan temper pendek dan loyalitas tanpa batas. Pendekatan langsung — dobrak pintu, pecahkan jendela, hadapi masalah head-on. Yang pertama bertindak saat bahaya datang.
 
-**Sifat:** Humoris • Loyal • Pemberontak • Dihantui Rasa Bersalah
+**Sifat:** Impulsive | Brave | Loyal | Street-smart
 
 ---
 
-### Vira Deviani — *Keindahan yang Mematikan* 🌑
+#### Vira Deviani — *Saksi Selamat*
 <img src="img/vira.png" width="150" alt="Vira">
 
-> *"Kalian pikir aku hilang. Tapi aku ditemukan."*
+> *"Aku sudah pernah di sini. Dan aku kembali bukan karena pilihan."*
 
-Menakjubkan dengan cara yang membuat orang tidak bisa berpaling — dan tidak bisa sepenuhnya nyaman. Rambut hitam pekat lurus sepinggang, mata dengan kilatan hijau supernatural, gaun gelap keunguan yang elegan. Vira yang dulu ceria dan penuh energi sudah tidak ada. Yang kembali berbicara dalam teka-teki dan tersenyum pada hal yang tidak terlihat. Tapi sesekali, Vira yang asli muncul — ketakutan, memohon bantuan. Antagonis atau korban? Tergantung pilihanmu.
+"Saksi Selamat" dari siklus tahun lalu. Kembali karena Sang Penenun mengancam adiknya. Menyimpan pengetahuan kritis tentang mansion — termasuk lokasi sarang Sang Penenun di B-3.
 
-**Sifat:** Misterius • Manipulatif • Cantik Mematikan • Terpecah Dua
-
----
-
-### Visual & Atmosfer
-- Portrait karakter muncul saat berbicara dalam cerita
-- Layar perkenalan karakter interaktif sebelum memulai permainan
-- Profil detail setiap karakter dengan hubungan antar-karakter
-- Ilustrasi atmosferik CSS untuk setiap jenis scene (hutan, cabin, ritual, entitas, fajar)
-- Partikel ambient melayang (entity presence)
-- Efek transisi chapter dan text fade-in
-- Screen shake pada momen intens
-- Death flash dan entity ambient glow
-- Fog drift animation
+**Sifat:** Haunted | Determined | Secretive | Protective
 
 ---
 
-## 🏗️ Struktur Proyek
+### 5 Karakter Pendukung
+
+| Karakter | Peran | Rahasia |
+|----------|-------|---------|
+| **Reza Hartono** | Mantan Detektif | Dipecat karena kasus yang terhubung dengan keluarga Wardhana |
+| **Lana Kusuma** | Novelis Horor | "Penulis" — operator Sang Penenun yang bermain ganda |
+| **Dimas Surya** | Mahasiswa Kedokteran | "Pemotong" — operator yang menjalankan metode Penenun |
+| **Kira Chen** | Ethical Hacker | Bisa hack sistem keamanan mansion |
+| **Farah Aldridge** | Pewaris Estate | Keluarganya mendanai pembangunan mansion 50 tahun lalu |
+
+---
+
+## Struktur Cerita (7 Chapter)
+
+| Chapter | Judul | Fokus |
+|---------|-------|-------|
+| Prolog | **Undangan** | Kedatangan, perkenalan 10 karakter, atmosphere setup |
+| Bab 1 | **Pameran Maut** | Pameran dimulai, sistem simpul terungkap, bukti pertama |
+| Bab 2 | **Darah Pertama** | Truth-or-lie game, racun Farah, hard drive ditemukan |
+| Bab 3 | **Pecah Belah** | Kelompok terpecah, lantai 3 terungkap, kematian pertama |
+| Bab 4 | **Perburuan** | Pemburu vs mangsa, kunci master, jebakan untuk Penenun |
+| Bab 5 | **Wahyu** | Identitas Sang Penenun terungkap, B-3 ditemukan |
+| Bab 6 | **Konfrontasi** | Pertempuran final — bakar, broadcast, atau konfrontasi |
+| Bab 7 | **Simpul Terakhir** | Fajar, resolusi, dan konsekuensi dari setiap pilihan |
+
+---
+
+## Sistem Killer
+
+Difficulty menentukan berapa banyak killer yang tertanam di antara tamu:
+
+- **Easy (1 killer):** Lana sebagai satu-satunya operator
+- **Normal (2 killers):** Lana ("Penulis") + Dimas ("Pemotong")
+- **Hard (3 killers):** Lana + Dimas + Niko (pewaris yang memberikan akses)
+
+Antagonis utama: **Ragil Pramudya** alias **Sang Penenun** — pria tua yang hidup di bunker B-3 di bawah mansion selama 20+ tahun, mengendalikan siklus simpul.
+
+---
+
+## Teknologi
+
+- **Pure HTML/CSS/JavaScript** — tanpa framework, langsung buka di browser
+- **Responsive** — desktop dan mobile
+- **Character portraits** untuk 5 karakter utama
+- **CSS avatars** untuk 5 karakter pendukung
+- **Auto-save** via localStorage
+- **Efek visual:** screen shake, glitch, blood overlay, ambient audio hooks
+
+---
+
+## Cara Bermain
+
+1. Buka `index.html` di browser
+2. Pilih tingkat kesulitan
+3. Kenali 10 karakter
+4. Buat keputusan — setiap pilihan menentukan alur cerita
+5. Kumpulkan bukti, bangun aliansi, dan ungkap identitas Sang Penenun
+6. Capai salah satu dari 25 ending
+
+---
+
+## Struktur File
 
 ```
 simpul-terakhir/
 ├── index.html              # Entry point
 ├── css/
-│   └── style.css           # Styling, animasi, CSS art
+│   └── style.css           # Styling + CSS avatars
 ├── img/
-│   ├── arin.png            # Portrait Arin
-│   ├── niko.png            # Portrait Niko
-│   ├── sera.png            # Portrait Sera
-│   ├── juno.png            # Portrait Juno
-│   └── vira.png            # Portrait Vira
-├── js/
-│   ├── characters.js       # Profil karakter mendalam
-│   ├── engine.js           # Game engine (state, rendering, effects)
-│   ├── story-prolog.js     # Prolog — perjalanan ke cabin
-│   ├── story-ch1.js        # Bab 1 — malam pertama
-│   ├── story-ch2.js        # Bab 2 — kebenaran terungkap
-│   ├── story-ch3.js        # Bab 3 & 4 — klimaks & simpul terakhir
-│   └── story-endings.js    # 25 ending computation & narasi
-└── README.md
+│   ├── arin.png            # Portrait karakter utama
+│   ├── niko.png
+│   ├── sera.png
+│   ├── juno.png
+│   └── vira.png
+└── js/
+    ├── characters.js       # 10 karakter (profil, traits, relationships)
+    ├── engine.js           # Game engine (trust, moral, danger, killer system)
+    ├── story-prolog.js     # Prolog: Undangan
+    ├── story-ch1.js        # Bab 1: Pameran Maut
+    ├── story-ch2.js        # Bab 2: Darah Pertama
+    ├── story-ch3.js        # Bab 3: Pecah Belah
+    ├── story-ch4.js        # Bab 4: Perburuan
+    ├── story-ch5.js        # Bab 5: Wahyu
+    ├── story-ch6.js        # Bab 6: Konfrontasi
+    ├── story-ch7.js        # Bab 7: Simpul Terakhir
+    └── story-endings.js    # 25 endings (S/A/B/C/D/F rating)
 ```
 
 ---
 
-## 🔧 Tech Stack
+## Lisensi
 
-- **Pure HTML/CSS/JavaScript** — tanpa framework, tanpa build tools
-- **CSS Art** — ilustrasi scene menggunakan gradient & animation
-- **AI-Generated Portraits** — karakter visual berkualitas tinggi
-- **localStorage** — auto-save progress
-- **100% client-side** — tidak ada backend, bisa di-host di mana saja
-
----
-
-## 🚀 Cara Main
-
-### Online
-Langsung mainkan di: [https://the-hollow-soojoloi.devinapps.com/](https://the-hollow-soojoloi.devinapps.com/)
-
-### Lokal
-```bash
-git clone https://github.com/yowanda/simpul-terakhir.git
-cd simpul-terakhir
-# Buka index.html di browser, atau gunakan live server:
-python3 -m http.server 8000
-# Lalu buka http://localhost:8000
-```
-
-### GitHub Pages
-1. Buka **Settings** → **Pages** di repository
-2. Pilih branch `main`, folder `/ (root)`
-3. Save — situs akan live dalam beberapa menit
-
----
-
-## 🌳 Alur Cerita (Spoiler-Free)
-
-```
-Prolog: Perjalanan ke Cabin
-    ↓
-Bab 1: Malam Pertama — rahasia mulai terungkap
-    ↓
-Bab 2: Kebenaran — konfrontasi dengan entitas & pengungkapan Niko
-    ↓
-Bab 3: Keputusan — ritual, pelarian, atau negosiasi?
-    ↓
-Bab 4: Simpul Terakhir — 25 ending berdasarkan semua pilihanmu
-```
-
-### Tier Ending
-| Tier | Jumlah | Deskripsi |
-|------|--------|-----------|
-| S | 2 | Ending sempurna — semua selamat, simpul utuh |
-| A | 4 | Ending baik — pengorbanan bermakna |
-| B | 6 | Ending netral — ada yang hilang, tapi ada harapan |
-| C | 6 | Ending buruk — konsekuensi berat |
-| D | 5 | Ending tragis — kehilangan besar |
-| F | 2 | Ending terburuk — kekalahan total |
-
----
-
-## 📝 Lisensi
-
-Proyek personal. Semua hak cipta dilindungi.
-
----
-
-*Dibuat dengan cinta, ketakutan, dan secangkir kopi di malam yang terlalu sunyi.* 🌙
+Proyek ini bersifat pribadi. Hak cipta dilindungi.
