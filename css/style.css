@@ -94,6 +94,97 @@ body {
 }
 .btn-secondary:hover { border-color: #6b6359; color: #b0a898; }
 
+/* ========== CARA BERMAIN / RULES SCREEN ========== */
+.rules-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+.rules-title {
+  font-family: 'Crimson Text', serif;
+  font-size: 1.6rem;
+  color: #e63946;
+  text-align: center;
+  margin-bottom: 0.3rem;
+}
+.rules-intro {
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #8696a0;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+.rules-section {
+  margin-bottom: 1.2rem;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.rules-section h3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: #e9edef;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+}
+.rules-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.rules-section ul li {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  color: #ccd6dd;
+  padding: 0.3rem 0;
+  padding-left: 1rem;
+  position: relative;
+  line-height: 1.5;
+}
+.rules-section ul li::before {
+  content: '•';
+  color: #e63946;
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+.rules-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+.rules-action-item {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: #ccd6dd;
+  padding: 0.35rem 0.5rem;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.ra-icon {
+  font-size: 1rem;
+  min-width: 1.2rem;
+  text-align: center;
+}
+.rules-back-btn {
+  margin-top: 1.2rem;
+  width: 100%;
+}
+@media (max-width: 480px) {
+  .rules-container { padding: 1.2rem 1rem; }
+  .rules-actions { grid-template-columns: 1fr; }
+  .rules-title { font-size: 1.3rem; }
+  .rules-section h3 { font-size: 0.88rem; }
+  .rules-action-item { font-size: 0.75rem; }
+}
+
 /* ========== GAME SCREEN (WhatsApp Dark Mode) ========== */
 #screen-game {
   flex-direction: column;
