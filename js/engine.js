@@ -1497,7 +1497,7 @@ const Engine = (() => {
         }
       }
 
-      // Manipulate/Frame (one-time per target) — chance-based with real consequences
+      // Manipulate/Frame (one-time per target) — chance-based with REAL consequences
       if (nearbyNpcs.length > 0) {
         const frameTarget = nearbyNpcs.find(n => !gameState.killers.includes(n) && !brainActionTaken('frame_' + n));
         if (frameTarget) {
@@ -1505,31 +1505,58 @@ const Engine = (() => {
           choices.push({
             text: `Arahkan kecurigaan ke ${CharBrain.charName(frameTarget)} — framing`,
             type: 'brain-killer', category: 'stealth',
-            hint: `Chance: ${frameChance}% — buat orang lain terlihat mencurigakan. Gagal = kecurigaan naik ke kamu!`,
+            hint: `Chance: ${frameChance}% — target jadi musuh semua NPC, trust hancur, bisa di-trust-kill. Gagal = kamu yang dicurigai!`,
             risk: 50, reward: 70,
             successChance: frameChance,
             effect: (s) => {
               recordBrainAction('frame_' + frameTarget);
               const result = rollChance(frameChance, pc, 'offense');
               if (result.success) {
-                const frameSusp = 15 + Math.floor(getCharAbility(pc, 'framingBonus') / 2);
+                const frameSusp = 25 + Math.floor(getCharAbility(pc, 'framingBonus') / 2);
                 Engine.modSuspicion(frameTarget, frameSusp);
-                // Real consequence: nearby NPCs turn hostile toward framed target
+                Engine.modSuspicion(pc, -15);
+                // REAL consequences: trust destroyed, enemies created, allies removed
+                const affectedNames = [];
                 if (s.npcMinds) {
                   Object.keys(s.npcMinds).forEach(npcName => {
-                    if (s.npcMinds[npcName] && s.npcMinds[npcName].location === (s.playerLocation || 'aula_utama') && s.alive[npcName] && !s.killers.includes(npcName)) {
-                      s.npcMinds[npcName].suspicions[frameTarget] = Math.min(100, (s.npcMinds[npcName].suspicions[frameTarget] || 0) + 20);
-                      if ((s.npcMinds[npcName].suspicions[frameTarget] || 0) >= 60 && !s.npcMinds[npcName].enemies.includes(frameTarget)) {
-                        s.npcMinds[npcName].enemies.push(frameTarget);
+                    const npc = s.npcMinds[npcName];
+                    if (npc && npc.location === (s.playerLocation || 'aula_utama') && s.alive[npcName] && !s.killers.includes(npcName) && npcName !== frameTarget) {
+                      // Suspicion spike on framed target
+                      npc.suspicions[frameTarget] = Math.min(100, (npc.suspicions[frameTarget] || 0) + 30);
+                      // Trust between NPC and framed target drops hard
+                      const tk = CharBrain.trustKeyFor ? CharBrain.trustKeyFor(npcName, frameTarget) : [npcName, frameTarget].sort().join('_');
+                      if (s.trust[tk] !== undefined) s.trust[tk] = Math.max(0, s.trust[tk] - 25);
+                      // Mark as enemy if suspicion high enough
+                      if ((npc.suspicions[frameTarget] || 0) >= 45 && !npc.enemies.includes(frameTarget)) {
+                        npc.enemies.push(frameTarget);
+                        affectedNames.push(CharBrain.charName(npcName));
                       }
+                      // Remove framed from allies
+                      npc.allies = npc.allies.filter(a => a !== frameTarget);
+                      // Raise tension → more likely to act aggressively
+                      npc.tension = Math.min(100, npc.tension + 10);
                     }
                   });
                 }
-                Engine.modSuspicion(pc, -10);
-                Engine.notify(`Framing berhasil! NPC mulai mencurigai ${CharBrain.charName(frameTarget)}. (${result.chance}% chance, roll: ${result.roll})`);
+                // Framed target becomes isolated: loses allies, gains tension
+                if (s.npcMinds && s.npcMinds[frameTarget]) {
+                  s.npcMinds[frameTarget].tension = Math.min(100, s.npcMinds[frameTarget].tension + 20);
+                  s.npcMinds[frameTarget].allies = [];
+                }
+                const enemyMsg = affectedNames.length > 0 ? ` ${affectedNames.join(', ')} sekarang MEMUSUHI ${CharBrain.charName(frameTarget)}!` : '';
+                Engine.notify(`Framing berhasil! ${CharBrain.charName(frameTarget)} suspicion +${frameSusp}%, trust hancur, terisolasi.${enemyMsg} (${result.chance}%, roll: ${result.roll})`);
               } else {
-                Engine.modSuspicion(pc, 15);
-                Engine.notify(`Framing gagal! Gerak-gerikmu justru mencurigakan. (${result.chance}% chance, roll: ${result.roll})`);
+                Engine.modSuspicion(pc, 20);
+                // Failed framing: nearby NPCs get suspicious of YOU
+                if (s.npcMinds) {
+                  Object.keys(s.npcMinds).forEach(npcName => {
+                    const npc = s.npcMinds[npcName];
+                    if (npc && npc.location === (s.playerLocation || 'aula_utama') && s.alive[npcName]) {
+                      npc.suspicions[pc] = Math.min(100, (npc.suspicions[pc] || 0) + 15);
+                    }
+                  });
+                }
+                Engine.notify(`Framing gagal! NPC curiga padamu. Suspicion kamu +20%. (${result.chance}%, roll: ${result.roll})`);
               }
             },
             next: (s) => currentNodeId
