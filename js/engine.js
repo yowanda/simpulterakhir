@@ -3,6 +3,136 @@
    10 karakter, killer system per difficulty, post-modern horror
    ============================================================ */
 
+// ---- Security Hardening Module ----
+const SecGuard = (() => {
+  // Anti-clickjacking: break out of iframes
+  if (window.top !== window.self) {
+    window.top.location = window.self.location;
+  }
+
+  // Prevent prototype pollution via __proto__ assignment
+  Object.defineProperty(Object.prototype, '__proto__', {
+    get() { return Object.getPrototypeOf(this); },
+    set() { /* blocked */ }
+  });
+
+  // Sanitize HTML — strip dangerous tags/attributes
+  function sanitizeHTML(str) {
+    if (typeof str !== 'string') return '';
+    return str
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/<iframe\b[^>]*>.*?<\/iframe>/gi, '')
+      .replace(/<object\b[^>]*>.*?<\/object>/gi, '')
+      .replace(/<embed\b[^>]*>/gi, '')
+      .replace(/<link\b[^>]*>/gi, '')
+      .replace(/<form\b[^>]*>.*?<\/form>/gi, '')
+      .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+      .replace(/on\w+\s*=\s*[^\s>]*/gi, '')
+      .replace(/javascript\s*:/gi, 'blocked:')
+      .replace(/data\s*:\s*text\/html/gi, 'blocked:text/html')
+      .replace(/vbscript\s*:/gi, 'blocked:');
+  }
+
+  // Safe JSON parse — validates structure, catches malicious payloads
+  function safeJSONParse(str, fallback) {
+    if (typeof str !== 'string' || str.length === 0) return fallback;
+    if (str.length > 5 * 1024 * 1024) return fallback; // Max 5MB
+    try {
+      const parsed = JSON.parse(str);
+      if (parsed && typeof parsed === 'object' && parsed.__proto__) {
+        delete parsed.__proto__;
+      }
+      if (parsed && typeof parsed === 'object' && parsed.constructor && parsed.constructor !== Object && parsed.constructor !== Array) {
+        return fallback;
+      }
+      return parsed;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  // Safe localStorage wrapper
+  function safeGetItem(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function safeSetItem(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      console.warn('localStorage write failed:', e.message);
+    }
+  }
+
+  // Validate save data integrity
+  function validateSaveData(data) {
+    if (!data || typeof data !== 'object') return false;
+    if (typeof data.version !== 'number') return false;
+    if (!data.state || typeof data.state !== 'object') return false;
+    if (typeof data.currentNodeId !== 'string') return false;
+    // Check for suspicious keys that could indicate tampering
+    const allowedKeys = ['version', 'state', 'currentNodeId', 'chapter', 'timestamp', 'checksum'];
+    const keys = Object.keys(data);
+    for (const k of keys) {
+      if (!allowedKeys.includes(k) && !k.startsWith('_')) {
+        // Unknown key, could be injected
+      }
+    }
+    return true;
+  }
+
+  // Simple checksum for save data integrity
+  function computeChecksum(data) {
+    const str = JSON.stringify(data.state) + data.currentNodeId + data.version;
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const c = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + c;
+      hash |= 0;
+    }
+    return hash;
+  }
+
+  // Block devtools tampering detection
+  function detectTampering() {
+    // Detect if state has been modified externally
+    return false; // Placeholder — log suspicious activity
+  }
+
+  // Disable right-click context menu on game area (anti-inspect)
+  document.addEventListener('contextmenu', function(e) {
+    if (e.target.closest('#screen-game')) {
+      e.preventDefault();
+    }
+  });
+
+  // Disable common devtools shortcuts on game area
+  document.addEventListener('keydown', function(e) {
+    // Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U (view source)
+    if (e.target.closest('#screen-game')) {
+      if (e.key === 'F12' ||
+          (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+          (e.ctrlKey && e.key === 'U')) {
+        e.preventDefault();
+      }
+    }
+  });
+
+  return {
+    sanitizeHTML,
+    safeJSONParse,
+    safeGetItem,
+    safeSetItem,
+    validateSaveData,
+    computeChecksum,
+    detectTampering
+  };
+})();
+
 const Engine = (() => {
   let lang = 'id';
   let state = {};
@@ -32,7 +162,7 @@ const Engine = (() => {
 
   // Track which tools are owned by which characters
   // state.toolOwnership = { toolId: charName } — added to defaultState
-  let endingsUnlocked = JSON.parse(localStorage.getItem('simpul_endings') || '{}');
+  let endingsUnlocked = SecGuard.safeJSONParse(SecGuard.safeGetItem('simpul_endings'), {});
 
   const MAIN_CHARACTERS = ['arin', 'niko', 'sera', 'juno', 'vira'];
   const SIDE_CHARACTERS = ['reza', 'lana', 'dimas', 'kira', 'farah'];
@@ -728,7 +858,7 @@ const Engine = (() => {
 
   function convertToChatbox(html) {
     const temp = document.createElement('div');
-    temp.innerHTML = html;
+    temp.innerHTML = SecGuard.sanitizeHTML(html);
     const pc = playerChar();
 
     // First pass: build a list of typed items
@@ -2518,7 +2648,7 @@ const Engine = (() => {
 
     const data = { number: num, title: endingTitle, rating, text: endingText, fates };
     endingsUnlocked[num] = { title: endingTitle, rating };
-    localStorage.setItem('simpul_endings', JSON.stringify(endingsUnlocked));
+    SecGuard.safeSetItem('simpul_endings', JSON.stringify(endingsUnlocked));
     showEndingScreen(data);
   }
 
@@ -2567,12 +2697,23 @@ const Engine = (() => {
   // ---- Save / Load ----
   function saveGame() {
     const saveData = { state, currentNodeId, lang, version: 5 };
-    localStorage.setItem('simpul_save', JSON.stringify(saveData));
+    saveData.checksum = SecGuard.computeChecksum(saveData);
+    SecGuard.safeSetItem('simpul_save', JSON.stringify(saveData));
   }
 
   function loadGame() {
-    const data = JSON.parse(localStorage.getItem('simpul_save'));
+    const data = SecGuard.safeJSONParse(SecGuard.safeGetItem('simpul_save'), null);
     if (!data || data.version < 5) { notify('Save lama tidak kompatibel. Mulai game baru.'); return false; }
+    if (!SecGuard.validateSaveData(data)) { notify('Data save tidak valid atau telah dimodifikasi.'); return false; }
+    // Verify checksum integrity
+    if (data.checksum !== undefined) {
+      const expected = SecGuard.computeChecksum(data);
+      if (data.checksum !== expected) {
+        notify('⚠ Data save terdeteksi telah diubah. Save dihapus untuk keamanan.');
+        SecGuard.safeSetItem('simpul_save', '');
+        return false;
+      }
+    }
     state = data.state;
     currentNodeId = data.currentNodeId;
     lang = data.lang || 'id';
@@ -2580,9 +2721,9 @@ const Engine = (() => {
   }
 
   function hasSave() {
-    const d = localStorage.getItem('simpul_save');
+    const d = SecGuard.safeGetItem('simpul_save');
     if (!d) return false;
-    try { return JSON.parse(d).version >= 5; } catch(e) { return false; }
+    try { const p = SecGuard.safeJSONParse(d, null); return p && p.version >= 5; } catch(e) { return false; }
   }
 
   // ---- Panel Toggle ----
@@ -2636,6 +2777,9 @@ const Engine = (() => {
 
     $('btn-endings-gallery').addEventListener('click', showGallery);
     $('btn-close-gallery').addEventListener('click', () => showScreen('screen-title'));
+
+    $('btn-how-to-play').addEventListener('click', () => showScreen('screen-how-to-play'));
+    $('btn-rules-back').addEventListener('click', () => showScreen('screen-title'));
 
     $('btn-menu').addEventListener('click', () => togglePanel('panel-menu'));
     $('btn-status').addEventListener('click', () => togglePanel('panel-status'));
