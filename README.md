@@ -4,7 +4,7 @@
 
 > *Sepuluh tamu. Satu mansion. Tiga simpul yang harus terputus. Siapa Sang Penenun?*
 
-[▶ Mainkan Sekarang](https://yowanda.github.io/simpul-terakhir/)
+[▶ Mainkan Sekarang](https://yowanda.github.io/simpulterakhir/)
 
 ---
 
