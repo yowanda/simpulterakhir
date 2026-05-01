@@ -5,6 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="description" content="Simpul Terakhir — Post-modern psychological horror thriller. 10 karakter, 7 chapter, 25 ending, dan keputusan yang menentukan siapa pembunuhnya.">
   <meta name="theme-color" content="#0a0a0a">
+
+  <!-- Security Hardening -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com;
+    img-src 'self' data:;
+    connect-src 'self';
+    frame-ancestors 'none';
+    base-uri 'self';
+    form-action 'none';
+    object-src 'none';
+  ">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta name="referrer" content="no-referrer">
+
   <title>Simpul Terakhir</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,9 +41,68 @@
       <div class="title-menu">
         <button class="btn-main" id="btn-new-game">Permainan Baru</button>
         <button class="btn-main" id="btn-continue" style="display:none">Lanjutkan</button>
+        <button class="btn-secondary" id="btn-how-to-play">&#9881; Cara Bermain</button>
         <button class="btn-secondary" id="btn-endings-gallery">Ending: <span id="endings-count">0</span>/25</button>
       </div>
       <p class="credits">Post-modern psychological horror thriller &bull; 7 chapter &bull; 25 ending</p>
+    </div>
+  </div>
+
+  <!-- CARA BERMAIN SCREEN -->
+  <div id="screen-how-to-play" class="screen">
+    <div class="rules-container">
+      <h2 class="rules-title">&#128214; Cara Bermain</h2>
+      <p class="rules-intro">Kamu terjebak di mansion bersama 9 orang lainnya. Salah satu (atau lebih) adalah pembunuh. Selamatkan dirimu sebelum fajar.</p>
+
+      <div class="rules-section">
+        <h3>&#127917; Tujuan Permainan</h3>
+        <ul>
+          <li><strong>Sebagai Survivor:</strong> Bertahan hidup, kumpulkan petunjuk, ungkap identitas killer</li>
+          <li><strong>Sebagai Killer:</strong> Eliminasi survivor tanpa ketahuan</li>
+          <li>Kumpulkan <strong>8 dari 15 petunjuk</strong> untuk mengungkap semua killer sekaligus</li>
+        </ul>
+      </div>
+
+      <div class="rules-section">
+        <h3>&#128172; Membaca Chat</h3>
+        <ul>
+          <li><strong>Bubble hijau (kanan)</strong> = pesan kamu</li>
+          <li><strong>Bubble gelap (kiri)</strong> = pesan karakter lain</li>
+          <li><em>Teks miring di tengah</em> = aksi/kejadian singkat</li>
+          <li><strong>Notifikasi tengah</strong> = event penting (kematian, aliansi, penemuan)</li>
+        </ul>
+      </div>
+
+      <div class="rules-section">
+        <h3>&#127918; Aksi yang Bisa Dilakukan</h3>
+        <div class="rules-actions">
+          <div class="rules-action-item"><span class="ra-icon" style="color:#dfe6e9">&#128214;</span> <strong>Cerita</strong> — lanjutkan alur utama</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#c8a96e">&#128269;</span> <strong>Investigasi</strong> — periksa ruangan, cari petunjuk</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#4ecdc4">&#129309;</span> <strong>Sosial</strong> — bicara, bangun hubungan</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#7f8c8d">&#128694;</span> <strong>Pindah</strong> — pindah ke ruangan lain</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#e63946">&#9876;&#65039;</span> <strong>Konfrontasi</strong> — hadapi orang yang mencurigakan</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#e74c3c">&#9757;&#65039;</span> <strong>Tuduh</strong> — tuduh seseorang sebagai killer</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#3498db">&#11088;</span> <strong>Aliansi</strong> — ajak kerja sama</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#2ecc71">&#128737;&#65039;</span> <strong>Lindungi</strong> — lindungi orang lain</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#bdc3c7">&#128064;</span> <strong>Amati</strong> — amati gerak-gerik orang</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#9b59b6">&#128065;&#65039;</span> <strong>Siluman</strong> — menyelinap diam-diam</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#636e72">&#129296;</span> <strong>Sembunyi</strong> — bersembunyi dari bahaya</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#f39c12">&#127939;</span> <strong>Kabur</strong> — lari dari situasi berbahaya</div>
+        </div>
+      </div>
+
+      <div class="rules-section">
+        <h3>&#9888;&#65039; Tips Penting</h3>
+        <ul>
+          <li><strong>Jangan sendirian</strong> — killer hanya bisa membunuh jika kamu sendirian di ruangan</li>
+          <li><strong>Perhatikan bar Risiko/Hasil</strong> — setiap aksi punya tingkat risiko dan reward</li>
+          <li><strong>NPC bertindak mandiri</strong> — karakter lain bergerak dan mengambil keputusan sendiri</li>
+          <li><strong>Setiap pilihan punya konsekuensi</strong> — karakter bisa mati secara permanen</li>
+          <li><strong>Game auto-save</strong> — progress tersimpan otomatis</li>
+        </ul>
+      </div>
+
+      <button class="btn-main rules-back-btn" id="btn-rules-back">&#8592; Kembali</button>
     </div>
   </div>
 
