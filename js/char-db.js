@@ -221,7 +221,21 @@ const CharDB = (() => {
       { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'betray', desc: 'Insting survival mengalahkan segalanya. Arin mempertimbangkan untuk meninggalkan yang lain demi keselamatannya.' }, weight: 10 },
       // Trust-kill: Arin bisa membunuh seseorang yang dia curigai sebagai killer (jika trust sangat rendah)
       { condition: { minDeaths: 2, emotion: 'hostile', minTension: 60 }, action: { type: 'trust_kill', desc: '"AKU SUDAH MUAK DENGAN KEBOHONGAN." Arin menyerang orang yang paling dia curigai — apapun konsekuensinya.' }, weight: 20 },
-      { condition: { minDeaths: 3, emotion: 'panicked', minTension: 70 }, action: { type: 'trust_kill', desc: 'Paranoia mengambil alih. Arin tidak bisa mempercayai siapapun lagi. "Salah satu dari kalian pasti pembunuh."' }, weight: 18 }
+      { condition: { minDeaths: 3, emotion: 'panicked', minTension: 70 }, action: { type: 'trust_kill', desc: 'Paranoia mengambil alih. Arin tidak bisa mempercayai siapapun lagi. "Salah satu dari kalian pasti pembunuh."' }, weight: 18 },
+
+      // --- Broad catch-all: different for every emotion so brain ALWAYS triggers ---
+      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Arin diam-diam mencatat siapa bicara dengan siapa dan siapa yang menghindari kontak mata.' }, weight: 10 },
+      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'investigate', desc: 'Arin memeriksa ruangan, mata jurnalisnya menangkap sesuatu yang tidak terlihat oleh yang lain.' }, weight: 10 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'confront', desc: '"Ceritamu tidak konsisten." Arin menantang orang yang paling mencurigakan di ruangan.' }, weight: 10 },
+      { condition: { emotion: 'hostile' }, action: { type: 'accuse', desc: 'Arin sudah lelah bersabar. "Aku punya cukup bukti. Saatnya mengakhiri ini."' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Arin meraih tangan siapapun yang terdekat dan berlari. "PERGI DARI SINI! SEKARANG!"' }, weight: 10 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Arin mematikan lampu dan bersembunyi di balik furnitur. Napasnya tertahan.' }, weight: 12 },
+      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Keuntungan sendirian — Arin bisa memeriksa tempat ini tanpa gangguan. Recorder menyala.' }, weight: 12 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Arin memutuskan untuk bergerak. Diam di satu tempat terlalu lama itu berbahaya.' }, weight: 10 },
+      { condition: { minDanger: 30, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Kita perlu strategi. Jangan pergi sendirian — buddy system mulai sekarang." Arin mengorganisir kelompok.' }, weight: 12 },
+      { condition: { minDanger: 50, isAlone: true }, action: { type: 'hide', desc: 'Tingkat bahaya tinggi. Arin menemukan celah gelap dan menunggu sampai situasi lebih aman.' }, weight: 12 },
+      { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Arin mengajak bicara orang terdekat. Setiap percakapan bisa jadi petunjuk — atau perangkap.' }, weight: 8 },
+      { condition: {}, action: { type: 'observe', desc: 'Arin mengamati sekitarnya. Setiap detail bisa jadi penting — atau jadi perbedaan antara hidup dan mati.' }, weight: 6 }
     ],
 
     // ========== NIKO — The Mastermind (as survivor) ==========
@@ -274,7 +288,20 @@ const CharDB = (() => {
       { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Niko menghilang ke ruangan rahasia, meninggalkan yang lain. Survival of the fittest.' }, weight: 10 },
       // Trust-kill: Niko kalkulatif — membunuh dengan dingin jika trust habis
       { condition: { minDeaths: 2, emotion: 'suspicious', minTension: 50 }, action: { type: 'trust_kill', desc: '"Aku sudah menghitung probabilitasnya. Dan kau terlalu mencurigakan untuk dibiarkan hidup." Niko menyerang dengan presisi dingin.' }, weight: 20 },
-      { condition: { minDeaths: 3, emotion: 'hostile' }, action: { type: 'trust_kill', desc: '"Mansionku. Aturanku. Dan kau bukan bagian dari solusinya." Niko mengeliminasi orang yang paling dia curigai.' }, weight: 18 }
+      { condition: { minDeaths: 3, emotion: 'hostile' }, action: { type: 'trust_kill', desc: '"Mansionku. Aturanku. Dan kau bukan bagian dari solusinya." Niko mengeliminasi orang yang paling dia curigai.' }, weight: 18 },
+
+      // --- Broad catch-all ---
+      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'manipulate', desc: 'Niko menyebar informasi setengah benar ke kelompok. Membuat mereka saling curiga — sementara dia mengamati.' }, weight: 10 },
+      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Niko membuka panel tersembunyi di dinding. Mansion ini penuh rahasia — dan dia tahu semuanya.' }, weight: 12 },
+      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'plan', desc: 'Niko diam-diam menyusun aliansi. "Kita butuh satu sama lain — untuk saat ini." Kata-kata yang diperhitungkan.' }, weight: 10 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Niko bergerak melalui koridor yang hanya dia tahu. Keuntungan tuan rumah.' }, weight: 10 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'manipulate', desc: '"Menarik..." Niko melempar komentar ambigu yang membuat dua orang saling curiga.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'scout', desc: 'Niko menyusuri lorong gelap dengan percaya diri. Rumahnya, teritori-nya.' }, weight: 10 },
+      { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'confront', desc: '"Cukup permainan. Aku tahu apa yang kau sembunyikan." Niko menanggalkan topeng sopannya.' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Niko masuk ke ruang rahasia kakeknya. Tempat aman yang tidak ada di blueprints resmi.' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Untuk pertama kalinya, topeng Niko runtuh sepenuhnya. Dia berlari tanpa melihat ke belakang.' }, weight: 10 },
+      { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Niko mengajak ngobrol dengan senyum diplomatisnya. Setiap kata diukur, setiap reaksi dicatat.' }, weight: 8 },
+      { condition: {}, action: { type: 'plan', desc: 'Niko berpikir. Menimbang opsi. Menghitung langkah — selalu tiga langkah di depan yang lain.' }, weight: 6 }
     ],
 
     // ========== SERA — The Profiler ==========
@@ -329,7 +356,19 @@ const CharDB = (() => {
       { condition: { minDanger: 50, isAlone: false }, action: { type: 'ambush', desc: 'Sera menyusun strategi psikologis. "Jangan lari dari predator. Buat dia merasa diburu."' }, weight: 16 },
       { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Sera melihat peluang. Mengorbankan satu orang untuk menyelamatkan dirinya dan Arin. Keputusan yang dingin.' }, weight: 10 },
       // Trust-kill: Sera membaca tanda-tanda dan bertindak jika yakin seseorang berbahaya
-      { condition: { minDeaths: 2, emotion: 'hostile', minTension: 60 }, action: { type: 'trust_kill', desc: '"Profilmu konsisten dengan seorang pembunuh. Maaf — tapi aku tidak bisa mengambil risiko." Sera bertindak berdasarkan analisisnya.' }, weight: 18 }
+      { condition: { minDeaths: 2, emotion: 'hostile', minTension: 60 }, action: { type: 'trust_kill', desc: '"Profilmu konsisten dengan seorang pembunuh. Maaf — tapi aku tidak bisa mengambil risiko." Sera bertindak berdasarkan analisisnya.' }, weight: 18 },
+
+      // --- Broad catch-all ---
+      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Sera menganalisis dinamika kelompok — siapa memimpin, siapa mengikuti, siapa yang terlalu diam.' }, weight: 10 },
+      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Sera menulis profil psikologis lengkap setiap orang. Pola mulai terbentuk.' }, weight: 12 },
+      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'observe', desc: '"Bahasa tubuh kalian berubah." Sera memperhatikan pergeseran halus dalam kelompok.' }, weight: 10 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Sera bergerak ke posisi yang lebih aman. Analisis butuh ketenangan.' }, weight: 10 },
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'investigate', desc: 'Sera meninjau ulang catatannya. Satu nama terus muncul di setiap pola anomali.' }, weight: 12 },
+      { condition: { emotion: 'hostile' }, action: { type: 'accuse', desc: '"Cukup data. Cukup analisis. Saatnya konfrontasi langsung." Sera berdiri.' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'guard', desc: 'Sera berdiri di dekat orang yang paling rentan. Insting melindungi mengalahkan ketakutan.' }, weight: 10 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Sera menghilang ke sudut tergelap. Jantungnya berdebar, tapi otaknya masih bekerja.' }, weight: 12 },
+      { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Sera mengajak bicara seseorang — bukan basa-basi, tapi probing pertanyaan yang terukur.' }, weight: 8 },
+      { condition: {}, action: { type: 'observe', desc: 'Sera mengamati. Setiap gerakan, setiap ekspresi — data untuk profil yang akan menentukan segalanya.' }, weight: 6 }
     ],
 
     // ========== JUNO — The Rebel ==========
@@ -382,7 +421,21 @@ const CharDB = (() => {
       // Trust-kill: Juno yang impulsif — paling mungkin membunuh karena ketidakpercayaan
       { condition: { minDeaths: 1, emotion: 'suspicious', minTension: 40 }, action: { type: 'trust_kill', desc: '"GUE UDAH TAU LO DALANGNYA!" Juno menyerang tanpa pikir panjang — impulsif dan mematikan.' }, weight: 22 },
       { condition: { minDeaths: 2, emotion: 'hostile' }, action: { type: 'trust_kill', desc: 'Juno meledak. "GUE NGGAK PERCAYA SIAPAPUN DI SINI." Tinju melayang sebelum siapapun sempat bereaksi.' }, weight: 24 },
-      { condition: { minDeaths: 1, emotion: 'panicked' }, action: { type: 'trust_kill', desc: 'Ketakutan berubah jadi kemarahan. Juno menyerang orang terdekat. "LO PASTI SALAH SATUNYA!"' }, weight: 20 }
+      { condition: { minDeaths: 1, emotion: 'panicked' }, action: { type: 'trust_kill', desc: 'Ketakutan berubah jadi kemarahan. Juno menyerang orang terdekat. "LO PASTI SALAH SATUNYA!"' }, weight: 20 },
+
+      // --- Broad catch-all ---
+      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Juno memeriksa jendela dan pintu. "Kalau ada jalan keluar, gue yang pertama nemu."' }, weight: 10 },
+      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'move', desc: 'Juno jalan-jalan sendirian, gelisah. Diam di satu tempat bukan gayanya.' }, weight: 12 },
+      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'confront', desc: '"Gue nggak suka cara lo ngeliatin gue." Juno menatap tajam orang terdekat.' }, weight: 10 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'scout', desc: 'Juno bergerak seperti kucing — cepat, tanpa suara, mata siaga ke segala arah.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'confront', desc: '"ADA YANG MAU NGOMONG JUJUR? Karena gue bakal mulai nonjok orang." Juno mengintimidasi.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'investigate', desc: 'Juno memeriksa setiap laci, setiap celah. Tangan kasarnya merobek penutup furniture.' }, weight: 10 },
+      { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'guard', desc: 'Juno mengambil posisi bertahan, badan bergetar karena adrenalin. "Lewat gue dulu."' }, weight: 12 },
+      { condition: { emotion: 'hostile', isAlone: true }, action: { type: 'ambush', desc: 'Juno menyiapkan jebakan dari furniture berat. Siapapun yang masuk ruangan ini akan kena.' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: '"LARI! SEKARANG!" Juno menarik siapapun yang terdekat dan berlari.' }, weight: 10 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Juno menyembunyikan diri di balik lemari berat. Napasnya berat, tinju terkepal.' }, weight: 12 },
+      { condition: { isAlone: false }, action: { type: 'socialize', desc: '"Lo oke?" Juno bertanya dengan kasar, tapi perhatiannya tulus. Street kid yang peduli.' }, weight: 8 },
+      { condition: {}, action: { type: 'observe', desc: 'Juno gelisah. Matanya menyapu ruangan, mencari ancaman — atau jalan keluar.' }, weight: 6 }
     ],
 
     // ========== VIRA — The Survivor ==========
@@ -430,7 +483,20 @@ const CharDB = (() => {
       { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'ambush', desc: 'Vira mengatur jebakan di lorong rahasia. "Dia pasti lewat sini. Aku tahu cara berpikirnya."' }, weight: 16 },
       { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Vira menutup pintu lorong rahasia — dari dalam. "Maaf. Aku sudah pernah hampir mati. Tidak lagi."' }, weight: 12 },
       // Trust-kill: Vira yang sudah trauma — bertindak defensif jika merasa terancam
-      { condition: { minDeaths: 2, emotion: 'panicked', minTension: 55 }, action: { type: 'trust_kill', desc: '"Aku sudah pernah hampir mati di sini. TIDAK LAGI." Vira menyerang orang yang paling dia curigai — insting bertahan hidup yang gelap.' }, weight: 18 }
+      { condition: { minDeaths: 2, emotion: 'panicked', minTension: 55 }, action: { type: 'trust_kill', desc: '"Aku sudah pernah hampir mati di sini. TIDAK LAGI." Vira menyerang orang yang paling dia curigai — insting bertahan hidup yang gelap.' }, weight: 18 },
+
+      // --- Broad catch-all ---
+      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Vira duduk di sudut, memeluk lututnya. Matanya tidak pernah lepas dari pintu keluar.' }, weight: 10 },
+      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Vira memeriksa lorong-lorong yang dia ingat dari terakhir kali. Beberapa sudah berubah.' }, weight: 12 },
+      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'hide', desc: 'Vira menarik diri ke sudut terjauh ruangan. Pengalaman mengajarkannya untuk tidak menonjol.' }, weight: 10 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Vira bergerak tanpa suara melalui lorong yang familiar. Tubuhnya ingat meskipun pikirannya menolak.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'observe', desc: 'Vira memperhatikan orang-orang dengan mata yang sudah melihat terlalu banyak kematian.' }, weight: 10 },
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'scout', desc: 'Vira memeriksa tanda-tanda bahaya di sepanjang lorong. Déjà vu yang mengerikan.' }, weight: 12 },
+      { condition: { emotion: 'hostile' }, action: { type: 'confront', desc: '"Aku sudah melewati ini. Aku tahu bagaimana ini berakhir. Dan kau TIDAK AKAN membunuhku." Vira berapi-api.' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'PTSD menguasai Vira. Dia berlari tanpa arah, dikejar bayangan dari enam bulan lalu.' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Vira meringkuk di celah sempit yang gelap. Tempat yang sama di mana dia bersembunyi terakhir kali.' }, weight: 14 },
+      { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Vira berbisik ke orang terdekat. "Jangan tinggalkan aku sendirian. Tolong."' }, weight: 8 },
+      { condition: {}, action: { type: 'hide', desc: 'Vira mencari tempat tersembunyi. Bertahan hidup berarti tidak terlihat.' }, weight: 6 }
     ],
 
     // ========== REZA — The Detective ==========
@@ -481,7 +547,21 @@ const CharDB = (() => {
       { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Reza mempertimbangkan opsi terburuk. Mengorbankan satu orang sebagai umpan. Keputusan yang hanya bisa diambil veteran.' }, weight: 8 },
       // Trust-kill: Reza detektif — jika bukti cukup kuat, dia "mengeksekusi" tersangka utama
       { condition: { minDeaths: 2, emotion: 'hostile', minTension: 55 }, action: { type: 'trust_kill', desc: '"Bukti cukup. Aku tidak butuh pengadilan di sini." Reza mengeksekusi keadilan sendiri — detektif yang sudah melampaui batas hukum.' }, weight: 18 },
-      { condition: { minDeaths: 3, emotion: 'suspicious', minTension: 65 }, action: { type: 'trust_kill', desc: 'Reza menarik napas. Dua puluh tahun di kepolisian mengajarkan satu hal: kadang kau harus bertindak sebelum bukti lengkap. Dan malam ini... dia bertindak.' }, weight: 16 }
+      { condition: { minDeaths: 3, emotion: 'suspicious', minTension: 65 }, action: { type: 'trust_kill', desc: 'Reza menarik napas. Dua puluh tahun di kepolisian mengajarkan satu hal: kadang kau harus bertindak sebelum bukti lengkap. Dan malam ini... dia bertindak.' }, weight: 16 },
+
+      // --- Broad catch-all ---
+      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Reza memeriksa ruangan secara metodis. "Standard sweep — cek setiap sudut, setiap celah."' }, weight: 10 },
+      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Reza mengeluarkan buku catatan usangnya. Menulis timeline, menandai inkonsistensi.' }, weight: 12 },
+      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'observe', desc: 'Reza memperhatikan setiap orang. Siapa yang terlalu tenang. Siapa yang terlalu gelisah.' }, weight: 10 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'scout', desc: 'Reza melakukan patrol rutin. Dua puluh tahun kebiasaan polisi tidak bisa dihentikan.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'confront', desc: '"Alibimu tidak cocok dengan timeline. Jelaskan." Reza menginterogasi dengan dingin.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'investigate', desc: 'Reza menyusun puzzle di kepalanya. Setiap keping bukti perlahan membentuk gambar.' }, weight: 10 },
+      { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'accuse', desc: '"Cukup. Aku punya cukup bukti." Reza berdiri dengan otoritas yang hanya dimiliki mantan polisi.' }, weight: 12 },
+      { condition: { emotion: 'hostile', isAlone: true }, action: { type: 'ambush', desc: 'Reza menyiapkan posisi. Detektif tua tahu cara mengatur penyergapan.' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'guard', desc: 'Reza menarik senjata improvisasi. "Di belakangku. SEKARANG." Insting protektif polisi.' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Reza menemukan posisi defensif — punggung ke dinding, mata ke pintu. Training yang tidak pernah hilang.' }, weight: 10 },
+      { condition: { isAlone: false }, action: { type: 'socialize', desc: '"Ceritakan padaku apa yang kau lihat." Reza menginterogasi dengan halus — seperti ngobrol biasa, tapi setiap jawaban dicatat.' }, weight: 8 },
+      { condition: {}, action: { type: 'investigate', desc: 'Reza memeriksa sekitar. Insting detektif tidak pernah istirahat.' }, weight: 6 }
     ],
 
     // ========== LANA — The Puppeteer (as survivor, if not killer) ==========
@@ -515,7 +595,20 @@ const CharDB = (() => {
       { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Lana menuju lorong yang sepi. Keahliannya membaca narasi membawanya ke tempat yang belum dijelajahi.', moveTo: 'lorong_rahasia' }, weight: 14 },
       { condition: { nearbyIncludes: 'sera', emotion: 'wary' }, action: { type: 'socialize', desc: '"Sera, gabungkan profilingmu dengan intuisi naratifku. Pembunuh ini punya pola — dan aku tahu pola cerita."' }, weight: 16 },
       // Trust-kill: Lana manipulatif — membunuh sambil berpura-pura itu self-defense
-      { condition: { minDeaths: 2, emotion: 'hostile', minTension: 50 }, action: { type: 'trust_kill', desc: '"Kau plot twist terburuk dalam ceritaku." Lana menyerang dengan tenang — membunuh sambil tersenyum. "Self-defense, tentu saja."' }, weight: 20 }
+      { condition: { minDeaths: 2, emotion: 'hostile', minTension: 50 }, action: { type: 'trust_kill', desc: '"Kau plot twist terburuk dalam ceritaku." Lana menyerang dengan tenang — membunuh sambil tersenyum. "Self-defense, tentu saja."' }, weight: 20 },
+
+      // --- Broad catch-all ---
+      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'manipulate', desc: 'Lana menyebarkan "gosip" strategis. Setiap kata dirancang untuk memecah aliansi.' }, weight: 10 },
+      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Lana menulis. Bukan novel — tapi catatan tentang semua orang. Kelemahan mereka. Ketakutan mereka.' }, weight: 12 },
+      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'observe', desc: 'Lana mengamati dengan senyum tipis. Setiap interaksi bisa jadi chapter berikutnya.' }, weight: 10 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Lana menghilang dari kelompok. Karakter utama tidak pernah tinggal di satu tempat terlalu lama.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'manipulate', desc: '"Oh? Kau tidak tahu? Menarik." Lana menjatuhkan informasi palsu dengan timing sempurna.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'plan', desc: 'Lana menulis skenario. Plot A, B, C — setiap orang punya peran, dan dia yang memegang naskah.' }, weight: 10 },
+      { condition: { emotion: 'hostile' }, action: { type: 'confront', desc: '"Plot twist, sayang. Villain sebenarnya bukan aku." Lana mengungkap kartu terakhirnya.' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Untuk pertama kalinya, Lana kehilangan kontrol naratif. Dia berlari tanpa rencana.' }, weight: 10 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Lana bersembunyi di kegelapan. Penulis horor yang akhirnya hidup di dalam novelnya sendiri.' }, weight: 12 },
+      { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Lana mengobrol dengan charm yang dipelajari. Setiap pertanyaan punya motif tersembunyi.' }, weight: 8 },
+      { condition: {}, action: { type: 'observe', desc: 'Lana mengamati. Menyerap. Merencanakan. Seperti penulis mengamati karakternya.' }, weight: 6 }
     ],
 
     // ========== DIMAS — The Operator (as survivor, if not killer) ==========
@@ -550,7 +643,20 @@ const CharDB = (() => {
       { condition: { minDeaths: 3, hasClue: true }, action: { type: 'accuse', desc: 'Dimas berdiri tenang. "Berdasarkan analisis forensik — waktu kematian, senjata, akses — pelakunya sudah jelas."' }, weight: 22 },
       { condition: { nearbyIncludes: 'arin', hasClue: true }, action: { type: 'share_clue', desc: '"Arin, sebagai jurnalis kau perlu fakta forensik ini. Ini bukti fisik yang tak terbantahkan."', target: 'arin' }, weight: 16 },
       // Trust-kill: Dimas yang klinis — membunuh berdasarkan "analisis forensik" yang salah sasaran
-      { condition: { minDeaths: 2, emotion: 'suspicious', minTension: 55 }, action: { type: 'trust_kill', desc: '"Pola luka, metode, timing — analisis forensikku menunjuk padamu." Dimas bertindak dengan presisi klinis — tapi kali ini salah sasaran.' }, weight: 18 }
+      { condition: { minDeaths: 2, emotion: 'suspicious', minTension: 55 }, action: { type: 'trust_kill', desc: '"Pola luka, metode, timing — analisis forensikku menunjuk padamu." Dimas bertindak dengan presisi klinis — tapi kali ini salah sasaran.' }, weight: 18 },
+
+      // --- Broad catch-all ---
+      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Dimas mengamati setiap orang dengan detachment klinis. Data. Pola. Probabilitas.' }, weight: 10 },
+      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Dimas memeriksa ruangan secara forensik. Sidik jari, DNA, pola darah — otaknya tidak pernah berhenti menganalisis.' }, weight: 12 },
+      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'observe', desc: 'Dimas memperhatikan nadi seseorang dari kejauhan. Detak jantung tidak bisa bohong.' }, weight: 10 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Dimas bergerak tanpa suara. Mahasiswa forensik yang terbiasa berada di dekat kematian.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'confront', desc: '"Pupilmu melebar. Cortisol tinggi. Kau berbohong." Dimas membaca fisiologi kebohongan.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'investigate', desc: 'Dimas memeriksa ulang bukti. Setiap detail forensik punya cerita. Dia hanya perlu mendengarkan.' }, weight: 10 },
+      { condition: { emotion: 'hostile' }, action: { type: 'confront', desc: '"Aku tahu cara kerja racun, senjata, dan strangulasi. Jangan uji kesabaranku." Dimas mengancam dengan tenang.' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'hide', desc: 'Bahkan dalam panik, Dimas bergerak dengan efisiensi. Menemukan tempat aman. Mengamankan perimeter.' }, weight: 10 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Dimas menemukan posisi defensif yang optimal secara taktis. Selalu kalkutatif, bahkan dalam ketakutan.' }, weight: 12 },
+      { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Dimas berbicara dengan nada datar. "Status lukamu?" Perhatian yang terasa seperti autopsi — tapi tulus.' }, weight: 8 },
+      { condition: {}, action: { type: 'observe', desc: 'Dimas berdiri diam. Mengamati. Menganalisis. Ketenangan yang membuat orang lain tidak nyaman.' }, weight: 6 }
     ],
 
     // ========== KIRA — The Hacker ==========
@@ -595,7 +701,20 @@ const CharDB = (() => {
       { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'ambush', desc: 'Kira memasang trip-wire digital di koridor — alarm otomatis jika seseorang lewat.' }, weight: 16 },
       { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Kira mengunci semua pintu dari laptop — termasuk pintu yang mengurung temannya. "Maaf. Aku butuh waktu."' }, weight: 10 },
       // Trust-kill: Kira paranoid — menyerang jika data "membuktikan" seseorang berbahaya
-      { condition: { minDeaths: 2, emotion: 'panicked', minTension: 60 }, action: { type: 'trust_kill', desc: '"Data tidak bohong. Log CCTV, posisi GPS, timeline — semuanya menunjuk ke kau." Kira menyerang berdasarkan bukti digitalnya.' }, weight: 16 }
+      { condition: { minDeaths: 2, emotion: 'panicked', minTension: 60 }, action: { type: 'trust_kill', desc: '"Data tidak bohong. Log CCTV, posisi GPS, timeline — semuanya menunjuk ke kau." Kira menyerang berdasarkan bukti digitalnya.' }, weight: 16 },
+
+      // --- Broad catch-all ---
+      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Kira scan jaringan WiFi. "Hm, ada device baru yang terkoneksi... siapa yang bawa phone ke sini?"' }, weight: 10 },
+      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Kira deep-dive ke server mansion. Log file, database, hidden directories — semuanya terbuka.' }, weight: 14 },
+      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'observe', desc: 'Kira memonitor feed CCTV dari laptopnya. "Ada yang bergerak di koridor barat."' }, weight: 10 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'investigate', desc: 'Kira meng-crack enkripsi file terkunci. Setiap password punya pattern — dan dia ahlinya.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'confront', desc: '"Lo punya dua HP. Yang satu burner phone. Mau jelasin?" Kira menunjukkan bukti digital.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'investigate', desc: 'Kira trace komunikasi keluar mansion. Seseorang mengirim pesan — dan dia tahu ke mana.' }, weight: 12 },
+      { condition: { emotion: 'hostile' }, action: { type: 'accuse', desc: '"Check this out." Kira membuka log yang di-recover. "Timestamp, lokasi, siapa yang masuk ruangan apa. Game over."' }, weight: 12 },
+      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Kira menutup laptop dan lari. "SERVER DOWN. SISTEM OFFLINE. KITA HARUS PERGI!"' }, weight: 10 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Kira bersembunyi dengan laptop masih terbuka. Bahkan dalam panik, dia tetap monitoring.' }, weight: 12 },
+      { condition: { isAlone: false }, action: { type: 'socialize', desc: '"Bro, phone lo bisa dipake hotspot? Aku perlu koneksi ke luar." Kira selalu mikirin tech solution.' }, weight: 8 },
+      { condition: {}, action: { type: 'investigate', desc: 'Kira nge-type di laptop. Mencari backdoor, exploit, apa saja yang bisa kasih keuntungan digital.' }, weight: 6 }
     ],
 
     // ========== FARAH — The Heiress ==========
@@ -641,7 +760,20 @@ const CharDB = (() => {
       { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'scout', desc: 'Farah menyusuri lorong yang dibangun kakeknya. Pewaris yang akhirnya menggunakan pengetahuan keluarganya.' }, weight: 14 },
       { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Farah masuk ke safe room dan mengunci pintu dari dalam. "Maaf. Uang tidak bisa membeli keberanian."' }, weight: 12 },
       // Trust-kill: Farah yang ketakutan — menyerang jika merasa nyawanya terancam
-      { condition: { minDeaths: 3, emotion: 'panicked', minTension: 65 }, action: { type: 'trust_kill', desc: '"JANGAN MENDEKAT!" Farah meraih tongkat golf dan menyerang. Ketakutan mengubah pewaris menjadi pembunuh.' }, weight: 14 }
+      { condition: { minDeaths: 3, emotion: 'panicked', minTension: 65 }, action: { type: 'trust_kill', desc: '"JANGAN MENDEKAT!" Farah meraih tongkat golf dan menyerang. Ketakutan mengubah pewaris menjadi pembunuh.' }, weight: 14 },
+
+      // --- Broad catch-all ---
+      { condition: { emotion: 'calm', isAlone: false }, action: { type: 'socialize', desc: '"Aku bisa membayar siapapun untuk membantu." Farah menggunakan satu-satunya senjata yang dia tahu — uang.' }, weight: 10 },
+      { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Farah memeriksa dokumen keluarga yang tersebar di meja. Rahasia Wardhana-Aldridge tertulis di sini.' }, weight: 12 },
+      { condition: { emotion: 'wary', isAlone: false }, action: { type: 'socialize', desc: '"Kita butuh strategi. Aku punya koneksi — kalau kita bisa keluar." Farah mencoba bernegosiasi.' }, weight: 10 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'hide', desc: 'Farah mencari tempat aman. Privilege mengajarkannya untuk selalu punya safe room.' }, weight: 12 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'observe', desc: 'Farah memperhatikan orang-orang. Bisnis mengajarkan cara membaca lawan — siapa yang bisa dipercaya, siapa yang tidak.' }, weight: 10 },
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'investigate', desc: 'Farah membuka brankas tersembunyi. Setiap keluarga kaya punya rahasia — dan dia tahu di mana menyimpannya.' }, weight: 12 },
+      { condition: { emotion: 'hostile' }, action: { type: 'confront', desc: '"Aku TIDAK akan mati di sini. Kau tahu siapa aku." Farah menggunakan otoritasnya yang terakhir.' }, weight: 10 },
+      { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Farah meraih tangan siapapun. "BAYAR BERAPAPUN — BAWA AKU KELUAR!"' }, weight: 10 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Farah menangis di sudut. Semua uang di dunia tidak bisa membeli keselamatan di sini.' }, weight: 14 },
+      { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Farah menawarkan "kontrak" — perlindungan sebagai imbalan informasi. Bisnis bahkan di ambang kematian.' }, weight: 8 },
+      { condition: {}, action: { type: 'hide', desc: 'Farah mencari tempat teraman yang bisa ditemukan. Bertahan hidup dengan privilege terakhirnya.' }, weight: 6 }
     ]
   };
 
@@ -692,7 +824,13 @@ const CharDB = (() => {
       // === SIASAT LANJUTAN: Cari target terisolasi ===
       { condition: { emotion: 'stalking', isAlone: true }, action: { type: 'move', desc: 'Lana membuntuti survivor yang sendirian — predator sabar yang menunggu momen sempurna.' }, weight: 20 },
       { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'manipulate', desc: '"Aku dengar suara aneh di sayap timur." Lana membuat alasan agar survivor berpencar.' }, weight: 22 },
-      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'distract', desc: 'Lana berpura-pura menemukan sesuatu penting. "LIHAT INI!" — mengalihkan perhatian dari rekan killernya.' }, weight: 20 }
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'distract', desc: 'Lana berpura-pura menemukan sesuatu penting. "LIHAT INI!" — mengalihkan perhatian dari rekan killernya.' }, weight: 20 },
+
+      // --- Broad catch-all killer ---
+      { condition: { emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Lana tersenyum dan bersosialisasi. Serigala di antara domba.' }, weight: 8 },
+      { condition: { emotion: 'hunting' }, action: { type: 'move', desc: 'Lana mencari posisi strategis — dekat target, jauh dari saksi.' }, weight: 8 },
+      { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Saatnya. Lana bergerak — dalang yang mengeksekusi bab terakhir novelnya.' }, weight: 10 },
+      { condition: {}, action: { type: 'observe', desc: 'Lana mengamati. Setiap orang adalah karakter dalam ceritanya — dan dia yang menulis endingnya.' }, weight: 5 }
     ],
 
     dimas: [
@@ -739,7 +877,13 @@ const CharDB = (() => {
       // === SIASAT LANJUTAN: Pisahkan kelompok, cari target sendirian ===
       { condition: { emotion: 'stalking', isAlone: true }, action: { type: 'move', desc: 'Dimas bergerak diam-diam mencari survivor yang terpisah dari kelompok.' }, weight: 18 },
       { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'distract', desc: 'Dimas berpura-pura mendengar sesuatu. "Ada suara dari basement..." — mengalihkan perhatian kelompok.' }, weight: 20 },
-      { condition: { isAlone: false, minDeaths: 1 }, action: { type: 'manipulate', desc: 'Dimas memanfaatkan rasa takut. "Siapa yang terakhir bersama korban? Kita perlu interogasi terpisah."' }, weight: 22 }
+      { condition: { isAlone: false, minDeaths: 1 }, action: { type: 'manipulate', desc: 'Dimas memanfaatkan rasa takut. "Siapa yang terakhir bersama korban? Kita perlu interogasi terpisah."' }, weight: 22 },
+
+      // --- Broad catch-all killer ---
+      { condition: { emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Dimas berdiri diam, mengamati. Ketenangan klinis yang menyembunyikan predator.' }, weight: 8 },
+      { condition: { emotion: 'hunting' }, action: { type: 'move', desc: 'Dimas bergerak tanpa suara. Mencari target yang terpisah dari kelompok.' }, weight: 8 },
+      { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Dimas bertindak dengan presisi bedah. Tidak ada emosi. Hanya prosedur.' }, weight: 10 },
+      { condition: {}, action: { type: 'observe', desc: 'Dimas mengamati. Menghitung. Menunggu momen yang tepat.' }, weight: 5 }
     ],
 
     niko: [
@@ -781,7 +925,13 @@ const CharDB = (() => {
       // === SIASAT LANJUTAN: Kontrol infrastruktur mansion ===
       { condition: { emotion: 'stalking', isAlone: true }, action: { type: 'sabotage', desc: 'Niko mematikan lampu di koridor — dalam kegelapan, kelompok terpisah.' }, weight: 20 },
       { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'distract', desc: '"ADA YANG MENCURIGAKAN DI SAYAP UTARA!" Niko mengarahkan kelompok ke arah berbeda.' }, weight: 22 },
-      { condition: { isAlone: false, minDeaths: 1 }, action: { type: 'manipulate', desc: 'Niko menggunakan otoritas tuan rumah. "Aku sarankan kita berpencar — aku tahu mansion ini." Jebakan sempurna.' }, weight: 24 }
+      { condition: { isAlone: false, minDeaths: 1 }, action: { type: 'manipulate', desc: 'Niko menggunakan otoritas tuan rumah. "Aku sarankan kita berpencar — aku tahu mansion ini." Jebakan sempurna.' }, weight: 24 },
+
+      // --- Broad catch-all killer ---
+      { condition: { emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Niko tersenyum. Tuan rumah yang sempurna. Tidak ada yang curiga.' }, weight: 8 },
+      { condition: { emotion: 'hunting' }, action: { type: 'sabotage', desc: 'Niko memanipulasi infrastruktur mansion — lampu, pintu, alarm. Rumahnya, senjatanya.' }, weight: 8 },
+      { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Niko menunjukkan wajah aslinya. Predator yang merencanakan ini sejak awal.' }, weight: 10 },
+      { condition: {}, action: { type: 'plan', desc: 'Niko berpikir. Menghitung. Mansion ini adalah papan caturnya — dan dia rajanya.' }, weight: 5 }
     ]
   };
 
