@@ -13,6 +13,14 @@ const Engine = (() => {
 
   const CHARACTERS = ['arin', 'niko', 'sera', 'juno', 'vira'];
   const CHAR_DISPLAY = { arin: 'Arin', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira' };
+  const CHAR_PORTRAITS = { arin: 'img/arin.png', niko: 'img/niko.png', sera: 'img/sera.png', juno: 'img/juno.png', vira: 'img/vira.png' };
+  const CHAR_TAGLINES = {
+    arin: 'Protagonis — penjaga keseimbangan kelompok',
+    niko: 'Pemimpin ambisius — menyimpan rahasia warisan kakek',
+    sera: 'Sensitif & intuitif — merasakan kebenaran yang lain abaikan',
+    juno: 'Penyimpan rasa bersalah — topeng humornya menyembunyikan luka',
+    vira: 'Misterius — kembali dari hutan sebagai seseorang yang berbeda'
+  };
 
   function defaultState(difficulty) {
     return {
@@ -185,7 +193,14 @@ const Engine = (() => {
   // ---- Text Rendering ----
   function renderText(html, container, callback) {
     if (typingTimeout) { clearTimeout(typingTimeout); typingTimeout = null; }
-    container.innerHTML = html;
+    // Inject character portrait thumbnails next to speaker names
+    const enhancedHtml = html.replace(/<span class="speaker (\w+)">/g, (match, charName) => {
+      if (CHAR_PORTRAITS[charName]) {
+        return `<img class="speaker-portrait" src="${CHAR_PORTRAITS[charName]}" alt="${charName}"><span class="speaker ${charName}">`;
+      }
+      return match;
+    });
+    container.innerHTML = enhancedHtml;
     if (callback) callback();
   }
 
@@ -296,8 +311,13 @@ const Engine = (() => {
       const awarenessBar = name === 'arin' ? `<div class="char-awareness">Kewaspadaan: ${state.awareness.arin}%<div class="char-rel-bar"><div class="char-rel-fill awareness" style="width:${state.awareness.arin}%"></div></div></div>` : '';
 
       div.innerHTML = `
-        <div class="char-name speaker ${name}">${displayName}</div>
-        <div class="char-status ${statusClass}">${statusLabel}</div>
+        <div class="char-header">
+          <img class="char-portrait" src="${CHAR_PORTRAITS[name]}" alt="${displayName}" loading="lazy">
+          <div class="char-info">
+            <div class="char-name speaker ${name}">${displayName}</div>
+            <div class="char-status ${statusClass}">${statusLabel}</div>
+          </div>
+        </div>
         ${awarenessBar}
         ${alive ? relHtml : ''}
       `;
@@ -314,6 +334,130 @@ const Engine = (() => {
       `;
       container.appendChild(entityDiv);
     }
+  }
+
+  // ---- Character Introduction Screen ----
+  function renderCharacterIntro() {
+    const container = $('characters-grid');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    if (typeof CHARACTER_PROFILES === 'undefined') {
+      // fallback: skip to game
+      showScreen('screen-game');
+      updateChapterIndicator();
+      initParticles();
+      renderNode('prologue_start');
+      return;
+    }
+
+    let currentFocus = -1;
+    
+    CHARACTERS.forEach((name, idx) => {
+      const profile = CHARACTER_PROFILES[name];
+      if (!profile) return;
+      
+      const card = document.createElement('div');
+      card.className = 'char-intro-card';
+      card.style.animationDelay = (idx * 0.15) + 's';
+      card.dataset.char = name;
+      
+      card.innerHTML = `
+        <div class="char-intro-portrait-wrap">
+          <img class="char-intro-portrait" src="${profile.portrait}" alt="${profile.name}" loading="lazy">
+          <div class="char-intro-glow" style="background:${profile.color}"></div>
+        </div>
+        <div class="char-intro-name">${profile.name}</div>
+        <div class="char-intro-role">${profile.role}</div>
+      `;
+      
+      card.addEventListener('click', () => {
+        if (currentFocus === idx) {
+          closeCharDetail();
+          currentFocus = -1;
+          return;
+        }
+        currentFocus = idx;
+        showCharDetail(profile);
+      });
+      
+      container.appendChild(card);
+    });
+  }
+
+  function showCharDetail(profile) {
+    let modal = $('char-detail-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'char-detail-modal';
+      modal.className = 'char-detail-modal';
+      document.body.appendChild(modal);
+    }
+    
+    const traitsHtml = profile.traits.map(t => `<span class="char-trait">${t}</span>`).join('');
+    
+    let relHtml = '';
+    if (profile.relationships) {
+      Object.entries(profile.relationships).forEach(([key, desc]) => {
+        const relName = CHARACTER_PROFILES[key] ? CHARACTER_PROFILES[key].name : key;
+        const relPortrait = CHARACTER_PROFILES[key] ? CHARACTER_PROFILES[key].portrait : '';
+        relHtml += `
+          <div class="char-rel-entry">
+            <img class="char-rel-portrait" src="${relPortrait}" alt="${relName}">
+            <div class="char-rel-detail">
+              <strong>${relName}</strong>
+              <p>${desc}</p>
+            </div>
+          </div>
+        `;
+      });
+    }
+    
+    modal.innerHTML = `
+      <div class="char-detail-content" style="border-color:${profile.color}">
+        <button class="char-detail-close" onclick="document.getElementById('char-detail-modal').classList.remove('active')">&times;</button>
+        <div class="char-detail-header">
+          <img class="char-detail-portrait" src="${profile.portrait}" alt="${profile.name}">
+          <div class="char-detail-info">
+            <h2 class="char-detail-name" style="color:${profile.color}">${profile.fullName}</h2>
+            <div class="char-detail-role">${profile.role}</div>
+            <div class="char-detail-age">Usia: ${profile.age} tahun</div>
+            <div class="char-detail-quote">"${profile.quote.replace(/"/g, '')}"</div>
+          </div>
+        </div>
+        <div class="char-detail-section">
+          <h3>Penampilan</h3>
+          <p>${profile.appearance}</p>
+        </div>
+        <div class="char-detail-section">
+          <h3>Kepribadian</h3>
+          <p>${profile.personality}</p>
+        </div>
+        <div class="char-detail-section">
+          <h3>Latar Belakang</h3>
+          <p>${profile.backstory}</p>
+        </div>
+        <div class="char-detail-section">
+          <h3>Sifat Utama</h3>
+          <div class="char-traits-list">${traitsHtml}</div>
+        </div>
+        <div class="char-detail-section">
+          <h3>Kelemahan</h3>
+          <p class="char-weakness">${profile.weakness}</p>
+        </div>
+        <div class="char-detail-section">
+          <h3>Hubungan</h3>
+          <div class="char-rel-list">${relHtml}</div>
+        </div>
+      </div>
+    `;
+    
+    modal.classList.add('active');
+  }
+
+  function closeCharDetail() {
+    const modal = $('char-detail-modal');
+    if (modal) modal.classList.remove('active');
   }
 
   // ---- Endings System ----
@@ -445,12 +589,20 @@ const Engine = (() => {
         const diff = parseInt(btn.dataset.diff);
         state = defaultState(diff);
         currentNodeId = null;
+        showScreen('screen-characters');
+        renderCharacterIntro();
+      });
+    });
+
+    const skipCharsBtn = $('btn-skip-chars');
+    if (skipCharsBtn) {
+      skipCharsBtn.addEventListener('click', () => {
         showScreen('screen-game');
         updateChapterIndicator();
         initParticles();
         renderNode('prologue_start');
       });
-    });
+    }
 
     $('btn-continue').addEventListener('click', () => {
       if (loadGame()) {
