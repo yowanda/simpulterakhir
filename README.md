@@ -74,6 +74,22 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 - **Dynamic Choices** — pilihan baru muncul berdasarkan aksi NPC (tuduh, aliansi, serang, investigasi)
 - **Tidak pakai AI live** — semua diatur oleh branching database, bukan generative AI
 
+### Interactive Choice System (Baru!)
+- **15 kategori aksi** — setiap pilihan dikategorikan dengan ikon dan warna unik:
+  - 🔍 Investigasi, ⚔️ Konfrontasi, 🤝 Sosial, 🚶 Pindah, 👁️ Siluman, 🛡️ Lindungi
+  - 🗡️ Serang (killer), 🏃 Kabur, ⭐ Aliansi, ☝️ Tuduh, 💻 Hack, 💬 Negosiasi
+  - 👀 Amati, 🤐 Sembunyi, 📖 Cerita
+- **Indikator Risiko/Hasil** — meter visual menunjukkan tingkat risiko dan potensi reward setiap pilihan
+- **Badge Bahaya** — pilihan berbahaya ditandai dengan badge "⚠ BAHAYA" yang berkedip
+- **Aksi Brain yang Lebih Kaya** — pilihan dinamis berdasarkan state NPC:
+  - Amati gerak-gerik NPC untuk mendeteksi killer
+  - Bicara dengan NPC untuk membangun trust
+  - Sembunyi saat danger level tinggi
+  - Killer: sabotase lokasi, framing NPC lain
+  - Info kontekstual: jumlah NPC di lokasi tujuan, level trust, kecurigaan
+- **Animasi klik** — pilihan yang dipilih menyusut, pilihan lain memudar
+- **Auto-detect kategori** — pilihan cerita otomatis dikategorikan berdasarkan konten teks
+
 ---
 
 ## Karakter
