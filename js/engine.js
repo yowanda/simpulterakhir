@@ -787,21 +787,23 @@ const Engine = (() => {
   // Killer count per difficulty (killers are randomly assigned)
   const KILLER_COUNT = { 1: 1, 2: 2, 3: 3 };
 
-  // Randomly pick N killers from available characters
+  // Fixed killer pool: only Lana, Dimas, Niko can be killers
+  const KILLER_POOL = ['lana', 'dimas', 'niko'];
+
+  // Randomly pick N killers from KILLER_POOL only
   function randomizeKillers(difficulty, playerCharacter, playerIsKiller) {
     const diff = difficulty || 2;
     const count = KILLER_COUNT[diff] || 2;
-    const pool = CHARACTERS.slice();
 
     if (playerIsKiller) {
-      // Player is one of the killers — pick (count - 1) more random killers from non-player pool
-      const others = pool.filter(n => n !== playerCharacter);
+      // Player is one of the killers — pick (count - 1) more from killer pool
+      const others = KILLER_POOL.filter(n => n !== playerCharacter);
       const shuffled = others.sort(() => Math.random() - 0.5);
       return [playerCharacter, ...shuffled.slice(0, count - 1)];
     } else {
-      // Player is survivor — pick killers from non-player pool
-      const others = pool.filter(n => n !== playerCharacter);
-      const shuffled = others.sort(() => Math.random() - 0.5);
+      // Player is survivor — pick killers from killer pool (excluding player)
+      const pool = KILLER_POOL.filter(n => n !== playerCharacter);
+      const shuffled = pool.sort(() => Math.random() - 0.5);
       return shuffled.slice(0, count);
     }
   }
@@ -3411,7 +3413,8 @@ const Engine = (() => {
 
     const killerCount = KILLER_COUNT[selectedDifficulty] || 2;
 
-    // --- SURVIVOR OPTION: Random character ---
+    // --- SURVIVOR OPTION: Random character (exclude killer pool) ---
+    const survivorPool = CHARACTERS.filter(n => !KILLER_POOL.includes(n));
     const survCard = document.createElement('div');
     survCard.className = 'role-card role-card-survivor';
     survCard.style.setProperty('--role-color', '#4a7c59');
@@ -3420,16 +3423,16 @@ const Engine = (() => {
       <div class="role-info">
         <div class="role-name" style="color:#4a7c59">Survivor</div>
         <div class="role-title">Karakter Acak</div>
-        <div class="role-perk">Kau akan mendapat salah satu dari 10 karakter secara acak</div>
-        <div class="role-desc">Bertahan hidup, kumpulkan petunjuk, ungkap identitas killer. Killer ditentukan secara <strong>acak</strong> — siapa saja bisa menjadi pembunuh!</div>
-        <div class="role-survivor-list">${CHARACTERS.map(n => {
+        <div class="role-perk">Kau akan mendapat salah satu dari ${survivorPool.length} karakter survivor secara acak</div>
+        <div class="role-desc">Bertahan hidup, kumpulkan petunjuk, ungkap identitas killer. Siapa pembunuhnya? Kau harus mencari tahu sendiri!</div>
+        <div class="role-survivor-list">${survivorPool.map(n => {
           const r = ROLE_DESCRIPTIONS[n];
           return `<span class="role-survivor-chip" style="border-color:${CHAR_COLORS[n]}">${CHAR_DISPLAY[n]} — ${r ? r.perk : ''}</span>`;
         }).join('')}</div>
       </div>
     `;
     survCard.addEventListener('click', () => {
-      const randomChar = CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
+      const randomChar = survivorPool[Math.floor(Math.random() * survivorPool.length)];
       state = defaultState(selectedDifficulty, randomChar, false);
       resetChatTimestamp();
       const startClueCount = getCharAbility(randomChar, 'startClues');
@@ -3442,7 +3445,7 @@ const Engine = (() => {
     });
     container.appendChild(survCard);
 
-    // --- KILLER OPTION: Random killer character ---
+    // --- KILLER OPTION: Random killer from killer pool ---
     const killCard = document.createElement('div');
     killCard.className = 'role-card role-card-killer';
     killCard.style.animationDelay = '0.12s';
@@ -3451,15 +3454,15 @@ const Engine = (() => {
       <span class="role-portrait css-avatar-role" style="background:#8b0000">🗡️</span>
       <div class="role-info">
         <div class="role-name" style="color:#e63946">Killer</div>
-        <div class="role-title">Karakter Acak — Peran Gelap</div>
-        <div class="role-perk">Kau akan mendapat salah satu dari 10 karakter sebagai killer secara acak</div>
-        <div class="role-desc">Eliminasi survivor tanpa ketahuan. ${killerCount > 1 ? `${killerCount - 1} killer lain juga ditentukan acak sebagai sekutumu.` : 'Kau adalah satu-satunya pembunuh.'} Hati-hati — Pemburu mengintai!</div>
-        <div class="role-warning">⚠️ Peran Gelap: Kau bermain sebagai antagonis. Karakter acak.</div>
+        <div class="role-title">Peran Gelap</div>
+        <div class="role-perk">Kau akan mendapat karakter killer secara acak</div>
+        <div class="role-desc">Eliminasi survivor tanpa ketahuan. ${killerCount > 1 ? `${killerCount - 1} killer lain juga akan membantumu.` : 'Kau adalah satu-satunya pembunuh.'} Hati-hati — Pemburu mengintai!</div>
+        <div class="role-warning">⚠️ Peran Gelap: Kau bermain sebagai antagonis.</div>
       </div>
     `;
     killCard.addEventListener('click', () => {
-      const randomChar = CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
-      state = defaultState(selectedDifficulty, randomChar, true);
+      const randomKiller = KILLER_POOL[Math.floor(Math.random() * KILLER_POOL.length)];
+      state = defaultState(selectedDifficulty, randomKiller, true);
       resetChatTimestamp();
       currentNodeId = null;
       showScreen('screen-characters');
