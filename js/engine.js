@@ -10,6 +10,8 @@ const Engine = (() => {
   let currentNodeId = null;
   let brainActionCount = 0;
   let isBrainRevisit = false;
+  let brainActionHistory = [];  // Track executed brain actions per node to prevent looping
+  const BRAIN_MAX_PER_NODE = 2; // Max brain actions before forcing story progression
   let typingTimeout = null;
   let endingsUnlocked = JSON.parse(localStorage.getItem('simpul_endings') || '{}');
 
@@ -474,6 +476,7 @@ const Engine = (() => {
     if (!revisit) {
       state.nodeHistory.push(nodeId);
       brainActionCount = 0;
+      brainActionHistory = [];  // Reset action history on new node
     }
 
     // Initialize NPC minds on first story node
@@ -504,10 +507,10 @@ const Engine = (() => {
       choicesContainer.innerHTML = '';
       const storyChoices = (node.choices || []).slice();
       const allChoices = storyChoices.slice();
-      if (state.npcMinds && state.chapter >= 1 && brainActionCount < 3) {
+      if (state.npcMinds && state.chapter >= 1 && brainActionCount < BRAIN_MAX_PER_NODE) {
         const dynamicChoices = generateDynamicChoices(state);
         dynamicChoices.forEach(c => allChoices.push(c));
-      } else if (brainActionCount >= 3 && storyChoices.length === 0) {
+      } else if (brainActionCount >= BRAIN_MAX_PER_NODE && storyChoices.length === 0) {
         const nextId = findNextStoryNode(nodeId);
         if (nextId) {
           allChoices.push({
@@ -561,7 +564,7 @@ const Engine = (() => {
       // Story choices first, then brain choices
       const storyChoices = (node.choices || []).slice();
       const allChoices = storyChoices.slice();
-      if (state.npcMinds && state.chapter >= 1) {
+      if (state.npcMinds && state.chapter >= 1 && brainActionCount < BRAIN_MAX_PER_NODE) {
         const dynamicChoices = generateDynamicChoices(state);
         dynamicChoices.forEach(c => allChoices.push(c));
       }
@@ -595,6 +598,14 @@ const Engine = (() => {
     return null;
   }
 
+  // ---- Check if a brain action was already taken ----
+  function brainActionTaken(actionKey) {
+    return brainActionHistory.includes(actionKey);
+  }
+  function recordBrainAction(actionKey) {
+    brainActionHistory.push(actionKey);
+  }
+
   // ---- Dynamic Choices based on NPC brain state ----
   function generateDynamicChoices(gameState) {
     const choices = [];
@@ -609,9 +620,9 @@ const Engine = (() => {
       gameState.alive[name] && gameState.npcMinds[name].location === playerLoc
     );
 
-    // --- ACCUSE suspect ---
+    // --- ACCUSE suspect (one-time per suspect per node) ---
     if (!isK && nearbyNpcs.length > 0 && gameState.deathCount >= 1) {
-      const suspect = nearbyNpcs.find(n => (gameState.suspicion[n] || 0) > 30);
+      const suspect = nearbyNpcs.find(n => (gameState.suspicion[n] || 0) > 30 && !brainActionTaken('accuse_' + n));
       if (suspect) {
         const suspLvl = gameState.suspicion[suspect] || 0;
         const conf = suspLvl > 60 ? 'Bukti kuat' : 'Bukti menengah';
@@ -621,72 +632,82 @@ const Engine = (() => {
           hint: `${conf} — kecurigaan ${suspLvl}%`,
           risk: Math.max(40, 80 - suspLvl),
           reward: suspLvl > 50 ? 90 : 60,
-          effect: (s) => { CharBrain.playerAction('accuse', suspect, s); Engine.modSuspicion(suspect, 15); },
+          effect: (s) => { recordBrainAction('accuse_' + suspect); CharBrain.playerAction('accuse', suspect, s); Engine.modSuspicion(suspect, 15); },
           next: (s) => currentNodeId
         });
       }
     }
 
-    // --- INVESTIGATE location ---
-    choices.push({
-      text: `Periksa ${CharBrain.locName(playerLoc)} — cari petunjuk tersembunyi`,
-      type: 'brain', category: 'investigate',
-      hint: nearbyNpcs.length === 0 ? 'Sendirian — lebih leluasa mencari' : 'Hati-hati, ada orang lain di sini',
-      risk: nearbyNpcs.length === 0 ? 15 : 25,
-      reward: 70,
-      effect: (s) => {
-        const result = CharBrain.playerAction('investigate_location', null, s);
-        if (result && result.found) Engine.notify(result.desc);
-        else Engine.notify('Kau memeriksa area ini tapi tidak menemukan hal baru.');
-      },
-      next: (s) => currentNodeId
-    });
-
-    // --- OBSERVE nearby NPCs ---
-    if (nearbyNpcs.length > 0) {
-      const observeTarget = nearbyNpcs[Math.floor(Math.random() * nearbyNpcs.length)];
-      const mind = gameState.npcMinds[observeTarget];
+    // --- INVESTIGATE location (one-time per location per node) ---
+    if (!brainActionTaken('investigate_' + playerLoc)) {
       choices.push({
-        text: `Amati gerak-gerik ${CharBrain.charName(observeTarget)} secara diam-diam`,
-        type: 'brain', category: 'observe',
-        hint: mind ? `Emosi: ${mind.emotion} — mungkin bisa membaca niatnya` : 'Perhatikan perilakunya',
-        risk: 10, reward: 55,
+        text: `Periksa ${CharBrain.locName(playerLoc)} — cari petunjuk tersembunyi`,
+        type: 'brain', category: 'investigate',
+        hint: nearbyNpcs.length === 0 ? 'Sendirian — lebih leluasa mencari' : 'Hati-hati, ada orang lain di sini',
+        risk: nearbyNpcs.length === 0 ? 15 : 25,
+        reward: 70,
         effect: (s) => {
-          const susp = s.suspicion[observeTarget] || 0;
-          const isTarget = s.killers.includes(observeTarget);
-          if (isTarget && Math.random() < 0.4) {
-            s.suspicion[observeTarget] = Math.min(100, susp + 10);
-            Engine.notify(`Kau menangkap gelagat mencurigakan dari ${CharBrain.charName(observeTarget)}! Kecurigaan naik.`);
-          } else {
-            Engine.notify(`${CharBrain.charName(observeTarget)} tampak ${isTarget ? 'terlalu tenang...' : 'normal.'}`);
-          }
+          recordBrainAction('investigate_' + playerLoc);
+          const result = CharBrain.playerAction('investigate_location', null, s);
+          if (result && result.found) Engine.notify(result.desc);
+          else Engine.notify('Kau memeriksa area ini tapi tidak menemukan hal baru.');
         },
         next: (s) => currentNodeId
       });
     }
 
-    // --- TALK to NPC ---
+    // --- OBSERVE nearby NPCs (one-time per NPC per node) ---
     if (nearbyNpcs.length > 0) {
-      const talkTarget = nearbyNpcs[nearbyNpcs.length > 1 ? 1 : 0];
-      const trustLvl = gameState.trust[trustKey(pc, talkTarget)] || 50;
-      choices.push({
-        text: `Bicara dengan ${CharBrain.charName(talkTarget)} — bangun hubungan`,
-        type: 'brain', category: 'social',
-        hint: `Kepercayaan saat ini: ${trustLvl}%`,
-        risk: 10, reward: 45,
-        effect: (s) => {
-          Engine.modTrust(pc, talkTarget, 5);
-          const newTrust = s.trust[trustKey(pc, talkTarget)] || 55;
-          Engine.notify(`Hubunganmu dengan ${CharBrain.charName(talkTarget)} membaik. Trust: ${newTrust}%`);
-        },
-        next: (s) => currentNodeId
-      });
+      const observeTarget = nearbyNpcs.find(n => !brainActionTaken('observe_' + n));
+      if (observeTarget) {
+        const mind = gameState.npcMinds[observeTarget];
+        choices.push({
+          text: `Amati gerak-gerik ${CharBrain.charName(observeTarget)} secara diam-diam`,
+          type: 'brain', category: 'observe',
+          hint: mind ? `Emosi: ${mind.emotion} — mungkin bisa membaca niatnya` : 'Perhatikan perilakunya',
+          risk: 10, reward: 55,
+          effect: (s) => {
+            recordBrainAction('observe_' + observeTarget);
+            const susp = s.suspicion[observeTarget] || 0;
+            const isTarget = s.killers.includes(observeTarget);
+            if (isTarget && Math.random() < 0.4) {
+              s.suspicion[observeTarget] = Math.min(100, susp + 10);
+              Engine.notify(`Kau menangkap gelagat mencurigakan dari ${CharBrain.charName(observeTarget)}! Kecurigaan naik.`);
+            } else {
+              Engine.notify(`${CharBrain.charName(observeTarget)} tampak ${isTarget ? 'terlalu tenang...' : 'normal.'}`);
+            }
+          },
+          next: (s) => currentNodeId
+        });
+      }
     }
 
-    // --- FORM ALLIANCE (survivor) ---
+    // --- TALK to NPC (one-time per NPC per node) ---
+    if (nearbyNpcs.length > 0) {
+      const talkTarget = nearbyNpcs.find(n => !brainActionTaken('talk_' + n));
+      if (talkTarget) {
+        const trustLvl = gameState.trust[trustKey(pc, talkTarget)] || 50;
+        choices.push({
+          text: `Bicara dengan ${CharBrain.charName(talkTarget)} — bangun hubungan`,
+          type: 'brain', category: 'social',
+          hint: `Kepercayaan saat ini: ${trustLvl}%`,
+          risk: 10, reward: 45,
+          effect: (s) => {
+            recordBrainAction('talk_' + talkTarget);
+            Engine.modTrust(pc, talkTarget, 5);
+            const newTrust = s.trust[trustKey(pc, talkTarget)] || 55;
+            Engine.notify(`Hubunganmu dengan ${CharBrain.charName(talkTarget)} membaik. Trust: ${newTrust}%`);
+          },
+          next: (s) => currentNodeId
+        });
+      }
+    }
+
+    // --- FORM ALLIANCE (one-time per target, survivor only) ---
     if (!isK && nearbyNpcs.length > 0 && gameState.deathCount >= 1) {
       const potential = nearbyNpcs.find(n =>
         !gameState.killers.includes(n) &&
+        !brainActionTaken('ally_' + n) &&
         (gameState.trust[trustKey(pc, n)] || 50) > 40 &&
         (!gameState.npcMinds[n] || !gameState.npcMinds[n].allies.includes(pc))
       );
@@ -699,6 +720,7 @@ const Engine = (() => {
           risk: trustVal > 60 ? 10 : 30,
           reward: 75,
           effect: (s) => {
+            recordBrainAction('ally_' + potential);
             CharBrain.playerAction('ally', potential, s);
             Engine.modTrust(pc, potential, 10);
             Engine.notify(`Aliansi terbentuk dengan ${CharBrain.charName(potential)}!`);
@@ -708,14 +730,15 @@ const Engine = (() => {
       }
     }
 
-    // --- HIDE (when danger is high) ---
-    if (gameState.dangerLevel > 30 && !isK) {
+    // --- HIDE (one-time per location per node) ---
+    if (gameState.dangerLevel > 30 && !isK && !brainActionTaken('hide_' + playerLoc)) {
       choices.push({
         text: `Sembunyi di ${CharBrain.locName(playerLoc)} — tunggu bahaya berlalu`,
         type: 'brain', category: 'hide',
         hint: `Danger level: ${gameState.dangerLevel}% — ${gameState.dangerLevel > 60 ? 'sangat berbahaya di luar!' : 'waspada'}`,
         risk: 5, reward: 15,
         effect: (s) => {
+          recordBrainAction('hide_' + playerLoc);
           s.dangerLevel = Math.max(0, s.dangerLevel - 5);
           Engine.notify('Kau bersembunyi dan menunggu. Tension turun sedikit.');
         },
@@ -723,10 +746,10 @@ const Engine = (() => {
       });
     }
 
-    // --- KILLER ACTIONS ---
+    // --- KILLER ACTIONS (one-time per target per node) ---
     if (isK) {
       // Strike target
-      const soloTarget = nearbyNpcs.find(n => !gameState.killers.includes(n));
+      const soloTarget = nearbyNpcs.find(n => !gameState.killers.includes(n) && !brainActionTaken('strike_' + n));
       if (soloTarget && nearbyNpcs.filter(n => !gameState.killers.includes(n)).length <= 2) {
         const witnesses = nearbyNpcs.filter(n => n !== soloTarget && !gameState.killers.includes(n)).length;
         choices.push({
@@ -737,6 +760,7 @@ const Engine = (() => {
           risk: witnesses === 0 ? 45 : 85,
           reward: 90,
           effect: (s) => {
+            recordBrainAction('strike_' + soloTarget);
             const result = CharBrain.playerAction('killer_strike', soloTarget, s);
             if (result) {
               if (result.success) { Engine.killChar(soloTarget); Engine.notify(result.desc); }
@@ -747,14 +771,15 @@ const Engine = (() => {
         });
       }
 
-      // Sabotage
-      if (nearbyNpcs.length === 0) {
+      // Sabotage (one-time per location)
+      if (nearbyNpcs.length === 0 && !brainActionTaken('sabotage_' + playerLoc)) {
         choices.push({
           text: `Sabotase ${CharBrain.locName(playerLoc)} — buat perangkap`,
           type: 'brain-killer', category: 'stealth',
           hint: 'Siapkan jebakan untuk korban berikutnya',
           risk: 30, reward: 65,
           effect: (s) => {
+            recordBrainAction('sabotage_' + playerLoc);
             s.dangerLevel = Math.min(100, s.dangerLevel + 5);
             Engine.notify('Kau menyiapkan perangkap dengan hati-hati. Area ini sekarang berbahaya bagi orang lain.');
           },
@@ -762,9 +787,9 @@ const Engine = (() => {
         });
       }
 
-      // Manipulate/Frame
+      // Manipulate/Frame (one-time per target)
       if (nearbyNpcs.length > 0) {
-        const frameTarget = nearbyNpcs.find(n => !gameState.killers.includes(n));
+        const frameTarget = nearbyNpcs.find(n => !gameState.killers.includes(n) && !brainActionTaken('frame_' + n));
         if (frameTarget) {
           choices.push({
             text: `Arahkan kecurigaan ke ${CharBrain.charName(frameTarget)} — framing`,
@@ -772,6 +797,7 @@ const Engine = (() => {
             hint: 'Buat orang lain terlihat mencurigakan',
             risk: 35, reward: 70,
             effect: (s) => {
+              recordBrainAction('frame_' + frameTarget);
               Engine.modSuspicion(frameTarget, 15);
               Engine.notify(`Kau diam-diam menanamkan bukti palsu yang mengarah ke ${CharBrain.charName(frameTarget)}.`);
             },
@@ -781,13 +807,13 @@ const Engine = (() => {
       }
     }
 
-    // --- MOVE to adjacent location ---
+    // --- MOVE to adjacent location (always available, resets brain actions at new loc) ---
     const connections = CharBrain.LOCATION_CONNECTIONS[playerLoc] || [];
     if (connections.length > 0 && gameState.chapter >= 1) {
-      // Show up to 2 movement options
       const shuffled = connections.slice().sort(() => Math.random() - 0.5);
       const moveDests = shuffled.slice(0, Math.min(2, shuffled.length));
       moveDests.forEach(loc => {
+        if (brainActionTaken('move_' + loc)) return; // Don't show move to same loc twice
         const npcsAtLoc = Object.keys(gameState.npcMinds || {}).filter(n =>
           gameState.alive[n] && gameState.npcMinds[n] && gameState.npcMinds[n].location === loc
         );
@@ -801,12 +827,29 @@ const Engine = (() => {
           risk: npcsAtLoc.length > 0 ? 25 : 10,
           reward: 20,
           effect: (s) => {
+            recordBrainAction('move_' + loc);
             s.playerLocation = loc;
+            // Moving to a new location partially resets brain actions (location-specific ones)
+            brainActionHistory = brainActionHistory.filter(a => !a.startsWith('investigate_') && !a.startsWith('hide_'));
             Engine.notify(`Kau berpindah ke ${CharBrain.locName(loc)}.${npcsAtLoc.length > 0 ? ' Kau melihat ' + npcsAtLoc.map(n => CharBrain.charName(n)).join(', ') + ' di sini.' : ''}`);
           },
           next: (s) => currentNodeId
         });
       });
+    }
+
+    // If all brain actions have been used, add forced progression
+    if (choices.length === 0) {
+      const nextId = findNextStoryNode(currentNodeId);
+      if (nextId) {
+        choices.push({
+          text: 'Lanjutkan cerita — saatnya bergerak',
+          type: 'brain', category: 'story',
+          hint: 'Semua aksi di sini sudah dilakukan',
+          risk: 5, reward: 50,
+          next: nextId
+        });
+      }
     }
 
     return choices;
