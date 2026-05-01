@@ -712,6 +712,7 @@ const Engine = (() => {
   }
 
   const NARRATION_VISIBLE_MAX = 0;
+  const DIALOG_ONLY_MODE = true; // Pure dialog focus — skip all narration
 
   // Generate a fake in-game timestamp for chat messages
   let chatMinuteCounter = 0;
@@ -739,9 +740,17 @@ const Engine = (() => {
       if (node.nodeType === 1 && node.classList && node.classList.contains('scene-art')) return;
 
       if (node.nodeType === 1 && node.tagName !== 'P') {
-        // Keep location-context and other structural elements
-        if (node.classList && (node.classList.contains('location-context') || node.classList.contains('npc-round-narrative') || node.classList.contains('wl-alert'))) {
+        // Keep location-context, npc-round-narrative (now chat-ified), and wl-alert
+        if (node.classList && node.classList.contains('wl-alert')) {
           items.push({ type: 'other', html: node.outerHTML });
+        } else if (node.classList && node.classList.contains('location-context')) {
+          items.push({ type: 'other', html: node.outerHTML });
+        } else if (node.classList && node.classList.contains('npc-round-narrative')) {
+          // Convert NPC round events into system-style chat messages
+          const events = node.querySelectorAll('p');
+          events.forEach(ev => {
+            items.push({ type: 'system', html: ev.innerHTML || ev.textContent });
+          });
         }
         return;
       }
@@ -762,6 +771,22 @@ const Engine = (() => {
             .replace(/<img[^>]*class="speaker-portrait"[^>]*>/g, '')
             .replace(/<span class="speaker [^"]*">[^<]*<\/span>/g, '')
             .trim();
+
+          // In DIALOG_ONLY_MODE: skip speaker-tagged narration (no quotes = narration)
+          if (DIALOG_ONLY_MODE) {
+            const plainMsg = msgContent.replace(/<[^>]+>/g, '').trim();
+            const hasQuotes = /["\u201C\u201D"']/.test(plainMsg.charAt(0)) || /["\u201C\u201D"']/.test(plainMsg);
+            const isDialogLine = hasQuotes || plainMsg.startsWith('"') || plainMsg.startsWith('\u201C');
+            // If no quotes at all, it's narration — convert to brief action if short, skip if long
+            if (!isDialogLine && plainMsg.length > 0) {
+              if (plainMsg.length <= 120) {
+                items.push({ type: 'action', charKey, charDisplayName, text: plainMsg });
+              }
+              // Skip long narration entirely
+              return;
+            }
+          }
+
           const isPlayer = charKey === pc;
           const isKiller = KILLER_CHARS.includes(charKey);
           const isEntity = charKey === 'entity';
@@ -795,11 +820,19 @@ const Engine = (() => {
             return;
           }
 
+          if (DIALOG_ONLY_MODE) {
+            // In dialog-only mode: only keep horror as system alerts, skip everything else
+            if (pClasses.includes('horror') || text.includes('class="horror"')) {
+              items.push({ type: 'system', html: text });
+            }
+            // All other narration is skipped
+            return;
+          }
+
           // Horror narration stays visible, everything else is hidden
           if (pClasses.includes('horror') || text.includes('class="horror"')) {
             items.push({ type: 'narration', html: text, cls: ' chat-narration-horror' });
           } else {
-            // Skip long narration entirely — only keep very short context (<80 chars)
             const plainLen = node.textContent.trim().length;
             if (plainLen > 80) return;
             items.push({ type: 'narration', html: text, cls: '' });
@@ -859,6 +892,12 @@ const Engine = (() => {
         chatHtml += `<div class="chat-name ${item.charKey}">${item.charDisplayName}</div>`;
         chatHtml += `<div class="chat-msg">${item.msgContent}<span class="chat-time">${ts}${readReceipt}</span></div>`;
         chatHtml += `</div></div>`;
+      } else if (item.type === 'action') {
+        // WhatsApp-style action message: "~Niko berdiri di tangga~"
+        chatHtml += `<div class="chat-item chat-action"><span class="chat-action-text">${item.charDisplayName} ${item.text}</span></div>`;
+      } else if (item.type === 'system') {
+        // System/event message — centered like WhatsApp group notifications
+        chatHtml += `<div class="chat-item chat-system-msg"><span class="chat-system-text">${item.html}</span></div>`;
       } else if (item.type === 'sound') {
         chatHtml += `<div class="chat-item chat-sound">${item.html}</div>`;
       } else if (item.type === 'journal') {
@@ -897,9 +936,17 @@ const Engine = (() => {
       const timer = setTimeout(() => {
         item.classList.add('chat-visible');
 
-        // Smooth scroll to the newly visible item
+        // Smooth scroll to the newly visible item — keep above choices container
         if (storyArea && i > 2) {
-          item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const choicesEl = $('choices-container');
+          const choicesH = choicesEl ? choicesEl.offsetHeight : 0;
+          const itemRect = item.getBoundingClientRect();
+          const areaRect = storyArea.getBoundingClientRect();
+          const visibleBottom = areaRect.bottom - choicesH;
+          if (itemRect.bottom > visibleBottom || itemRect.top < areaRect.top) {
+            const scrollTarget = item.offsetTop - storyArea.offsetTop - (storyArea.clientHeight - choicesH) / 2;
+            storyArea.scrollTo({ top: Math.max(0, scrollTarget), behavior: 'smooth' });
+          }
         }
       }, delay);
       staggerTimers.push(timer);
@@ -1252,6 +1299,9 @@ const Engine = (() => {
 
     renderText(textContent, storyText, () => {
       $('story-area').scrollTop = 0;
+
+      // After rendering choices, adjust story-area padding so last message is above choices
+      adjustStoryPadding();
 
       // If win/loss triggered, show ending after delay
       if (state.winLossResult) {
@@ -2093,6 +2143,9 @@ const Engine = (() => {
       btn.style.animationDelay = (i * 0.15) + 's';
       container.appendChild(btn);
     });
+
+    // Adjust story padding so last message is visible above choices
+    requestAnimationFrame(() => adjustStoryPadding());
   }
 
   const CHAPTERS = {
@@ -2101,6 +2154,28 @@ const Engine = (() => {
   };
   function updateChapterIndicator() {
     $('chapter-indicator').textContent = (CHAPTERS[lang] || CHAPTERS.id)[state.chapter] || '';
+    // Update WhatsApp group members list
+    updateWaMembers();
+  }
+
+  function adjustStoryPadding() {
+    const storyArea = $('story-area');
+    const choicesEl = $('choices-container');
+    if (!storyArea || !choicesEl) return;
+    const choicesH = choicesEl.offsetHeight;
+    // Ensure enough bottom padding so last message isn't hidden behind choices
+    storyArea.style.paddingBottom = Math.max(choicesH + 24, 120) + 'px';
+  }
+
+  function updateWaMembers() {
+    const el = $('wa-members');
+    if (!el) return;
+    const aliveNames = CHARACTERS.filter(c => state.alive[c]).map(c => CHAR_DISPLAY[c] || c);
+    if (aliveNames.length > 0) {
+      el.textContent = aliveNames.join(', ');
+    } else {
+      el.textContent = 'Mansion Wardhana';
+    }
   }
 
   function updateCharPanel() {
