@@ -561,6 +561,24 @@ const Engine = (() => {
       const survivorsLeft = Object.keys(state.alive).filter(k => state.alive[k] && !(state.killers || []).includes(k)).length;
       html += `<div class="ps-escape">Target: ${survivorsLeft} tersisa | Petunjuk dihancurkan: ${escDestroyed}</div>`;
     }
+
+    // Character location detail — like WhatsApp "last seen" / subtitle
+    const playerLoc = state.playerLocation || 'aula_utama';
+    const locDisplayName = typeof CharBrain !== 'undefined' ? CharBrain.locName(playerLoc) : playerLoc;
+    let nearbyInfo = '';
+    if (state.npcMinds) {
+      const nearbyChars = Object.keys(state.npcMinds).filter(n =>
+        state.alive[n] && state.npcMinds[n] && state.npcMinds[n].location === playerLoc && n !== pc
+      );
+      const nearbyNames = nearbyChars.map(n => typeof CharBrain !== 'undefined' ? CharBrain.charName(n) : n);
+      if (nearbyNames.length > 0) {
+        nearbyInfo = ` \u2014 bersama <span class="loc-nearby">${nearbyNames.join(', ')}</span>`;
+      } else {
+        nearbyInfo = ` \u2014 <span class="loc-nearby">sendirian</span>`;
+      }
+    }
+    html += `<div class="ps-location"><span class="loc-icon">\uD83D\uDCCD</span>${locDisplayName}${nearbyInfo}</div>`;
+
     bar.innerHTML = html;
     bar.style.display = 'flex';
   }
@@ -693,7 +711,19 @@ const Engine = (() => {
     staggerTimers = [];
   }
 
-  const NARRATION_VISIBLE_MAX = 2;
+  const NARRATION_VISIBLE_MAX = 1;
+
+  // Generate a fake in-game timestamp for chat messages
+  let chatMinuteCounter = 0;
+  function getChatTimestamp() {
+    const baseHour = 21; // 21:00 (9 PM — story starts at night)
+    const mins = chatMinuteCounter;
+    chatMinuteCounter += Math.floor(Math.random() * 3) + 1;
+    const h = baseHour + Math.floor(mins / 60);
+    const m = mins % 60;
+    return String(h % 24).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+  }
+  function resetChatTimestamp() { chatMinuteCounter = 0; }
 
   function convertToChatbox(html) {
     const temp = document.createElement('div');
@@ -705,8 +735,14 @@ const Engine = (() => {
     Array.from(temp.childNodes).forEach(node => {
       if (node.nodeType === 3 && !node.textContent.trim()) return;
 
+      // Skip scene-art divs entirely in chat mode
+      if (node.nodeType === 1 && node.classList && node.classList.contains('scene-art')) return;
+
       if (node.nodeType === 1 && node.tagName !== 'P') {
-        items.push({ type: 'other', html: node.outerHTML });
+        // Keep location-context and other structural elements
+        if (node.classList && (node.classList.contains('location-context') || node.classList.contains('npc-round-narrative') || node.classList.contains('wl-alert'))) {
+          items.push({ type: 'other', html: node.outerHTML });
+        }
         return;
       }
 
@@ -742,6 +778,21 @@ const Engine = (() => {
           }
           if (pClasses.includes('sound') || node.querySelector('.sound')) {
             items.push({ type: 'sound', html: text });
+            return;
+          }
+
+          // Detect untagged dialog (starts with quote mark) — treat as player speech
+          const plainText = node.textContent.trim();
+          if (/^[""\u201C\u201D]/.test(plainText) || /^["']/.test(plainText)) {
+            items.push({
+              type: 'bubble',
+              charKey: pc,
+              charDisplayName: CHAR_DISPLAY[pc] || 'Kamu',
+              msgContent: text,
+              isPlayer: true,
+              isKiller: KILLER_CHARS.includes(pc),
+              isEntity: false
+            });
             return;
           }
 
@@ -795,11 +846,13 @@ const Engine = (() => {
         if (item.isKiller) bubbleClass += ' chat-bubble-killer';
         if (item.isEntity) bubbleClass += ' chat-bubble-entity';
         const avatar = item.charKey ? getChatAvatarHTML(item.charKey) : '';
+        const ts = getChatTimestamp();
+        const readReceipt = item.isPlayer ? ' <span class="chat-read-receipt">&#10003;&#10003;</span>' : '';
         chatHtml += `<div class="${bubbleClass}">`;
         chatHtml += avatar;
         chatHtml += `<div class="chat-content">`;
         chatHtml += `<div class="chat-name ${item.charKey}">${item.charDisplayName}</div>`;
-        chatHtml += `<div class="chat-msg">${item.msgContent}</div>`;
+        chatHtml += `<div class="chat-msg">${item.msgContent}<span class="chat-time">${ts}${readReceipt}</span></div>`;
         chatHtml += `</div></div>`;
       } else if (item.type === 'sound') {
         chatHtml += `<div class="chat-item chat-sound">${item.html}</div>`;
@@ -2149,6 +2202,7 @@ const Engine = (() => {
     survCard.addEventListener('click', () => {
       const randomSurvivor = survivorNames[Math.floor(Math.random() * survivorNames.length)];
       state = defaultState(selectedDifficulty, randomSurvivor);
+      resetChatTimestamp();
       // Vira's ability: start with 2 known clue locations
       const startClueCount = getCharAbility(randomSurvivor, 'startClues');
       if (startClueCount > 0) {
@@ -2188,6 +2242,7 @@ const Engine = (() => {
 
       card.addEventListener('click', () => {
         state = defaultState(selectedDifficulty, name);
+        resetChatTimestamp();
         currentNodeId = null;
         showScreen('screen-characters');
         renderCharacterIntro();
