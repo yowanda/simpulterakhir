@@ -2411,6 +2411,17 @@ body {
 .chat-system-msg .npc-event-clue { color: #53bdeb; }
 .chat-system-msg .npc-event-manipulation { color: #b39ddb; }
 
+/* Killer tracking/nearby alert — pulsing red warning */
+.chat-system-msg .npc-event-track {
+  color: #ff4444;
+  text-shadow: 0 0 8px rgba(255,68,68,0.4);
+  animation: pulseTrack 2s ease-in-out infinite;
+}
+@keyframes pulseTrack {
+  0%, 100% { text-shadow: 0 0 8px rgba(255,68,68,0.4); }
+  50% { text-shadow: 0 0 16px rgba(255,68,68,0.7); }
+}
+
 @keyframes chatSlideIn {
   0% { opacity: 0; transform: translateY(8px); }
   100% { opacity: 1; transform: translateY(0); }
