@@ -503,80 +503,80 @@ const Engine = (() => {
   }
 
   // ---- Pemburu Execution Mechanic ----
-  // If ANY character's suspicion exceeds 80%, a "pemburu" (hunter) among the survivors
-  // will automatically execute them. The pemburu is then revealed to all survivors.
+  // Pemburu is assigned when the first escape clue is found (random survivor).
+  // Each round, if any character has suspicion >80%, the Pemburu executes them.
+  // After executing, the Pemburu's identity is revealed to all survivors.
   function checkPemburuExecution() {
     const events = [];
+    if (!state.pemburu || !state.alive[state.pemburu]) return events;
     if (!state.suspicion || !state.npcMinds) return events;
 
-    const aliveSurvivors = CHARACTERS.filter(c =>
-      state.alive[c] && !(state.killers || []).includes(c)
-    );
-    if (aliveSurvivors.length < 2) return events; // Need at least 2 survivors for pemburu
+    const pemburu = state.pemburu;
+    const charName = typeof CharBrain !== 'undefined' ? CharBrain.charName : (n) => n;
 
-    // Check all alive characters (both killer AND survivor can be executed)
+    // Find the highest suspicion target above 80%
+    let highestTarget = null;
+    let highestSusp = 80;
     CHARACTERS.forEach(target => {
       if (!state.alive[target]) return;
+      if (target === pemburu) return; // Pemburu can't execute themselves
       const susp = state.suspicion[target] || 0;
-      if (susp <= 80) return;
-      // Already revealed killers are handled by the HUNT mechanic, not pemburu
-      if ((state.killerRevealed || []).includes(target)) return;
-      if ((state.witnessedKillers || []).includes(target)) return;
-
-      // Pick a random survivor as the pemburu (not the target themselves)
-      const potentialHunters = aliveSurvivors.filter(s => s !== target);
-      if (potentialHunters.length === 0) return;
-      const pemburu = potentialHunters[Math.floor(Math.random() * potentialHunters.length)];
-
-      const isTargetKiller = (state.killers || []).includes(target);
-      const charName = typeof CharBrain !== 'undefined' ? CharBrain.charName : (n) => n;
-
-      // Execute the target
-      state.alive[target] = false;
-      state.deathCount++;
-
-      if (isTargetKiller) {
-        if (!state.killersDead) state.killersDead = [];
-        if (!state.killersDead.includes(target)) state.killersDead.push(target);
-        if (!state.killerRevealed) state.killerRevealed = [];
-        if (!state.killerRevealed.includes(target)) state.killerRevealed.push(target);
-      }
-
-      // Pemburu is now revealed — everyone knows who the hunter is
-      if (!state.pemburuRevealed) state.pemburuRevealed = [];
-      if (!state.pemburuRevealed.includes(pemburu)) state.pemburuRevealed.push(pemburu);
-
-      // All survivors now know about the pemburu
-      if (state.npcMinds) {
-        Object.values(state.npcMinds).forEach(mind => {
-          if (state.alive[mind.name] && mind.name !== pemburu) {
-            mind.memory.push({
-              type: 'witnessed_execution',
-              pemburu: pemburu,
-              target: target,
-              round: state.roundCount || 0
-            });
-          }
-        });
-      }
-
-      const correctShot = isTargetKiller
-        ? `Tembakan tepat! ${charName(target)} ternyata memang seorang KILLER!`
-        : `SALAH SASARAN! ${charName(target)} ternyata bukan killer — seorang survivor tidak bersalah tewas!`;
-
-      events.push({
-        type: 'pemburu_execution',
-        pemburu: pemburu,
-        target: target,
-        wasKiller: isTargetKiller,
-        desc: `🔫 EKSEKUSI PEMBURU! Kecurigaan terhadap ${charName(target)} mencapai ${susp}% — ${charName(pemburu)} bertindak sebagai Pemburu dan menembak ${charName(target)}! ${correctShot} Identitas ${charName(pemburu)} sebagai Pemburu kini terungkap kepada semua survivor.`
-      });
-
-      // Notify
-      if (typeof Engine !== 'undefined' && Engine.notify) {
-        Engine.notify(`🔫 ${charName(pemburu)} mengeksekusi ${charName(target)} karena kecurigaan terlalu tinggi (${susp}%)! ${correctShot}`);
+      if (susp > highestSusp) {
+        // Already revealed killers are handled by HUNT mechanic
+        if ((state.killerRevealed || []).includes(target)) return;
+        if ((state.witnessedKillers || []).includes(target)) return;
+        highestSusp = susp;
+        highestTarget = target;
       }
     });
+
+    if (!highestTarget) return events;
+
+    const target = highestTarget;
+    const susp = state.suspicion[target] || 0;
+    const isTargetKiller = (state.killers || []).includes(target);
+
+    // Execute the target
+    state.alive[target] = false;
+    state.deathCount++;
+
+    if (isTargetKiller) {
+      if (!state.killersDead) state.killersDead = [];
+      if (!state.killersDead.includes(target)) state.killersDead.push(target);
+      if (!state.killerRevealed) state.killerRevealed = [];
+      if (!state.killerRevealed.includes(target)) state.killerRevealed.push(target);
+    }
+
+    // Pemburu is now revealed — everyone knows who the hunter is
+    state.pemburuRevealed = true;
+
+    // All survivors now know about the pemburu
+    if (state.npcMinds) {
+      Object.values(state.npcMinds).forEach(mind => {
+        if (state.alive[mind.name] && mind.name !== pemburu) {
+          mind.memory.push({
+            type: 'witnessed_execution',
+            pemburu: pemburu,
+            target: target,
+            round: state.roundCount || 0
+          });
+        }
+      });
+    }
+
+    const correctShot = isTargetKiller
+      ? `Tembakan tepat! ${charName(target)} ternyata memang seorang KILLER!`
+      : `SALAH SASARAN! ${charName(target)} ternyata bukan killer — seorang survivor tidak bersalah tewas!`;
+
+    events.push({
+      type: 'pemburu_execution',
+      pemburu: pemburu,
+      target: target,
+      wasKiller: isTargetKiller,
+      desc: `🔫 EKSEKUSI PEMBURU! Kecurigaan terhadap ${charName(target)} mencapai ${susp}% — ${charName(pemburu)} bertindak sebagai Pemburu dan menembak ${charName(target)}! ${correctShot} Identitas ${charName(pemburu)} sebagai Pemburu kini terungkap kepada semua survivor.`
+    });
+
+    notify(`🔫 ${charName(pemburu)} mengeksekusi ${charName(target)} karena kecurigaan terlalu tinggi (${susp}%)! ${correctShot}`);
 
     return events;
   }
@@ -643,9 +643,26 @@ const Engine = (() => {
   }
   function findEscapeClue(clueId) {
     if (!state.escapeClues) state.escapeClues = [];
+    const wasEmpty = state.escapeClues.length === 0;
     if (!state.escapeClues.includes(clueId)) {
       state.escapeClues.push(clueId);
     }
+    // First clue found → assign a random survivor as Pemburu
+    if (wasEmpty && state.escapeClues.length === 1 && !state.pemburu) {
+      assignPemburu();
+    }
+  }
+
+  // Assign a random survivor as Pemburu when first clue is discovered
+  function assignPemburu() {
+    const aliveSurvivors = CHARACTERS.filter(c =>
+      state.alive[c] && !(state.killers || []).includes(c)
+    );
+    if (aliveSurvivors.length < 2) return;
+    const pemburu = aliveSurvivors[Math.floor(Math.random() * aliveSurvivors.length)];
+    state.pemburu = pemburu;
+    const charName = typeof CharBrain !== 'undefined' ? CharBrain.charName : (n) => n;
+    notify(`Petunjuk pertama ditemukan! Seorang survivor diam-diam mengambil peran sebagai Pemburu...`);
   }
   function destroyEscapeClue(clueId) {
     if (!state.destroyedClues) state.destroyedClues = [];
