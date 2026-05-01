@@ -944,11 +944,7 @@ body {
 }
 
 /* ========== STORY TEXT ANIMATIONS ========== */
-.story-text { animation: textSlideIn 0.6s ease-out; }
-@keyframes textSlideIn {
-  0% { opacity: 0; transform: translateY(15px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
+/* Stagger reveal is handled by .chat-item + JS in engine.js */
 
 /* ========== CHOICE ANIMATIONS ========== */
 .choice-btn {
@@ -1857,17 +1853,49 @@ body {
 .story-text {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.7rem;
 }
 .story-text p { margin-bottom: 0; }
+
+/* Staggered reveal: items start hidden, revealed by JS */
+.story-text .chat-item {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.45s cubic-bezier(0.23,1,0.32,1), transform 0.45s cubic-bezier(0.23,1,0.32,1);
+}
+.story-text .chat-item.chat-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Typing indicator */
+.chat-typing-indicator {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 0.5rem 0.85rem;
+  align-self: flex-start;
+}
+.chat-typing-indicator .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8a8478;
+  animation: typingBounce 1.2s infinite ease-in-out;
+}
+.chat-typing-indicator .dot:nth-child(2) { animation-delay: 0.15s; }
+.chat-typing-indicator .dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
 
 /* Chat bubble container */
 .chat-bubble {
   display: flex;
-  gap: 0.6rem;
+  gap: 0.65rem;
   align-items: flex-start;
-  animation: chatSlideIn 0.35s ease-out;
-  max-width: 92%;
+  max-width: 88%;
 }
 .chat-bubble-right {
   flex-direction: row-reverse;
@@ -1879,19 +1907,24 @@ body {
 
 /* Avatar in chat */
 .chat-avatar {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgba(200, 54, 45, 0.35);
-  box-shadow: 0 0 8px rgba(200, 54, 45, 0.15);
+  border: 2px solid rgba(200, 54, 45, 0.3);
+  box-shadow: 0 0 12px rgba(200, 54, 45, 0.12), 0 0 4px rgba(0,0,0,0.3);
   margin-top: 0.15rem;
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+.chat-bubble:hover .chat-avatar {
+  box-shadow: 0 0 16px rgba(200, 54, 45, 0.25), 0 0 6px rgba(0,0,0,0.4);
+  border-color: rgba(200, 54, 45, 0.5);
 }
 .chat-avatar.css-avatar {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
   font-size: 0.75rem;
 }
 
@@ -1903,11 +1936,11 @@ body {
 .chat-name {
   font-family: 'Inter', sans-serif;
   font-weight: 700;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-bottom: 0.2rem;
-  opacity: 0.85;
+  margin-bottom: 0.25rem;
+  opacity: 0.9;
 }
 .chat-name.arin { color: #5b9bd5; }
 .chat-name.niko { color: #e69138; }
@@ -1923,13 +1956,18 @@ body {
 
 /* Player bubble (right side) */
 .chat-bubble-right .chat-msg {
-  background: linear-gradient(135deg, rgba(74, 124, 89, 0.25), rgba(74, 124, 89, 0.15));
-  border: 1px solid rgba(74, 124, 89, 0.3);
-  border-radius: 14px 14px 4px 14px;
-  padding: 0.55rem 0.85rem;
-  color: #d0ccc4;
+  background: linear-gradient(135deg, rgba(74, 124, 89, 0.28), rgba(74, 124, 89, 0.12));
+  border: 1px solid rgba(74, 124, 89, 0.35);
+  border-radius: 16px 16px 4px 16px;
+  padding: 0.6rem 0.9rem;
+  color: #d4d0c8;
   font-size: 0.92rem;
-  line-height: 1.6;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: box-shadow 0.3s;
+}
+.chat-bubble-right:hover .chat-msg {
+  box-shadow: 0 3px 12px rgba(74, 124, 89, 0.2);
 }
 .chat-bubble-right .chat-name {
   text-align: right;
@@ -1937,88 +1975,127 @@ body {
 
 /* NPC bubble (left side) */
 .chat-bubble-left .chat-msg {
-  background: linear-gradient(135deg, rgba(40, 35, 50, 0.7), rgba(30, 25, 40, 0.6));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px 14px 14px 4px;
-  padding: 0.55rem 0.85rem;
-  color: #c8c0b4;
+  background: linear-gradient(135deg, rgba(40, 35, 55, 0.75), rgba(28, 23, 40, 0.6));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px 16px 16px 4px;
+  padding: 0.6rem 0.9rem;
+  color: #ccc6ba;
   font-size: 0.92rem;
-  line-height: 1.6;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: box-shadow 0.3s;
+}
+.chat-bubble-left:hover .chat-msg {
+  box-shadow: 0 3px 12px rgba(0,0,0,0.3);
 }
 
-/* Killer bubble — slightly red tint */
+/* Killer bubble — menacing red glow */
 .chat-bubble-killer .chat-msg {
-  background: linear-gradient(135deg, rgba(80, 20, 20, 0.35), rgba(60, 15, 15, 0.25));
-  border: 1px solid rgba(200, 54, 45, 0.2);
+  background: linear-gradient(135deg, rgba(80, 18, 18, 0.4), rgba(55, 12, 12, 0.3));
+  border: 1px solid rgba(200, 54, 45, 0.25);
+  box-shadow: 0 2px 10px rgba(200, 54, 45, 0.08);
+}
+.chat-bubble-killer:hover .chat-msg {
+  box-shadow: 0 3px 14px rgba(200, 54, 45, 0.15);
+}
+.chat-bubble-killer .chat-avatar {
+  border-color: rgba(200, 54, 45, 0.5);
 }
 
 /* Entity/system speaker bubble */
 .chat-bubble-entity .chat-msg {
-  background: linear-gradient(135deg, rgba(0, 60, 40, 0.35), rgba(0, 40, 30, 0.25));
+  background: linear-gradient(135deg, rgba(0, 60, 40, 0.4), rgba(0, 40, 30, 0.3));
   border: 1px solid rgba(0, 204, 102, 0.2);
   color: #a0e8c0;
+  box-shadow: 0 0 12px rgba(0, 204, 102, 0.06);
+}
+
+/* Scene divider — visual break between narration blocks */
+.chat-scene-break {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  align-self: center;
+  padding: 0.25rem 0;
+}
+.chat-scene-break::before,
+.chat-scene-break::after {
+  content: '';
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200, 169, 110, 0.3), transparent);
+}
+.chat-scene-break .break-icon {
+  font-size: 0.55rem;
+  color: rgba(200, 169, 110, 0.4);
+  letter-spacing: 0.3em;
 }
 
 /* Narration (system message style) */
 .chat-narration {
   text-align: center;
-  color: #8a8478;
-  font-size: 0.85rem;
-  line-height: 1.6;
-  padding: 0.4rem 1.2rem;
-  max-width: 85%;
+  color: #9a9488;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  padding: 0.5rem 1.4rem;
+  max-width: 82%;
   align-self: center;
   font-style: italic;
   position: relative;
-  animation: chatSlideIn 0.35s ease-out;
 }
 .chat-narration::before,
 .chat-narration::after {
   content: '';
   position: absolute;
   top: 50%;
-  width: 30px;
+  width: 24px;
   height: 1px;
-  background: rgba(138, 132, 120, 0.3);
+  background: linear-gradient(90deg, transparent, rgba(138, 132, 120, 0.35));
 }
-.chat-narration::before { right: 100%; margin-right: 8px; }
-.chat-narration::after { left: 100%; margin-left: 8px; }
+.chat-narration::before { right: 100%; margin-right: 6px; background: linear-gradient(90deg, transparent, rgba(138, 132, 120, 0.35)); }
+.chat-narration::after { left: 100%; margin-left: 6px; background: linear-gradient(270deg, transparent, rgba(138, 132, 120, 0.35)); }
 
-/* Horror narration */
+/* Horror narration — pulsing red glow */
 .chat-narration-horror {
-  color: #c8362d;
-  text-shadow: 0 0 5px rgba(200, 54, 45, 0.25);
+  color: #d44035;
+  text-shadow: 0 0 6px rgba(200, 54, 45, 0.3);
+  animation: horrorPulse 3s ease-in-out infinite;
 }
 .chat-narration-horror::before,
 .chat-narration-horror::after {
-  background: rgba(200, 54, 45, 0.3);
+  background: linear-gradient(90deg, transparent, rgba(200, 54, 45, 0.4)) !important;
+}
+@keyframes horrorPulse {
+  0%, 100% { text-shadow: 0 0 6px rgba(200, 54, 45, 0.3); }
+  50% { text-shadow: 0 0 12px rgba(200, 54, 45, 0.5), 0 0 20px rgba(200, 54, 45, 0.15); }
 }
 
-/* Sound effects in chat */
+/* Sound effects in chat — dramatic uppercase flash */
 .chat-sound {
   text-align: center;
-  color: #6b6359;
+  color: #7a7468;
   font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  padding: 0.3rem 1rem;
+  padding: 0.35rem 1rem;
   align-self: center;
-  animation: chatSlideIn 0.35s ease-out;
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px;
 }
 
 /* Location context as chat system msg */
 .location-context {
   text-align: center;
-  background: rgba(200, 169, 110, 0.08);
-  border: 1px solid rgba(200, 169, 110, 0.15);
+  background: linear-gradient(135deg, rgba(200, 169, 110, 0.1), rgba(200, 169, 110, 0.04));
+  border: 1px solid rgba(200, 169, 110, 0.18);
   border-radius: 20px;
-  padding: 0.3rem 1rem;
+  padding: 0.35rem 1.1rem;
   font-size: 0.78rem;
   color: #c8a96e;
   align-self: center;
   margin-bottom: 0.3rem;
-  animation: chatSlideIn 0.35s ease-out;
+  box-shadow: 0 1px 6px rgba(200, 169, 110, 0.06);
 }
 
 /* NPC event narratives in chatbox */
@@ -2056,5 +2133,6 @@ body {
   .chat-avatar { width: 30px; height: 30px; min-width: 30px; }
   .chat-avatar.css-avatar { width: 30px; height: 30px; min-width: 30px; font-size: 0.65rem; }
   .chat-msg { font-size: 0.85rem !important; padding: 0.45rem 0.7rem !important; }
-  .chat-narration { font-size: 0.8rem; max-width: 92%; }
+  .chat-narration { font-size: 0.82rem; max-width: 92%; }
+  .chat-typing-indicator { padding: 0.4rem 0.7rem; }
 }
