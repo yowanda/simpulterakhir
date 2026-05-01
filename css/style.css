@@ -1717,3 +1717,108 @@ body {
   padding-left: 0.5rem;
   margin-left: 0.5rem;
 }
+
+/* ---- Game Result Screen ---- */
+.game-result {
+  padding: 1rem 0;
+}
+.result-headline {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  border-radius: 6px;
+  text-align: center;
+}
+.winner-protagonist .result-headline {
+  background: rgba(46,204,113,0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46,204,113,0.4);
+}
+.winner-killer .result-headline {
+  background: rgba(230,57,70,0.15);
+  color: #e63946;
+  border: 1px solid rgba(230,57,70,0.4);
+}
+.winner-draw .result-headline {
+  background: rgba(243,156,18,0.15);
+  color: #f39c12;
+  border: 1px solid rgba(243,156,18,0.4);
+}
+.result-player-dead {
+  color: #e63946;
+  font-style: italic;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+.result-stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: rgba(200,169,110,0.08);
+  border: 1px solid rgba(200,169,110,0.2);
+  border-radius: 6px;
+  min-width: 80px;
+}
+.stat-label {
+  font-size: 0.7rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #c8a96e;
+}
+.result-fates {
+  margin-top: 1rem;
+}
+.fates-title {
+  font-family: 'Crimson Text', serif;
+  color: #c8a96e;
+  font-size: 1rem;
+  margin-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(200,169,110,0.2);
+  padding-bottom: 0.3rem;
+}
+.role-tag {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+  margin-left: 0.3rem;
+}
+.killer-tag { background: rgba(230,57,70,0.2); color: #e63946; border: 1px solid rgba(230,57,70,0.4); }
+.player-tag { background: rgba(52,152,219,0.2); color: #3498db; border: 1px solid rgba(52,152,219,0.4); }
+.witness-tag { background: rgba(243,156,18,0.2); color: #f39c12; border: 1px solid rgba(243,156,18,0.4); }
+.result-autosim {
+  margin-top: 1.2rem;
+  padding: 0.8rem;
+  background: rgba(20,20,30,0.6);
+  border: 1px solid rgba(200,169,110,0.15);
+  border-radius: 6px;
+}
+.autosim-entry {
+  font-size: 0.82rem;
+  color: #aaa;
+  margin-bottom: 0.3rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid rgba(200,169,110,0.15);
+}
+.autosim-more {
+  font-size: 0.75rem;
+  color: #666;
+  font-style: italic;
+  margin-top: 0.5rem;
+}
