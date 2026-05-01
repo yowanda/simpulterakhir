@@ -12,7 +12,7 @@ const Engine = (() => {
   let isBrainRevisit = false;
   let brainActionHistory = [];  // Track executed brain actions per node to prevent looping
   const BRAIN_MAX_PER_NODE = 5; // Max brain actions per node — interactive gameplay first, plot supports ending
-  const MAX_PLAYER_OPTIONS = 3; // Max choices shown to player per node
+  const MAX_PLAYER_OPTIONS = 6; // Max choices shown to player per node — brain interactive first
   let typingTimeout = null;
 
   // ---- 7 Unique Tools System ----
@@ -957,7 +957,7 @@ const Engine = (() => {
     let textContent = typeof node.text === 'function' ? node.text(state) : t(node.text);
 
     // Location context: show who's with the player
-    if (state.npcMinds && state.chapter >= 1) {
+    if (state.npcMinds) {
       const playerLoc = state.playerLocation || 'aula_utama';
       const locDisplayName = typeof CharBrain !== 'undefined' ? CharBrain.locName(playerLoc) : playerLoc;
       const nearbyChars = Object.keys(state.npcMinds).filter(n =>
@@ -976,7 +976,7 @@ const Engine = (() => {
     }
 
     // Run NPC round and append narrative
-    if (state.npcMinds && state.chapter >= 1 && !node.isEnding) {
+    if (state.npcMinds && !node.isEnding) {
       const roundResult = runNpcRound();
       if (roundResult) {
         const narrative = CharBrain.generateNarrative(roundResult, state);
@@ -1497,7 +1497,7 @@ const Engine = (() => {
 
     // --- MOVE to adjacent location (always available, resets brain actions at new loc) ---
     const connections = CharBrain.LOCATION_CONNECTIONS[playerLoc] || [];
-    if (connections.length > 0 && gameState.chapter >= 1) {
+    if (connections.length > 0) {
       const shuffled = connections.slice().sort(() => Math.random() - 0.5);
       // Niko's ability: +1 extra movement option (knows secret passages)
       const moveLimit = hasCharAbility(pc, 'extraMovement') ? 4 : 3;
@@ -1654,15 +1654,19 @@ const Engine = (() => {
 
     if (available.length === 0 && choices.length === 0) return;
 
-    // Limit player options to MAX_PLAYER_OPTIONS (3) — prioritize story choices, then highest reward brain choices
+    // Limit player options — prioritize BRAIN interactive choices, then story
     let displayed = available;
     if (displayed.length > MAX_PLAYER_OPTIONS) {
-      const story = displayed.filter(c => !c.type || c.type === 'story' || (!c.type?.startsWith('brain')));
       const brain = displayed.filter(c => c.type === 'brain' || c.type === 'brain-killer');
-      brain.sort((a, b) => (b.reward || 0) - (a.reward || 0));
-      displayed = story.slice(0, MAX_PLAYER_OPTIONS);
-      const remaining = MAX_PLAYER_OPTIONS - displayed.length;
-      if (remaining > 0) displayed = displayed.concat(brain.slice(0, remaining));
+      const story = displayed.filter(c => !c.type || c.type === 'story' || (!c.type?.startsWith('brain')));
+      // Shuffle brain choices for variety each game
+      for (let i = brain.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [brain[i], brain[j]] = [brain[j], brain[i]];
+      }
+      // Show 1 story choice max + fill rest with brain choices
+      const storySlot = story.length > 0 ? 1 : 0;
+      displayed = story.slice(0, storySlot).concat(brain.slice(0, MAX_PLAYER_OPTIONS - storySlot));
       displayed = displayed.slice(0, MAX_PLAYER_OPTIONS);
     }
 
@@ -1701,7 +1705,7 @@ const Engine = (() => {
       html += `</div>`;
 
       // Risk/Reward meter
-      if (state.chapter >= 1) {
+      if (state.chapter >= 0) {
         html += `<div class="choice-meters">`;
         const riskClass = risk > 65 ? 'meter-high' : risk > 35 ? 'meter-mid' : 'meter-low';
         const rewardClass = reward > 65 ? 'meter-high' : reward > 35 ? 'meter-mid' : 'meter-low';
