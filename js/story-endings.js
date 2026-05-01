@@ -1,6 +1,6 @@
 /* ============================================================
    SIMPUL TERAKHIR — ENDINGS
-   25 endings total — dapat trigger di chapter manapun.
+   28 endings total — dapat trigger di chapter manapun.
    Rating: S (terbaik), A, B, C, D, F (terburuk)
    ============================================================ */
 
