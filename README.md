@@ -122,9 +122,28 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 
 ### Framing & Divide Mechanic
 - **Framing** — killer bisa menanamkan bukti palsu ke target (45% chance sukses):
-  - **Sukses**: Target suspicion +25-40%, trust dengan NPC lain hancur (-25), NPC tandai target sebagai MUSUH, target kehilangan semua allies, tension +20
-  - **Gagal**: Suspicion KILLER naik +20%, NPC sekitar jadi curiga ke killer (+15)
+  - **Sukses**: Target suspicion +20-30%, trust dengan NPC lain hancur (-25), NPC tandai target sebagai MUSUH, target kehilangan semua allies, tension +20
+  - **Gagal**: Suspicion KILLER naik +15%, NPC sekitar jadi curiga ke killer (+12)
+  - Killer yang sudah revealed TIDAK bisa frame (semua sudah tahu)
+  - Frame chance turun seiring suspicion naik (susah framing saat sudah dicurigai)
 - **Divide** — killer NPC bisa memecah kelompok survivor (60% chance pindahkan survivor ke lokasi random)
+
+### Suspicion System (Optimized)
+- **Diminishing Returns** — suspicion di atas 60% lebih susah naik (contoh: +20 di level 80% jadi ~+18)
+- **Chapter Scaling** — chapter 0-1: gain x0.7, chapter 2: gain x0.85 (build-up bertahap)
+- **Reduction Boost** — suspicion turun lebih efektif saat level tinggi (x1.2 di atas 70%)
+- **Natural Decay** — setiap round, suspicion turun -2/-3 poin otomatis (kecuali killer yang sudah terbukti — itu permanent)
+- **Semua suspicion value di-rebalance** — lebih gradual, tidak ada lagi spike +30/+35 dari satu aksi
+
+### Pemburu Mechanic (Baru!)
+- **Trigger**: Saat petunjuk pelarian **pertama** ditemukan → random survivor ditunjuk sebagai **Pemburu**
+- **Pemburu persistent** — satu orang yang sama sepanjang game (`state.pemburu`)
+- **Auto-Eksekusi**: Jika ada karakter (killer ATAU survivor) dengan suspicion >80% → Pemburu otomatis menembak target dengan suspicion tertinggi
+- **Berlaku untuk SEMUA** — killer dan survivor innocent bisa jadi korban pemburu
+  - Jika target benar killer: "Tembakan tepat!"
+  - Jika target innocent: "SALAH SASARAN!" — survivor tewas
+- **Pemburu Terungkap** — setelah eksekusi, identitas Pemburu diketahui semua survivor (`state.pemburuRevealed`)
+- **Strategis**: Killer harus hati-hati agar suspicion tidak >80%, survivor bisa memanfaatkan framing untuk memicu pemburu ke target yang salah
 
 ### Anti-Looping System
 - **Player Action Tracking** — setiap brain action hanya bisa dilakukan **1x per target per node**
@@ -155,6 +174,16 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
 - Hasil roll ditampilkan setelah aksi: "Berhasil! (65% chance, roll: 42)"
 - Chance disesuaikan per difficulty — protagonist punya advantage lebih besar di easy
 - Killer mendapat penalty di difficulty lebih rendah untuk keseimbangan
+- **Bar Chance Akurat** — `previewChance()` menampilkan angka sebenarnya termasuk ability + tool + difficulty bonus (bukan hanya base chance)
+- **Bar Risiko/Hasil Role-Aware** — killer yang terungkap (buka kartu) mendapat opsi aksi yang sesuai:
+  - Aksi ofensif (serang/frame/sabotase): risiko naik +20-25%, reward turun -30%
+  - Aksi defensif (kabur/sembunyi): risiko TURUN, reward NAIK — strategi yang masuk akal
+  - Aksi baru khusus revealed killer: Kabur, Bersembunyi, Serangan Terakhir
+- **Bar Protagonis Dinamis** — risiko/reward berubah berdasarkan game state:
+  - Sekutu nearby mengurangi risk untuk aksi konfrontasi
+  - Danger level mempengaruhi risk investigasi
+  - Trust mempengaruhi reward bicara/aliansi
+  - Bukti yang terkumpul mempengaruhi akurasi tuduhan
 
 ### Realtime Player Status
 - Status bar WhatsApp-style menampilkan kondisi karakter pemain di sub-header:
@@ -175,6 +204,7 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
 - **Jika 5 petunjuk terkumpul** → semua killer langsung terungkap dan dieksekusi oleh tim protagonis!
 - **Kunci Master** — 5% chance muncul di lokasi acak saat investigasi. Jika ditemukan → misi petunjuk pelarian langsung selesai!
 - **Killer bisa MENGHANCURKAN petunjuk** — jika sisa petunjuk < 5, killer menang karena protagonist tak bisa mengungkap identitas mereka
+- **Petunjuk pertama → Pemburu aktif** — menemukan petunjuk pertama mengaktifkan mechanic Pemburu (random survivor ditunjuk)
 - **8 Lokasi Petunjuk**:
   | Petunjuk | Lokasi | Deskripsi |
   |----------|--------|-----------|
