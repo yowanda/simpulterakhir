@@ -95,7 +95,8 @@ const CharBrain = (() => {
       enemies: [],         // Who they actively oppose
       target: null,        // Current action target (person or location)
       lastAction: null,
-      actionCooldown: 0,
+      actionHistory: [],     // Track last N actions to prevent looping
+      actionCooldowns: {},   // Cooldown per action type: { type: roundsRemaining }
       killerExposed: false,
       hasClue: [],         // Clues this character has found
       isHiding: false,
@@ -180,6 +181,40 @@ const CharBrain = (() => {
     }
   }
 
+  // ---- Anti-Looping: check if action type is on cooldown ----
+  function isActionOnCooldown(mind, actionType) {
+    return (mind.actionCooldowns[actionType] || 0) > 0;
+  }
+
+  // ---- Anti-Looping: record action and set cooldown ----
+  function recordAction(mind, action) {
+    const type = action.type;
+    mind.actionHistory.push(type);
+    if (mind.actionHistory.length > 5) mind.actionHistory.shift(); // Keep last 5
+
+    // Set cooldown: prevent same action type for 1-2 rounds
+    const cooldownMap = {
+      observe: 2, investigate: 2, socialize: 2, manipulate: 2,
+      plan: 2, guard: 1, hide: 2, flee: 1, question: 2,
+      maintain_cover: 2, frame: 2, stalk: 1, trap: 2, sabotage: 2,
+      confront: 1, accuse: 3, barricade: 3
+    };
+    mind.actionCooldowns[type] = cooldownMap[type] || 1;
+  }
+
+  // ---- Anti-Looping: tick cooldowns each round ----
+  function tickCooldowns(mind) {
+    Object.keys(mind.actionCooldowns).forEach(type => {
+      if (mind.actionCooldowns[type] > 0) mind.actionCooldowns[type]--;
+    });
+  }
+
+  // ---- Anti-Looping: check if action was recently done (last 3 actions) ----
+  function wasRecentlyDone(mind, actionType) {
+    const recent = mind.actionHistory.slice(-3);
+    return recent.includes(actionType);
+  }
+
   // ---- Decision Making ----
   // The core of the brain: given a mind state and game state,
   // choose an action from the behavior database
@@ -193,14 +228,21 @@ const CharBrain = (() => {
     const possibleActions = st.canAct;
     const pc = gameState.playerCharacter || 'arin';
 
-    // Get character-specific decisions from database
+    // Get character-specific decisions from database (with anti-loop filtering)
     if (db && db.decisions) {
       const contextKey = buildContextKey(mind, gameState, allMinds);
       const decision = matchDecision(db.decisions, contextKey, mind, gameState);
-      if (decision) return decision;
+      if (decision && !isActionOnCooldown(mind, decision.type) && !wasRecentlyDone(mind, decision.type)) {
+        return decision;
+      }
+      // If decision was blocked by cooldown, try a second match excluding that type
+      if (decision) {
+        const altDecision = matchDecisionExcluding(db.decisions, contextKey, mind, gameState, decision.type);
+        if (altDecision) return altDecision;
+      }
     }
 
-    // Fallback: generic decision based on emotional state and goals
+    // Fallback: generic decision based on emotional state and goals (with anti-loop)
     return genericDecision(mind, gameState, allMinds, possibleActions, isK);
   }
 
@@ -251,6 +293,33 @@ const CharBrain = (() => {
     return matches[matches.length - 1].action;
   }
 
+  // ---- Match decision excluding a specific action type (anti-loop fallback) ----
+  function matchDecisionExcluding(decisions, ctx, mind, gameState, excludeType) {
+    const matches = decisions.filter(d => {
+      if (d.action && d.action.type === excludeType) return false;
+      if (d.condition.emotion && d.condition.emotion !== ctx.emotion) return false;
+      if (d.condition.chapter !== undefined && d.condition.chapter !== ctx.chapter) return false;
+      if (d.condition.minDanger && ctx.dangerLevel < d.condition.minDanger) return false;
+      if (d.condition.maxDanger && ctx.dangerLevel > d.condition.maxDanger) return false;
+      if (d.condition.isAlone !== undefined && d.condition.isAlone !== ctx.isAlone) return false;
+      if (d.condition.minTension && ctx.tension < d.condition.minTension) return false;
+      if (d.condition.minDeaths && ctx.deathCount < d.condition.minDeaths) return false;
+      if (d.condition.hasClue !== undefined && d.condition.hasClue !== ctx.hasClue) return false;
+      if (d.condition.location && d.condition.location !== ctx.location) return false;
+      if (d.condition.nearbyIncludes && !ctx.nearbyChars.includes(d.condition.nearbyIncludes)) return false;
+      if (d.condition.nearbyExcludes && ctx.nearbyChars.includes(d.condition.nearbyExcludes)) return false;
+      return true;
+    });
+    if (matches.length === 0) return null;
+    const totalWeight = matches.reduce((sum, m) => sum + (m.weight || 10), 0);
+    let roll = Math.random() * totalWeight;
+    for (const m of matches) {
+      roll -= (m.weight || 10);
+      if (roll <= 0) return m.action;
+    }
+    return matches[matches.length - 1].action;
+  }
+
   function genericDecision(mind, gameState, allMinds, possibleActions, isK) {
     const nearby = Object.values(allMinds).filter(m =>
       m !== mind && m.location === mind.location && gameState.alive[m.name]
@@ -265,88 +334,157 @@ const CharBrain = (() => {
 
   function survivorFallback(mind, gameState, allMinds, nearby, isAlone) {
     const deathCount = gameState.deathCount || 0;
+    const canDo = (type) => !isActionOnCooldown(mind, type);
+
+    // Build list of candidate actions, pick first non-cooldown one
+    const candidates = [];
 
     // High tension → flee or hide
     if (mind.tension >= 70) {
-      if (isAlone) {
-        return { type: 'flee', desc: fleeTo(mind), priority: 90 };
+      if (isAlone && canDo('flee')) {
+        candidates.push({ type: 'flee', desc: fleeTo(mind), priority: 90 });
       }
-      if (nearby.some(n => mind.enemies.includes(n.name))) {
-        return { type: 'flee', desc: fleeTo(mind), priority: 95 };
+      if (nearby.some(n => mind.enemies.includes(n.name)) && canDo('flee')) {
+        candidates.push({ type: 'flee', desc: fleeTo(mind), priority: 95 });
       }
-      return { type: 'barricade', desc: `${charName(mind.name)} memblokir pintu ${locName(mind.location)}.`, priority: 80 };
+      if (canDo('barricade')) {
+        candidates.push({ type: 'barricade', desc: `${charName(mind.name)} memblokir pintu ${locName(mind.location)}.`, priority: 80 });
+      }
+      // Escalation: if flee/barricade on cooldown, try confront
+      if (candidates.length === 0 && canDo('confront') && nearby.length > 0) {
+        candidates.push({ type: 'confront', desc: `${charName(mind.name)} berbalik menghadapi ancaman. "Aku tidak akan lari lagi!"`, priority: 85 });
+      }
     }
 
-    // Mid tension → investigate or question
-    if (mind.tension >= 35) {
-      if (mind.hasClue.length > 0 && nearby.length > 0) {
+    // Mid tension → investigate, question, or share clue
+    if (mind.tension >= 35 && candidates.length === 0) {
+      if (mind.hasClue.length > 0 && nearby.length > 0 && canDo('share_clue')) {
         const ally = nearby.find(n => mind.allies.includes(n.name));
         if (ally) {
-          return { type: 'share_clue', desc: `${charName(mind.name)} membagi bukti dengan ${charName(ally.name)}.`, target: ally.name, priority: 70 };
+          candidates.push({ type: 'share_clue', desc: `${charName(mind.name)} membagi bukti dengan ${charName(ally.name)}.`, target: ally.name, priority: 70 });
         }
       }
-      if (isAlone) {
-        return { type: 'investigate', desc: `${charName(mind.name)} memeriksa ${locName(mind.location)} untuk mencari petunjuk.`, priority: 65 };
+      if (isAlone && canDo('investigate')) {
+        candidates.push({ type: 'investigate', desc: `${charName(mind.name)} memeriksa ${locName(mind.location)} untuk mencari petunjuk.`, priority: 65 });
       }
       const suspect = nearby.find(n => mind.suspicions[n.name] > 40);
-      if (suspect) {
-        return { type: 'question', desc: `${charName(mind.name)} mengonfrontasi ${charName(suspect.name)}: "Di mana kau saat lampu mati?"`, target: suspect.name, priority: 75 };
+      if (suspect && canDo('question')) {
+        candidates.push({ type: 'question', desc: `${charName(mind.name)} mengonfrontasi ${charName(suspect.name)}: "Di mana kau saat lampu mati?"`, target: suspect.name, priority: 75 });
+      }
+      // Escalation: move to a different location to find new things
+      if (candidates.length === 0) {
+        const moveTo = pickNewLocation(mind);
+        if (moveTo) {
+          candidates.push({ type: 'move', desc: `${charName(mind.name)} bergerak ke ${locName(moveTo)} untuk mencari petunjuk baru.`, moveTo, priority: 55 });
+        }
       }
     }
 
-    // Low tension → socialize or observe
-    if (nearby.length > 0 && deathCount === 0) {
-      return { type: 'socialize', desc: `${charName(mind.name)} berbicara dengan ${charName(nearby[0].name)}.`, target: nearby[0].name, priority: 40 };
+    // Low tension → socialize, observe, or move
+    if (candidates.length === 0) {
+      if (nearby.length > 0 && deathCount === 0 && canDo('socialize')) {
+        candidates.push({ type: 'socialize', desc: `${charName(mind.name)} berbicara dengan ${charName(nearby[0].name)}.`, target: nearby[0].name, priority: 40 });
+      }
+      if (canDo('observe')) {
+        candidates.push({ type: 'observe', desc: `${charName(mind.name)} mengamati sekitar dengan waspada.`, priority: 30 });
+      }
+      // If all common actions on cooldown, move somewhere new
+      if (candidates.length === 0) {
+        const moveTo = pickNewLocation(mind);
+        if (moveTo) {
+          candidates.push({ type: 'move', desc: `${charName(mind.name)} bergerak ke ${locName(moveTo)}.`, moveTo, priority: 25 });
+        }
+      }
     }
 
-    // Default: observe
-    return { type: 'observe', desc: `${charName(mind.name)} mengamati sekitar dengan waspada.`, priority: 30 };
+    return candidates.length > 0 ? candidates[0] : { type: 'observe', desc: `${charName(mind.name)} berdiri diam, berpikir.`, priority: 10 };
   }
 
   function killerFallback(mind, gameState, allMinds, nearby, isAlone) {
     const mySusp = gameState.suspicion ? gameState.suspicion[mind.name] || 0 : 0;
+    const canDo = (type) => !isActionOnCooldown(mind, type);
+    const candidates = [];
 
     // Exposed → cover up or flee
     if (mySusp > 60) {
-      if (nearby.length > 0) {
-        return { type: 'frame', desc: `${charName(mind.name)} mengalihkan kecurigaan ke orang lain.`, priority: 85 };
+      if (nearby.length > 0 && canDo('frame')) {
+        candidates.push({ type: 'frame', desc: `${charName(mind.name)} mengalihkan kecurigaan ke orang lain.`, priority: 85 });
       }
-      return { type: 'hide', desc: `${charName(mind.name)} menghilang ke bayangan.`, priority: 80 };
+      if (canDo('hide')) {
+        candidates.push({ type: 'hide', desc: `${charName(mind.name)} menghilang ke bayangan.`, priority: 80 });
+      }
+      // Escalation: if framing on cooldown, try to maintain cover instead
+      if (candidates.length === 0 && canDo('maintain_cover')) {
+        candidates.push({ type: 'maintain_cover', desc: `${charName(mind.name)} bersikap tenang, menekan kepanikan.`, priority: 70 });
+      }
     }
 
     // Stalking → find isolated target
-    if (mind.emotion === 'stalking') {
+    if (mind.emotion === 'stalking' && candidates.length === 0) {
       const isolated = Object.values(allMinds).filter(m =>
         m !== mind &&
         gameState.alive[m.name] &&
         !gameState.killers.includes(m.name) &&
         Object.values(allMinds).filter(o => o.location === m.location && o !== m && gameState.alive[o.name]).length === 0
       );
-      if (isolated.length > 0) {
+      if (isolated.length > 0 && canDo('stalk')) {
         const target = isolated[Math.floor(Math.random() * isolated.length)];
-        return { type: 'stalk', desc: `${charName(mind.name)} bergerak menuju ${locName(target.location)}, membuntuti ${charName(target.name)}.`, target: target.name, moveTo: target.location, priority: 80 };
+        candidates.push({ type: 'stalk', desc: `${charName(mind.name)} bergerak menuju ${locName(target.location)}, membuntuti ${charName(target.name)}.`, target: target.name, moveTo: target.location, priority: 80 });
       }
-      return { type: 'manipulate', desc: `${charName(mind.name)} memainkan emosi kelompok untuk memecah aliansi.`, priority: 65 };
+      if (canDo('manipulate')) {
+        candidates.push({ type: 'manipulate', desc: `${charName(mind.name)} memainkan emosi kelompok untuk memecah aliansi.`, priority: 65 });
+      }
+      // Escalation: move to new position
+      if (candidates.length === 0) {
+        const moveTo = pickNewLocation(mind);
+        if (moveTo) {
+          candidates.push({ type: 'move', desc: `${charName(mind.name)} berpindah posisi ke ${locName(moveTo)}, mencari mangsa.`, moveTo, priority: 55 });
+        }
+      }
     }
 
     // Hunting → isolate and strike
-    if (mind.emotion === 'hunting') {
-      if (isAlone) {
-        return { type: 'trap', desc: `${charName(mind.name)} menyiapkan jebakan di ${locName(mind.location)}.`, priority: 75 };
+    if (mind.emotion === 'hunting' && candidates.length === 0) {
+      if (isAlone && canDo('trap')) {
+        candidates.push({ type: 'trap', desc: `${charName(mind.name)} menyiapkan jebakan di ${locName(mind.location)}.`, priority: 75 });
       }
       if (nearby.length === 1 && !gameState.killers.includes(nearby[0].name)) {
-        return { type: 'strike', desc: `${charName(mind.name)} menyerang ${charName(nearby[0].name)} di ${locName(mind.location)}!`, target: nearby[0].name, priority: 95 };
+        candidates.push({ type: 'strike', desc: `${charName(mind.name)} menyerang ${charName(nearby[0].name)} di ${locName(mind.location)}!`, target: nearby[0].name, priority: 95 });
       }
-      return { type: 'isolate', desc: `${charName(mind.name)} mencoba memisahkan kelompok.`, priority: 70 };
+      if (canDo('isolate')) {
+        candidates.push({ type: 'isolate', desc: `${charName(mind.name)} mencoba memisahkan kelompok.`, priority: 70 });
+      }
+      if (candidates.length === 0 && canDo('sabotage')) {
+        candidates.push({ type: 'sabotage', desc: `${charName(mind.name)} menyabotase ${locName(mind.location)}.`, priority: 60 });
+      }
     }
 
-    // Executing → kill
-    if (mind.emotion === 'executing' && nearby.length === 1) {
-      return { type: 'eliminate', desc: `${charName(mind.name)} mengeksekusi ${charName(nearby[0].name)}!`, target: nearby[0].name, priority: 100 };
+    // Executing → kill (always allowed, critical action)
+    if (mind.emotion === 'executing' && nearby.length === 1 && candidates.length === 0) {
+      candidates.push({ type: 'eliminate', desc: `${charName(mind.name)} mengeksekusi ${charName(nearby[0].name)}!`, target: nearby[0].name, priority: 100 });
     }
 
-    // Default: maintain cover
-    return { type: 'maintain_cover', desc: `${charName(mind.name)} bersikap normal, menyembunyikan niat.`, priority: 50 };
+    // Default: maintain cover or move
+    if (candidates.length === 0) {
+      if (canDo('maintain_cover')) {
+        candidates.push({ type: 'maintain_cover', desc: `${charName(mind.name)} bersikap normal, menyembunyikan niat.`, priority: 50 });
+      } else {
+        const moveTo = pickNewLocation(mind);
+        if (moveTo) {
+          candidates.push({ type: 'move', desc: `${charName(mind.name)} berpindah ke ${locName(moveTo)}.`, moveTo, priority: 40 });
+        }
+      }
+    }
+
+    return candidates.length > 0 ? candidates[0] : { type: 'maintain_cover', desc: `${charName(mind.name)} menunggu dengan sabar.`, priority: 30 };
+  }
+
+  // ---- Pick a new location to move to (anti-loop: avoid current location) ----
+  function pickNewLocation(mind) {
+    const connections = LOCATION_CONNECTIONS[mind.location] || [];
+    if (connections.length === 0) return null;
+    const shuffled = connections.slice().sort(() => Math.random() - 0.5);
+    return shuffled[0];
   }
 
   function fleeTo(mind) {
@@ -374,6 +512,9 @@ const CharBrain = (() => {
       const mind = minds[name];
       mind.roundsSurvived++;
 
+      // Tick cooldowns before making new decision
+      tickCooldowns(mind);
+
       // Update emotional state
       updateEmotion(mind, gameState);
 
@@ -381,6 +522,8 @@ const CharBrain = (() => {
       const decision = makeDecision(mind, gameState, minds);
       if (!decision) return;
 
+      // Record action for anti-looping
+      recordAction(mind, decision);
       mind.lastAction = decision;
       actions.push({ character: name, action: decision });
 
@@ -584,6 +727,19 @@ const CharBrain = (() => {
         // Protect location — makes it harder for killer to strike here
         return { type: 'guarding', character: mind.name, location: mind.location,
           desc: `${charName(mind.name)} berjaga di ${locName(mind.location)}.` };
+      }
+
+      case 'move': {
+        // Move to a new location (anti-loop: breaks repetitive actions at same loc)
+        const dest = action.moveTo || pickNewLocation(mind);
+        if (dest) {
+          const oldLoc = mind.location;
+          mind.location = dest;
+          mind.isHiding = false;
+          return { type: 'movement', character: mind.name, from: oldLoc, to: dest,
+            desc: `${charName(mind.name)} berpindah dari ${locName(oldLoc)} ke ${locName(dest)}.` };
+        }
+        return null;
       }
 
       default:
