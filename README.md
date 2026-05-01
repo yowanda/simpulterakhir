@@ -77,7 +77,7 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - Siapa yang ada di dekat mereka
   - Clue yang sudah ditemukan
   - Aliansi dan musuh
-- **418 Decision Entries** — 40+ keputusan per karakter dengan weighted random selection + catch-all fallbacks
+- **505 Decision Entries** — 40-60+ keputusan per karakter (termasuk chapters 7-10 endgame) dengan weighted random selection + catch-all fallbacks
 - **Sistem Win/Loss Dinamis** — hasil ditentukan oleh aksi NPC, bukan ending pre-scripted:
   - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan **8 dari 15 petunjuk** → semua killer terungkap & dieksekusi
   - **Killer Menang**: Eliminasi protagonis hingga tersisa 1 ATAU hancurkan cukup petunjuk agar protagonist tak bisa capai 8

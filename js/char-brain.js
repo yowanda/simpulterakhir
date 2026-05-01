@@ -208,9 +208,9 @@ const CharBrain = (() => {
       confront: 2, accuse: 3, barricade: 3, sabotage_killer: 3, move: 1,
       coordinate_defense: 3, scout: 2, rally: 3, ambush: 3,
       secure_exit: 3, betray: 3, distract: 3, divide: 3,
-      isolate: 2, eliminate: 1, strike: 1, share_clue: 2,
+      isolate: 3, eliminate: 2, strike: 2, share_clue: 2,
       trust_kill: 4,
-      destroy_clue: 2, search_escape_clue: 2, attack_killer: 2
+      destroy_clue: 3, search_escape_clue: 2, attack_killer: 2
     };
     let cd = cooldownMap[type] || 1;
     // Escalation: reduce cooldowns in chapters 8-10
@@ -588,11 +588,11 @@ const CharBrain = (() => {
       candidates.push({ type: 'manipulate', desc: `${charName(mind.name)} menanam ketidakpercayaan antar survivor — memecah belah dari dalam.`, priority: 82 });
     }
 
-    // Destroy escape clue if at a location with one (high priority)
+    // Destroy escape clue if at a location with one (reduced priority for balance)
     if (typeof Engine !== 'undefined' && Engine.getEscapeClueAtLocation && canDo('destroy_clue')) {
       const escClue = Engine.getEscapeClueAtLocation(mind.location);
       if (escClue) {
-        candidates.push({ type: 'destroy_clue', desc: `${charName(mind.name)} menghancurkan ${escClue.name} di ${locName(mind.location)}.`, clueId: escClue.id, priority: 88 });
+        candidates.push({ type: 'destroy_clue', desc: `${charName(mind.name)} menghancurkan ${escClue.name} di ${locName(mind.location)}.`, clueId: escClue.id, priority: 72 });
       }
     }
 
@@ -930,16 +930,29 @@ const CharBrain = (() => {
       }
 
       case 'frame': {
-        // Redirect suspicion to someone else
+        // Redirect suspicion to someone else — chance-based with real consequences
         const aliveNonKillers = Object.keys(allMinds).filter(n =>
           gameState.alive[n] && !gameState.killers.includes(n) && n !== mind.name
         );
         if (aliveNonKillers.length > 0) {
           const framed = aliveNonKillers[Math.floor(Math.random() * aliveNonKillers.length)];
-          gameState.suspicion[framed] = Math.min(100, (gameState.suspicion[framed] || 0) + 20);
-          gameState.suspicion[mind.name] = Math.max(0, (gameState.suspicion[mind.name] || 0) - 15);
-          return { type: 'framed', framer: mind.name, victim: framed,
-            desc: `Kecurigaan meningkat terhadap ${charName(framed)}...` };
+          const frameChance = 0.45 - getKillerPenalty(gameState);
+          if (Math.random() < frameChance) {
+            gameState.suspicion[framed] = Math.min(100, (gameState.suspicion[framed] || 0) + 15);
+            gameState.suspicion[mind.name] = Math.max(0, (gameState.suspicion[mind.name] || 0) - 10);
+            // Nearby NPCs also start suspecting the framed target
+            Object.values(allMinds).forEach(m => {
+              if (m.name !== mind.name && m.name !== framed && m.location === mind.location && gameState.alive[m.name]) {
+                m.suspicions[framed] = Math.min(100, (m.suspicions[framed] || 0) + 15);
+              }
+            });
+            return { type: 'framed', framer: mind.name, victim: framed,
+              desc: `Kecurigaan meningkat terhadap ${charName(framed)}... NPC mulai curiga.` };
+          } else {
+            gameState.suspicion[mind.name] = Math.min(100, (gameState.suspicion[mind.name] || 0) + 10);
+            return { type: 'frame_failed', framer: mind.name, victim: framed,
+              desc: `${charName(mind.name)} mencoba mengalihkan kecurigaan, tapi gerak-geriknya justru mencurigakan.` };
+          }
         }
         return null;
       }
@@ -1117,7 +1130,7 @@ const CharBrain = (() => {
 
       case 'destroy_clue': {
         if (!action.clueId || typeof Engine === 'undefined') return null;
-        const destroyChance = 0.55 - getKillerPenalty(gameState);
+        const destroyChance = 0.40 - getKillerPenalty(gameState);
         if (Math.random() < destroyChance) {
           Engine.destroyEscapeClue(action.clueId);
           return { type: 'clue_destroyed', character: mind.name, location: mind.location,
@@ -1129,7 +1142,7 @@ const CharBrain = (() => {
 
       case 'search_escape_clue': {
         if (!action.clueId || typeof Engine === 'undefined') return null;
-        const searchChance = 0.35 + (gameState.chapter * 0.05) + getEscalationBonus(gameState) + getProtagonistBonus(gameState);
+        const searchChance = 0.45 + (gameState.chapter * 0.05) + getEscalationBonus(gameState) + getProtagonistBonus(gameState);
         if (Math.random() < searchChance) {
           Engine.findEscapeClue(action.clueId);
           gameState.cluesFound = (gameState.cluesFound || 0) + 1;
@@ -1259,7 +1272,7 @@ const CharBrain = (() => {
   // ---- Defense Calculation ----
   function calculateDefense(targetName, gameState, allMinds) {
     const isTargetKiller = gameState.killers && gameState.killers.includes(targetName);
-    let defense = 0.15; // Base 15% chance to survive
+    let defense = 0.25; // Base 25% chance to survive (buffed for balance)
     // Escalation: defense decreases in later chapters (harder to survive)
     defense -= getEscalationBonus(gameState) * 0.5;
     defense = Math.max(0.03, defense);
