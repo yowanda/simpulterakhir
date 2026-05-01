@@ -6,7 +6,7 @@
 const STORY_CH9 = {
 
 'ch9_start': {
-  chapter: 9,
+  chapter: 5,
   text: (s) => {
     let text = `<p class="sound">— Satu jam sebelum fajar. —</p>`;
     text += `<p class="sound">— Langit di timur mulai berubah — bukan terang, belum. Tapi gelap yang berbeda. Gelap yang berjanji akan pergi. —</p>`;

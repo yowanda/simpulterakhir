@@ -6,7 +6,7 @@
 const STORY_CH10 = {
 
 'ch10_start': {
-  chapter: 10,
+  chapter: 5,
   text: (s) => {
     let text = `<p class="sound">— Fajar. —</p>`;
     text += `<p class="sound">— Garis tipis merah di timur — seperti luka di kulit langit. Perlahan melebar, membasahi hutan pinus dengan cahaya yang terasa terlalu biasa untuk apa yang baru saja terjadi. —</p>`;
@@ -198,7 +198,7 @@ const STORY_CH10 = {
 },
 
 'ch10_resolution': {
-  chapter: 10,
+  chapter: 5,
   text: (s) => {
     let text = `<p class="sound">— Dan begitulah malam di Mansion Wardhana berakhir. —</p>`;
     text += `<p class="sound">— Bukan dengan twist terakhir. Bukan dengan monster yang muncul di detik terakhir. Tapi dengan sinar matahari — biasa, sederhana, memalukan dalam normalitasnya — yang menerangi kekacauan yang ditinggalkan manusia. —</p>`;

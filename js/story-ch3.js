@@ -7,7 +7,7 @@
 const STORY_CH3 = {
 
 'ch3_start': {
-  chapter: 3,
+  chapter: 2,
   text: (s) => {
     let text = `<p class="sound">— Mansion Wardhana terasa semakin kecil setiap menitnya. Dinding-dinding mendekat. Bayangan-bayangan memanjang. Dan di antara sepuluh orang — atau berapa pun yang masih utuh — garis-garis kepercayaan mulai retak seperti kaca. —</p>`;
     text += `<p class="sound">— Countdown: ${s.flags.kiraTracking ? '02:30:00' : '03:30:00'} —</p>`;
@@ -190,7 +190,7 @@ const STORY_CH3 = {
 },
 
 'ch3_floor3': {
-  chapter: 3,
+  chapter: 2,
   text: (s) => {
     let text = `<p class="sound">— Lantai tiga Mansion Wardhana. —</p>`;
 
@@ -667,7 +667,7 @@ const STORY_CH3 = {
 },
 
 'ch3_first_death': {
-  chapter: 3,
+  chapter: 2,
   text: (s) => {
     let text = `<p class="sound">— Dan kemudian — kematian pertama. —</p>`;
 
@@ -809,7 +809,7 @@ const STORY_CH3 = {
 },
 
 'ch3_forest_escape': {
-  chapter: 3,
+  chapter: 2,
   text: (s) => {
     let text = `<p><span class="speaker sera">Sera</span> Kau berlari keluar. Udara malam menghantam — dingin, tajam, penuh bau pinus dan tanah basah.</p>`;
     text += `<p><span class="speaker sera">Sera</span> Gelap. Gelap seperti dasar lautan. Ponselmu — satu persen baterai — memberikan cahaya selemah lilin.</p>`;

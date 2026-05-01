@@ -975,7 +975,7 @@ const STORY_CH1 = {
       }
     },
     {
-      text: "Cari jalan keluar alternatif — jendela lantai 2, atap, apapun",
+      text: "Cari jalan keluar alternatif — jendela lantai 2, menara, apapun",
       next: 'ch2_start',
       effect: (s) => {
         s.flags.searchingEscape = true;
