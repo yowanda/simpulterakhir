@@ -74,6 +74,16 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 - **Dynamic Choices** — pilihan baru muncul berdasarkan aksi NPC (tuduh, aliansi, serang, investigasi)
 - **Tidak pakai AI live** — semua diatur oleh branching database, bukan generative AI
 
+### Anti-Looping System (Baru!)
+- **Player Action Tracking** — setiap brain action (investigasi, observasi, bicara, tuduh, dll.) hanya bisa dilakukan **1x per target per node** — tidak bisa diulang
+- **Max 2 Brain Actions** per node sebelum otomatis paksa progressi cerita ("Lanjutkan cerita")
+- **NPC Cooldown System** — setiap tipe aksi NPC punya cooldown 1-3 ronde, mencegah NPC mengulangi aksi yang sama berturut-turut
+- **Action History** — NPC menyimpan 5 aksi terakhir; aksi yang baru dilakukan tidak akan dipilih lagi
+- **Escalation Mechanism** — jika semua aksi on cooldown, NPC otomatis pindah lokasi (tidak diam/stuck)
+- **Anti-Loop Fallback** — jika keputusan utama NPC terblokir cooldown, sistem mencari keputusan alternatif dari database
+- **Location-Based Reset** — pindah ke lokasi baru me-reset aksi spesifik lokasi (investigasi, sembunyi)
+- **160+ Decision Node** — database brain diperkaya dengan aksi movement, interaksi unik antar karakter, escalation chain, dan desperation actions
+
 ### Interactive Choice System (Baru!)
 - **15 kategori aksi** — setiap pilihan dikategorikan dengan ikon dan warna unik:
   - 🔍 Investigasi, ⚔️ Konfrontasi, 🤝 Sosial, 🚶 Pindah, 👁️ Siluman, 🛡️ Lindungi
