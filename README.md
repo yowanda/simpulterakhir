@@ -1,6 +1,6 @@
 # SIMPUL TERAKHIR
 
-**Post-modern psychological horror/thriller interactive story — Bahasa Indonesia**
+**Post-modern psychological horror/thriller fully interactive game — Bahasa Indonesia**
 
 > *Sepuluh tamu. Satu mansion. Tiga simpul yang harus terputus. Siapa Sang Penenun?*
 
@@ -70,10 +70,14 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan **8 dari 15 petunjuk** → semua killer terungkap & dieksekusi
   - **Killer Menang**: Eliminasi protagonis hingga tersisa 1 ATAU hancurkan cukup petunjuk agar protagonist tak bisa capai 8
   - **Killer Kalah**: Semua killer tereliminasi
-  - **Saksi + Buru + Eksekusi**: Jika killer ketahuan membunuh (ada saksi) atau gagal menyerang, killer langsung DIBURU oleh semua survivor. Jika killer ditemukan di ruangan dengan 2+ survivor → dieksekusi. Killer hanya selamat jika sembunyi sendirian.
-  - **Survivor Melawan**: Jika killer menyerang di ruangan dengan 2+ survivor → killer MATI (survivor fight back)
+    - **Saksi + Buru + Eksekusi**: Jika killer ketahuan membunuh (ada saksi), killer langsung DIBURU oleh SEMUA survivor. Jika ditemukan di ruangan dengan 2+ survivor → DIEKSEKUSI. Killer hanya selamat jika berhasil kabur dan sembunyi SENDIRIAN.
+  - **Survivor Melawan**: Jika killer menyerang di ruangan dengan 2+ survivor → killer MATI (survivor fight back). Berlaku juga saat killer mencoba kill di room penuh.
   - **2 Killer vs 1 Survivor**: Jika 2+ killer di ruangan dengan 1 survivor → survivor 100% mati, tidak ada kesempatan
-  - **Killer Strategi**: Killer TIDAK bisa bantu/lindungi survivor. Fokus: memisahkan kelompok (divide, isolate, manipulate) lalu membunuh target yang sendirian
+  - **Killer Strategi**: Killer TIDAK BISA bantu/lindungi survivor (hard-blocked oleh sistem). Fokus: memisahkan kelompok (divide, isolate, manipulate, distract) lalu membunuh target yang sendirian. Killer juga bisa menghancurkan petunjuk pelarian.
+  - **Difficulty-Based Win Rate**: Protagonist punya advantage lebih besar per difficulty:
+    - **Easy**: +15% bonus defense, search, dan attack untuk protagonist
+    - **Normal**: +10% bonus
+    - **Hard**: +5% bonus
   - **Auto-Simulasi**: Jika player tereliminasi, NPC brain melanjutkan sampai ada pemenang
   - **Ringkasan Akhir**: Tampilkan semua karakter — siapa hidup, siapa mati, role masing-masing
 - **Trust-Kill Mechanic** — NPC bisa membunuh NPC lain karena ketidakpercayaan:
@@ -88,7 +92,7 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 
 ### Anti-Looping System
 - **Player Action Tracking** — setiap brain action hanya bisa dilakukan **1x per target per node**
-- **Max 2 Brain Actions** per node sebelum force progressi cerita
+- **Max 5 Brain Actions** per node — gameplay interaktif prioritas, plot mendukung ending
 - **NPC Cooldown System** — setiap tipe aksi NPC punya cooldown 1-3 ronde
 - **Escalation Mechanism** — jika semua aksi on cooldown, NPC otomatis pindah lokasi
 - **Location-Based Reset** — pindah ke lokasi baru me-reset aksi spesifik lokasi
@@ -111,7 +115,8 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
 - Setiap aksi punya **persentase keberhasilan** yang ditampilkan di UI
 - Tool bonus meningkatkan chance (misal: Laptop +40% investigasi)
 - Hasil roll ditampilkan setelah aksi: "Berhasil! (65% chance, roll: 42)"
-- Chance seimbang antara tim survivor dan killer
+- Chance disesuaikan per difficulty — protagonist punya advantage lebih besar di easy
+- Killer mendapat penalty di difficulty lebih rendah untuk keseimbangan
 
 ### Realtime Player Status
 - Status bar real-time menampilkan kondisi karakter pemain:
