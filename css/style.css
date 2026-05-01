@@ -586,12 +586,290 @@ body {
 .rel-change.negative { background: rgba(90, 30, 30, 0.9); color: #d57a7a; border: 1px solid #8a3a3a; }
 @keyframes relPop { 0% { opacity: 0; transform: translateY(-10px); } 10% { opacity: 1; transform: translateY(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-20px); } }
 
+/* ========== SCENE ILLUSTRATIONS (CSS Art) ========== */
+.scene-art {
+  width: 100%;
+  max-width: 500px;
+  margin: 1.5em auto;
+  aspect-ratio: 16/7;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  animation: sceneReveal 1.5s 0.3s forwards;
+}
+@keyframes sceneReveal {
+  0% { opacity: 0; transform: scale(1.05); filter: blur(5px); }
+  100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+.scene-forest {
+  background: linear-gradient(180deg, #0a1a0a 0%, #0d2010 30%, #0a180d 60%, #050d05 100%);
+}
+.scene-forest::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 70%;
+  background: 
+    linear-gradient(170deg, transparent 40%, #0a1a0a 41%, transparent 41.5%),
+    linear-gradient(190deg, transparent 35%, #0d200d 36%, transparent 36.5%),
+    linear-gradient(175deg, transparent 45%, #081808 46%, transparent 46.5%),
+    linear-gradient(185deg, transparent 30%, #0a1a0a 31%, transparent 31.5%),
+    linear-gradient(172deg, transparent 50%, #0d250d 51%, transparent 51.5%);
+}
+.scene-forest::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,200,180,0.2), transparent 60%);
+  animation: moonGlow 4s ease-in-out infinite alternate;
+}
+@keyframes moonGlow {
+  0% { opacity: 0.6; box-shadow: 0 0 20px rgba(200,200,180,0.1); }
+  100% { opacity: 1; box-shadow: 0 0 40px rgba(200,200,180,0.2); }
+}
+
+.scene-cabin {
+  background: linear-gradient(180deg, #0a0a15 0%, #151520 40%, #1a1510 70%, #0d0a08 100%);
+}
+.scene-cabin::before {
+  content: '';
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 80px;
+  background: #1a1510;
+  clip-path: polygon(10% 100%, 10% 30%, 50% 0%, 90% 30%, 90% 100%);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+.scene-cabin::after {
+  content: '';
+  position: absolute;
+  bottom: 35%;
+  left: calc(50% - 12px);
+  width: 24px;
+  height: 30px;
+  background: rgba(180,120,40,0.3);
+  animation: windowFlicker 3s ease-in-out infinite;
+}
+@keyframes windowFlicker {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+  70% { opacity: 0.2; }
+  85% { opacity: 0.6; }
+}
+
+.scene-ritual {
+  background: radial-gradient(circle at 50% 70%, #0a2a0a 0%, #050d05 50%, #020502 100%);
+}
+.scene-ritual::before {
+  content: '';
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgba(0,204,102,0.3);
+  border-radius: 50%;
+  animation: ritualPulse 2s ease-in-out infinite;
+}
+@keyframes ritualPulse {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.3; }
+  50% { transform: translateX(-50%) scale(1.15); opacity: 0.8; }
+}
+.scene-ritual::after {
+  content: '';
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  background: #00cc66;
+  border-radius: 50%;
+  box-shadow: 0 0 20px #00cc66, 0 0 40px rgba(0,204,102,0.5);
+  animation: stoneGlow 1.5s ease-in-out infinite alternate;
+}
+@keyframes stoneGlow {
+  0% { box-shadow: 0 0 10px #00cc66; }
+  100% { box-shadow: 0 0 30px #00cc66, 0 0 60px rgba(0,204,102,0.3); }
+}
+
+.scene-entity {
+  background: radial-gradient(circle at 50% 50%, #001a00 0%, #000a00 50%, #000 100%);
+  animation: entityScene 3s ease-in-out infinite;
+}
+@keyframes entityScene {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.2) hue-rotate(10deg); }
+}
+.scene-entity::before {
+  content: '';
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 20px;
+  background: transparent;
+  border-bottom: none;
+  box-shadow: 
+    -25px -5px 0 3px rgba(0,255,80,0.6),
+    25px -5px 0 3px rgba(0,255,80,0.6),
+    -25px -5px 10px 5px rgba(0,255,80,0.2),
+    25px -5px 10px 5px rgba(0,255,80,0.2);
+  border-radius: 50%;
+  animation: entityEyes 4s ease-in-out infinite;
+}
+@keyframes entityEyes {
+  0%, 90%, 100% { opacity: 1; }
+  92% { opacity: 0; }
+  94% { opacity: 1; }
+  95% { opacity: 0; }
+  97% { opacity: 1; }
+}
+
+.scene-dawn {
+  background: linear-gradient(180deg, #1a0a20 0%, #3a1020 20%, #8a3020 45%, #cc8040 65%, #e8c080 80%, #f0e0b0 100%);
+}
+
+/* ========== AMBIENT FOG ========== */
+#screen-game::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: 
+    radial-gradient(ellipse at 20% 80%, rgba(10,20,10,0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(10,15,10,0.2) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+  animation: fogDrift 15s ease-in-out infinite alternate;
+}
+@keyframes fogDrift {
+  0% { opacity: 0.3; transform: translateX(-10px); }
+  100% { opacity: 0.6; transform: translateX(10px); }
+}
+
+/* ========== SCREEN TRANSITIONS ========== */
+.screen { animation: screenFadeIn 0.8s ease-out; }
+@keyframes screenFadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* ========== STORY TEXT ANIMATIONS ========== */
+.story-text { animation: textSlideIn 0.6s ease-out; }
+@keyframes textSlideIn {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== CHOICE ANIMATIONS ========== */
+.choice-btn {
+  opacity: 0;
+  animation: choiceAppear 0.5s ease-out forwards;
+}
+@keyframes choiceAppear {
+  0% { opacity: 0; transform: translateX(-10px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* ========== PARTICLE SYSTEM ========== */
+.particle-container {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(0,180,80,0.3);
+  border-radius: 50%;
+  animation: particleFloat linear infinite;
+}
+@keyframes particleFloat {
+  0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-10vh) translateX(30px); opacity: 0; }
+}
+
+/* ========== DEATH FLASH ========== */
+.death-flash {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(139, 26, 26, 0.4);
+  z-index: 200;
+  animation: deathFlashAnim 0.8s forwards;
+  pointer-events: none;
+}
+@keyframes deathFlashAnim {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ========== ENTITY PRESENCE ========== */
+.entity-ambient {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0,30,0,0.15) 100%);
+  animation: entityAmbient 8s ease-in-out infinite alternate;
+}
+@keyframes entityAmbient {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* ========== CHAPTER TRANSITION ========== */
+.chapter-transition {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #000;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: chapterTrans 3s forwards;
+}
+.chapter-transition span {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #6b6359;
+  animation: chapterText 3s forwards;
+}
+@keyframes chapterTrans {
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0; pointer-events: none; }
+}
+@keyframes chapterText {
+  0% { opacity: 0; transform: translateY(10px); }
+  20% { opacity: 1; transform: translateY(0); }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* ========== RESPONSIVE ========== */
 @media (max-width: 480px) {
   .story-area { padding: 1rem 1rem 2rem; }
   .choice-btn { padding: 0.9rem 1rem; }
   .panel { width: 280px; }
   .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+  .scene-art { aspect-ratio: 16/9; }
 }
 @media (min-width: 768px) {
   .story-area { padding: 2rem 2rem 4rem; }

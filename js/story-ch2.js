@@ -76,7 +76,8 @@ const STORY_CH2 = {
 },
 
 'ch2_entity_explains': {
-  text: `<p>Entitas mengangguk.</p>
+  text: `<div class="scene-art scene-entity"></div>
+<p>Entitas mengangguk.</p>
 <p>"Batu yang diambil kakek Niko adalah <em>Inti Simpul</em> — jantung perjanjian antara hutan dan manusia. Tanpanya, simpul yang mengikat dua dunia semakin rapuh."</p>
 <p>"Untuk mengembalikannya, tidak cukup hanya meletakkan batu di tempatnya. Lima jiwa yang terikat harus <em>bersama-sama</em> menaruhnya kembali. Dan mereka harus melakukannya dengan ikatan yang tulus — bukan karena takut, bukan karena terpaksa."</p>
 <p>"Masalahnya..." entitas melirik ke arah Niko, "...tidak semua dari kalian datang dengan niat yang murni."</p>
@@ -100,6 +101,139 @@ const STORY_CH2 = {
       effect: (s) => {
         Engine.modTrust('arin', 'niko', 10);
         s.flags.defendedNiko = true;
+      }
+    },
+    {
+      text: '"Entitas, ceritakan tentang lima jiwa pertama. Tahun 1973."',
+      hint: "Kau tahu lebih dari yang mereka kira.",
+      next: 'ch2_ask_1973',
+      condition: (s) => s.flags.hasMedal || s.flags.asked1973 || s.flags.hasOldPhoto,
+      effect: (s) => {
+        Engine.modAwareness('arin', 15);
+        s.flags.asked1973entity = true;
+        s.keyChoices.push('asked_1973');
+      }
+    },
+    {
+      text: '"Sera, apa yang kau rasakan sekarang? Kau yang paling sensitif."',
+      next: 'ch2_sera_sense',
+      effect: (s) => {
+        Engine.modTrust('arin', 'sera', 8);
+        s.flags.askedSeraSense = true;
+      }
+    }
+  ]
+},
+
+'ch2_ask_1973': {
+  text: `<p>Entitas berhenti. Matanya yang bercahaya hijau meredup — tanda emosi yang tidak bisa disembunyikan.</p>
+<p>"Kau tahu tentang 1973."</p>
+<p>"Aku tahu kakek Niko datang bersama empat orang lain. Dan hanya dia yang kembali."</p>
+<p>Entitas terdiam sangat lama. Pohon-pohon di sekeliling clearing berhenti bergerak.</p>
+<p>"Lima tentara datang menyelidiki hutan yang 'berjalan'. Mereka menemukan altar. Menemukan Inti Simpul. Pemimpin mereka — kakek Niko — melihat kekuatan di dalam batu itu. Kekuatan untuk mengendalikan."</p>
+<p>"Yang lain menolak mengambilnya. Mereka mengerti bahwa batu itu <em>milik</em> hutan. Tapi pemimpin mereka mengambilnya paksa."</p>
+<p>"Dan simpul yang melindungi hutan — dan manusia di sekitarnya — mulai retak. Untuk menambalnya sementara, aku..." suaranya retak, "...aku terpaksa mengambil empat jiwa itu sebagai pengganti."</p>
+<p>"Bukan membunuh. <em>Menyerap</em>. Mereka menjadi bagian dari simpul. Bagian dariku."</p>
+<p>Sera menutup mulutnya. Juno mundur.</p>
+<p>"Mereka tidak menderita. Mereka bermimpi. Mimpi yang indah dan tanpa akhir."</p>
+<p>"Seperti Vira," bisikmu.</p>
+<p>"...ya. Seperti Vira."</p>`,
+  choices: [
+    {
+      text: '"Apakah empat tentara itu masih bisa dibebaskan?"',
+      next: 'ch2_can_free_all',
+      effect: (s) => {
+        s.flags.askedFreeAll = true;
+        s.moralScore += 10;
+        s.keyChoices.push('asked_free_all');
+      }
+    },
+    {
+      text: '"Ini tidak bisa terus terjadi. Siklus ini harus berhenti."',
+      next: 'ch2_pragmatic',
+      effect: (s) => {
+        s.flags.demandedEndCycle = true;
+        s.moralScore += 15;
+      }
+    }
+  ]
+},
+
+'ch2_can_free_all': {
+  text: `<p>Entitas menatapmu dengan sesuatu yang mirip keheranan.</p>
+<p>"Kau bertanya tentang mereka? Empat jiwa yang sudah terlupakan selama lima puluh tahun?"</p>
+<p>"Mereka juga manusia."</p>
+<p>Keheningan. Lalu, pelan-pelan, senyum. Bukan senyum Vira — senyum entitas sendiri. Tulus. Kaget. Berterima kasih.</p>
+<p>"Kalau simpul dipulihkan dengan sempurna... ya. Mereka bisa dibebaskan. Semuanya. Vira. Empat jiwa lama. Semuanya."</p>
+<p>"Tapi itu membutuhkan lima ikatan yang <em>murni</em>. Tidak setitik pun kebohongan. Tidak sebutir pun keraguan. Ikatan seperti itu..." entitas menatap kalian satu per satu, "...apakah mungkin dari kalian yang begitu penuh rahasia?"</p>`,
+  choices: [
+    {
+      text: '"Kita mulai sekarang. Keluarkan semua rahasia."',
+      next: 'ch2_niko_truth',
+      effect: (s) => {
+        s.flags.fullPurge = true;
+        s.moralScore += 15;
+        s.keyChoices.push('full_purge');
+      }
+    },
+    {
+      text: '"Kami butuh waktu. Sampai fajar."',
+      next: 'ch2_pragmatic',
+      effect: (s) => {
+        s.flags.neededTime = true;
+      }
+    }
+  ]
+},
+
+'ch2_sera_sense': {
+  text: `<p>Sera menutup matanya. Tangannya menyentuh tanah. Tubuhnya bergetar.</p>
+<p><span class="speaker sera">Sera</span></p>
+<p>"Aku... aku bisa merasakan sesuatu. Sejak kita masuk ke hutan ini, ada suara di belakang telingaku. Seperti detak jantung yang bukan milikku."</p>
+<p>Matanya terbuka. Basah.</p>
+<p>"Dan sekarang — di dekat pohon ini — aku bisa <em>mendengar</em> sesuatu. Bukan kata. Tapi... perasaan. Kesepian yang begitu dalam sampai rasanya seperti tenggelam."</p>
+<p>Entitas menatap Sera dengan ekspresi terkejut.</p>
+<p>"Kau bisa mendengarku?" bisiknya. "Tanpa jembatan? Tanpa kontak?"</p>
+<p>"Sera memiliki kepekaan yang langka," katanya padamu. "Dia bisa merasakan simpul secara langsung. Ini bisa memperkuat ritual — atau menghancurkannya, kalau dia tidak siap."</p>`,
+  choices: [
+    {
+      text: '"Sera, apakah kau baik-baik saja? Kita bisa mundur."',
+      next: 'ch2_pragmatic',
+      effect: (s) => {
+        Engine.modTrust('arin', 'sera', 10);
+        s.flags.seraSensitive = true;
+        s.moralScore += 5;
+      }
+    },
+    {
+      text: '"Sera, bisa kau merasakan Vira? Vira yang asli?"',
+      next: 'ch2_sera_feels_vira',
+      effect: (s) => {
+        s.flags.seraFeelsVira = true;
+        Engine.modAwareness('arin', 10);
+      }
+    }
+  ]
+},
+
+'ch2_sera_feels_vira': {
+  text: `<p>Sera menekan kedua tangannya ke tanah lebih dalam. Tubuhnya bergetar hebat.</p>
+<p>"Dia... dia ada di sana. Dalam. Seperti di dasar kolam yang sangat gelap."</p>
+<p>Air mata mengalir. "Dia bermimpi. Mimpi tentang kita — tentang SMA, tentang es krim setelah ujian, tentang malam-malam di atap rumahku lihat bintang."</p>
+<p>"Vira..." bisik Sera ke tanah, "Vira, aku di sini. Kami datang untukmu."</p>
+<p>Dari bawah tanah — atau mungkin dari dalam simpul itu sendiri — suara lembut membalas. Samar. Rapuh. Tapi <em>nyata</em>.</p>
+<p>"Se...ra...?"</p>
+<p>Sera menangis. Semua orang menangis. Bahkan entitas.</p>
+<p>"Dia masih mengenali suaramu," bisik entitas. "Ikatan kalian... bahkan aku tidak bisa menandingi kekuatannya."</p>`,
+  choices: [
+    {
+      text: '"Kita selamatkan dia. Sekarang."',
+      next: 'ch2_pragmatic',
+      effect: (s) => {
+        s.flags.viraHeard = true;
+        s.moralScore += 20;
+        Engine.modTrust('arin', 'sera', 15);
+        s.keyChoices.push('vira_heard');
       }
     }
   ]
@@ -249,6 +383,109 @@ const STORY_CH2 = {
       text: '"Jelaskan apa yang harus kami lakukan."',
       next: 'ch2_pragmatic',
       effect: (s) => { s.flags.askedPlan = true; }
+    }
+  ]
+},
+
+'ch2_sera_reveals': {
+  chapter: 2,
+  text: (s) => {
+    let intro = `<p><span class="speaker sera">Sera</span> menarik napas dalam. Tangannya berhenti gemetar — seolah keputusan untuk akhirnya bicara memberikannya ketenangan yang aneh.</p>`;
+
+    if (s.flags.seraPartner) {
+      intro += `<p>"Arin sudah tahu sebagian. Tapi aku perlu ceritakan semuanya."</p>`;
+    }
+
+    return `${intro}
+<p>"Sejak Vira kembali dari Halimun, aku tahu ada yang salah. Bukan intuisi. Bukan perasaan. Aku <em>tahu</em>."</p>
+<p>"Karena malam sebelum Vira pergi ke Halimun, dia meneleponku. Pukul tiga pagi. Menangis."</p>
+<p>"Dia bilang..." Sera memejamkan mata, mengingat. "Dia bilang ada sesuatu yang <em>memanggilnya</em>. Dari hutan. Sudah berminggu-minggu. Suara yang tidak bisa dia jelaskan. Dan dia tidak bisa menolak lagi."</p>
+<p>"Aku mencoba menghentikannya. Mengatakan jangan pergi sendirian. Tapi Vira... Vira bilang itu bukan pilihan. Itu <em>panggilan</em>. Seperti ada tali yang menariknya."</p>
+<p>"Dan ketika dia kembali — tersenyum, tenang, seolah tiga minggu di hutan tidak pernah terjadi — aku tahu orang yang kembali bukan Vira."</p>
+<p>Sera menatap Niko. "Aku bilang padamu, Niko. Aku bilang ada yang salah. Dan kau bilang aku 'terlalu sensitif'. Kau bilang aku 'drama queen'."</p>
+<p>Niko memucat. "Sera, aku tidak—"</p>
+<p>"Kau tahu. <em>Kau tahu</em> karena kakekmu memberitahumu tentang batu itu. Dan kau tetap membawa kami ke sini."</p>
+<p>Keheningan yang mengikuti bisa membekukan api.</p>`;
+  },
+  choices: [
+    {
+      text: '"Niko, apakah itu benar?"',
+      next: 'ch2_niko_cornered',
+      effect: (s) => {
+        s.flags.nikoCornered = true;
+        Engine.modTrust('arin', 'niko', -10);
+        s.keyChoices.push('niko_cornered');
+      }
+    },
+    {
+      text: '"Sekarang bukan saatnya saling menyalahkan. Vira di luar sana."',
+      next: 'ch2_search',
+      effect: (s) => {
+        s.flags.unitedDespiteTruth = true;
+        s.moralScore += 10;
+      }
+    }
+  ]
+},
+
+'ch2_niko_cornered': {
+  text: `<p>Niko berdiri di sudut ruangan. Sera di depannya. Juno di samping. Kau di tengah.</p>
+<p>Dan untuk pertama kalinya sejak kalian saling mengenal, Niko terlihat <em>kecil</em>. Bukan leader. Bukan otak kelompok. Hanya seseorang yang ketakutan dan tersudut.</p>
+<p><span class="speaker niko">Niko</span></p>
+<p>"Ya." Suaranya serak. "Ya, aku tahu. Kakek meninggalkan surat wasiat. Di dalamnya ada batu — dan instruksi untuk mengembalikannya ke hutan dekat tempat kakek membangun cabin."</p>
+<p>"Tapi dia juga menulis bahwa batu itu <em>memberikan kekuatan</em> pada yang memegangnya. Dan aku..." suaranya pecah, "...aku ingin kekuatan itu, Arin. Aku membawa kalian ke sini bukan untuk mengembalikan batu. Aku membawa kalian karena menurut jurnal kakek, ritual membutuhkan lima orang."</p>
+<p>"Aku mau menggunakan kalian. Teman-temanku sendiri."</p>
+<p>Juno memukul dinding. "BAJINGAN!"</p>
+<p>Sera menangis tanpa suara.</p>
+<p>Niko jatuh berlutut. "Maafkan aku. Maafkan aku. Aku tidak tahu akan jadi seperti ini. Aku pikir—"</p>
+<p>"Kau pikir apa, Niko? Kau pikir kau bisa menggunakan kami dan tidak ada konsekuensi?"</p>`,
+  shake: true,
+  choices: [
+    {
+      text: '"Kita urus Niko nanti. Sekarang, kita cari Vira."',
+      next: 'ch2_search',
+      effect: (s) => {
+        s.flags.postponedNikoJudgment = true;
+        s.moralScore += 5;
+      }
+    },
+    {
+      text: "Pukul Niko. Dia pantas mendapatkannya.",
+      next: 'ch2_search',
+      effect: (s) => {
+        Engine.modTrust('arin', 'niko', -20);
+        s.flags.punchedNiko = true;
+        s.moralScore -= 5;
+        s.keyChoices.push('punched_niko');
+      }
+    },
+    {
+      text: '"Berikan batu itu padaku. Sekarang."',
+      next: 'ch2_take_stone',
+      effect: (s) => {
+        s.flags.tookStone = true;
+        s.flags.arinHasStone = true;
+        s.keyChoices.push('took_stone');
+      }
+    }
+  ]
+},
+
+'ch2_take_stone': {
+  text: `<p>Niko merogoh ranselnya dengan tangan gemetar dan mengeluarkan kotak berukir. Membukanya. Batu di dalamnya berdenyut hijau — seperti jantung yang berdebar.</p>
+<p>Kau mengambilnya. Berat. Hangat. Dan saat kulitmu menyentuh permukaannya, kau merasakan sesuatu — seperti tangan yang meraih dari dalam batu. Bukan mengancam. <em>Memohon</em>.</p>
+<p>Bisikan: <em>"Kembalikan aku."</em></p>
+<p><span class="speaker sera">Sera</span> menatap batu itu. "Arin, aku bisa merasakannya. Batu itu... <em>hidup</em>."</p>
+<p>Kau memasukkan batu ke sakumu. Tanggung jawabnya sekarang ada di tanganmu.</p>
+<p>Dari luar cabin, suara-suara hutan berubah. Seolah hutan tahu batu itu berpindah tangan.</p>`,
+  choices: [
+    {
+      text: '"Keluar. Cari Vira. Batu ini aman bersamaku."',
+      next: 'ch2_search',
+      effect: (s) => {
+        s.flags.arinProtectsStone = true;
+        s.courage.arin += 10;
+      }
     }
   ]
 },

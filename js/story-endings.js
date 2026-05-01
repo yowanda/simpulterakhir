@@ -18,9 +18,13 @@ const STORY_ENDINGS = {
     let endingNum = 13;
 
     // S-TIER
-    if (s.flags.perfectRitual && aliveCount >= 4 && s.flags.fiveGuardians) {
+    if (s.flags.memoryRitualComplete && s.flags.acceptedMemoryLoss && aliveCount >= 4) {
+      endingNum = 1;
+    } else if (s.flags.perfectRitual && aliveCount >= 4 && s.flags.fiveGuardians) {
       endingNum = 1;
     } else if (s.flags.perfectRitual && aliveCount >= 4 && avgTrust >= 60 && ms >= 40) {
+      endingNum = 2;
+    } else if (s.flags.memoryRitualComplete && aliveCount >= 4 && ms >= 30) {
       endingNum = 2;
     }
     // A-TIER
@@ -30,7 +34,11 @@ const STORY_ENDINGS = {
       endingNum = 4;
     } else if (s.flags.nikoSacrificed && aliveCount >= 3) {
       endingNum = 5;
+    } else if (s.flags.junoRedeemed && aliveCount >= 3 && ms >= 20) {
+      endingNum = 6;
     } else if (s.flags.imperfectRitual && aliveCount >= 3 && ms >= 20) {
+      endingNum = 6;
+    } else if (s.flags.memoryRitualComplete && aliveCount >= 3) {
       endingNum = 6;
     }
     // B-TIER
