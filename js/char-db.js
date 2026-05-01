@@ -235,6 +235,12 @@ const CharDB = (() => {
       { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Arin mengumpulkan siapa pun yang tersisa. "Ini simpul terakhir. Putuskan sekarang."' }, weight: 30 },
       { condition: { chapter: 5, hasClue: true }, action: { type: 'accuse', desc: 'Semua benang merah terhubung. Arin mengungkap SEMUANYA — nama, motif, rencana. Final confrontation.' }, weight: 28 },
 
+      // --- Cross-character interactions (missing) ---
+      { condition: { nearbyIncludes: 'juno', emotion: 'wary' }, action: { type: 'socialize', desc: '"Juno, kau punya keberanian yang aku kagumi. Tapi jangan bertindak gegabah — kita butuh strategi." Arin meredam Juno.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Lana, novel terbarumu tentang pembunuhan di mansion. Kebetulan? Aku tidak percaya kebetulan." Arin menantang Lana.' }, weight: 16 },
+      { condition: { nearbyIncludes: 'dimas', emotion: 'wary' }, action: { type: 'socialize', desc: '"Dimas, ketenangan forensikmu berguna. Tapi kenapa kau begitu tenang? Jurnalis selalu bertanya."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'farah', emotion: 'calm' }, action: { type: 'socialize', desc: '"Farah, aku ingin mewawancaraimu. Sebagai pewaris Wardhana, kau pasti tahu sejarah mansion ini."' }, weight: 12 },
+
       // --- Broad catch-all: different for every emotion so brain ALWAYS triggers ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Arin diam-diam mencatat siapa bicara dengan siapa dan siapa yang menghindari kontak mata.' }, weight: 10 },
       { condition: { emotion: 'wary', isAlone: false }, action: { type: 'investigate', desc: 'Arin memeriksa ruangan, mata jurnalisnya menangkap sesuatu yang tidak terlihat oleh yang lain.' }, weight: 10 },
@@ -311,6 +317,13 @@ const CharDB = (() => {
       // Trust-kill: Niko kalkulatif — membunuh dengan dingin jika trust habis
       { condition: { minDeaths: 2, emotion: 'suspicious', minTension: 50 }, action: { type: 'trust_kill', desc: '"Aku sudah menghitung probabilitasnya. Dan kau terlalu mencurigakan untuk dibiarkan hidup." Niko menyerang dengan presisi dingin.' }, weight: 20 },
       { condition: { minDeaths: 3, emotion: 'hostile' }, action: { type: 'trust_kill', desc: '"Mansionku. Aturanku. Dan kau bukan bagian dari solusinya." Niko mengeliminasi orang yang paling dia curigai.' }, weight: 18 },
+
+      // --- Cross-character interactions (missing) ---
+      { condition: { nearbyIncludes: 'arin', emotion: 'suspicious' }, action: { type: 'manipulate', desc: '"Arin, jurnalis selalu mencari cerita. Tapi cerita apa yang kau sembunyikan dari kami?" Niko membalik pertanyaan.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'juno', emotion: 'wary' }, action: { type: 'socialize', desc: '"Juno, kekuatanmu berguna di sini. Tapi keberanianmu bisa jadi kelemahanmu." Niko menasihati dengan kalkulasi.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'reza', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Niko menatap Reza. Detektif. Orang yang paling berbahaya di sini — karena dia bisa melihat menembus topeng.' }, weight: 16 },
+      { condition: { nearbyIncludes: 'dimas', emotion: 'calm' }, action: { type: 'socialize', desc: '"Dimas, forensikmu bisa berguna. Tapi di mansion ini, sains tidak selalu menang atas kegelapan."' }, weight: 12 },
+      { condition: { nearbyIncludes: 'kira', emotion: 'wary' }, action: { type: 'question', desc: '"Kira, apa yang kau temukan di server mansion? Aku tahu infrastrukturnya — tapi apa yang disembunyikannya?"' }, weight: 16 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'manipulate', desc: 'Niko menyebar informasi setengah benar ke kelompok. Membuat mereka saling curiga — sementara dia mengamati.' }, weight: 10 },
@@ -390,6 +403,10 @@ const CharDB = (() => {
       { condition: { chapter: 5, hasClue: true }, action: { type: 'accuse', desc: 'Final profiling. Sera mengungkap setiap kebohongan, setiap alibi palsu. "INILAH KEBENARAN MALAM INI."' }, weight: 30 },
       { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. "Aku sudah baca setiap wajah di mansion ini. Simpul terakhir ada di tangan kita."' }, weight: 28 },
 
+      // --- Cross-character interactions (missing) ---
+      { condition: { nearbyIncludes: 'niko', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Sera mengamati Niko. Micro-expression terlalu terkontrol. "Kau menyembunyikan sesuatu, Niko. Pupilmu berkhianat."' }, weight: 16 },
+      { condition: { nearbyIncludes: 'vira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Vira, aku bisa melihat kau menyimpan trauma. Aku terlatih mendengarkan. Ceritakan." Sera menawarkan dukungan psikologis.' }, weight: 14 },
+
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Sera menganalisis dinamika kelompok — siapa memimpin, siapa mengikuti, siapa yang terlalu diam.' }, weight: 10 },
       { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Sera menulis profil psikologis lengkap setiap orang. Pola mulai terbentuk.' }, weight: 12 },
@@ -465,6 +482,11 @@ const CharDB = (() => {
       { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. "GUE MULAI DARI JALANAN. GUE NGGAK BAKAL MATI DI SINI." Juno memimpin serangan terakhir.' }, weight: 30 },
       { condition: { chapter: 5, emotion: 'hostile' }, action: { type: 'confront', desc: 'Konfrontasi final. Juno meraih senjata apapun yang ada. "Lo dan gue. SEKARANG."' }, weight: 28 },
 
+      // --- Cross-character interactions (missing) ---
+      { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Lana, gue tau lo pinter ngomong. Tapi gue bukan orang yang bisa lo manipulasi. JUJUR. SEKARANG."' }, weight: 16 },
+      { condition: { nearbyIncludes: 'kira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Kira, lo bisa hack apapun kan? Bantu gue buka pintu mansion ini. Gue cover lo."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'farah', emotion: 'calm' }, action: { type: 'confront', desc: '"Farah, lo pewaris. Lo punya kunci rumah ini. Jangan bilang lo nggak bisa buka pintu keluar."' }, weight: 14 },
+
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Juno memeriksa jendela dan pintu. "Kalau ada jalan keluar, gue yang pertama nemu."' }, weight: 10 },
       { condition: { emotion: 'calm', isAlone: true }, action: { type: 'move', desc: 'Juno jalan-jalan sendirian, gelisah. Diam di satu tempat bukan gayanya.' }, weight: 12 },
@@ -536,6 +558,13 @@ const CharDB = (() => {
       { condition: { chapter: 5, emotion: 'hostile' }, action: { type: 'rally', desc: '"AKU SUDAH SELAMAT SEKALI. AKU AKAN SELAMAT LAGI. SIAPA YANG IKUT?!" Vira memimpin evakuasi.' }, weight: 26 },
       { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Vira berdiri di depan pintu mansion. "Simpul terakhir. Kali ini, AKU yang putuskan akhirnya."' }, weight: 30 },
       { condition: { chapter: 5, hasClue: true }, action: { type: 'secure_exit', desc: 'Vira mengaktifkan jalur pelarian terakhir. "SEMUA IKUT AKU. SEKARANG!" Survivor dari masa lalu memimpin yang hidup.' }, weight: 28 },
+
+      // --- Cross-character interactions (missing) ---
+      { condition: { nearbyIncludes: 'juno', emotion: 'panicked' }, action: { type: 'socialize', desc: '"Juno, tolong... aku pernah di sini. Aku tahu apa yang akan terjadi. Kita harus pergi SEKARANG."' }, weight: 16 },
+      { condition: { nearbyIncludes: 'reza', emotion: 'suspicious' }, action: { type: 'share_clue', desc: '"Reza, enam bulan lalu ada kejadian yang sama. Aku... aku satu-satunya yang selamat. Ini pola-nya."', target: 'reza' }, weight: 18 },
+      { condition: { nearbyIncludes: 'dimas', emotion: 'wary' }, action: { type: 'observe', desc: 'Vira menatap Dimas. Terlalu tenang. Terlalu terkontrol. Seperti seseorang yang sudah tahu apa yang akan terjadi.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'kira', emotion: 'calm' }, action: { type: 'socialize', desc: '"Kira, bisakah kau cari rekaman 6 bulan lalu? Aku perlu tahu apa yang terjadi di malam itu — yang tidak aku ingat."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'farah', emotion: 'wary' }, action: { type: 'socialize', desc: '"Farah, keluarga Wardhana memiliki mansion ini. Apa kau tahu kenapa kami semua diundang?"' }, weight: 12 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Vira duduk di sudut, memeluk lututnya. Matanya tidak pernah lepas dari pintu keluar.' }, weight: 10 },
@@ -610,6 +639,13 @@ const CharDB = (() => {
       { condition: { chapter: 5, hasClue: true }, action: { type: 'accuse', desc: 'Final verdict. Reza mengungkap semua bukti. "Kasus ditutup. Pembunuhnya adalah—"' }, weight: 30 },
       { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Reza mengambil napas. "Ini kasus terakhirku. Dan aku AKAN menyelesaikannya."' }, weight: 28 },
 
+      // --- Cross-character interactions (missing) ---
+      { condition: { nearbyIncludes: 'niko', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Niko, ini mansionmu. Kau punya akses ke semua ruangan. Dalam investigasi, itu menjadikanmu tersangka utama."' }, weight: 18 },
+      { condition: { nearbyIncludes: 'sera', emotion: 'calm' }, action: { type: 'socialize', desc: '"Sera, profilingmu bisa membantu investigasi. Aku butuh analisis psikologis semua orang di sini."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'vira', emotion: 'wary' }, action: { type: 'question', desc: '"Vira, kau satu-satunya yang pernah di sini sebelumnya. Apa yang terjadi enam bulan lalu? Ini interogasi resmi."' }, weight: 18 },
+      { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Reza menatap Lana. Penulis. Kreatif. Terlalu pintar berbohong. "Lana, dalam pengalamanku, penulis fiksi adalah pembohong terbaik."' }, weight: 16 },
+      { condition: { nearbyIncludes: 'farah', emotion: 'wary' }, action: { type: 'question', desc: '"Farah, siapa yang mengundang kami semua ke sini? Sebagai pewaris, kau pasti tahu motifnya."' }, weight: 14 },
+
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Reza memeriksa ruangan secara metodis. "Standard sweep — cek setiap sudut, setiap celah."' }, weight: 10 },
       { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Reza mengeluarkan buku catatan usangnya. Menulis timeline, menandai inkonsistensi.' }, weight: 12 },
@@ -658,6 +694,24 @@ const CharDB = (() => {
       // Trust-kill: Lana manipulatif — membunuh sambil berpura-pura itu self-defense
       { condition: { minDeaths: 2, emotion: 'hostile', minTension: 50 }, action: { type: 'trust_kill', desc: '"Kau plot twist terburuk dalam ceritaku." Lana menyerang dengan tenang — membunuh sambil tersenyum. "Self-defense, tentu saja."' }, weight: 20 },
 
+      // --- Cross-character interactions ---
+      { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'socialize', desc: '"Arin, kau jurnalis kan? Menarik... aku juga menulis fiksi. Bedanya, fiksiku kadang jadi kenyataan."' }, weight: 16 },
+      { condition: { nearbyIncludes: 'juno', emotion: 'wary' }, action: { type: 'manipulate', desc: 'Lana mendekati Juno. "Kau kuat, Juno. Tapi kekuatan tanpa arah hanya destruksi. Biarkan aku yang mengarahkan."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'reza', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Lana menatap Reza. Detektif. Ancaman terbesar baginya — orang yang terlatih menemukan kebohongan.' }, weight: 16 },
+      { condition: { nearbyIncludes: 'farah', emotion: 'calm' }, action: { type: 'manipulate', desc: '"Farah, sayang. Uangmu bisa membeli banyak hal — tapi tidak kebenaran. Biarkan aku yang mengungkapnya untukmu."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'vira' }, action: { type: 'observe', desc: 'Lana melirik Vira. Ada sesuatu tentang gadis itu — terlalu banyak rahasia untuk seseorang yang terlihat polos.' }, weight: 12 },
+      { condition: { nearbyIncludes: 'kira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Kira, bisakah kau cek sesuatu untukku? Aku menemukan catatan digital yang aneh." Lana memanfaatkan keahlian orang lain.' }, weight: 14 },
+
+      // --- Additional tactical survivor entries ---
+      { condition: { chapter: 1 }, action: { type: 'investigate', desc: 'Lana memetakan timeline kematian. Sebagai penulis misteri, dia tahu bahwa urutan peristiwa selalu mengungkap pelaku.' }, weight: 16 },
+      { condition: { chapter: 2 }, action: { type: 'manipulate', desc: 'Lana membentuk aliansi sementara. Dia tahu setiap aliansi punya tanggal kadaluarsa — seperti karakter dalam novelnya.' }, weight: 18 },
+      { condition: { chapter: 4 }, action: { type: 'confront', desc: 'Lana mengumpulkan semua orang. "Aku tahu siapa pembunuhnya. Dengarkan — ini seperti klimaks novel misteri."' }, weight: 20 },
+      { condition: { emotion: 'panicked', minDeaths: 1 }, action: { type: 'coordinate_defense', desc: '"DENGARKAN AKU! Aku menulis 12 novel thriller. Aku tahu cara survive." Lana memimpin dengan otoritas penulis.' }, weight: 16 },
+      { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'confront', desc: 'Lana berdiri tegak. "Aku sudah menulis ending untukmu, pembunuh. Dan di versi aku — kau kalah."' }, weight: 14 },
+      { condition: { emotion: 'suspicious', minDeaths: 1 }, action: { type: 'investigate', desc: 'Lana memeriksa alibi semua orang. Sebagai penulis, dia terbiasa mencari plot holes dalam cerita.' }, weight: 14 },
+      { condition: { emotion: 'wary', minDanger: 30 }, action: { type: 'observe', desc: 'Lana mencatat di bukunya. Setiap detail bisa jadi petunjuk — atau bahan novel selanjutnya.' }, weight: 12 },
+      { condition: { minDeaths: 1, emotion: 'calm' }, action: { type: 'socialize', desc: 'Lana menenangkan kelompok dengan storytelling. "Dalam setiap cerita, ada harapan. Kita akan menemukan jalan keluar."' }, weight: 14 },
+
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'manipulate', desc: 'Lana menyebarkan "gosip" strategis. Setiap kata dirancang untuk memecah aliansi.' }, weight: 10 },
       { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Lana menulis. Bukan novel — tapi catatan tentang semua orang. Kelemahan mereka. Ketakutan mereka.' }, weight: 12 },
@@ -705,6 +759,24 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'arin', hasClue: true }, action: { type: 'share_clue', desc: '"Arin, sebagai jurnalis kau perlu fakta forensik ini. Ini bukti fisik yang tak terbantahkan."', target: 'arin' }, weight: 16 },
       // Trust-kill: Dimas yang klinis — membunuh berdasarkan "analisis forensik" yang salah sasaran
       { condition: { minDeaths: 2, emotion: 'suspicious', minTension: 55 }, action: { type: 'trust_kill', desc: '"Pola luka, metode, timing — analisis forensikku menunjuk padamu." Dimas bertindak dengan presisi klinis — tapi kali ini salah sasaran.' }, weight: 18 },
+
+      // --- Cross-character interactions ---
+      { condition: { nearbyIncludes: 'juno', emotion: 'wary' }, action: { type: 'socialize', desc: '"Juno, kau punya insting bertahan. Aku punya pengetahuan forensik. Kita bisa menutupi kelemahan satu sama lain."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'share_clue', desc: '"Arin, sebagai jurnalis kau perlu tahu — pola kematian ini bukan acak. Ada metodologi di baliknya."', target: 'arin' }, weight: 16 },
+      { condition: { nearbyIncludes: 'farah' }, action: { type: 'observe', desc: 'Dimas melirik Farah. Pewaris. Privileged. Tapi juga target potensial — seseorang pasti menginginkan kekayaannya.' }, weight: 12 },
+      { condition: { nearbyIncludes: 'kira', emotion: 'suspicious' }, action: { type: 'socialize', desc: '"Kira, bisakah kau cross-reference data CCTV dengan timeline forensikku? Dua perspektif lebih baik."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'niko', emotion: 'wary' }, action: { type: 'observe', desc: 'Dimas memperhatikan Niko. Tuan rumah tahu terlalu banyak tentang mansion ini. Pengetahuan bisa jadi senjata.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'vira', emotion: 'calm' }, action: { type: 'socialize', desc: '"Vira, aku perhatikan kau sangat cemas. Detak jantungmu stabil tapi pupilmu bergetar." Dimas membaca tubuh, bukan kata.' }, weight: 14 },
+
+      // --- Additional tactical survivor entries ---
+      { condition: { chapter: 1 }, action: { type: 'investigate', desc: 'Dimas memeriksa alat-alat medis yang ada. Sebagai mahasiswa forensik, dia bisa mengidentifikasi senjata dari luka.' }, weight: 16 },
+      { condition: { chapter: 2, minDeaths: 1 }, action: { type: 'investigate', desc: 'Dimas melakukan autopsi mental pada korban. "Luka ini definitif — pelaku terlatih, bukan amatir."' }, weight: 18 },
+      { condition: { chapter: 4 }, action: { type: 'accuse', desc: 'Dimas mempresentasikan analisis forensiknya. "Bukti fisik tidak berbohong. Pelaku — berdasarkan semua data — adalah..."' }, weight: 20 },
+      { condition: { emotion: 'panicked', minDeaths: 2 }, action: { type: 'coordinate_defense', desc: 'Dimas mengambil alih dengan ketenangan klinis. "Stop panik. Aku tahu area mana yang paling aman secara taktis."' }, weight: 16 },
+      { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'confront', desc: 'Dimas menunjukkan bukti forensik dengan dingin. "Data ini tidak bisa dibantah. Kau. Pelakunya."' }, weight: 14 },
+      { condition: { emotion: 'suspicious', minDeaths: 2 }, action: { type: 'investigate', desc: 'Dimas memeriksa pola gerakan semua orang. Waktu, lokasi, alibi — semuanya diplot di kepalanya.' }, weight: 14 },
+      { condition: { emotion: 'wary', minDanger: 40 }, action: { type: 'barricade', desc: 'Dimas memblokir pintu dengan presisi teknis. "Perimeter aman. Tidak ada yang masuk tanpa sepengetahuan kita."' }, weight: 14 },
+      { condition: { minDeaths: 1, emotion: 'calm' }, action: { type: 'observe', desc: 'Dimas mengamati reaksi semua orang terhadap kematian. "Psikologi berkabung versus guilt response — perbedaannya halus."' }, weight: 14 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Dimas mengamati setiap orang dengan detachment klinis. Data. Pola. Probabilitas.' }, weight: 10 },
@@ -773,6 +845,12 @@ const CharDB = (() => {
       { condition: { chapter: 5, hasClue: true }, action: { type: 'secure_exit', desc: 'Kira meng-hack door lock terakhir. "SEMUA PINTU TERBUKA. INI KESEMPATAN TERAKHIR!"' }, weight: 30 },
       { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. "Aku sudah crack semuanya. Simpul terakhir ada di server ini."' }, weight: 28 },
 
+      // --- Cross-character interactions (missing) ---
+      { condition: { nearbyIncludes: 'juno', emotion: 'wary' }, action: { type: 'socialize', desc: '"Juno, gue bisa unlock semua pintu dari sini. Lo cover gue dari ancaman fisik. Deal?"' }, weight: 14 },
+      { condition: { nearbyIncludes: 'vira', emotion: 'calm' }, action: { type: 'socialize', desc: '"Vira, enam bulan lalu apa ada sistem keamanan yang sama? Aku perlu tau arsitektur lamanya."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Kira cek log Lana. "Menarik... kau browsing blueprint mansion tiga bulan sebelum pesta ini."' }, weight: 16 },
+      { condition: { nearbyIncludes: 'dimas', emotion: 'wary' }, action: { type: 'observe', desc: 'Kira menatap Dimas. "Digital footprint-mu terlalu bersih. Orang normal meninggalkan jejak. Kau tidak."' }, weight: 16 },
+
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Kira scan jaringan WiFi. "Hm, ada device baru yang terkoneksi... siapa yang bawa phone ke sini?"' }, weight: 10 },
       { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Kira deep-dive ke server mansion. Log file, database, hidden directories — semuanya terbuka.' }, weight: 14 },
@@ -840,6 +918,14 @@ const CharDB = (() => {
       { condition: { chapter: 5, hasClue: true }, action: { type: 'secure_exit', desc: 'Farah membuka kunci master warisan keluarga. "SEMUA PINTU TERBUKA. PERGI SEKARANG!"' }, weight: 26 },
       { condition: { chapter: 5, isAlone: false }, action: { type: 'rally', desc: 'Bab terakhir. Farah melepas cincin keluarganya. "Aku pewaris. Dan ini warisanku — menyelamatkan kalian semua."' }, weight: 30 },
       { condition: { chapter: 5, hasClue: true }, action: { type: 'secure_exit', desc: 'Farah mengaktifkan protokol evakuasi keluarga. "Kakek membangun ini untuk keadaan darurat. INI keadaan darurat."' }, weight: 28 },
+
+      // --- Cross-character interactions (missing) ---
+      { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'socialize', desc: '"Arin, sebagai jurnalis kau bisa mempublikasikan ini. Tapi aku minta — lindungi nama keluargaku. Deal?"' }, weight: 14 },
+      { condition: { nearbyIncludes: 'sera', emotion: 'wary' }, action: { type: 'socialize', desc: '"Sera, aku butuh seseorang yang bisa membaca orang. Profiling-mu bisa menyelamatkan kita. Apa yang kau butuhkan?"' }, weight: 14 },
+      { condition: { nearbyIncludes: 'juno', emotion: 'panicked' }, action: { type: 'socialize', desc: '"Juno, kau pejuang. Aku punya akses ke safe room keluarga. Kau jaga kami, aku buka pintunya."' }, weight: 16 },
+      { condition: { nearbyIncludes: 'vira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Vira, kau pernah di sini. Kau dan aku — kita punya koneksi ke mansion ini yang tidak dimiliki orang lain."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Farah menatap Lana. Penulis yang terlalu tahu. "Lana, novelmu... itu bukan fiksi, kan?"' }, weight: 16 },
+      { condition: { nearbyIncludes: 'dimas', emotion: 'calm' }, action: { type: 'observe', desc: 'Farah memperhatikan Dimas. "Forensik. Menarik. Tapi kenapa mahasiswa forensik ada di pesta keluarga Wardhana?"' }, weight: 14 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'socialize', desc: '"Aku bisa membayar siapapun untuk membantu." Farah menggunakan satu-satunya senjata yang dia tahu — uang.' }, weight: 10 },

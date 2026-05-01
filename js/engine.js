@@ -282,6 +282,466 @@ const Engine = (() => {
     dimas: { clueSearch: 0, defense: 0, offense: 15, trust: 0, investigation: 0, flee: 0, accusation: 0, detection: 0, silentKill: true }
   };
 
+  // ---- Character-Specific Action Flavor ----
+  // Each character gets unique text and unique actions reflecting their personality.
+  // This prevents characters from "taking over" each other's action style.
+  const CHARACTER_ACTION_FLAVOR = {
+    arin: {
+      investigate: (loc) => `Recorder menyala — investigasi ${CharBrain.locName(loc)} dengan mata jurnalis`,
+      observe: (target) => `Amati gerak-gerik ${CharBrain.charName(target)} — catat di recorder`,
+      talk: (target) => `Wawancarai ${CharBrain.charName(target)} — gali informasi`,
+      accuse: (target) => `Tunjukkan bukti ke ${CharBrain.charName(target)}: "Aku tahu apa yang kau lakukan."`,
+      hide: (loc) => `Matikan lampu, sembunyi di ${CharBrain.locName(loc)} — recorder tetap menyala`,
+      ally: (target) => `Ajak ${CharBrain.charName(target)} berkolaborasi — "Kita butuh satu sama lain"`,
+      escape_clue: (loc) => `Cari petunjuk pelarian di ${CharBrain.locName(loc)} — ikuti insting jurnalis`,
+      unique: [
+        {
+          id: 'arin_deep_investigate',
+          text: (loc) => `Bongkar semua catatan — investigasi mendalam di ${CharBrain.locName(loc)}`,
+          category: 'investigate',
+          hint: 'Kemampuan jurnalis: temukan petunjuk tersembunyi dengan +20% bonus',
+          condition: (gs, nearby) => gs.chapter >= 1,
+          risk: 25, reward: 85,
+          effect: (s, pc) => {
+            const baseChance = 60 + getCharAbility(pc, 'clueSearch');
+            const result = rollChance(baseChance, pc, 'intel');
+            if (result.success) {
+              s.cluesFound = (s.cluesFound || 0) + 1;
+              const nearbyKillers = Object.keys(s.npcMinds || {}).filter(n =>
+                s.alive[n] && s.killers.includes(n) && s.npcMinds[n].location === (s.playerLocation || 'aula_utama'));
+              nearbyKillers.forEach(k => Engine.modSuspicion(k, 12));
+              Engine.notify(`Investigasi mendalam berhasil! Catatan jurnalis mengungkap pola baru. (${result.chance}%, roll: ${result.roll})`);
+            } else {
+              Engine.notify(`Tidak ada petunjuk baru kali ini. (${result.chance}%, roll: ${result.roll})`);
+            }
+          }
+        },
+        {
+          id: 'arin_protect_sera',
+          text: () => `Lindungi Sera — "Tetap di belakangku."`,
+          category: 'protect',
+          hint: 'Lindungi Sera dari ancaman. Trust Sera meningkat.',
+          condition: (gs, nearby) => nearby.includes('sera') && (gs.dangerLevel || 0) >= 30,
+          risk: 35, reward: 70,
+          effect: (s, pc) => {
+            Engine.modTrust(pc, 'sera', 12);
+            Engine.modDanger(-8);
+            Engine.notify('Kau berdiri di depan Sera. Trust +12%. Bahaya turun.');
+          }
+        }
+      ]
+    },
+    sera: {
+      investigate: (loc) => `Profiling — analisis pola perilaku di ${CharBrain.locName(loc)}`,
+      observe: (target) => `Baca micro-expression ${CharBrain.charName(target)} — profiling psikologis`,
+      talk: (target) => `Analisis ${CharBrain.charName(target)} lewat percakapan — cari tanda kebohongan`,
+      accuse: (target) => `"Pupilmu melebar saat kau berbohong." Tuduh ${CharBrain.charName(target)}.`,
+      hide: (loc) => `Menunduk diam di ${CharBrain.locName(loc)} — otak tetap menganalisis`,
+      ally: (target) => `Tawarkan profiling ke ${CharBrain.charName(target)} — "Kita bisa saling melengkapi"`,
+      escape_clue: (loc) => `Prediksi lokasi petunjuk pelarian di ${CharBrain.locName(loc)} berdasarkan pola`,
+      unique: [
+        {
+          id: 'sera_deep_profile',
+          text: (loc) => `Profiling mendalam — baca semua yang ada di ${CharBrain.locName(loc)}`,
+          category: 'observe',
+          hint: 'Kemampuan profiler: deteksi emosi & tension NPC dengan presisi (+20%)',
+          condition: (gs, nearby) => nearby.length > 0,
+          risk: 10, reward: 80,
+          effect: (s, pc) => {
+            const nearby = Object.keys(s.npcMinds || {}).filter(n =>
+              s.alive[n] && s.npcMinds[n].location === (s.playerLocation || 'aula_utama'));
+            let report = [];
+            nearby.forEach(n => {
+              const mind = s.npcMinds[n];
+              if (!mind) return;
+              const isK = s.killers.includes(n);
+              const detectChance = 0.55 + (getCharAbility(pc, 'detection') / 100);
+              if (isK && Math.random() < detectChance) {
+                Engine.modSuspicion(n, 10);
+                report.push(`${CharBrain.charName(n)}: ANOMALI terdeteksi! Suspicion +10%`);
+              } else {
+                report.push(`${CharBrain.charName(n)}: ${mind.emotion}, tension ${mind.tension}%`);
+              }
+            });
+            Engine.notify('Profiling: ' + report.join(' | '));
+          }
+        },
+        {
+          id: 'sera_protect_arin',
+          text: () => `Lindungi Arin — tidak bisa membayangkan kehilangannya`,
+          category: 'protect',
+          hint: 'Berdiri di samping Arin. Trust meningkat.',
+          condition: (gs, nearby) => nearby.includes('arin') && (gs.dangerLevel || 0) >= 30,
+          risk: 35, reward: 70,
+          effect: (s, pc) => {
+            Engine.modTrust(pc, 'arin', 12);
+            Engine.modDanger(-8);
+            Engine.notify('Kau berdiri di samping Arin. Trust +12%. Bahaya turun.');
+          }
+        }
+      ]
+    },
+    niko: {
+      investigate: (loc) => `Buka panel rahasia — gunakan pengetahuan mansion di ${CharBrain.locName(loc)}`,
+      observe: (target) => `Hitung langkah ${CharBrain.charName(target)} — kalkulasi dingin`,
+      talk: (target) => `Bicaralah dengan ${CharBrain.charName(target)} — setiap kata diukur`,
+      accuse: (target) => `"Aku sudah tahu sejak awal." Ungkap ${CharBrain.charName(target)}.`,
+      hide: (loc) => `Menghilang ke ruangan tersembunyi di ${CharBrain.locName(loc)}`,
+      ally: (target) => `Rekrut ${CharBrain.charName(target)} — "Kita butuh satu sama lain. Untuk saat ini."`,
+      escape_clue: (loc) => `Cari jalur rahasia mansion di ${CharBrain.locName(loc)}`,
+      unique: [
+        {
+          id: 'niko_secret_passage',
+          text: (loc) => `Gunakan jalur rahasia — keuntungan tuan rumah di ${CharBrain.locName(loc)}`,
+          category: 'investigate',
+          hint: 'Hanya Niko yang tahu jalan rahasia mansion. +1 lokasi ekstra.',
+          condition: (gs) => true,
+          risk: 10, reward: 65,
+          effect: (s, pc) => {
+            const allLocs = CharBrain.LOCATIONS || ['aula_utama','perpustakaan','dapur','basement','menara','taman_dalam','galeri_timur','bunker_b3'];
+            const currentLoc = s.playerLocation || 'aula_utama';
+            const otherLocs = allLocs.filter(l => l !== currentLoc);
+            const secretLoc = otherLocs[Math.floor(Math.random() * otherLocs.length)];
+            Engine.notify(`Kau menemukan jalur rahasia kakek ke ${CharBrain.locName(secretLoc)}! Bisa pindah ke sana kapanpun.`);
+          }
+        },
+        {
+          id: 'niko_manipulate',
+          text: (target) => `Manipulasi informasi — sebarkan ketidakpercayaan`,
+          category: 'social',
+          hint: 'Sebarkan informasi setengah benar. NPC saling curiga.',
+          condition: (gs, nearby) => nearby.length >= 2,
+          risk: 40, reward: 75,
+          effect: (s, pc) => {
+            const loc = s.playerLocation || 'aula_utama';
+            const nearby = Object.keys(s.npcMinds || {}).filter(n =>
+              s.alive[n] && s.npcMinds[n].location === loc && !s.killers.includes(n));
+            if (nearby.length >= 2) {
+              const a = nearby[0], b = nearby[1];
+              const tk = CharBrain.trustKeyFor ? CharBrain.trustKeyFor(a, b) : [a,b].sort().join('_');
+              if (s.trust[tk] !== undefined) s.trust[tk] = Math.max(0, s.trust[tk] - 10);
+              Engine.notify(`Kau menanam benih ketidakpercayaan antara ${CharBrain.charName(a)} dan ${CharBrain.charName(b)}. Trust mereka -10%.`);
+            }
+          }
+        }
+      ]
+    },
+    juno: {
+      investigate: (loc) => `Geledah ${CharBrain.locName(loc)} — langsung, tanpa basa-basi`,
+      observe: (target) => `Perhatikan ${CharBrain.charName(target)} — insting jalanan menyala`,
+      talk: (target) => `Konfrontasi langsung ${CharBrain.charName(target)} — "Jangan main-main denganku."`,
+      accuse: (target) => `"AKU TAHU KAU PEMBUNUHNYA!" Juno menunjuk ${CharBrain.charName(target)}.`,
+      hide: (loc) => `Barricade di ${CharBrain.locName(loc)} — pertahanan rebel-style`,
+      ally: (target) => `Ajak ${CharBrain.charName(target)} bertarung bersama — "Kita lawan mereka!"`,
+      escape_clue: (loc) => `Terobos setiap sudut ${CharBrain.locName(loc)} — cari petunjuk pelarian`,
+      unique: [
+        {
+          id: 'juno_barricade',
+          text: (loc) => `Barricade ${CharBrain.locName(loc)} — "TIDAK ADA yang masuk!"`,
+          category: 'protect',
+          hint: 'Defense +20%, flee +15%. Blokir pintu masuk.',
+          condition: (gs) => (gs.dangerLevel || 0) >= 25,
+          risk: 20, reward: 70,
+          effect: (s, pc) => {
+            s.dangerLevel = Math.max(0, s.dangerLevel - 12);
+            Engine.notify('Kau memblokir semua pintu masuk. Bahaya turun -12%. Area ini aman sementara.');
+          }
+        },
+        {
+          id: 'juno_protect_sera',
+          text: () => `Lindungi Sera — "Siapapun yang menyentuhnya harus melewatiku dulu!"`,
+          category: 'protect',
+          hint: 'Juno melindungi Sera dengan loyalitas absolut.',
+          condition: (gs, nearby) => nearby.includes('sera') && (gs.dangerLevel || 0) >= 30,
+          risk: 35, reward: 75,
+          effect: (s, pc) => {
+            Engine.modTrust(pc, 'sera', 10);
+            Engine.modDanger(-10);
+            Engine.notify('Kau berdiri di depan Sera. Trust +10%. Bahaya turun.');
+          }
+        }
+      ]
+    },
+    vira: {
+      investigate: (loc) => `Periksa ${CharBrain.locName(loc)} — ingatan dari kunjungan lalu menyala`,
+      observe: (target) => `Amati ${CharBrain.charName(target)} — ada sesuatu yang familiar...`,
+      talk: (target) => `Bicara dengan ${CharBrain.charName(target)} — cari tahu apa yang berubah`,
+      accuse: (target) => `"Kau... aku pernah melihatmu melakukan ini." Vira menuduh ${CharBrain.charName(target)}.`,
+      hide: (loc) => `Sembunyi di ${CharBrain.locName(loc)} — tempat yang sudah dikenal`,
+      ally: (target) => `Minta perlindungan ${CharBrain.charName(target)} — "Aku tidak bisa sendirian lagi"`,
+      escape_clue: (loc) => `Ingat sesuatu tentang ${CharBrain.locName(loc)} — petunjuk dari masa lalu`,
+      unique: [
+        {
+          id: 'vira_memory_flash',
+          text: (loc) => `Flashback — ingatan tentang ${CharBrain.locName(loc)} dari 6 bulan lalu`,
+          category: 'investigate',
+          hint: 'Vira pernah ke sini sebelumnya. Mulai dengan 2 lokasi clue diketahui.',
+          condition: (gs) => gs.chapter >= 1,
+          risk: 5, reward: 75,
+          effect: (s, pc) => {
+            const loc = s.playerLocation || 'aula_utama';
+            const escClue = getEscapeClueAtLocation(loc);
+            if (escClue && Math.random() < 0.5) {
+              findEscapeClue(escClue.id);
+              s.cluesFound = (s.cluesFound || 0) + 1;
+              Engine.notify(`Ingatan menyala! Kau ingat petunjuk pelarian di sini: ${escClue.name}!`);
+            } else {
+              Engine.notify('Ingatan samar... ada sesuatu tapi belum jelas. Coba di lokasi lain.');
+            }
+          }
+        },
+        {
+          id: 'vira_niko_confront',
+          text: () => `Konfrontasi Niko — "Kau yang membuatku seperti ini."`,
+          category: 'confront',
+          hint: 'Konfrontasi emosional dengan mantan. Trust bisa naik atau turun drastis.',
+          condition: (gs, nearby) => nearby.includes('niko'),
+          risk: 50, reward: 80,
+          effect: (s, pc) => {
+            if (Math.random() < 0.6) {
+              Engine.modTrust(pc, 'niko', 15);
+              Engine.notify('Niko akhirnya jujur. Trust +15%. Topengnya retak.');
+            } else {
+              Engine.modTrust(pc, 'niko', -10);
+              Engine.notify('Niko menutup diri lagi. Trust -10%. Dinding emosional.');
+            }
+          }
+        }
+      ]
+    },
+    reza: {
+      investigate: (loc) => `Periksa TKP ${CharBrain.locName(loc)} — prosedur detektif standar`,
+      observe: (target) => `Profil kriminal ${CharBrain.charName(target)} — insting detektif`,
+      talk: (target) => `Interogasi ${CharBrain.charName(target)} — pertanyaan terstruktur`,
+      accuse: (target) => `"Berdasarkan bukti yang ada..." Reza secara resmi menuduh ${CharBrain.charName(target)}.`,
+      hide: (loc) => `Posisi defensif di ${CharBrain.locName(loc)} — siap menghadapi ancaman`,
+      ally: (target) => `Bentuk tim investigasi dengan ${CharBrain.charName(target)}`,
+      escape_clue: (loc) => `Periksa ${CharBrain.locName(loc)} secara forensik — cari petunjuk pelarian`,
+      unique: [
+        {
+          id: 'reza_forensic',
+          text: (loc) => `Analisis forensik ${CharBrain.locName(loc)} — prosedur profesional`,
+          category: 'investigate',
+          hint: 'Detektif: +15% akurasi tuduhan, +10% deteksi. Analisis profesional.',
+          condition: (gs) => gs.deathCount >= 1,
+          risk: 15, reward: 85,
+          effect: (s, pc) => {
+            const nearbyKillers = Object.keys(s.npcMinds || {}).filter(n =>
+              s.alive[n] && s.killers.includes(n) && s.npcMinds[n].location === (s.playerLocation || 'aula_utama'));
+            nearbyKillers.forEach(k => Engine.modSuspicion(k, 15));
+            if (nearbyKillers.length > 0) {
+              Engine.notify(`Forensik menemukan bukti kuat! Suspicion killer +15%!`);
+            } else {
+              Engine.notify('Analisis forensik selesai. Tidak ada bukti killer di sini — area ini aman.');
+            }
+          }
+        },
+        {
+          id: 'reza_interrogate',
+          text: (target) => `Interogasi intensif — teknik detektif profesional`,
+          category: 'confront',
+          hint: 'Pertanyaan terstruktur meningkatkan akurasi deteksi.',
+          condition: (gs, nearby) => nearby.length > 0 && gs.deathCount >= 1,
+          risk: 30, reward: 80,
+          effect: (s, pc) => {
+            const loc = s.playerLocation || 'aula_utama';
+            const nearby = Object.keys(s.npcMinds || {}).filter(n =>
+              s.alive[n] && s.npcMinds[n].location === loc);
+            const target = nearby.find(n => (s.suspicion[n] || 0) > 20) || nearby[0];
+            if (target) {
+              const isK = s.killers.includes(target);
+              if (isK && Math.random() < 0.5) {
+                Engine.modSuspicion(target, 12);
+                Engine.notify(`Interogasi ${CharBrain.charName(target)}: jawaban tidak konsisten! Suspicion +12%.`);
+              } else {
+                Engine.notify(`Interogasi ${CharBrain.charName(target)}: ceritanya konsisten. Belum ada bukti.`);
+              }
+            }
+          }
+        }
+      ]
+    },
+    kira: {
+      investigate: (loc) => `Scan digital ${CharBrain.locName(loc)} — cari sinyal dan data tersembunyi`,
+      observe: (target) => `Monitor aktivitas digital ${CharBrain.charName(target)}`,
+      talk: (target) => `Chat dengan ${CharBrain.charName(target)} — gaya hacker, to-the-point`,
+      accuse: (target) => `"Data tidak berbohong." Kira menunjukkan bukti digital ke ${CharBrain.charName(target)}.`,
+      hide: (loc) => `Stealth mode di ${CharBrain.locName(loc)} — off the grid`,
+      ally: (target) => `Share akses dengan ${CharBrain.charName(target)} — "Aku bisa hack, kau yang tangani fisik"`,
+      escape_clue: (loc) => `Hack sistem keamanan di ${CharBrain.locName(loc)} — cari data pelarian`,
+      unique: [
+        {
+          id: 'kira_hack_cctv',
+          text: (loc) => `Hack CCTV mansion — lihat siapa di mana`,
+          category: 'hack',
+          hint: '+25% investigasi digital. Lihat lokasi semua NPC.',
+          condition: (gs) => gs.chapter >= 1,
+          risk: 15, reward: 90,
+          effect: (s, pc) => {
+            const result = rollChance(55 + getCharAbility(pc, 'investigation'), pc, 'intel');
+            if (result.success) {
+              let report = 'CCTV: ';
+              Object.keys(s.npcMinds || {}).forEach(n => {
+                if (s.alive[n] && s.npcMinds[n]) {
+                  report += `${CharBrain.charName(n)}: ${CharBrain.locName(s.npcMinds[n].location)} | `;
+                }
+              });
+              Engine.notify(report + `(${result.chance}%, roll: ${result.roll})`);
+            } else {
+              Engine.notify(`Sistem keamanan terlalu kuat. Gagal hack. (${result.chance}%, roll: ${result.roll})`);
+            }
+          }
+        },
+        {
+          id: 'kira_digital_trace',
+          text: () => `Lacak jejak digital — siapa yang menggunakan sistem mansion`,
+          category: 'investigate',
+          hint: 'Temukan siapa yang mengakses panel kontrol mansion.',
+          condition: (gs) => gs.deathCount >= 1,
+          risk: 15, reward: 75,
+          effect: (s, pc) => {
+            const killers = Object.keys(s.npcMinds || {}).filter(n => s.alive[n] && s.killers.includes(n));
+            if (killers.length > 0 && Math.random() < 0.45) {
+              const k = killers[Math.floor(Math.random() * killers.length)];
+              Engine.modSuspicion(k, 10);
+              Engine.notify(`Jejak digital menunjukkan ${CharBrain.charName(k)} mengakses panel kontrol! Suspicion +10%.`);
+            } else {
+              Engine.notify('Tidak ada jejak digital yang mencurigakan kali ini.');
+            }
+          }
+        }
+      ]
+    },
+    farah: {
+      investigate: (loc) => `Periksa ${CharBrain.locName(loc)} — cari sesuatu yang bisa dinegosiasikan`,
+      observe: (target) => `Nilai ${CharBrain.charName(target)} — apakah bisa dipercaya untuk deal?`,
+      talk: (target) => `Negosiasi dengan ${CharBrain.charName(target)} — tawarkan deal`,
+      accuse: (target) => `"Uangku bisa membeli kebenaran." Farah menuduh ${CharBrain.charName(target)}.`,
+      hide: (loc) => `Berlindung di ${CharBrain.locName(loc)} — uang tidak bisa membeli keselamatan di sini`,
+      ally: (target) => `Beli loyalitas ${CharBrain.charName(target)} — "Aku bisa menjamin keselamatanmu"`,
+      escape_clue: (loc) => `Cari petunjuk pelarian di ${CharBrain.locName(loc)} — gunakan koneksi Wardhana`,
+      unique: [
+        {
+          id: 'farah_broker_deal',
+          text: () => `Broker deal — tukar informasi untuk perlindungan`,
+          category: 'negotiate',
+          hint: '+15% trust gain, +10% aliansi. Negosiasi keselamatan.',
+          condition: (gs, nearby) => nearby.length > 0,
+          risk: 20, reward: 75,
+          effect: (s, pc) => {
+            const loc = s.playerLocation || 'aula_utama';
+            const nearby = Object.keys(s.npcMinds || {}).filter(n =>
+              s.alive[n] && !s.killers.includes(n) && s.npcMinds[n] && s.npcMinds[n].location === loc);
+            if (nearby.length > 0) {
+              const target = nearby[0];
+              const trustGain = 10 + getCharAbility(pc, 'trust');
+              Engine.modTrust(pc, target, trustGain);
+              Engine.notify(`Deal berhasil dengan ${CharBrain.charName(target)}! Trust +${trustGain}%.`);
+            }
+          }
+        },
+        {
+          id: 'farah_wardhana_info',
+          text: () => `Gunakan pengetahuan keluarga Wardhana — "Aku tahu sejarah mansion ini"`,
+          category: 'investigate',
+          hint: 'Informasi pewaris tentang sejarah mansion.',
+          condition: (gs) => gs.chapter >= 1,
+          risk: 10, reward: 65,
+          effect: (s, pc) => {
+            if (Math.random() < 0.4) {
+              s.cluesFound = (s.cluesFound || 0) + 1;
+              Engine.notify('Pengetahuan keluarga mengungkap rahasia mansion — petunjuk baru ditemukan!');
+            } else {
+              Engine.notify('Kau mengingat sejarah keluarga, tapi belum menemukan petunjuk baru.');
+            }
+          }
+        }
+      ]
+    },
+    // Killer-specific action flavors
+    lana: {
+      investigate: (loc) => `Pura-pura investigasi di ${CharBrain.locName(loc)} — aktris sempurna`,
+      observe: (target) => `Pelajari ${CharBrain.charName(target)} — cari kelemahan untuk dieksploitasi`,
+      talk: (target) => `Manipulasi ${CharBrain.charName(target)} lewat percakapan manis`,
+      accuse: (target) => `"Ya Tuhan, aku pikir ini..." Lana menuduh ${CharBrain.charName(target)} dengan akting sempurna`,
+      hide: (loc) => `Bersembunyi di ${CharBrain.locName(loc)} — novelis yang tahu kapan harus diam`,
+      ally: (target) => `Dekati ${CharBrain.charName(target)} — "Aku takut... bisakah kita bersama?"`,
+      escape_clue: (loc) => `Cari — lalu hancurkan — petunjuk pelarian di ${CharBrain.locName(loc)}`,
+      strike: (target) => `Eksekusi ${CharBrain.charName(target)} — presisi novelis yang menulis akhir ceritanya sendiri`,
+      frame: (target) => `"Ya Tuhan, lihat ini!" Arahkan bukti palsu ke ${CharBrain.charName(target)}`,
+      unique: [
+        {
+          id: 'lana_seductive_manipulation',
+          text: () => `Manipulasi seduktif — "Aku percaya padamu... tidak seperti yang lain"`,
+          category: 'stealth',
+          hint: 'Framing +20%, suspicion turun -15%. Pesona mematikan.',
+          condition: (gs, nearby) => nearby.length > 0,
+          risk: 35, reward: 85,
+          effect: (s, pc) => {
+            const loc = s.playerLocation || 'aula_utama';
+            const nearby = Object.keys(s.npcMinds || {}).filter(n =>
+              s.alive[n] && !s.killers.includes(n) && s.npcMinds[n] && s.npcMinds[n].location === loc);
+            if (nearby.length > 0) {
+              const target = nearby[0];
+              Engine.modSuspicion(pc, -12);
+              Engine.modTrust(pc, target, 8);
+              Engine.notify(`Pesona Lana bekerja. ${CharBrain.charName(target)} semakin percaya. Suspicion -12%.`);
+            }
+          }
+        },
+        {
+          id: 'lana_fake_cry',
+          text: () => `Tangisan palsu — "Aku takut... seseorang tolong aku!"`,
+          category: 'stealth',
+          hint: 'Akting Oscar-worthy. Semua NPC di sekitar percaya.',
+          condition: (gs) => (gs.deathCount || 0) >= 1,
+          risk: 25, reward: 70,
+          effect: (s, pc) => {
+            Engine.modSuspicion(pc, -15);
+            Engine.notify('Akting sempurna! Semua orang iba. Suspicion -15%.');
+          }
+        }
+      ]
+    },
+    dimas: {
+      investigate: (loc) => `Periksa ${CharBrain.locName(loc)} — diam-diam, tanpa meninggalkan jejak`,
+      observe: (target) => `Pantau ${CharBrain.charName(target)} dari kejauhan — siap bertindak`,
+      talk: (target) => `Bicara sopan dengan ${CharBrain.charName(target)} — topeng kesopanan sempurna`,
+      accuse: (target) => `"Menurutku dia..." Dimas mengarahkan perhatian ke ${CharBrain.charName(target)}`,
+      hide: (loc) => `Menghilang di ${CharBrain.locName(loc)} — seperti bayangan`,
+      ally: (target) => `Dekati ${CharBrain.charName(target)} — "Aku bisa menjaga kita berdua"`,
+      escape_clue: (loc) => `Cari — lalu sabotase — petunjuk pelarian di ${CharBrain.locName(loc)}`,
+      strike: (target) => `Eliminasi diam-diam — ${CharBrain.charName(target)} tidak akan sempat berteriak`,
+      frame: (target) => `Tanam bukti secara teknis ke ${CharBrain.charName(target)} — operasi bersih`,
+      unique: [
+        {
+          id: 'dimas_silent_approach',
+          text: () => `Pendekatan senyap — posisikan diri di dekat target tanpa terdeteksi`,
+          category: 'stealth',
+          hint: 'Silent kill: +15% eliminasi, tanpa bukti tertinggal.',
+          condition: (gs, nearby) => nearby.length > 0,
+          risk: 30, reward: 80,
+          effect: (s, pc) => {
+            Engine.modSuspicion(pc, -8);
+            Engine.notify('Kau bergerak tanpa suara. Posisi sempurna. Suspicion -8%.');
+          }
+        },
+        {
+          id: 'dimas_infrastructure_sabotage',
+          text: (loc) => `Sabotase infrastruktur ${CharBrain.locName(loc)} — matikan lampu/kunci pintu`,
+          category: 'stealth',
+          hint: 'Sabotase teknis untuk memisahkan kelompok.',
+          condition: (gs, nearby) => nearby.length >= 2,
+          risk: 35, reward: 75,
+          effect: (s, pc) => {
+            s.dangerLevel = Math.min(100, (s.dangerLevel || 0) + 8);
+            Engine.notify('Infrastruktur disabotase. Lampu mati. Kelompok akan terpecah.');
+          }
+        }
+      ]
+    }
+  };
+
   function getCharAbility(charName, abilityType) {
     const abilities = CHARACTER_ABILITIES[charName];
     if (!abilities) return 0;
@@ -1756,6 +2216,7 @@ const Engine = (() => {
     const pc = gameState.playerCharacter || 'arin';
     const isK = gameState.killers && gameState.killers.includes(pc);
     const playerLoc = gameState.playerLocation || 'aula_utama';
+    const flavor = CHARACTER_ACTION_FLAVOR[pc] || CHARACTER_ACTION_FLAVOR.arin;
 
     // Find NPCs at player's location
     const nearbyNpcs = Object.keys(gameState.npcMinds).filter(name =>
@@ -1799,7 +2260,7 @@ const Engine = (() => {
         // Reward scales gradually with suspicion
         const accuseReward = Math.min(95, 50 + Math.floor(suspLvl / 2));
         choices.push({
-          text: `Tuduh ${CharBrain.charName(suspect)}: "Aku tahu apa yang kau lakukan."`,
+          text: flavor.accuse ? flavor.accuse(suspect) : `Tuduh ${CharBrain.charName(suspect)}: "Aku tahu apa yang kau lakukan."`,
           type: 'brain', category: 'accuse',
           hint: `${conf} — kecurigaan ${suspLvl}%${allyCount > 0 ? ` | ${allyCount} sekutu mendukung` : ''}`,
           risk: accuseRisk,
@@ -1835,7 +2296,7 @@ const Engine = (() => {
       const aloneHint = nearbyNpcs.length === 0 ? 'Sendirian — lebih leluasa mencari' : `${nearbyNpcs.length} orang di sini — hati-hati`;
       const dangerHint = (gameState.dangerLevel || 0) > 40 ? ` | Bahaya ${gameState.dangerLevel}%` : '';
       choices.push({
-        text: `Periksa ${CharBrain.locName(playerLoc)} — cari petunjuk tersembunyi`,
+        text: flavor.investigate ? flavor.investigate(playerLoc) : `Periksa ${CharBrain.locName(playerLoc)} — cari petunjuk tersembunyi`,
         type: 'brain', category: 'investigate',
         hint: `${aloneHint}${dangerHint}`,
         risk: invRisk,
@@ -1901,7 +2362,7 @@ const Engine = (() => {
         // Reward scales with urgency — more rewarding when close to completing
         const escReward = Math.min(100, 70 + (remaining <= 2 ? 25 : remaining <= 3 ? 15 : 0));
         choices.push({
-          text: `Cari petunjuk pelarian di ${CharBrain.locName(playerLoc)}`,
+          text: flavor.escape_clue ? flavor.escape_clue(playerLoc) : `Cari petunjuk pelarian di ${CharBrain.locName(playerLoc)}`,
           type: 'brain', category: 'investigate',
           hint: `Petunjuk: ${found}/${needed} dibutuhkan (${total} total)${peopleInfo} | 🔑 5% chance Kunci Room Master`,
           risk: escRisk,
@@ -2015,7 +2476,7 @@ const Engine = (() => {
         const targetSusp = gameState.suspicion[observeTarget] || 0;
         const obsReward = Math.min(80, 40 + Math.floor(targetSusp / 4) + (canReadEmotion ? 15 : 0));
         choices.push({
-          text: `Amati gerak-gerik ${CharBrain.charName(observeTarget)} secara diam-diam`,
+          text: flavor.observe ? flavor.observe(observeTarget) : `Amati gerak-gerik ${CharBrain.charName(observeTarget)} secara diam-diam`,
           type: 'brain', category: 'observe',
           hint: emotionHint,
           risk: obsRisk, reward: obsReward,
@@ -2055,7 +2516,7 @@ const Engine = (() => {
         const talkReward = Math.min(70, 30 + Math.floor((100 - trustLvl) / 4) + (trustAbility > 0 ? 10 : 0));
         const suspHint = theirSusp > 30 ? ` | Dia curiga padamu (${Math.round(theirSusp)}%)` : '';
         choices.push({
-          text: `Bicara dengan ${CharBrain.charName(talkTarget)} — bangun hubungan`,
+          text: flavor.talk ? flavor.talk(talkTarget) : `Bicara dengan ${CharBrain.charName(talkTarget)} — bangun hubungan`,
           type: 'brain', category: 'social',
           hint: `Kepercayaan: ${trustLvl}% → +${trustGainPreview}%${suspHint}`,
           risk: talkRisk, reward: talkReward,
@@ -2097,7 +2558,7 @@ const Engine = (() => {
         const allyReward = Math.min(90, 75 + (currentAllyCount === 0 ? 15 : 0) - (currentAllyCount * 5));
         const trustDesc = trustVal > 70 ? 'sangat percaya' : trustVal > 55 ? 'cukup percaya' : 'masih ragu';
         choices.push({
-          text: `Ajak ${CharBrain.charName(potential)} membentuk aliansi`,
+          text: flavor.ally ? flavor.ally(potential) : `Ajak ${CharBrain.charName(potential)} membentuk aliansi`,
           type: 'brain', category: 'alliance',
           hint: `Trust: ${trustVal}% (${trustDesc})${(gameState.dangerLevel || 0) > 40 ? ' | Bahaya tinggi — lebih mudah diajak' : ''}`,
           risk: allyRisk,
@@ -2127,7 +2588,7 @@ const Engine = (() => {
       const hideRisk = nearbyNpcs.length === 0 ? 3 : Math.min(15, 5 + nearbyNpcs.length * 3);
       const dangerDesc = gameState.dangerLevel > 70 ? 'SANGAT BERBAHAYA!' : gameState.dangerLevel > 50 ? 'berbahaya di luar' : 'waspada';
       choices.push({
-        text: `Sembunyi di ${CharBrain.locName(playerLoc)} — tunggu bahaya berlalu`,
+        text: flavor.hide ? flavor.hide(playerLoc) : `Sembunyi di ${CharBrain.locName(playerLoc)} — tunggu bahaya berlalu`,
         type: 'brain', category: 'hide',
         hint: `Bahaya: ${gameState.dangerLevel}% — ${dangerDesc}${nearbyNpcs.length === 0 ? ' | Sendirian — aman' : ''}`,
         risk: hideRisk, reward: hideReward,
@@ -2245,7 +2706,7 @@ const Engine = (() => {
         if (mySusp > 40) strikeChance = Math.max(10, strikeChance - Math.floor(mySusp / 10));
         const silentLabel = isSilent ? ' (silent kill)' : '';
         choices.push({
-          text: `Serang ${CharBrain.charName(soloTarget)}${witnesses === 0 ? ' — tidak ada saksi...' + silentLabel : ' — ada risiko saksi!'}`,
+          text: flavor.strike ? flavor.strike(soloTarget) : `Serang ${CharBrain.charName(soloTarget)}${witnesses === 0 ? ' — tidak ada saksi...' + silentLabel : ' — ada risiko saksi!'}`,
           type: 'brain-killer', category: 'killer',
           danger: witnesses > 0,
           hint: witnesses === 0 ? (isSilent ? 'Sendirian + silent kill — eliminasi tanpa bukti' : 'Sendirian — kesempatan emas') : `${witnesses} saksi potensial — sangat berisiko!`,
@@ -2377,7 +2838,7 @@ const Engine = (() => {
           const frameReward = Math.max(20, 70 - Math.floor(mySusp / 4));
           const suspHint = mySusp > 50 ? ` | Kecurigaan tinggi (${mySusp}%) — framing berisiko gagal!` : '';
           choices.push({
-            text: `Arahkan kecurigaan ke ${CharBrain.charName(frameTarget)} — framing`,
+            text: flavor.frame ? flavor.frame(frameTarget) : `Arahkan kecurigaan ke ${CharBrain.charName(frameTarget)} — framing`,
             type: 'brain-killer', category: 'stealth',
             hint: `Chance: ${frameChance}% — target jadi musuh semua NPC, trust hancur. Gagal = kamu yang dicurigai!${suspHint}`,
             risk: frameRisk, reward: frameReward,
@@ -2437,6 +2898,30 @@ const Engine = (() => {
           });
         }
       }
+    }
+
+    // --- CHARACTER-UNIQUE ACTIONS (only available to the specific character) ---
+    if (flavor.unique && Array.isArray(flavor.unique)) {
+      flavor.unique.forEach(ua => {
+        if (brainActionTaken('unique_' + ua.id)) return;
+        const nearbyNames = nearbyNpcs;
+        if (ua.condition && !ua.condition(gameState, nearbyNames)) return;
+        const uText = typeof ua.text === 'function' ? ua.text(playerLoc) : ua.text;
+        choices.push({
+          text: uText,
+          type: isK ? 'brain-killer' : 'brain',
+          category: ua.category || 'investigate',
+          hint: ua.hint || '',
+          risk: ua.risk || 20,
+          reward: ua.reward || 70,
+          successChance: ua.successChance || undefined,
+          effect: (s) => {
+            recordBrainAction('unique_' + ua.id);
+            if (ua.effect) ua.effect(s, pc);
+          },
+          next: (s) => currentNodeId
+        });
+      });
     }
 
     // --- MOVE to adjacent location (always available, resets brain actions at new loc) ---
