@@ -899,7 +899,7 @@ const Engine = (() => {
 
         // Smooth scroll to the newly visible item
         if (storyArea && i > 2) {
-          item.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          item.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }, delay);
       staggerTimers.push(timer);
