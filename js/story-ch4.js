@@ -30,6 +30,13 @@ const STORY_CH4 = {
       }
     }
 
+    text += `<p>Di sisi ruangan, drama kecil bermain tanpa kata:</p>`;
+    text += `<p><span class="speaker sera">Sera</span> berdiri di dekatmu — lebih dekat dari biasanya. Bahunya menyentuh bahumu. Di situasi normal, seorang psikolog profesional akan menjaga jarak. Tapi malam ini bukan malam normal, dan Sera sudah berhenti berpura-pura bahwa perasaannya pada Arin hanya "kolega". Setiap kali lampu berkedip, tangannya mencari tanganmu.</p>`;
+    text += `<p><span class="speaker niko">Niko</span> berdiri terpisah dari kelompok — dalang yang terisolasi oleh egonya sendiri. Tapi matanya tidak bisa berhenti kembali ke <span class="speaker vira">Vira</span>. Cinta lama yang toxic tidak pernah benar-benar mati — hanya bermutasi menjadi sesuatu yang lebih berbahaya. "Vira," bisiknya saat tidak ada yang mendengar, "aku mengundangmu karena—" "Karena rasa bersalah?" potong Vira. "Atau karena kau masih tidak bisa melepaskanku?" Keheningan yang menyakitkan.</p>`;
+    text += `<p><span class="speaker juno">Juno</span> berjalan mondar-mandir, energinya ceroboh dan berbahaya. Reza mengikutinya dengan mata — negosiator yang tahu bahwa bom waktu emosional di depannya bisa meledak kapan saja. "Duduk, Juno." "Nggak bisa." "Duduk." Juno duduk. Dan ketika lutut mereka bersentuhan, keduanya pura-pura tidak menyadarinya.</p>`;
+    text += `<p><span class="speaker lana">Lana</span> berbisik pada <span class="speaker dimas">Dimas</span> — dalang menarik benang bonekanya. "Sebentar lagi waktunya. Kau tahu apa yang harus dilakukan." Dimas mengangguk tanpa ekspresi. Tapi ada sesuatu yang baru di matanya — keraguan? Perasaan? Matanya bergerak ke Sera, dan untuk pertama kalinya, Dimas merasakan sesuatu yang Lana tidak bisa kontrol: emosi manusia.</p>`;
+    text += `<p><span class="speaker farah">Farah</span> menarik <span class="speaker kira">Kira</span> ke sudut. "Aku bisa membayarmu. Nama hargamu." Kira tertawa — tawa eksentrik yang terlalu keras untuk situasi ini. "Uang? Serius? Kita bisa mati dan lo nawarin gue uang?" Farah mengepalkan tangan — negosiator yang kehabisan mata uang.</p>`;
+
     text += `<p>Speaker — sekarang dengan suara yang lebih manusiawi, lebih personal, seolah Sang Penenun melepas filter elektroniknya:</p>`;
     text += `<p class="journal"><em>"Dua jam tersisa. Dua simpul lagi. Tapi kali ini, aku beri kalian kesempatan. Di suatu tempat di mansion ini, ada kunci master yang membuka semua pintu — termasuk pintu keluar. Temukan, dan kalian bebas. Tapi kunci itu dijaga."</em></p>`;
 

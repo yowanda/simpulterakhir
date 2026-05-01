@@ -12,6 +12,10 @@ const STORY_CH5 = {
     let text = `<p class="narration">Countdown: <strong>01:00:00</strong>. Satu jam sebelum fajar. Dan kebenaran — seperti fajar itu sendiri — mulai menyingsing melalui kegelapan.</p>`;
 
     text += `<p>Yang tersisa berkumpul di perpustakaan — ruangan paling aman yang bisa dibarricade dari dalam. Kau berdiri di tengah, bukti-bukti tersebar di meja panjang seperti peta operasi perang.</p>`;
+    text += `<p>Sera duduk di sebelahmu. Tidak ada lagi pretense profesional — tangannya menggenggam tanganmu di bawah meja, dan kau menggenggam balik. Kalau ini malam terakhir, setidaknya kalian tidak harus melewatinya sendiri.</p>`;
+    text += `<p>"Arin." Suara Sera berbisik, hanya untukmu. "Apapun yang terjadi setelah ini — aku ingin kau tahu bahwa aku..." Dia berhenti. Psikolog yang bisa membaca jiwa semua orang tapi tidak bisa mengucapkan tiga kata kepada satu orang. "...aku akan ada di sini."</p>`;
+    text += `<p>Di sudut ruangan, drama lain: <span class="speaker niko">Niko</span> duduk sendirian, kepala di tangan. Dalang yang topengnya retak. <span class="speaker vira">Vira</span> berjalan ke arahnya — pelan, seperti mendekati binatang yang terluka. "Niko." Suaranya lembut — pertama kalinya malam ini. Niko mendongak. Dan di antara dua orang yang saling menyakiti dengan cara paling toxic, ada momen kerentanan yang jujur. "Aku minta maaf," bisik Niko. "Atas semuanya." Vira tidak menjawab. Tapi dia duduk di sampingnya.</p>`;
+    text += `<p><span class="speaker reza">Reza</span> mengeluarkan flask-nya. Tangannya gemetar. <span class="speaker juno">Juno</span> mengambil flask itu dari tangannya — pelan, tegas. "Nggak sekarang." Reza menatapnya — dan tidak melawan. Dua orang rusak yang mulai menyembuhkan satu sama lain di malam yang paling gelap.</p>`;
 
     let evidenceList = [];
     if (s.flags.hasProtocol || s.flags.hasProtocolPhotos) evidenceList.push('Protokol Simpul');
