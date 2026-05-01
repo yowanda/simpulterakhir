@@ -197,7 +197,7 @@ const CharBrain = (() => {
       observe: 2, investigate: 2, socialize: 2, manipulate: 2,
       plan: 2, guard: 1, hide: 2, flee: 1, question: 2,
       maintain_cover: 2, frame: 2, stalk: 1, trap: 2, sabotage: 2,
-      confront: 1, accuse: 3, barricade: 3
+      confront: 1, accuse: 3, barricade: 3, sabotage_killer: 3, move: 1
     };
     mind.actionCooldowns[type] = cooldownMap[type] || 1;
   }
@@ -380,6 +380,19 @@ const CharBrain = (() => {
       }
     }
 
+    // Cooperative alliance: survivors team up against suspected killers
+    if (deathCount >= 1 && nearby.length > 0 && candidates.length === 0) {
+      const potentialAlly = nearby.find(n => !gameState.killers.includes(n.name) && !mind.allies.includes(n.name) && !mind.enemies.includes(n.name));
+      if (potentialAlly && canDo('socialize')) {
+        candidates.push({ type: 'socialize', desc: `${charName(mind.name)} mengajak ${charName(potentialAlly.name)} bekerja sama: "Kita harus bersatu untuk selamat."`, target: potentialAlly.name, priority: 60 });
+      }
+      // Coordinated defense: if ally nearby with tool
+      const armedAlly = nearby.find(n => mind.allies.includes(n.name) && typeof Engine !== 'undefined' && Engine.getCharTool && Engine.getCharTool(n.name));
+      if (armedAlly && canDo('guard')) {
+        candidates.push({ type: 'guard', desc: `${charName(mind.name)} dan ${charName(armedAlly.name)} membentuk pertahanan bersama di ${locName(mind.location)}.`, priority: 72 });
+      }
+    }
+
     // Low tension → socialize, observe, or move
     if (candidates.length === 0) {
       if (nearby.length > 0 && deathCount === 0 && canDo('socialize')) {
@@ -388,7 +401,6 @@ const CharBrain = (() => {
       if (canDo('observe')) {
         candidates.push({ type: 'observe', desc: `${charName(mind.name)} mengamati sekitar dengan waspada.`, priority: 30 });
       }
-      // If all common actions on cooldown, move somewhere new
       if (candidates.length === 0) {
         const moveTo = pickNewLocation(mind);
         if (moveTo) {
@@ -464,6 +476,15 @@ const CharBrain = (() => {
       candidates.push({ type: 'eliminate', desc: `${charName(mind.name)} mengeksekusi ${charName(nearby[0].name)}!`, target: nearby[0].name, priority: 100 });
     }
 
+    // Killer vs Killer: sabotage rival killer for self-preservation (chapter 3+)
+    if (gameState.chapter >= 3 && mySusp > 40 && canDo('sabotage_killer')) {
+      const rivalKillers = nearby.filter(n => gameState.killers.includes(n.name) && n.name !== mind.name);
+      if (rivalKillers.length > 0) {
+        const rival = rivalKillers[0];
+        candidates.push({ type: 'sabotage_killer', desc: `${charName(mind.name)} memutuskan untuk mengorbankan ${charName(rival.name)} demi keselamatannya sendiri.`, target: rival.name, priority: 88 });
+      }
+    }
+
     // Default: maintain cover or move
     if (candidates.length === 0) {
       if (canDo('maintain_cover')) {
@@ -527,7 +548,16 @@ const CharBrain = (() => {
       mind.lastAction = decision;
       actions.push({ character: name, action: decision });
 
-      // Apply consequences
+      // NPC tool pickup attempt
+      if (typeof Engine !== 'undefined' && Engine.npcPickupTool) {
+        const toolResult = Engine.npcPickupTool(name, mind.location);
+        if (toolResult) {
+          events.push({ type: 'tool_found', character: name, tool: toolResult.tool,
+            desc: `${charName(name)} menemukan ${toolResult.tool.icon} ${toolResult.tool.name} di ${locName(mind.location)}!` });
+        }
+      }
+
+      // Apply consequences with chance%
       const consequence = applyAction(mind, decision, gameState, minds);
       if (consequence) events.push(consequence);
     });
@@ -578,13 +608,30 @@ const CharBrain = (() => {
         return null;
       }
 
+      case 'sabotage_killer': {
+        // Killer vs killer: sabotage a rival killer's cover
+        if (!action.target) return null;
+        const rivalMind = allMinds[action.target];
+        if (!rivalMind || !gameState.alive[action.target]) return null;
+        const sabChance = typeof Engine !== 'undefined' ? Engine.rollChance(45, mind.name, 'offense') : { success: Math.random() < 0.45, chance: 45 };
+        if (sabChance.success) {
+          gameState.suspicion[action.target] = Math.min(100, (gameState.suspicion[action.target] || 0) + 25);
+          rivalMind.killerExposed = true;
+          if (!gameState.killerRevealed.includes(action.target)) gameState.killerRevealed.push(action.target);
+          return { type: 'killer_sabotage', saboteur: mind.name, victim: action.target,
+            desc: `${charName(mind.name)} diam-diam membocorkan bukti terhadap ${charName(action.target)}! Identitas killer terungkap!` };
+        }
+        return { type: 'sabotage_failed', saboteur: mind.name, victim: action.target,
+          desc: `${charName(mind.name)} mencoba menjatuhkan ${charName(action.target)}, tapi gagal.` };
+      }
+
       case 'strike':
       case 'eliminate': {
         if (!action.target) return null;
         const targetMind = allMinds[action.target];
         if (!targetMind || !gameState.alive[action.target]) return null;
 
-        // Can the target defend?
+        // Can the target defend? Tool bonus affects defense
         const defenseChance = calculateDefense(action.target, gameState, allMinds);
         if (Math.random() < defenseChance) {
           // Target survives!
@@ -776,6 +823,11 @@ const CharBrain = (() => {
 
       // If target is hiding, harder to kill
       if (targetMind.isHiding) defense += 0.3;
+    }
+
+    // Tool defense bonus
+    if (typeof Engine !== 'undefined' && Engine.getToolBonus) {
+      defense += Engine.getToolBonus(targetName, 'defense') / 100;
     }
 
     // Difficulty modifier

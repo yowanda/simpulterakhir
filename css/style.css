@@ -1630,3 +1630,58 @@ body {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.85; }
 }
+
+/* ---- Player Realtime Status Bar ---- */
+.player-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.45rem 1rem;
+  background: linear-gradient(135deg, rgba(20,20,30,0.95), rgba(30,30,45,0.9));
+  border-bottom: 1px solid rgba(200,169,110,0.25);
+  font-size: 0.82rem;
+  flex-wrap: wrap;
+}
+.ps-name {
+  font-family: 'Crimson Text', serif;
+  font-weight: 700;
+  color: #c8a96e;
+  font-size: 0.95rem;
+}
+.ps-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.ps-tag {
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.ps-safe { background: rgba(46,204,113,0.2); color: #2ecc71; border: 1px solid rgba(46,204,113,0.4); }
+.ps-wounded { background: rgba(230,57,70,0.2); color: #e63946; border: 1px solid rgba(230,57,70,0.4); animation: psThrob 1.5s infinite; }
+.ps-threat { background: rgba(139,0,0,0.3); color: #ff4444; border: 1px solid rgba(139,0,0,0.6); animation: psThrob 0.8s infinite; }
+.ps-detected { background: rgba(243,156,18,0.2); color: #f39c12; border: 1px solid rgba(243,156,18,0.4); }
+.ps-panicked { background: rgba(155,89,182,0.2); color: #9b59b6; border: 1px solid rgba(155,89,182,0.4); }
+.ps-tool {
+  margin-left: auto;
+  padding: 0.15rem 0.5rem;
+  background: rgba(200,169,110,0.15);
+  border: 1px solid rgba(200,169,110,0.3);
+  border-radius: 3px;
+  font-size: 0.75rem;
+  color: #c8a96e;
+}
+@keyframes psThrob {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ---- Chance % Badge ---- */
+.choice-chance {
+  font-size: 0.7rem;
+  color: #bdc3c7;
+  margin-top: 0.2rem;
+}
+.chance-high { color: #2ecc71; }
+.chance-mid { color: #f39c12; }
+.chance-low { color: #e63946; }
