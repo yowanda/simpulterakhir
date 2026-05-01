@@ -210,7 +210,15 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'kira' }, action: { type: 'socialize', desc: '"Kira, bisa kau hack CCTV mansion ini? Aku butuh rekaman malam itu." Arin mengajak Kira berkolaborasi.' }, weight: 16 },
       { condition: { nearbyIncludes: 'reza', minDeaths: 1 }, action: { type: 'socialize', desc: '"Reza, kau pernah menangani kasus seperti ini. Apa yang kau lihat?" Arin mengandalkan pengalaman Reza.' }, weight: 14 },
       { condition: { nearbyIncludes: 'niko', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Niko, ini mansionmu. Kau tahu lebih banyak dari yang kau akui. BICARA." Arin mendesak Niko.' }, weight: 18 },
-      { condition: { nearbyIncludes: 'vira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Vira, kau pernah di sini. Apa yang terjadi enam bulan lalu? Aku perlu tahu." Arin mencari jawaban dari Vira.' }, weight: 16 }
+      { condition: { nearbyIncludes: 'vira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Vira, kau pernah di sini. Apa yang terjadi enam bulan lalu? Aku perlu tahu." Arin mencari jawaban dari Vira.' }, weight: 16 },
+
+      // --- Tactical protagonist actions ---
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: 'Arin mengambil alih. "Dengarkan. Kita butuh strategi — siapa jaga pintu, siapa investigasi, siapa pantau pergerakan."' }, weight: 20 },
+      { condition: { isAlone: true, emotion: 'suspicious' }, action: { type: 'scout', desc: 'Arin bergerak pelan, memeriksa setiap sudut sebelum melangkah. Jurnalis yang tahu kapan harus diam.' }, weight: 16 },
+      { condition: { minDeaths: 2, isAlone: false, hasClue: true }, action: { type: 'rally', desc: '"SEMUA DENGARKAN. Aku punya bukti. Kita akhiri ini malam ini." Arin mengumpulkan semua yang tersisa.' }, weight: 22 },
+      { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'ambush', desc: 'Arin menyusun rencana penyergapan. "Kita tahu dia akan lewat sini. Bersiap."' }, weight: 18 },
+      { condition: { minDanger: 60, isAlone: false }, action: { type: 'secure_exit', desc: 'Arin memeriksa semua jalur keluar. "Kalau semuanya gagal, kita butuh rencana pelarian."' }, weight: 14 },
+      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'betray', desc: 'Insting survival mengalahkan segalanya. Arin mempertimbangkan untuk meninggalkan yang lain demi keselamatannya.' }, weight: 10 }
     ],
 
     // ========== NIKO — The Mastermind (as survivor) ==========
@@ -253,7 +261,14 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'sera', emotion: 'wary' }, action: { type: 'socialize', desc: '"Sera, aku butuh kau membaca seseorang untukku. Secara profesional." Niko memanfaatkan keahlian Sera.' }, weight: 15 },
 
       // --- NEW: Desperation ---
-      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'share_clue', desc: 'Niko membuka brankas rahasia kakeknya. "Ini... ini yang disembunyikan keluargaku selama 50 tahun."' }, weight: 20 }
+      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'share_clue', desc: 'Niko membuka brankas rahasia kakeknya. "Ini... ini yang disembunyikan keluargaku selama 50 tahun."' }, weight: 20 },
+
+      // --- Tactical protagonist actions ---
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Ini mansionku. Aku tahu setiap lorong, setiap pintu. Ikuti aku \u2014 kita amankan perimeter."' }, weight: 20 },
+      { condition: { isAlone: true, emotion: 'suspicious' }, action: { type: 'scout', desc: 'Niko menyusuri lorong rahasia yang hanya keluarganya tahu. Tuan rumah selalu punya keuntungan.' }, weight: 18 },
+      { condition: { minDanger: 60, isAlone: false }, action: { type: 'secure_exit', desc: 'Niko membuka jalur pelarian melalui terowongan bawah tanah mansion. "Kakekku membangun ini untuk keadaan darurat."' }, weight: 22 },
+      { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'ambush', desc: 'Niko mengatur jebakan di koridor utama. "Rumahku, aturanku. Pembunuh akan melewati sini."' }, weight: 18 },
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Niko menghilang ke ruangan rahasia, meninggalkan yang lain. Survival of the fittest.' }, weight: 10 }
     ],
 
     // ========== SERA — The Profiler ==========
@@ -299,7 +314,14 @@ const CharDB = (() => {
 
       // --- NEW: Escalation ---
       { condition: { minDeaths: 2, emotion: 'suspicious' }, action: { type: 'confront', desc: 'Sera tidak lagi menganalisis dari kejauhan. "Aku sudah melihat tanda-tandanya. Salah satu dari kita adalah pembunuh. Dan aku tahu siapa."' }, weight: 22 },
-      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'flee', desc: 'Sera kehilangan ketenangan profesionalnya. Terlalu banyak kematian. "Aku... aku tidak bisa terus menganalisis mayat."' }, weight: 18 }
+      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'flee', desc: 'Sera kehilangan ketenangan profesionalnya. Terlalu banyak kematian. "Aku... aku tidak bisa terus menganalisis mayat."' }, weight: 18 },
+
+      // --- Tactical protagonist actions ---
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: 'Sera menganalisis pola pembunuhan. "Pembunuh ini predator. Kita harus berpikir seperti mangsa yang cerdas."' }, weight: 20 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'scout', desc: 'Sera mengamati semua orang di ruangan. Profilingnya mencari tanda-tanda predator — micro-expression, postur, pernapasan.' }, weight: 18 },
+      { condition: { minDeaths: 2, hasClue: true, isAlone: false }, action: { type: 'rally', desc: '"Aku sudah profil semua orang. Hasilnya mengejutkan. Pembunuh ada di antara kita — dan aku tahu polanya."' }, weight: 22 },
+      { condition: { minDanger: 50, isAlone: false }, action: { type: 'ambush', desc: 'Sera menyusun strategi psikologis. "Jangan lari dari predator. Buat dia merasa diburu."' }, weight: 16 },
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Sera melihat peluang. Mengorbankan satu orang untuk menyelamatkan dirinya dan Arin. Keputusan yang dingin.' }, weight: 10 }
     ],
 
     // ========== JUNO — The Rebel ==========
@@ -341,7 +363,14 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'vira', emotion: 'calm' }, action: { type: 'socialize', desc: '"Vira, gue respect lo. Lo selamat dari sini sekali. Ajarin gue caranya." Sisi lembut Juno yang jarang muncul.' }, weight: 12 },
 
       // --- NEW: Escalation ---
-      { condition: { minDeaths: 3, emotion: 'hostile' }, action: { type: 'guard', desc: 'Juno mengambil posisi di depan kelompok. "Gue nggak akan diam lagi. Siapapun yang datang lewat pintu itu mati."' }, weight: 22 }
+      { condition: { minDeaths: 3, emotion: 'hostile' }, action: { type: 'guard', desc: 'Juno mengambil posisi di depan kelompok. "Gue nggak akan diam lagi. Siapapun yang datang lewat pintu itu mati."' }, weight: 22 },
+
+      // --- Tactical protagonist actions ---
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'ambush', desc: 'Juno menyiapkan penyergapan. "Gue tau dia bakal lewat sini. Gue tunggu di sini. Lo siap?"' }, weight: 20 },
+      { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'coordinate_defense', desc: '"STOP PANIK. Gue punya rencana. Lo jaga pintu, gue hadang dari sini. SEKARANG!" Juno memimpin pertahanan.' }, weight: 18 },
+      { condition: { isAlone: true, minDanger: 50 }, action: { type: 'scout', desc: 'Juno bergerak tanpa suara — insting jalanan mengajarkan cara bergerak di kegelapan tanpa terdeteksi.' }, weight: 16 },
+      { condition: { minDeaths: 2, emotion: 'hostile' }, action: { type: 'secure_exit', desc: 'Juno mencoba memecahkan jendela, mendobrak pintu — mencari jalan keluar dengan cara kasar.' }, weight: 18 },
+      { condition: { minDeaths: 4, emotion: 'hostile' }, action: { type: 'betray', desc: 'Juno tidak mau mati untuk orang asing. "Sorry. Gue keluar sendiri. Selamat tinggal."' }, weight: 12 }
     ],
 
     // ========== VIRA — The Survivor ==========
@@ -380,7 +409,14 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Lana. Aku membaca novelmu. Bab 17 — itu bukan fiksi, kan? Kau di sini malam itu." Vira tahu lebih dari yang dia tunjukkan.' }, weight: 20 },
 
       // --- NEW: Desperation ---
-      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'share_clue', desc: 'Vira akhirnya mengungkap semua yang dia tahu tentang malam enam bulan lalu. "Dengarkan baik-baik, karena aku tidak akan mengulanginya."' }, weight: 22 }
+      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'share_clue', desc: 'Vira akhirnya mengungkap semua yang dia tahu tentang malam enam bulan lalu. "Dengarkan baik-baik, karena aku tidak akan mengulanginya."' }, weight: 22 },
+
+      // --- Tactical protagonist actions ---
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Aku tahu mansion ini. Ikuti aku ke tempat yang aman — ada ruangan yang tidak bisa ditembus."' }, weight: 20 },
+      { condition: { isAlone: true, emotion: 'wary' }, action: { type: 'scout', desc: 'Vira menyusuri lorong rahasia, tubuhnya mengingat setiap belokan dari enam bulan lalu.' }, weight: 18 },
+      { condition: { minDanger: 60, isAlone: false }, action: { type: 'secure_exit', desc: 'Vira membuka jalur pelarian tersembunyi. "Ada jalan keluar yang tidak diketahui siapapun. Lewat sini."' }, weight: 22 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'ambush', desc: 'Vira mengatur jebakan di lorong rahasia. "Dia pasti lewat sini. Aku tahu cara berpikirnya."' }, weight: 16 },
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Vira menutup pintu lorong rahasia — dari dalam. "Maaf. Aku sudah pernah hampir mati. Tidak lagi."' }, weight: 12 }
     ],
 
     // ========== REZA — The Detective ==========
@@ -420,7 +456,15 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'arin', emotion: 'wary' }, action: { type: 'socialize', desc: '"Arin, kau jurnalis investigasi. Aku butuh partnerku yang dulu. Bantu aku memecahkan ini." Reza merekrut Arin.' }, weight: 14 },
 
       // --- NEW: Escalation ---
-      { condition: { minDeaths: 3, hasClue: true }, action: { type: 'accuse', desc: 'Reza memasang wajah detektifnya. "Cukup. Aku sudah menyusun semua bukti. Pembunuhnya di antara kita — dan aku tahu siapa."' }, weight: 24 }
+      { condition: { minDeaths: 3, hasClue: true }, action: { type: 'accuse', desc: 'Reza memasang wajah detektifnya. "Cukup. Aku sudah menyusun semua bukti. Pembunuhnya di antara kita — dan aku tahu siapa."' }, weight: 24 },
+
+      // --- Tactical protagonist actions ---
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Dengar. Aku sudah handle kasus pembunuhan berantai. Ini protokolnya — buddy system, jangan sendirian, jaga semua exit."' }, weight: 22 },
+      { condition: { isAlone: true, emotion: 'suspicious' }, action: { type: 'scout', desc: 'Reza melakukan sweep taktis — ruang per ruang, sudut per sudut. Dua puluh tahun kebiasaan polisi.' }, weight: 18 },
+      { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'ambush', desc: 'Reza menyiapkan penyergapan di bottleneck mansion. "Di sini. Kalau dia lewat, kita tangkap."' }, weight: 20 },
+      { condition: { minDanger: 50, isAlone: false }, action: { type: 'secure_exit', desc: 'Reza mengamankan jalur evakuasi. "Standard procedure — selalu punya rencana mundur."' }, weight: 16 },
+      { condition: { minDeaths: 2, isAlone: false }, action: { type: 'rally', desc: '"SEMUA BERKUMPUL. Kita buat perimeter. Tidak ada yang bergerak sendirian mulai sekarang."' }, weight: 20 },
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Reza mempertimbangkan opsi terburuk. Mengorbankan satu orang sebagai umpan. Keputusan yang hanya bisa diambil veteran.' }, weight: 8 }
     ],
 
     // ========== LANA — The Puppeteer (as survivor, if not killer) ==========
@@ -446,7 +490,13 @@ const CharDB = (() => {
       { condition: { isAlone: false, minDeaths: 2 }, action: { type: 'confront', desc: '"Menarik." Lana memiringkan kepala. "Kematian selalu mengungkap sisi terburuk manusia. Sekarang, siapa yang berikutnya?"' }, weight: 20 },
 
       // Late game
-      { condition: { chapter: 5 }, action: { type: 'manipulate', desc: 'Lana mengatur final act-nya. Setiap orang di mansion ini adalah karakter dalam novelnya — dan dia yang menulis endingnya.' }, weight: 22 }
+      { condition: { chapter: 5 }, action: { type: 'manipulate', desc: 'Lana mengatur final act-nya. Setiap orang di mansion ini adalah karakter dalam novelnya — dan dia yang menulis endingnya.' }, weight: 22 },
+
+      // --- Tactical survivor Lana ---
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'distract', desc: 'Lana membuat distraksi — menjatuhkan vas antik dengan "tidak sengaja". Semua menoleh. Persis seperti yang dia rencanakan.' }, weight: 18 },
+      { condition: { minDeaths: 2, emotion: 'panicked' }, action: { type: 'coordinate_defense', desc: '"Dengarkan aku. Aku tahu cara berpikir seperti pembunuh — aku menulisnya." Lana memimpin strategi pertahanan.' }, weight: 20 },
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Lana menuju lorong yang sepi. Keahliannya membaca narasi membawanya ke tempat yang belum dijelajahi.', moveTo: 'lorong_rahasia' }, weight: 14 },
+      { condition: { nearbyIncludes: 'sera', emotion: 'wary' }, action: { type: 'socialize', desc: '"Sera, gabungkan profilingmu dengan intuisi naratifku. Pembunuh ini punya pola — dan aku tahu pola cerita."' }, weight: 16 }
     ],
 
     // ========== DIMAS — The Operator (as survivor, if not killer) ==========
@@ -472,7 +522,14 @@ const CharDB = (() => {
       { condition: { minDanger: 50 }, action: { type: 'observe', desc: 'Sementara orang lain panik, Dimas tetap tenang. Ketenangan yang bukan keberanian — tapi sesuatu yang lebih dingin.' }, weight: 18 },
 
       // Late game
-      { condition: { chapter: 5 }, action: { type: 'investigate', desc: 'Dimas menganalisis semua kematian secara klinis. "Pola ini konsisten dengan satu profil psikologis. Aku tahu siapa dalangnya."' }, weight: 22 }
+      { condition: { chapter: 5 }, action: { type: 'investigate', desc: 'Dimas menganalisis semua kematian secara klinis. "Pola ini konsisten dengan satu profil psikologis. Aku tahu siapa dalangnya."' }, weight: 22 },
+
+      // --- Tactical survivor Dimas ---
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'move', desc: 'Dimas bergerak dengan tenang ke lokasi strategis. Pengetahuan forensiknya mengajarkan pentingnya posisi.', moveTo: 'basement' }, weight: 14 },
+      { condition: { minDeaths: 2, nearbyIncludes: 'reza' }, action: { type: 'share_clue', desc: '"Reza, lihat pola lukanya. Aku tahu jenis senjata yang dipakai — dan siapa yang punya akses."', target: 'reza' }, weight: 20 },
+      { condition: { emotion: 'panicked' }, action: { type: 'barricade', desc: 'Dimas menutup dan mengunci pintu dengan presisi klinis. "Pintu ini tidak akan terbuka dari luar."' }, weight: 18 },
+      { condition: { minDeaths: 3, hasClue: true }, action: { type: 'accuse', desc: 'Dimas berdiri tenang. "Berdasarkan analisis forensik — waktu kematian, senjata, akses — pelakunya sudah jelas."' }, weight: 22 },
+      { condition: { nearbyIncludes: 'arin', hasClue: true }, action: { type: 'share_clue', desc: '"Arin, sebagai jurnalis kau perlu fakta forensik ini. Ini bukti fisik yang tak terbantahkan."', target: 'arin' }, weight: 16 }
     ],
 
     // ========== KIRA — The Hacker ==========
@@ -508,7 +565,14 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'farah' }, action: { type: 'socialize', desc: '"Farah, aku hack email keluargamu. Jangan marah — tapi kakekmu transfer dana ke rekening yang sama dengan pemilik mansion ini."' }, weight: 16 },
 
       // --- NEW: Escalation ---
-      { condition: { minDeaths: 2, hasClue: true }, action: { type: 'accuse', desc: 'Kira menunjukkan layar laptop: "Lihat log CCTV yang di-recover. Timestamp. Lokasi. Identitas. Game over untuk pembunuh."' }, weight: 22 }
+      { condition: { minDeaths: 2, hasClue: true }, action: { type: 'accuse', desc: 'Kira menunjukkan layar laptop: "Lihat log CCTV yang di-recover. Timestamp. Lokasi. Identitas. Game over untuk pembunuh."' }, weight: 22 },
+
+      // --- Tactical protagonist actions ---
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Aku bisa hack sistem door lock. Kita kunci semua pintu kecuali exit utama. Pembunuh terjebak."' }, weight: 20 },
+      { condition: { isAlone: true, emotion: 'wary' }, action: { type: 'scout', desc: 'Kira menggunakan remote access ke CCTV untuk mengintai pergerakan di seluruh mansion dari laptopnya.' }, weight: 18 },
+      { condition: { emotion: 'panicked' }, action: { type: 'secure_exit', desc: 'Kira meng-hack door lock system. "Semua pintu keluar terbuka. SEKARANG LARI!"' }, weight: 20 },
+      { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'ambush', desc: 'Kira memasang trip-wire digital di koridor — alarm otomatis jika seseorang lewat.' }, weight: 16 },
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Kira mengunci semua pintu dari laptop — termasuk pintu yang mengurung temannya. "Maaf. Aku butuh waktu."' }, weight: 10 }
     ],
 
     // ========== FARAH — The Heiress ==========
@@ -545,7 +609,14 @@ const CharDB = (() => {
 
       // --- NEW: Escalation & character growth ---
       { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'guard', desc: 'Farah meraih tongkat golf antik dari dinding. Untuk pertama kalinya dalam hidupnya, pewaris ini siap bertarung sendiri.' }, weight: 20 },
-      { condition: { minDeaths: 4 }, action: { type: 'share_clue', desc: '"Aku sudah tidak peduli dengan reputasi. Kakekku mendanai pembangunan mansion ini untuk eksperimen. INI yang dia sembunyikan." Farah mengungkap segalanya.' }, weight: 22 }
+      { condition: { minDeaths: 4 }, action: { type: 'share_clue', desc: '"Aku sudah tidak peduli dengan reputasi. Kakekku mendanai pembangunan mansion ini untuk eksperimen. INI yang dia sembunyikan." Farah mengungkap segalanya.' }, weight: 22 },
+
+      // --- Tactical protagonist actions ---
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Dengar, keluargaku membangun safe room di mansion ini. Kita semua pindah ke sana. Sekarang."' }, weight: 20 },
+      { condition: { minDanger: 50, isAlone: false }, action: { type: 'secure_exit', desc: 'Farah membuka brankas keluarga. Di dalamnya — kunci master semua pintu mansion. "Warisan yang akhirnya berguna."' }, weight: 22 },
+      { condition: { emotion: 'suspicious', nearbyIncludes: 'reza' }, action: { type: 'rally', desc: '"Reza, aku punya pengaruh. Kau punya otak. Gabungkan. Kumpulkan semua orang — aku yang tanggung biayanya."' }, weight: 16 },
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'scout', desc: 'Farah menyusuri lorong yang dibangun kakeknya. Pewaris yang akhirnya menggunakan pengetahuan keluarganya.' }, weight: 14 },
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Farah masuk ke safe room dan mengunci pintu dari dalam. "Maaf. Uang tidak bisa membeli keberanian."' }, weight: 12 }
     ]
   };
 
@@ -554,107 +625,107 @@ const CharDB = (() => {
 
   const KILLER_TREES = {
     lana: [
-      // Master puppeteer
+      // === FASE AWAL: Maintain cover, minimal action ===
       { condition: { emotion: 'stalking', chapter: 0 }, action: { type: 'maintain_cover', desc: 'Lana memainkan perannya sempurna — novelis eksentrik yang ketakutan. Aktingnya tanpa celah.' }, weight: 20 },
-      { condition: { emotion: 'stalking', isAlone: false }, action: { type: 'manipulate', desc: 'Lana menanam benih ketidakpercayaan. Berbisik tentang satu orang ke orang lain — jaring laba-laba yang tak terlihat.' }, weight: 22 },
       { condition: { emotion: 'stalking', isAlone: true }, action: { type: 'plan', desc: 'Lana meninjau naskahnya. Korban berikutnya sudah dipilih. Yang tersisa: timing dan metode.' }, weight: 18 },
 
-      // Isolate targets
+      // === SIASAT: Manipulasi hanya untuk memecah kelompok ===
+      { condition: { emotion: 'stalking', isAlone: false, minDeaths: 0 }, action: { type: 'manipulate', desc: 'Lana menanam benih ketidakpercayaan. Berbisik tentang satu orang ke orang lain — jaring laba-laba yang tak terlihat.' }, weight: 22 },
+      { condition: { emotion: 'stalking', isAlone: false, minDeaths: 1 }, action: { type: 'divide', desc: '"Kita harus berpencar untuk efisiensi." Lana memecah kelompok secara halus — domba dipisahkan dari kawanan.' }, weight: 24 },
+
+      // === HUNTING: Isolasi target, jebak, posisikan diri ===
       { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'isolate', desc: '"Aku dengar suara dari Galeri Timur. Siapa yang mau cek?" Lana memisahkan kawanan — predator yang sabar.' }, weight: 25 },
       { condition: { emotion: 'hunting', isAlone: true, nearbyExcludes: 'dimas' }, action: { type: 'trap', desc: 'Lana menyiapkan perangkap di koridor gelap. Penulis yang tahu persis bagaimana ceritanya harus berakhir.' }, weight: 22 },
+      { condition: { emotion: 'hunting', isAlone: true }, action: { type: 'move', desc: 'Lana berpindah ke posisi strategis — dekat target berikutnya, jauh dari saksi.', moveTo: 'koridor_selatan' }, weight: 18 },
 
-      // Use Dimas
-      { condition: { nearbyIncludes: 'dimas' }, action: { type: 'plan', desc: 'Lana memberi instruksi ke Dimas lewat kode. "Bab selanjutnya dimulai sekarang."' }, weight: 20 },
+      // === Koordinasi dengan Dimas (singkat, strategis) ===
+      { condition: { nearbyIncludes: 'dimas', emotion: 'stalking' }, action: { type: 'plan', desc: 'Lana memberi instruksi ke Dimas lewat kode. "Bab selanjutnya dimulai sekarang."' }, weight: 20 },
 
-      // Kill
+      // === KILL: Hanya saat kondisi tepat ===
       { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Lana bergerak dengan presisi novelis yang mengeksekusi plot twist-nya sendiri. Sempurna. Mematikan.' }, weight: 30 },
-      { condition: { emotion: 'hunting', nearbyIncludes: 'sera' }, action: { type: 'strike', desc: 'Sera tahu terlalu banyak. Profiler yang bisa membacanya — ancaman terbesar. Lana harus bertindak.' }, weight: 28 },
+      { condition: { emotion: 'hunting', nearbyIncludes: 'sera', isAlone: false }, action: { type: 'strike', desc: 'Sera tahu terlalu banyak. Profiler yang bisa membacanya — ancaman terbesar. Lana harus bertindak.' }, weight: 28 },
 
-      // Cover up
-      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'frame', desc: 'Lana "menemukan" bukti yang menunjuk ke orang lain. "Ya Tuhan, lihat ini..." Aktris terbaik yang tidak pernah terdeteksi.' }, weight: 25 },
+      // === COVER UP: Tutup jejak ===
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'frame', desc: 'Lana "menemukan" bukti yang menunjuk ke orang lain. "Ya Tuhan, lihat ini..." Aktris terbaik.' }, weight: 25 },
+      { condition: { minDeaths: 2, isAlone: false }, action: { type: 'maintain_cover', desc: 'Lana menangis tersedu. "Aku takut... tolong..." Akting Oscar-worthy yang menyembunyikan predator di baliknya.' }, weight: 20 },
 
-      // When exposed
-      { condition: { emotion: 'executing', minTension: 70 }, action: { type: 'flee', desc: 'Topeng jatuh. Lana tidak lari — dia berjalan pergi dengan anggun. "Setiap cerita butuh villain. Aku hanya mengisi peran."' }, weight: 20 },
+      // === TERDESAK: Berkhianat pada killer lain ===
+      { condition: { minTension: 60, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: '"Dimas menjadi beban." Lana merencanakan mengekspos Dimas demi keselamatannya sendiri.', target: 'dimas' }, weight: 26 },
+      { condition: { minTension: 70, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Lana meninggalkan bukti mengarah ke Niko. "Tuan rumah selalu tersangka pertama."', target: 'niko' }, weight: 24 },
+      { condition: { emotion: 'executing', minTension: 80 }, action: { type: 'flee', desc: 'Topeng jatuh. Lana berjalan pergi dengan anggun. "Setiap cerita butuh villain."' }, weight: 20 },
 
-      // Late game dominance
-      { condition: { chapter: 5 }, action: { type: 'eliminate', desc: 'Final act. Lana mengeksekusi rencana besarnya — bukan satu korban, tapi pernyataan. Karya agung sang penulis.' }, weight: 25 },
-
-      // --- NEW: Diverse killer actions ---
-      { condition: { emotion: 'stalking', chapter: 2 }, action: { type: 'move', desc: 'Lana berpindah ke posisi strategis. Penulis yang tahu setting cerita sama pentingnya dengan karakter.', moveTo: 'galeri_timur' }, weight: 16 },
-      { condition: { emotion: 'hunting', nearbyIncludes: 'arin' }, action: { type: 'manipulate', desc: '"Arin, aku punya informasi penting." Lana menyeret Arin ke percakapan private — menjauhkan investigator dari kebenaran.' }, weight: 22 },
-      { condition: { emotion: 'stalking', minDeaths: 2 }, action: { type: 'observe', desc: 'Lana mengamati reaksi kelompok terhadap kematian. Setiap ekspresi, setiap air mata — semua jadi data untuk langkah selanjutnya.' }, weight: 18 },
-
-      // --- Killer vs Killer: Self-preservation ---
-      { condition: { chapter: 4, nearbyIncludes: 'dimas', minTension: 50 }, action: { type: 'sabotage_killer', desc: '"Dimas menjadi beban. Saatnya melepas bidak yang tidak berguna." Lana merencanakan untuk mengekspos Dimas demi keselamatannya sendiri.', target: 'dimas' }, weight: 24 },
-      { condition: { chapter: 5, nearbyIncludes: 'niko', minTension: 60 }, action: { type: 'sabotage_killer', desc: 'Lana meninggalkan bukti yang mengarah ke Niko. "Tuan rumah selalu jadi tersangka pertama."', target: 'niko' }, weight: 22 }
+      // === LATE GAME: Eksekusi atau khianat ===
+      { condition: { chapter: 5, minDeaths: 2 }, action: { type: 'eliminate', desc: 'Final act. Lana mengeksekusi rencana besarnya. Karya agung sang penulis.' }, weight: 25 },
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Endgame. Lana memutuskan hanya satu yang boleh selamat — dan itu harus dirinya. Dimas hanyalah bidak.', target: 'dimas' }, weight: 28 },
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Lana memutuskan hanya satu yang boleh selamat — Niko harus disingkirkan.', target: 'niko' }, weight: 28 }
     ],
 
     dimas: [
-      // Silent operator
-      { condition: { emotion: 'stalking', chapter: 0 }, action: { type: 'maintain_cover', desc: 'Dimas memainkan peran mahasiswa pendiam. Senyum sopan, mata kosong. Topeng yang sudah dia pakai seumur hidup.' }, weight: 20 },
-      { condition: { emotion: 'stalking', isAlone: true }, action: { type: 'plan', desc: 'Dimas menyiapkan suntikan di kantong jasnya. Propofol — cepat, tenang, tanpa darah. Clinical.' }, weight: 22 },
+      // === FASE AWAL: Cover, diam, tunggu momen ===
+      { condition: { emotion: 'stalking', chapter: 0 }, action: { type: 'maintain_cover', desc: 'Dimas memainkan peran mahasiswa pendiam. Senyum sopan, mata kosong. Topeng seumur hidup.' }, weight: 20 },
+      { condition: { emotion: 'stalking', isAlone: true }, action: { type: 'plan', desc: 'Dimas menyiapkan suntikan di kantong jasnya. Propofol — cepat, tenang, tanpa darah.' }, weight: 22 },
 
-      // Follow Lana's orders
-      { condition: { nearbyIncludes: 'lana' }, action: { type: 'plan', desc: 'Dimas menunggu sinyal Lana. Dia adalah instrumen — senjata yang menunggu tangan yang mengarahkan.' }, weight: 18 },
-
-      // Target Sera (obsession)
-      { condition: { nearbyIncludes: 'sera', isAlone: false }, action: { type: 'observe', desc: 'Dimas memperhatikan Sera. Obsesi yang bercampur dengan instruksi pembunuhan. Konflik internal yang dia tekan.' }, weight: 20 },
-      { condition: { nearbyIncludes: 'sera', emotion: 'hunting' }, action: { type: 'isolate', desc: '"Sera, aku perlu bicarakan sesuatu secara private." Dimas mencoba memisahkan Sera dari kelompok.' }, weight: 25 },
-
-      // Clinical kills
-      { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Dimas bergerak dengan presisi bedah. Tidak ada emosi. Tidak ada ragu. Hanya prosedur.' }, weight: 28 },
+      // === SIASAT: Posisi strategis, siapkan perangkap ===
+      { condition: { emotion: 'stalking', isAlone: true, chapter: 2 }, action: { type: 'move', desc: 'Dimas bergerak ke dapur. Akses ke bahan kimia rumah tangga — keuntungan farmakologi.', moveTo: 'dapur' }, weight: 18 },
       { condition: { emotion: 'hunting', isAlone: true }, action: { type: 'sabotage', desc: 'Dimas memanipulasi obat di kotak P3K mansion. Pengetahuan farmakologi yang mematikan.' }, weight: 22 },
+      { condition: { emotion: 'hunting', isAlone: true }, action: { type: 'trap', desc: 'Dimas menyiapkan jebakan farmakologis di koridor gelap. Tidak kasar, tidak berdarah — klinis.' }, weight: 20 },
 
-      // Cover tracks
-      { condition: { minDeaths: 1 }, action: { type: 'maintain_cover', desc: 'Dimas memeriksa "korban" dengan ketenangan klinis. "Waktu kematian sekitar..." Akting sempurna dari pembunuh yang berpura-pura menjadi penolong.' }, weight: 22 },
+      // === Koordinasi dengan Lana (singkat) ===
+      { condition: { nearbyIncludes: 'lana', emotion: 'stalking' }, action: { type: 'plan', desc: 'Dimas menunggu sinyal Lana. Instrumen — senjata yang menunggu tangan yang mengarahkan.' }, weight: 18 },
 
-      // When suspected
-      { condition: { minTension: 60 }, action: { type: 'frame', desc: 'Dimas menempatkan bukti di tas seseorang. Framing yang rapi — seperti operasi bedah.' }, weight: 20 },
+      // === Target Sera: Isolasi ===
+      { condition: { nearbyIncludes: 'sera', emotion: 'hunting' }, action: { type: 'isolate', desc: '"Sera, aku perlu bicarakan sesuatu secara private." Dimas mencoba memisahkan Sera.' }, weight: 25 },
 
-      // Late game
-      { condition: { chapter: 5 }, action: { type: 'eliminate', desc: 'Dimas lepas dari kendali Lana. Untuk pertama kalinya, dia membunuh bukan karena diperintah — tapi karena dia mau.' }, weight: 25 },
+      // === KILL: Presisi bedah ===
+      { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Dimas bergerak dengan presisi bedah. Tidak ada emosi. Tidak ada ragu. Hanya prosedur.' }, weight: 28 },
 
-      // --- NEW: Diverse killer actions ---
-      { condition: { emotion: 'stalking', chapter: 3 }, action: { type: 'move', desc: 'Dimas bergerak ke dapur mansion. Pengetahuan farmakologinya memerlukan akses ke bahan kimia rumah tangga.', moveTo: 'dapur' }, weight: 16 },
-      { condition: { emotion: 'hunting', nearbyIncludes: 'reza' }, action: { type: 'maintain_cover', desc: 'Dimas sengaja menunjukkan "ketakutan" di depan Reza. Akting yang dirancang untuk membuat detektif itu mengabaikannya.' }, weight: 20 },
-      { condition: { emotion: 'stalking', isAlone: false }, action: { type: 'socialize', desc: '"Aku khawatir tentang keselamatan kita semua." Dimas memainkan peran mahasiswa yang concerned. Sempurna.' }, weight: 18 },
+      // === COVER: Minimal, efisien ===
+      { condition: { minDeaths: 1, isAlone: false, emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Dimas memeriksa "korban" dengan ketenangan klinis. Akting pembunuh yang berpura-pura penolong.' }, weight: 22 },
+      { condition: { minTension: 60 }, action: { type: 'frame', desc: 'Dimas menempatkan bukti di tas seseorang. Framing rapi — seperti operasi bedah.' }, weight: 20 },
 
-      // --- Killer vs Killer: Self-preservation ---
-      { condition: { chapter: 4, nearbyIncludes: 'lana', minTension: 50 }, action: { type: 'sabotage_killer', desc: 'Dimas sudah muak diperintah. "Lana, kali ini AKU yang menulis ending." Dia meninggalkan bukti yang mengarah ke Lana.', target: 'lana' }, weight: 24 }
+      // === Detektif nearby: Maintain cover saja ===
+      { condition: { nearbyIncludes: 'reza', emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Dimas menunjukkan "ketakutan" di depan Reza. Akting untuk membuat detektif mengabaikannya.' }, weight: 20 },
+
+      // === TERDESAK: Khianat Lana ===
+      { condition: { minTension: 60, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Dimas muak diperintah. Dia meninggalkan bukti yang mengarah ke Lana.', target: 'lana' }, weight: 26 },
+      { condition: { minTension: 80 }, action: { type: 'flee', desc: 'Dimas meninggalkan segalanya. Insting survival lebih kuat dari instruksi.' }, weight: 18 },
+
+      // === LATE GAME: Lepas kendali ===
+      { condition: { chapter: 5, minDeaths: 2 }, action: { type: 'eliminate', desc: 'Dimas lepas dari kendali Lana. Dia membunuh bukan karena diperintah — tapi karena dia mau.' }, weight: 25 },
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Lana demi keselamatannya sendiri.', target: 'lana' }, weight: 28 },
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Niko — hanya satu yang boleh menang.', target: 'niko' }, weight: 28 }
     ],
 
     niko: [
-      // Mastermind killer
-      { condition: { emotion: 'stalking', chapter: 0 }, action: { type: 'maintain_cover', desc: 'Niko memainkan peran tuan rumah yang concerned. "Tenang semua. Aku akan cari tahu apa yang terjadi." Ironi yang sempurna.' }, weight: 22 },
-      { condition: { emotion: 'stalking', isAlone: false }, action: { type: 'manipulate', desc: 'Niko menggunakan karismanya untuk mengarahkan kelompok — ke tempat yang dia inginkan, ke kesimpulan yang dia rancang.' }, weight: 25 },
+      // === FASE AWAL: Tuan rumah yang concerned (cover) ===
+      { condition: { emotion: 'stalking', chapter: 0 }, action: { type: 'maintain_cover', desc: 'Niko memainkan peran tuan rumah yang concerned. "Tenang semua." Ironi yang sempurna.' }, weight: 22 },
 
-      // Use mansion knowledge
-      { condition: { isAlone: true }, action: { type: 'plan', desc: 'Niko membuka panel rahasia dan mengakses kontrol mansion. "Rumahku. Aturanku."' }, weight: 20 },
-      { condition: { emotion: 'hunting' }, action: { type: 'sabotage', desc: 'Niko mematikan lampu di satu sayap mansion. "Sepertinya ada masalah listrik." Senyum di kegelapan.' }, weight: 22 },
+      // === SIASAT: Kontrol mansion, pecah kelompok ===
+      { condition: { isAlone: true, emotion: 'stalking' }, action: { type: 'plan', desc: 'Niko membuka panel rahasia dan mengakses kontrol mansion. "Rumahku. Aturanku."' }, weight: 20 },
+      { condition: { emotion: 'stalking', isAlone: false }, action: { type: 'divide', desc: '"Kita harus berpencar untuk cari clue." Niko memecah kelompok — kambing menjauhi kawanan.' }, weight: 25 },
+      { condition: { emotion: 'stalking', chapter: 2 }, action: { type: 'move', desc: 'Niko bergerak ke panel kontrol rahasia mansion.', moveTo: 'ruang_penyimpanan' }, weight: 16 },
 
-      // Divide and conquer
-      { condition: { emotion: 'stalking', isAlone: false }, action: { type: 'divide', desc: '"Kita harus berpencar untuk cari clue." Niko memecah kelompok — kambing menjauhi kawanan, siap untuk disembelih.' }, weight: 25 },
+      // === HUNTING: Sabotase infrastruktur, isolasi ===
+      { condition: { emotion: 'hunting' }, action: { type: 'sabotage', desc: 'Niko mematikan lampu di satu sayap mansion. Senyum di kegelapan.' }, weight: 22 },
+      { condition: { emotion: 'hunting', nearbyIncludes: 'vira' }, action: { type: 'isolate', desc: '"Vira, kau ingat malam itu? Ikut aku." Niko mencoba memisahkan Vira — berbahaya.' }, weight: 22 },
+      { condition: { emotion: 'hunting', isAlone: true }, action: { type: 'trap', desc: 'Niko mengaktifkan jebakan mansion yang hanya dia tahu. Tuan rumah punya keuntungan absolut.' }, weight: 20 },
 
-      // Kill
-      { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Niko menunjukkan wajah aslinya. Bukan tuan rumah yang ramah — tapi predator yang sudah merencanakan ini bertahun-tahun.' }, weight: 28 },
+      // === KILL ===
+      { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Niko menunjukkan wajah aslinya. Predator yang sudah merencanakan ini bertahun-tahun.' }, weight: 28 },
 
-      // Cover
-      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'frame', desc: 'Niko "menemukan" bukti yang menunjuk ke seseorang. "Aku tidak percaya... teman kita sendiri?"' }, weight: 22 },
+      // === COVER ===
+      { condition: { minDeaths: 1, isAlone: false, emotion: 'stalking' }, action: { type: 'frame', desc: 'Niko "menemukan" bukti menunjuk ke seseorang. "Aku tidak percaya... teman kita sendiri?"' }, weight: 22 },
+      { condition: { minDeaths: 1, isAlone: false, emotion: 'stalking' }, action: { type: 'maintain_cover', desc: '"Aku akan pastikan keamanan kita semua." Niko bersikap protektif — ironi paling kejam.' }, weight: 18 },
 
-      // When exposed
-      { condition: { minTension: 70 }, action: { type: 'confront', desc: 'Niko berhenti berpura-pura. "Mansion ini milikku. Kalian semua tamu — dan tamu tidak membuat aturan."' }, weight: 20 },
+      // === TERDESAK: Khianat killer lain ===
+      { condition: { minTension: 60, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: '"Lana, kau bukan bagian dari rencana ini lagi." Niko mengekspos Lana.', target: 'lana' }, weight: 26 },
+      { condition: { minTension: 60, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Niko mengaktifkan CCTV yang merekam Dimas. "Hanya satu yang boleh selamat."', target: 'dimas' }, weight: 24 },
+      { condition: { minTension: 70 }, action: { type: 'confront', desc: 'Niko berhenti berpura-pura. "Mansion ini milikku. Kalian tamu."' }, weight: 20 },
 
-      // Late game
-      { condition: { chapter: 6 }, action: { type: 'eliminate', desc: 'Endgame. Niko mengaktifkan trap terakhir mansion. "Selamat datang di Simpul Terakhir. Sesungguhnya."' }, weight: 25 },
-
-      // --- NEW: Diverse killer actions ---
-      { condition: { emotion: 'stalking', chapter: 2 }, action: { type: 'move', desc: 'Niko bergerak ke panel kontrol rahasia mansion. Tuan rumah selalu punya keuntungan.', moveTo: 'ruang_penyimpanan' }, weight: 16 },
-      { condition: { emotion: 'hunting', nearbyIncludes: 'vira' }, action: { type: 'manipulate', desc: '"Vira, kau ingat malam itu? Aku bisa menjelaskan segalanya. Ikut aku." Niko mencoba memisahkan Vira dari kelompok — berbahaya.' }, weight: 22 },
-      { condition: { emotion: 'stalking', isAlone: false, minDeaths: 1 }, action: { type: 'socialize', desc: '"Kita harus tetap tenang. Aku pemilik mansion ini — aku akan melindungi kalian." Ironi yang menyakitkan.' }, weight: 18 },
-
-      // --- Killer vs Killer: Self-preservation ---
-      { condition: { chapter: 5, nearbyIncludes: 'lana', minTension: 60 }, action: { type: 'sabotage_killer', desc: '"Lana, kau sudah bukan bagian dari rencana ini." Niko menggunakan keuntungan tuan rumah untuk mengekspos Lana.', target: 'lana' }, weight: 24 },
-      { condition: { chapter: 5, nearbyIncludes: 'dimas', minTension: 60 }, action: { type: 'sabotage_killer', desc: 'Niko mengaktifkan CCTV yang merekam Dimas. "Maaf Dimas. Hanya satu yang boleh selamat."', target: 'dimas' }, weight: 22 }
+      // === LATE GAME ===
+      { condition: { chapter: 6, minDeaths: 2 }, action: { type: 'eliminate', desc: 'Endgame. Niko mengaktifkan trap terakhir mansion.' }, weight: 25 },
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Di akhir permainan, Niko mengorbankan Lana demi menjadi satu-satunya yang selamat.', target: 'lana' }, weight: 28 },
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Di akhir permainan, Niko mengkhianati Dimas — mansion ini hanya untuk satu pemenang.', target: 'dimas' }, weight: 28 }
     ]
   };
 
