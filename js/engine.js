@@ -1155,7 +1155,7 @@ const Engine = (() => {
 
     // --- INVESTIGATE location (one-time per location per node) ---
     if (!brainActionTaken('investigate_' + playerLoc)) {
-      const invChance = 40 + (gameState.chapter * 8);
+      const invChance = 45 + (gameState.chapter * 8);
       choices.push({
         text: `Periksa ${CharBrain.locName(playerLoc)} — cari petunjuk tersembunyi`,
         type: 'brain', category: 'investigate',
@@ -1168,6 +1168,29 @@ const Engine = (() => {
           const result = rollChance(invChance, pc, 'intel');
           if (result.success) {
             CharBrain.playerAction('investigate_location', null, s);
+            // Real reward: increase suspicion on actual killers and possibly find escape clue
+            const isKiller = s.killers && s.killers.includes(pc);
+            if (!isKiller) {
+              // Boost suspicion on actual killers nearby
+              nearbyNpcs.forEach(n => {
+                if (s.killers.includes(n)) {
+                  Engine.modSuspicion(n, 10);
+                }
+              });
+              // Chance to also find an escape clue as bonus (30%)
+              const escClue = getEscapeClueAtLocation(playerLoc);
+              if (escClue && Math.random() < 0.30) {
+                findEscapeClue(escClue.id);
+                s.cluesFound = (s.cluesFound || 0) + 1;
+                const newFound = (s.escapeClues || []).length;
+                const total = s.totalEscapeClues || 15;
+                Engine.notify(`Petunjuk ditemukan! Bonus: ${escClue.name} juga terungkap! Pelarian: ${newFound}/${total} (${result.chance}% chance, roll: ${result.roll})`);
+                if (canEscape()) {
+                  Engine.notify('SEMUA PETUNJUK TERKUMPUL! Jalan keluar mansion terbuka!');
+                }
+                return;
+              }
+            }
             Engine.notify(`Petunjuk ditemukan! (${result.chance}% chance, roll: ${result.roll})`);
           } else {
             Engine.notify(`Tidak menemukan apa-apa kali ini. (${result.chance}% chance, roll: ${result.roll})`);
@@ -1181,7 +1204,7 @@ const Engine = (() => {
     if (!isK && !brainActionTaken('escape_clue_' + playerLoc)) {
       const escClue = getEscapeClueAtLocation(playerLoc);
       if (escClue) {
-        const escChance = 45 + (gameState.chapter * 6);
+        const escChance = 55 + (gameState.chapter * 6);
         const found = (gameState.escapeClues || []).length;
         const total = gameState.totalEscapeClues || 6;
         choices.push({
@@ -1373,7 +1396,7 @@ const Engine = (() => {
       if (soloTarget && nearbyNpcs.filter(n => !gameState.killers.includes(n)).length <= 2) {
         const witnesses = nearbyNpcs.filter(n => n !== soloTarget && !gameState.killers.includes(n)).length;
         const isSilent = hasCharAbility(pc, 'silentKill');
-        const strikeChance = witnesses === 0 ? 65 : 35;
+        const strikeChance = witnesses === 0 ? 50 : 25;
         const silentLabel = isSilent ? ' (silent kill)' : '';
         choices.push({
           text: `Serang ${CharBrain.charName(soloTarget)}${witnesses === 0 ? ' — tidak ada saksi...' + silentLabel : ' — ada risiko saksi!'}`,
@@ -1451,7 +1474,7 @@ const Engine = (() => {
       if (!brainActionTaken('destroy_clue_' + playerLoc)) {
         const escClue = getEscapeClueAtLocation(playerLoc);
         if (escClue) {
-          const destroyChance = 60;
+          const destroyChance = 40;
           const destroyed = (gameState.destroyedClues || []).length;
           choices.push({
             text: `Hancurkan petunjuk pelarian di ${CharBrain.locName(playerLoc)}`,
@@ -1474,20 +1497,40 @@ const Engine = (() => {
         }
       }
 
-      // Manipulate/Frame (one-time per target)
+      // Manipulate/Frame (one-time per target) — chance-based with real consequences
       if (nearbyNpcs.length > 0) {
         const frameTarget = nearbyNpcs.find(n => !gameState.killers.includes(n) && !brainActionTaken('frame_' + n));
         if (frameTarget) {
+          const frameChance = 45 + Math.floor(getCharAbility(pc, 'framingBonus') / 2);
           choices.push({
             text: `Arahkan kecurigaan ke ${CharBrain.charName(frameTarget)} — framing`,
             type: 'brain-killer', category: 'stealth',
-            hint: 'Buat orang lain terlihat mencurigakan',
-            risk: 35, reward: 70,
+            hint: `Chance: ${frameChance}% — buat orang lain terlihat mencurigakan. Gagal = kecurigaan naik ke kamu!`,
+            risk: 50, reward: 70,
+            successChance: frameChance,
             effect: (s) => {
               recordBrainAction('frame_' + frameTarget);
-              const frameSusp = 15 + Math.floor(getCharAbility(pc, 'framingBonus') / 2);
-              Engine.modSuspicion(frameTarget, frameSusp);
-              Engine.notify(`Kau diam-diam menanamkan bukti palsu yang mengarah ke ${CharBrain.charName(frameTarget)}.`);
+              const result = rollChance(frameChance, pc, 'offense');
+              if (result.success) {
+                const frameSusp = 15 + Math.floor(getCharAbility(pc, 'framingBonus') / 2);
+                Engine.modSuspicion(frameTarget, frameSusp);
+                // Real consequence: nearby NPCs turn hostile toward framed target
+                if (s.npcMinds) {
+                  Object.keys(s.npcMinds).forEach(npcName => {
+                    if (s.npcMinds[npcName] && s.npcMinds[npcName].location === (s.playerLocation || 'aula_utama') && s.alive[npcName] && !s.killers.includes(npcName)) {
+                      s.npcMinds[npcName].suspicions[frameTarget] = Math.min(100, (s.npcMinds[npcName].suspicions[frameTarget] || 0) + 20);
+                      if ((s.npcMinds[npcName].suspicions[frameTarget] || 0) >= 60 && !s.npcMinds[npcName].enemies.includes(frameTarget)) {
+                        s.npcMinds[npcName].enemies.push(frameTarget);
+                      }
+                    }
+                  });
+                }
+                Engine.modSuspicion(pc, -10);
+                Engine.notify(`Framing berhasil! NPC mulai mencurigai ${CharBrain.charName(frameTarget)}. (${result.chance}% chance, roll: ${result.roll})`);
+              } else {
+                Engine.modSuspicion(pc, 15);
+                Engine.notify(`Framing gagal! Gerak-gerikmu justru mencurigakan. (${result.chance}% chance, roll: ${result.roll})`);
+              }
             },
             next: (s) => currentNodeId
           });
@@ -1649,6 +1692,16 @@ const Engine = (() => {
       if (c.maxDifficulty && state.difficulty > c.maxDifficulty) return false;
       const txt = typeof c.text === 'function' ? c.text(state) : c.text;
       if (txt === null || txt === undefined) return false;
+      // Block protect/lindungi/guard options for killer players
+      if (isPlayerKiller()) {
+        const cat = detectCategory(c);
+        if (cat === 'protect') return false;
+        const lowerText = (txt || '').toLowerCase();
+        if (lowerText.includes('lindungi') || lowerText.includes('protect') || lowerText.includes('jaga ') || lowerText.includes('pertahan')) {
+          const actionType = c.category || cat;
+          if (actionType === 'protect' || actionType === 'guard' || actionType === 'coordinate_defense' || actionType === 'rally' || actionType === 'secure_exit') return false;
+        }
+      }
       return true;
     });
 
