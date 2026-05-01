@@ -244,15 +244,13 @@ const Engine = (() => {
       role: 'Dalang',
       perk: '+20% framing & -15% terdeteksi',
       desc: 'Novelis horor. Manipulasi dan framing lebih efektif, dan lebih sulit dideteksi sebagai killer.',
-      icon: 'pena',
-      killerOnly: true
+      icon: 'pena'
     },
     dimas: {
       role: 'Operator',
       perk: '+15% kill & silent elimination',
       desc: 'Mahasiswa forensik. Presisi klinis dalam eliminasi — lebih tinggi chance kill dan lebih sedikit bukti.',
-      icon: 'pisau',
-      killerOnly: true
+      icon: 'pisau'
     },
     kira: {
       role: 'Hacker',
@@ -326,17 +324,32 @@ const Engine = (() => {
     return perspectives[pc] || perspectives.arin;
   }
 
-  // Killer assignments per difficulty
-  const KILLER_CONFIG = {
-    1: { killers: ['lana'], accomplices: [] },
-    2: { killers: ['lana', 'dimas'], accomplices: [] },
-    3: { killers: ['lana', 'dimas', 'niko'], accomplices: [] }
-  };
+  // Killer count per difficulty (killers are randomly assigned)
+  const KILLER_COUNT = { 1: 1, 2: 2, 3: 3 };
 
-  function defaultState(difficulty, playerCharacter) {
+  // Randomly pick N killers from available characters
+  function randomizeKillers(difficulty, playerCharacter, playerIsKiller) {
+    const diff = difficulty || 2;
+    const count = KILLER_COUNT[diff] || 2;
+    const pool = CHARACTERS.slice();
+
+    if (playerIsKiller) {
+      // Player is one of the killers — pick (count - 1) more random killers from non-player pool
+      const others = pool.filter(n => n !== playerCharacter);
+      const shuffled = others.sort(() => Math.random() - 0.5);
+      return [playerCharacter, ...shuffled.slice(0, count - 1)];
+    } else {
+      // Player is survivor — pick killers from non-player pool
+      const others = pool.filter(n => n !== playerCharacter);
+      const shuffled = others.sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, count);
+    }
+  }
+
+  function defaultState(difficulty, playerCharacter, playerIsKiller) {
     const diff = difficulty || 2;
     const pc = playerCharacter || 'arin';
-    const killerConf = KILLER_CONFIG[diff] || KILLER_CONFIG[2];
+    const killers = randomizeKillers(diff, pc, playerIsKiller);
     return {
       chapter: 0,
       difficulty: diff,
@@ -371,7 +384,7 @@ const Engine = (() => {
       },
       flags: {},
       items: [],
-      killers: killerConf.killers.slice(),
+      killers: killers.slice(),
       killerRevealed: [],
       dangerLevel: 10,
       moralScore: 0,
@@ -2389,8 +2402,7 @@ const Engine = (() => {
     if (!container) return;
     container.innerHTML = '';
 
-    const killerNames = KILLER_CONFIG[selectedDifficulty].killers;
-    const survivorNames = CHARACTERS.filter(n => !killerNames.includes(n));
+    const killerCount = KILLER_COUNT[selectedDifficulty] || 2;
 
     // --- SURVIVOR OPTION: Random character ---
     const survCard = document.createElement('div');
@@ -2401,20 +2413,19 @@ const Engine = (() => {
       <div class="role-info">
         <div class="role-name" style="color:#4a7c59">Survivor</div>
         <div class="role-title">Karakter Acak</div>
-        <div class="role-perk">Kau akan mendapat salah satu dari ${survivorNames.length} protagonist secara acak</div>
-        <div class="role-desc">Setiap survivor punya kemampuan pasif unik. Bertahan hidup, kumpulkan petunjuk, ungkap identitas killer.</div>
-        <div class="role-survivor-list">${survivorNames.map(n => {
+        <div class="role-perk">Kau akan mendapat salah satu dari 10 karakter secara acak</div>
+        <div class="role-desc">Bertahan hidup, kumpulkan petunjuk, ungkap identitas killer. Killer ditentukan secara <strong>acak</strong> — siapa saja bisa menjadi pembunuh!</div>
+        <div class="role-survivor-list">${CHARACTERS.map(n => {
           const r = ROLE_DESCRIPTIONS[n];
-          return `<span class="role-survivor-chip" style="border-color:${CHAR_COLORS[n]}">${CHAR_DISPLAY[n]} — ${r.perk}</span>`;
+          return `<span class="role-survivor-chip" style="border-color:${CHAR_COLORS[n]}">${CHAR_DISPLAY[n]} — ${r ? r.perk : ''}</span>`;
         }).join('')}</div>
       </div>
     `;
     survCard.addEventListener('click', () => {
-      const randomSurvivor = survivorNames[Math.floor(Math.random() * survivorNames.length)];
-      state = defaultState(selectedDifficulty, randomSurvivor);
+      const randomChar = CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
+      state = defaultState(selectedDifficulty, randomChar, false);
       resetChatTimestamp();
-      // Vira's ability: start with 2 known clue locations
-      const startClueCount = getCharAbility(randomSurvivor, 'startClues');
+      const startClueCount = getCharAbility(randomChar, 'startClues');
       if (startClueCount > 0) {
         applyStartClues(state, startClueCount);
       }
@@ -2424,42 +2435,30 @@ const Engine = (() => {
     });
     container.appendChild(survCard);
 
-    // --- KILLER OPTIONS: Show each available killer ---
-    killerNames.forEach((name, idx) => {
-      const role = ROLE_DESCRIPTIONS[name];
-      const color = CHAR_COLORS[name] || '#8b0000';
-      const displayName = CHAR_DISPLAY[name];
-
-      const card = document.createElement('div');
-      card.className = 'role-card role-card-killer';
-      card.style.animationDelay = ((idx + 1) * 0.12) + 's';
-      card.style.setProperty('--role-color', color);
-
-      const portraitContent = CHAR_PORTRAITS[name]
-        ? `<img class="role-portrait" src="${CHAR_PORTRAITS[name]}" alt="${displayName}">`
-        : `<span class="role-portrait css-avatar-role" style="background:${color}">${CHAR_INITIALS[name] || displayName.charAt(0)}</span>`;
-
-      card.innerHTML = `
-        ${portraitContent}
-        <div class="role-info">
-          <div class="role-name" style="color:${color}">${displayName}</div>
-          <div class="role-title">${role.role} — Killer</div>
-          <div class="role-perk">${role.perk}</div>
-          <div class="role-desc">${role.desc}</div>
-          <div class="role-warning">Peran Gelap: Kau bermain sebagai antagonis</div>
-        </div>
-      `;
-
-      card.addEventListener('click', () => {
-        state = defaultState(selectedDifficulty, name);
-        resetChatTimestamp();
-        currentNodeId = null;
-        showScreen('screen-characters');
-        renderCharacterIntro();
-      });
-
-      container.appendChild(card);
+    // --- KILLER OPTION: Random killer character ---
+    const killCard = document.createElement('div');
+    killCard.className = 'role-card role-card-killer';
+    killCard.style.animationDelay = '0.12s';
+    killCard.style.setProperty('--role-color', '#8b0000');
+    killCard.innerHTML = `
+      <span class="role-portrait css-avatar-role" style="background:#8b0000">🗡️</span>
+      <div class="role-info">
+        <div class="role-name" style="color:#e63946">Killer</div>
+        <div class="role-title">Karakter Acak — Peran Gelap</div>
+        <div class="role-perk">Kau akan mendapat salah satu dari 10 karakter sebagai killer secara acak</div>
+        <div class="role-desc">Eliminasi survivor tanpa ketahuan. ${killerCount > 1 ? `${killerCount - 1} killer lain juga ditentukan acak sebagai sekutumu.` : 'Kau adalah satu-satunya pembunuh.'} Hati-hati — Pemburu mengintai!</div>
+        <div class="role-warning">⚠️ Peran Gelap: Kau bermain sebagai antagonis. Karakter acak.</div>
+      </div>
+    `;
+    killCard.addEventListener('click', () => {
+      const randomChar = CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
+      state = defaultState(selectedDifficulty, randomChar, true);
+      resetChatTimestamp();
+      currentNodeId = null;
+      showScreen('screen-characters');
+      renderCharacterIntro();
     });
+    container.appendChild(killCard);
   }
 
   // Apply Vira's startClues ability
