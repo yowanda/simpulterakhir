@@ -658,6 +658,25 @@ const Engine = (() => {
 
     let textContent = typeof node.text === 'function' ? node.text(state) : t(node.text);
 
+    // Location context: show who's with the player
+    if (state.npcMinds && state.chapter >= 1) {
+      const playerLoc = state.playerLocation || 'aula_utama';
+      const locDisplayName = typeof CharBrain !== 'undefined' ? CharBrain.locName(playerLoc) : playerLoc;
+      const nearbyChars = Object.keys(state.npcMinds).filter(n =>
+        state.alive[n] && state.npcMinds[n] && state.npcMinds[n].location === playerLoc
+      );
+      const nearbyNames = nearbyChars.map(n => typeof CharBrain !== 'undefined' ? CharBrain.charName(n) : n);
+      let ctxHtml = `<div class="location-context">`;
+      ctxHtml += `<span class="loc-icon">\uD83D\uDCCD</span> <strong>${locDisplayName}</strong>`;
+      if (nearbyNames.length > 0) {
+        ctxHtml += ` — bersama: ${nearbyNames.join(', ')}`;
+      } else {
+        ctxHtml += ` — sendirian`;
+      }
+      ctxHtml += `</div>`;
+      textContent = ctxHtml + textContent;
+    }
+
     // Run NPC round and append narrative
     if (state.npcMinds && state.chapter >= 1 && !node.isEnding) {
       const roundResult = runNpcRound();
