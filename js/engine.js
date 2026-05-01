@@ -12,7 +12,24 @@ const Engine = (() => {
   let isBrainRevisit = false;
   let brainActionHistory = [];  // Track executed brain actions per node to prevent looping
   const BRAIN_MAX_PER_NODE = 2; // Max brain actions before forcing story progression
+  const MAX_PLAYER_OPTIONS = 3; // Max choices shown to player per node
   let typingTimeout = null;
+
+  // ---- 7 Unique Tools System ----
+  // Each tool can only be held by one character. Once picked up, no one else can get it.
+  // Tools trigger based on events and provide support or execution abilities.
+  const GAME_TOOLS = {
+    pisau_dapur:    { name: 'Pisau Dapur', icon: '\uD83D\uDD2A', type: 'weapon', desc: 'Senjata jarak dekat. +40% chance kill, tapi meninggalkan bukti darah.', triggerLoc: 'dapur', offense: 40, defense: 10, evidence: true },
+    kunci_master:   { name: 'Kunci Master', icon: '\uD83D\uDD11', type: 'support', desc: 'Buka semua pintu di mansion. Akses ke lorong rahasia dan bunker.', triggerLoc: 'ruang_penyimpanan', offense: 0, defense: 20, unlocks: true },
+    suntikan:       { name: 'Suntikan Obat Bius', icon: '\uD83D\uDC89', type: 'weapon', desc: 'Bius target tanpa suara. +50% chance eliminasi diam-diam, tanpa bukti.', triggerLoc: 'basement', offense: 50, defense: 0, silent: true },
+    radio_portabel: { name: 'Radio Portabel', icon: '\uD83D\uDCFB', type: 'support', desc: 'Komunikasi jarak jauh. Bisa panggil bantuan atau koordinasi aliansi.', triggerLoc: 'menara', offense: 0, defense: 30, comms: true },
+    tali_baja:      { name: 'Tali Baja', icon: '\u26D3\uFE0F', type: 'weapon', desc: 'Ikat atau jebak target. +35% chance tangkap, bisa untuk barricade.', triggerLoc: 'taman_dalam', offense: 35, defense: 15, trap: true },
+    obor_api:       { name: 'Obor Api', icon: '\uD83D\uDD25', type: 'dual', desc: 'Penerangan + senjata darurat. +20% offense, +25% defense, mengintimidasi.', triggerLoc: 'galeri_timur', offense: 20, defense: 25, intimidate: true },
+    laptop_kira:    { name: 'Laptop Terenkripsi', icon: '\uD83D\uDCBB', type: 'support', desc: 'Akses data mansion: CCTV, log pintu, komunikasi tersembunyi. +40% investigasi.', triggerLoc: 'perpustakaan', offense: 0, defense: 15, intel: true }
+  };
+
+  // Track which tools are owned by which characters
+  // state.toolOwnership = { toolId: charName } — added to defaultState
   let endingsUnlocked = JSON.parse(localStorage.getItem('simpul_endings') || '{}');
 
   const MAIN_CHARACTERS = ['arin', 'niko', 'sera', 'juno', 'vira'];
@@ -206,7 +223,16 @@ const Engine = (() => {
       roundCount: 0,
       playerLocation: 'aula_utama',
       npcActionLog: [],
-      winLossResult: null
+      winLossResult: null,
+      toolOwnership: {},       // { toolId: charName } — each tool held by max 1 char
+      playerStatus: {          // Realtime player condition
+        detected: false,       // Killer knows player is investigating
+        panicked: false,       // Player is in panic state
+        wounded: false,        // Player took damage
+        killThreat: null,      // Which killer is threatening player (charName or null)
+        woundCount: 0,         // Number of wounds taken
+        toolId: null           // Tool held by player (max 1)
+      }
     };
   }
 
@@ -280,6 +306,111 @@ const Engine = (() => {
   // ---- Alliance system ----
   function addAlliance(members) {
     state.alliances.push({ members, strength: 50 });
+  }
+
+  // ---- Tool System ----
+  function isToolAvailable(toolId) {
+    return !state.toolOwnership[toolId];
+  }
+  function getToolOwner(toolId) {
+    return state.toolOwnership[toolId] || null;
+  }
+  function getCharTool(charName) {
+    for (const [tid, owner] of Object.entries(state.toolOwnership)) {
+      if (owner === charName) return tid;
+    }
+    return null;
+  }
+  function pickupTool(charName, toolId) {
+    if (!isToolAvailable(toolId)) return false;
+    if (getCharTool(charName)) return false; // Already has a tool
+    state.toolOwnership[toolId] = charName;
+    if (charName === (state.playerCharacter || 'arin')) {
+      state.playerStatus.toolId = toolId;
+    }
+    return true;
+  }
+  function getToolBonus(charName, bonusType) {
+    const tid = getCharTool(charName);
+    if (!tid) return 0;
+    const tool = GAME_TOOLS[tid];
+    if (!tool) return 0;
+    return tool[bonusType] || 0;
+  }
+
+  // ---- Chance % System ----
+  function rollChance(baseChance, charName, bonusType) {
+    const toolBonus = getToolBonus(charName, bonusType);
+    const totalChance = Math.min(95, Math.max(5, baseChance + toolBonus));
+    const roll = Math.random() * 100;
+    return { success: roll < totalChance, chance: totalChance, roll: Math.round(roll) };
+  }
+
+  // ---- Player Status Management ----
+  function updatePlayerStatus(gameState) {
+    if (!gameState.playerStatus) return;
+    const pc = gameState.playerCharacter || 'arin';
+    const ps = gameState.playerStatus;
+    const playerLoc = gameState.playerLocation || 'aula_utama';
+
+    // Check if killer is at player location
+    ps.killThreat = null;
+    if (gameState.npcMinds) {
+      for (const k of (gameState.killers || [])) {
+        if (gameState.alive[k] && gameState.npcMinds[k] && gameState.npcMinds[k].location === playerLoc) {
+          const mind = gameState.npcMinds[k];
+          if (mind.emotion === 'hunting' || mind.emotion === 'executing') {
+            ps.killThreat = k;
+            break;
+          }
+        }
+      }
+    }
+
+    // Check detected state
+    ps.detected = false;
+    if (gameState.npcMinds) {
+      for (const k of (gameState.killers || [])) {
+        if (gameState.alive[k] && gameState.npcMinds[k]) {
+          const susp = gameState.npcMinds[k].suspicions[pc] || 0;
+          if (susp > 60) { ps.detected = true; break; }
+        }
+      }
+    }
+
+    // Panic state
+    ps.panicked = (gameState.dangerLevel || 0) > 60 || ps.wounded || !!ps.killThreat;
+
+    renderPlayerStatusBar();
+  }
+
+  function renderPlayerStatusBar() {
+    const bar = $('player-status-bar');
+    if (!bar) return;
+    const ps = state.playerStatus;
+    if (!ps) return;
+    const pc = state.playerCharacter || 'arin';
+    const pcName = typeof CharBrain !== 'undefined' ? CharBrain.charName(pc) : pc;
+    const tid = getCharTool(pc);
+    const tool = tid ? GAME_TOOLS[tid] : null;
+
+    let html = `<div class="ps-name">${pcName}</div><div class="ps-tags">`;
+
+    if (ps.wounded) html += `<span class="ps-tag ps-wounded">TERLUKA (${ps.woundCount}x)</span>`;
+    if (ps.killThreat) {
+      const threatName = typeof CharBrain !== 'undefined' ? CharBrain.charName(ps.killThreat) : ps.killThreat;
+      html += `<span class="ps-tag ps-threat">ANCAMAN: ${threatName}</span>`;
+    }
+    if (ps.detected) html += `<span class="ps-tag ps-detected">TERDETEKSI</span>`;
+    if (ps.panicked) html += `<span class="ps-tag ps-panicked">PANIK</span>`;
+    if (!ps.wounded && !ps.killThreat && !ps.detected && !ps.panicked) html += `<span class="ps-tag ps-safe">AMAN</span>`;
+
+    html += `</div>`;
+    if (tool) {
+      html += `<div class="ps-tool">${tool.icon} ${tool.name}</div>`;
+    }
+    bar.innerHTML = html;
+    bar.style.display = 'flex';
   }
 
   // ---- i18n ----
@@ -572,6 +703,8 @@ const Engine = (() => {
     });
 
     updateNpcLogPanel();
+    updatePlayerStatus(state);
+    checkToolPickup(state);
     saveGame();
   }
 
@@ -606,6 +739,36 @@ const Engine = (() => {
     brainActionHistory.push(actionKey);
   }
 
+  // ---- Tool Pickup Events ----
+  function checkToolPickup(gameState) {
+    if (!gameState || gameState.chapter < 1) return;
+    const pc = gameState.playerCharacter || 'arin';
+    const playerLoc = gameState.playerLocation || 'aula_utama';
+
+    // Check if any tool at this location is available and player has no tool
+    if (getCharTool(pc)) return; // Already holding a tool
+    for (const [tid, tool] of Object.entries(GAME_TOOLS)) {
+      if (tool.triggerLoc === playerLoc && isToolAvailable(tid)) {
+        // Auto-generate a tool pickup notification
+        notify(`${tool.icon} ${tool.name} ditemukan di ${typeof CharBrain !== 'undefined' ? CharBrain.locName(playerLoc) : playerLoc}!`);
+        break;
+      }
+    }
+  }
+
+  // ---- NPC Tool Pickup (called from char-brain.js executeRound) ----
+  function npcPickupTool(charName, location) {
+    if (getCharTool(charName)) return null; // Already has tool
+    for (const [tid, tool] of Object.entries(GAME_TOOLS)) {
+      if (tool.triggerLoc === location && isToolAvailable(tid)) {
+        if (pickupTool(charName, tid)) {
+          return { toolId: tid, tool: tool };
+        }
+      }
+    }
+    return null;
+  }
+
   // ---- Dynamic Choices based on NPC brain state ----
   function generateDynamicChoices(gameState) {
     const choices = [];
@@ -620,19 +783,54 @@ const Engine = (() => {
       gameState.alive[name] && gameState.npcMinds[name].location === playerLoc
     );
 
+    // --- TOOL PICKUP (if tool available at location and player has no tool) ---
+    if (!getCharTool(pc)) {
+      for (const [tid, tool] of Object.entries(GAME_TOOLS)) {
+        if (tool.triggerLoc === playerLoc && isToolAvailable(tid) && !brainActionTaken('pickup_' + tid)) {
+          choices.push({
+            text: `${tool.icon} Ambil ${tool.name}`,
+            type: 'brain', category: 'investigate',
+            hint: tool.desc,
+            risk: 5, reward: 80,
+            successChance: 100,
+            effect: (s) => {
+              recordBrainAction('pickup_' + tid);
+              pickupTool(pc, tid);
+              Engine.notify(`Kau mengambil ${tool.icon} ${tool.name}! ${tool.desc}`);
+            },
+            next: (s) => currentNodeId
+          });
+          break; // Only show one tool pickup
+        }
+      }
+    }
+
     // --- ACCUSE suspect (one-time per suspect per node) ---
     if (!isK && nearbyNpcs.length > 0 && gameState.deathCount >= 1) {
       const suspect = nearbyNpcs.find(n => (gameState.suspicion[n] || 0) > 30 && !brainActionTaken('accuse_' + n));
       if (suspect) {
         const suspLvl = gameState.suspicion[suspect] || 0;
         const conf = suspLvl > 60 ? 'Bukti kuat' : 'Bukti menengah';
+        const accuseChance = Math.min(85, 30 + suspLvl);
         choices.push({
           text: `Tuduh ${CharBrain.charName(suspect)}: "Aku tahu apa yang kau lakukan."`,
           type: 'brain', category: 'accuse',
           hint: `${conf} — kecurigaan ${suspLvl}%`,
           risk: Math.max(40, 80 - suspLvl),
           reward: suspLvl > 50 ? 90 : 60,
-          effect: (s) => { recordBrainAction('accuse_' + suspect); CharBrain.playerAction('accuse', suspect, s); Engine.modSuspicion(suspect, 15); },
+          successChance: accuseChance,
+          effect: (s) => {
+            recordBrainAction('accuse_' + suspect);
+            const result = rollChance(accuseChance, pc, 'offense');
+            if (result.success) {
+              CharBrain.playerAction('accuse', suspect, s);
+              Engine.modSuspicion(suspect, 15);
+              Engine.notify(`Tuduhan berhasil! (${result.chance}% chance, roll: ${result.roll})`);
+            } else {
+              Engine.modSuspicion(suspect, 5);
+              Engine.notify(`Tuduhanmu tidak meyakinkan. (${result.chance}% chance, roll: ${result.roll})`);
+            }
+          },
           next: (s) => currentNodeId
         });
       }
@@ -640,17 +838,23 @@ const Engine = (() => {
 
     // --- INVESTIGATE location (one-time per location per node) ---
     if (!brainActionTaken('investigate_' + playerLoc)) {
+      const invChance = 40 + (gameState.chapter * 8);
       choices.push({
         text: `Periksa ${CharBrain.locName(playerLoc)} — cari petunjuk tersembunyi`,
         type: 'brain', category: 'investigate',
         hint: nearbyNpcs.length === 0 ? 'Sendirian — lebih leluasa mencari' : 'Hati-hati, ada orang lain di sini',
         risk: nearbyNpcs.length === 0 ? 15 : 25,
         reward: 70,
+        successChance: invChance,
         effect: (s) => {
           recordBrainAction('investigate_' + playerLoc);
-          const result = CharBrain.playerAction('investigate_location', null, s);
-          if (result && result.found) Engine.notify(result.desc);
-          else Engine.notify('Kau memeriksa area ini tapi tidak menemukan hal baru.');
+          const result = rollChance(invChance, pc, 'intel');
+          if (result.success) {
+            CharBrain.playerAction('investigate_location', null, s);
+            Engine.notify(`Petunjuk ditemukan! (${result.chance}% chance, roll: ${result.roll})`);
+          } else {
+            Engine.notify(`Tidak menemukan apa-apa kali ini. (${result.chance}% chance, roll: ${result.roll})`);
+          }
         },
         next: (s) => currentNodeId
       });
@@ -752,6 +956,7 @@ const Engine = (() => {
       const soloTarget = nearbyNpcs.find(n => !gameState.killers.includes(n) && !brainActionTaken('strike_' + n));
       if (soloTarget && nearbyNpcs.filter(n => !gameState.killers.includes(n)).length <= 2) {
         const witnesses = nearbyNpcs.filter(n => n !== soloTarget && !gameState.killers.includes(n)).length;
+        const strikeChance = witnesses === 0 ? 65 : 35;
         choices.push({
           text: `Serang ${CharBrain.charName(soloTarget)}${witnesses === 0 ? ' — tidak ada saksi...' : ' — ada risiko saksi!'}`,
           type: 'brain-killer', category: 'killer',
@@ -759,12 +964,43 @@ const Engine = (() => {
           hint: witnesses === 0 ? 'Sendirian — kesempatan emas' : `${witnesses} saksi potensial — sangat berisiko!`,
           risk: witnesses === 0 ? 45 : 85,
           reward: 90,
+          successChance: strikeChance,
           effect: (s) => {
             recordBrainAction('strike_' + soloTarget);
-            const result = CharBrain.playerAction('killer_strike', soloTarget, s);
-            if (result) {
-              if (result.success) { Engine.killChar(soloTarget); Engine.notify(result.desc); }
-              else Engine.notify(result.desc);
+            const result = rollChance(strikeChance, pc, 'offense');
+            if (result.success) {
+              Engine.killChar(soloTarget);
+              Engine.notify(`${CharBrain.charName(soloTarget)} dieliminasi! (${result.chance}% chance, roll: ${result.roll})`);
+            } else {
+              Engine.modSuspicion(pc, 20);
+              Engine.notify(`Serangan gagal! ${CharBrain.charName(soloTarget)} berhasil lolos. (${result.chance}% chance, roll: ${result.roll})`);
+            }
+          },
+          next: (s) => currentNodeId
+        });
+      }
+
+      // Sabotage other killer (killer vs killer self-preservation)
+      const otherKillers = nearbyNpcs.filter(n => gameState.killers.includes(n) && n !== pc && !brainActionTaken('sabotage_killer_' + n));
+      if (otherKillers.length > 0 && gameState.chapter >= 3) {
+        const rivalKiller = otherKillers[0];
+        const sabChance = 50;
+        choices.push({
+          text: `Sabotase ${CharBrain.charName(rivalKiller)} — selamatkan diri sendiri`,
+          type: 'brain-killer', category: 'stealth',
+          danger: true,
+          hint: 'Khianati killer lain agar kau satu-satunya yang selamat',
+          risk: 70, reward: 85,
+          successChance: sabChance,
+          effect: (s) => {
+            recordBrainAction('sabotage_killer_' + rivalKiller);
+            const result = rollChance(sabChance, pc, 'offense');
+            if (result.success) {
+              Engine.modSuspicion(rivalKiller, 30);
+              Engine.notify(`Kau berhasil membocorkan identitas ${CharBrain.charName(rivalKiller)} ke kelompok! (${result.chance}%)`);
+            } else {
+              Engine.modSuspicion(pc, 15);
+              Engine.notify(`Usaha sabotasemu ketahuan oleh ${CharBrain.charName(rivalKiller)}! (${result.chance}%)`);
             }
           },
           next: (s) => currentNodeId
@@ -964,7 +1200,19 @@ const Engine = (() => {
 
     if (available.length === 0 && choices.length === 0) return;
 
-    available.forEach((choice, i) => {
+    // Limit player options to MAX_PLAYER_OPTIONS (3) — prioritize story choices, then highest reward brain choices
+    let displayed = available;
+    if (displayed.length > MAX_PLAYER_OPTIONS) {
+      const story = displayed.filter(c => !c.type || c.type === 'story' || (!c.type?.startsWith('brain')));
+      const brain = displayed.filter(c => c.type === 'brain' || c.type === 'brain-killer');
+      brain.sort((a, b) => (b.reward || 0) - (a.reward || 0));
+      displayed = story.slice(0, MAX_PLAYER_OPTIONS);
+      const remaining = MAX_PLAYER_OPTIONS - displayed.length;
+      if (remaining > 0) displayed = displayed.concat(brain.slice(0, remaining));
+      displayed = displayed.slice(0, MAX_PLAYER_OPTIONS);
+    }
+
+    displayed.forEach((choice, i) => {
       const btn = document.createElement('button');
       const cat = detectCategory(choice);
       const catInfo = ACTION_CATEGORIES[cat] || ACTION_CATEGORIES.story;
@@ -991,6 +1239,10 @@ const Engine = (() => {
       if (choice.hint && state.difficulty <= 2) {
         const hintText = typeof choice.hint === 'function' ? choice.hint(state) : t(choice.hint);
         html += `<span class="choice-hint">${hintText}</span>`;
+      }
+      if (choice.successChance !== undefined) {
+        const chClass = choice.successChance >= 60 ? 'chance-high' : choice.successChance >= 35 ? 'chance-mid' : 'chance-low';
+        html += `<span class="choice-chance ${chClass}">Peluang: ${choice.successChance}%</span>`;
       }
       html += `</div>`;
 
@@ -1505,7 +1757,10 @@ const Engine = (() => {
     showDirectEnding, renderNode, getPortraitHTML,
     isPlayer, playerChar, playerName, isPlayerKiller, getPlayerPerspective,
     initNpcMinds, runNpcRound, checkWinLossState, updateNpcLogPanel,
-    ROLE_DESCRIPTIONS,
+    // Tool system
+    pickupTool, getCharTool, getToolOwner, isToolAvailable, npcPickupTool,
+    getToolBonus, rollChance, updatePlayerStatus,
+    GAME_TOOLS, ROLE_DESCRIPTIONS,
     get state() { return state; },
     get lang() { return lang; },
     CHARACTERS, MAIN_CHARACTERS, SIDE_CHARACTERS, CHAR_DISPLAY, diffMult
