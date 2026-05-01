@@ -106,7 +106,13 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 - **Dialog sebagai Chat Bubble** — setiap dialog karakter ditampilkan sebagai bubble chat dengan avatar
 - **Player di Kanan** — pesan karakter yang dimainkan muncul di sisi kanan dengan tint hijau
 - **NPC di Kiri** — pesan NPC lain muncul di sisi kiri dengan background gelap
-- **Killer Bubble** — karakter killer punya bubble dengan tint merah subtle
+- **Killer Bubble** — karakter killer punya bubble dengan tint merah dan glow effect menacing
+- **Staggered Message Reveal** — pesan muncul satu per satu dengan animasi fade-in smooth, seperti chat asli
+- **Scene Break Dividers** — pembatas visual (···) otomatis muncul di antara narasi panjang agar lebih mudah dibaca
+- **Click-to-Skip** — klik area cerita untuk langsung tampilkan semua teks
+- **Choices Fade-In** — pilihan muncul dengan animasi smooth setelah semua teks terlihat
+- **Horror Narration Glow** — narasi horor punya efek glow berdenyut (pulsing red)
+- **Hover Effects** — bubble dan avatar bereaksi saat di-hover
 - **Narasi Centered** — deskripsi dan narasi non-dialog muncul di tengah dengan garis dekoratif
 - **Location Context** — info lokasi tampil sebagai pill-shaped system message
 - **Responsive** — avatar dan font otomatis mengecil di mobile

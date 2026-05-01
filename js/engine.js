@@ -684,52 +684,55 @@ const Engine = (() => {
 
   const KILLER_CHARS = ['lana', 'dimas', 'niko'];
 
+  let staggerTimers = [];
+  let lastSpeaker = '';
+  let pendingStaggerCallback = null;
+
+  function clearStaggerTimers() {
+    staggerTimers.forEach(t => clearTimeout(t));
+    staggerTimers = [];
+  }
+
   function convertToChatbox(html) {
     const temp = document.createElement('div');
     temp.innerHTML = html;
     let chatHtml = '';
     const pc = playerChar();
+    let narrationCount = 0;
 
-    // Process each top-level element
     Array.from(temp.childNodes).forEach(node => {
-      // Skip empty text nodes
       if (node.nodeType === 3 && !node.textContent.trim()) return;
 
       // Preserve non-<p> elements (divs like location-context, npc-round-narrative, wl-alert, etc.)
       if (node.nodeType === 1 && node.tagName !== 'P') {
-        chatHtml += node.outerHTML;
+        chatHtml += `<div class="chat-item">${node.outerHTML}</div>`;
         return;
       }
 
-      // Text nodes outside <p> — treat as narration
       if (node.nodeType === 3) {
         const txt = node.textContent.trim();
-        if (txt) chatHtml += `<div class="chat-narration">${txt}</div>`;
+        if (txt) chatHtml += `<div class="chat-item chat-narration">${txt}</div>`;
         return;
       }
 
-      // Process <p> elements
       if (node.nodeType === 1 && node.tagName === 'P') {
         const speakerEl = node.querySelector('.speaker');
 
         if (speakerEl) {
-          // This is a dialogue <p> — extract character and convert to chat bubble
           const charClasses = Array.from(speakerEl.classList).filter(c => c !== 'speaker');
           const charKey = charClasses[0] || '';
           const charDisplayName = CHAR_DISPLAY[charKey] || speakerEl.textContent.trim();
 
-          // Get the message text (everything after the speaker tag)
           const msgContent = node.innerHTML
-            .replace(/<img[^>]*class="speaker-portrait"[^>]*>/g, '')  // remove old portrait
-            .replace(/<span class="speaker [^"]*">[^<]*<\/span>/g, '') // remove speaker tag
+            .replace(/<img[^>]*class="speaker-portrait"[^>]*>/g, '')
+            .replace(/<span class="speaker [^"]*">[^<]*<\/span>/g, '')
             .trim();
 
-          // Determine bubble side — player char = right, others = left
           const isPlayer = charKey === pc;
           const isKiller = KILLER_CHARS.includes(charKey);
           const isEntity = charKey === 'entity';
           const side = isPlayer ? 'right' : 'left';
-          let bubbleClass = `chat-bubble chat-bubble-${side}`;
+          let bubbleClass = `chat-item chat-bubble chat-bubble-${side}`;
           if (isKiller) bubbleClass += ' chat-bubble-killer';
           if (isEntity) bubbleClass += ' chat-bubble-entity';
 
@@ -740,18 +743,32 @@ const Engine = (() => {
           chatHtml += `<div class="chat-name ${charKey}">${charDisplayName}</div>`;
           chatHtml += `<div class="chat-msg">${msgContent}</div>`;
           chatHtml += `</div></div>`;
+          narrationCount = 0;
         } else {
-          // No speaker — narration/system message
           const text = node.innerHTML.trim();
           if (!text) return;
 
-          // Check for special CSS classes
           const pClasses = Array.from(node.classList);
-          let narrationClass = 'chat-narration';
+
+          // Journal entries get their own styling without narration treatment
+          if (pClasses.includes('journal')) {
+            chatHtml += `<div class="chat-item">${node.outerHTML}</div>`;
+            narrationCount = 0;
+            return;
+          }
+
+          let narrationClass = 'chat-item chat-narration';
           if (pClasses.includes('horror') || text.includes('class="horror"')) narrationClass += ' chat-narration-horror';
           if (pClasses.includes('sound') || node.querySelector('.sound')) {
-            chatHtml += `<div class="chat-sound">${text}</div>`;
+            chatHtml += `<div class="chat-item chat-sound">${text}</div>`;
+            narrationCount = 0;
             return;
+          }
+
+          // Add scene break before consecutive narration blocks (after 2nd)
+          narrationCount++;
+          if (narrationCount === 3) {
+            chatHtml += `<div class="chat-item chat-scene-break"><span class="break-icon">···</span></div>`;
           }
 
           chatHtml += `<div class="${narrationClass}">${text}</div>`;
@@ -764,9 +781,64 @@ const Engine = (() => {
 
   function renderText(html, container, callback) {
     if (typingTimeout) { clearTimeout(typingTimeout); typingTimeout = null; }
+    clearStaggerTimers();
+
     const chatboxHtml = convertToChatbox(html);
     container.innerHTML = chatboxHtml;
-    if (callback) callback();
+
+    // Staggered reveal: show items one by one with natural pacing
+    const items = container.querySelectorAll('.chat-item');
+    const storyArea = $('story-area');
+    const DELAY_NARRATION = 180;
+    const DELAY_BUBBLE = 280;
+    const DELAY_OTHER = 120;
+    let delay = 200; // Initial pause before first item
+
+    items.forEach((item, i) => {
+      const isBubble = item.classList.contains('chat-bubble');
+      const isNarration = item.classList.contains('chat-narration');
+      const isBreak = item.classList.contains('chat-scene-break');
+      const increment = isBubble ? DELAY_BUBBLE : (isNarration ? DELAY_NARRATION : (isBreak ? 100 : DELAY_OTHER));
+      delay += increment;
+
+      const timer = setTimeout(() => {
+        item.classList.add('chat-visible');
+
+        // Smooth scroll to the newly visible item
+        if (storyArea && i > 2) {
+          item.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+      }, delay);
+      staggerTimers.push(timer);
+    });
+
+    // Call callback after all items are revealed
+    pendingStaggerCallback = callback;
+    const finalTimer = setTimeout(() => {
+      if (pendingStaggerCallback) {
+        pendingStaggerCallback();
+        pendingStaggerCallback = null;
+      }
+    }, delay + 100);
+    staggerTimers.push(finalTimer);
+  }
+
+  function skipStaggerAnimation() {
+    clearStaggerTimers();
+    const container = $('story-text');
+    if (!container) return;
+    container.querySelectorAll('.chat-item').forEach(item => {
+      item.classList.add('chat-visible');
+    });
+    const choicesContainer = $('choices-container');
+    if (choicesContainer) {
+      choicesContainer.style.opacity = '1';
+      choicesContainer.style.transform = 'translateY(0)';
+    }
+    if (pendingStaggerCallback) {
+      pendingStaggerCallback();
+      pendingStaggerCallback = null;
+    }
   }
 
   // ---- NPC Brain Integration ----
@@ -1080,6 +1152,11 @@ const Engine = (() => {
       }
     }
 
+    // Hide choices until text is fully revealed
+    choicesContainer.style.opacity = '0';
+    choicesContainer.style.transform = 'translateY(10px)';
+    choicesContainer.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+
     renderText(textContent, storyText, () => {
       $('story-area').scrollTop = 0;
 
@@ -1105,6 +1182,12 @@ const Engine = (() => {
         dynamicChoices.forEach(c => allChoices.push(c));
       }
       renderChoices(allChoices);
+
+      // Reveal choices with smooth animation after text
+      setTimeout(() => {
+        choicesContainer.style.opacity = '1';
+        choicesContainer.style.transform = 'translateY(0)';
+      }, 150);
     });
 
     updateNpcLogPanel();
@@ -2395,6 +2478,12 @@ const Engine = (() => {
     $('overlay').addEventListener('click', () => {
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('open'));
       $('overlay').classList.remove('active');
+    });
+
+    // Click story area to skip stagger animation
+    $('story-area').addEventListener('click', (e) => {
+      if (e.target.closest('.choice-btn') || e.target.closest('.chat-bubble') || e.target.closest('.panel')) return;
+      if (staggerTimers.length > 0) skipStaggerAnimation();
     });
 
     $('btn-save').addEventListener('click', () => { saveGame(); notify('Game tersimpan'); togglePanel('panel-menu'); });
