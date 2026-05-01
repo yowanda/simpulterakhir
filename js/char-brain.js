@@ -1637,7 +1637,7 @@ const CharBrain = (() => {
       return result;
     }
 
-    // 8 clues found → all killers revealed & executed
+    // 5 clues found (or master key) → all killers revealed & executed
     if (typeof Engine !== 'undefined' && Engine.canEscape && Engine.canEscape()) {
       result.ended = true;
       result.type = 'win';
@@ -1659,7 +1659,7 @@ const CharBrain = (() => {
       return result;
     }
 
-    // Killer destroyed/hid enough clues that protagonist can't reach 8
+    // Killer destroyed/hid enough clues that protagonist can't reach 5
     const totalClues = gameState.totalEscapeClues || 8;
     const destroyed = (gameState.destroyedClues || []).length;
     const found = (gameState.escapeClues || []).length;

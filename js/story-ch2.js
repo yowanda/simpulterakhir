@@ -221,6 +221,32 @@ const STORY_CH2 = {
   ]
 },
 
+'ch2_dinner_aftermath': {
+  text: (s) => {
+    let text = `<p class="sound">— Kau kembali ke ruang makan. Yang lain sudah duduk — suasana tegang, tidak ada yang bicara. —</p>`;
+    if (s.flags.letViraGo) {
+      text += `<p><span class="speaker vira">Vira</span> kembali beberapa menit kemudian dari arah tangga, seolah tidak terjadi apa-apa. Matanya menghindari tatapanmu.</p>`;
+    } else if (s.flags.knowsViraBlackmailed) {
+      text += `<p>Kau tahu sesuatu tentang <span class="speaker vira">Vira</span> yang tidak diketahui orang lain. Informasi ini bisa mengubah segalanya — atau menghancurkannya.</p>`;
+    } else if (s.flags.hasHardDrive) {
+      text += `<p>Hard drive tersembunyi di tasmu. Informasi di dalamnya bisa jadi kunci untuk memahami apa yang sebenarnya terjadi di mansion ini.</p>`;
+    } else if (s.flags.viraJoinedGroup) {
+      text += `<p><span class="speaker vira">Vira</span> berjalan di sampingmu. Untuk pertama kalinya, dia terlihat sedikit lega — meskipun matanya masih menyimpan ketakutan.</p>`;
+    }
+    text += `<p><span class="speaker sera">Sera</span> Speaker berderak: <em>"Simpul Kedua berlanjut. Buka cloche kalian."</em></p>`;
+    return text;
+  },
+  choices: [
+    {
+      text: "Buka cloche-mu",
+      next: 'ch2_read_envelopes',
+      effect: (s) => {
+        s.flags.playedDinner = true;
+      }
+    }
+  ]
+},
+
 'ch2_play_dinner': {
   text: `<p class="sound">— Kalian duduk. Sepuluh orang. Sepuluh kursi. Sepuluh cloche. —</p>
 <p><span class="speaker vira">Vira</span> Kau membuka cloche-mu. Di bawahnya: amplop, dan — sebuah boneka kayu kecil yang menyerupaimu. Ukiran detail, miniatur sempurna. Menyeramkan.</p>
