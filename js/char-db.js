@@ -218,7 +218,10 @@ const CharDB = (() => {
       { condition: { minDeaths: 2, isAlone: false, hasClue: true }, action: { type: 'rally', desc: '"SEMUA DENGARKAN. Aku punya bukti. Kita akhiri ini malam ini." Arin mengumpulkan semua yang tersisa.' }, weight: 22 },
       { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'ambush', desc: 'Arin menyusun rencana penyergapan. "Kita tahu dia akan lewat sini. Bersiap."' }, weight: 18 },
       { condition: { minDanger: 60, isAlone: false }, action: { type: 'secure_exit', desc: 'Arin memeriksa semua jalur keluar. "Kalau semuanya gagal, kita butuh rencana pelarian."' }, weight: 14 },
-      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'betray', desc: 'Insting survival mengalahkan segalanya. Arin mempertimbangkan untuk meninggalkan yang lain demi keselamatannya.' }, weight: 10 }
+      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'betray', desc: 'Insting survival mengalahkan segalanya. Arin mempertimbangkan untuk meninggalkan yang lain demi keselamatannya.' }, weight: 10 },
+      // Trust-kill: Arin bisa membunuh seseorang yang dia curigai sebagai killer (jika trust sangat rendah)
+      { condition: { minDeaths: 2, emotion: 'hostile', minTension: 60 }, action: { type: 'trust_kill', desc: '"AKU SUDAH MUAK DENGAN KEBOHONGAN." Arin menyerang orang yang paling dia curigai — apapun konsekuensinya.' }, weight: 20 },
+      { condition: { minDeaths: 3, emotion: 'panicked', minTension: 70 }, action: { type: 'trust_kill', desc: 'Paranoia mengambil alih. Arin tidak bisa mempercayai siapapun lagi. "Salah satu dari kalian pasti pembunuh."' }, weight: 18 }
     ],
 
     // ========== NIKO — The Mastermind (as survivor) ==========
@@ -268,7 +271,10 @@ const CharDB = (() => {
       { condition: { isAlone: true, emotion: 'suspicious' }, action: { type: 'scout', desc: 'Niko menyusuri lorong rahasia yang hanya keluarganya tahu. Tuan rumah selalu punya keuntungan.' }, weight: 18 },
       { condition: { minDanger: 60, isAlone: false }, action: { type: 'secure_exit', desc: 'Niko membuka jalur pelarian melalui terowongan bawah tanah mansion. "Kakekku membangun ini untuk keadaan darurat."' }, weight: 22 },
       { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'ambush', desc: 'Niko mengatur jebakan di koridor utama. "Rumahku, aturanku. Pembunuh akan melewati sini."' }, weight: 18 },
-      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Niko menghilang ke ruangan rahasia, meninggalkan yang lain. Survival of the fittest.' }, weight: 10 }
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Niko menghilang ke ruangan rahasia, meninggalkan yang lain. Survival of the fittest.' }, weight: 10 },
+      // Trust-kill: Niko kalkulatif — membunuh dengan dingin jika trust habis
+      { condition: { minDeaths: 2, emotion: 'suspicious', minTension: 50 }, action: { type: 'trust_kill', desc: '"Aku sudah menghitung probabilitasnya. Dan kau terlalu mencurigakan untuk dibiarkan hidup." Niko menyerang dengan presisi dingin.' }, weight: 20 },
+      { condition: { minDeaths: 3, emotion: 'hostile' }, action: { type: 'trust_kill', desc: '"Mansionku. Aturanku. Dan kau bukan bagian dari solusinya." Niko mengeliminasi orang yang paling dia curigai.' }, weight: 18 }
     ],
 
     // ========== SERA — The Profiler ==========
@@ -321,7 +327,9 @@ const CharDB = (() => {
       { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'scout', desc: 'Sera mengamati semua orang di ruangan. Profilingnya mencari tanda-tanda predator — micro-expression, postur, pernapasan.' }, weight: 18 },
       { condition: { minDeaths: 2, hasClue: true, isAlone: false }, action: { type: 'rally', desc: '"Aku sudah profil semua orang. Hasilnya mengejutkan. Pembunuh ada di antara kita — dan aku tahu polanya."' }, weight: 22 },
       { condition: { minDanger: 50, isAlone: false }, action: { type: 'ambush', desc: 'Sera menyusun strategi psikologis. "Jangan lari dari predator. Buat dia merasa diburu."' }, weight: 16 },
-      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Sera melihat peluang. Mengorbankan satu orang untuk menyelamatkan dirinya dan Arin. Keputusan yang dingin.' }, weight: 10 }
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Sera melihat peluang. Mengorbankan satu orang untuk menyelamatkan dirinya dan Arin. Keputusan yang dingin.' }, weight: 10 },
+      // Trust-kill: Sera membaca tanda-tanda dan bertindak jika yakin seseorang berbahaya
+      { condition: { minDeaths: 2, emotion: 'hostile', minTension: 60 }, action: { type: 'trust_kill', desc: '"Profilmu konsisten dengan seorang pembunuh. Maaf — tapi aku tidak bisa mengambil risiko." Sera bertindak berdasarkan analisisnya.' }, weight: 18 }
     ],
 
     // ========== JUNO — The Rebel ==========
@@ -370,7 +378,11 @@ const CharDB = (() => {
       { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'coordinate_defense', desc: '"STOP PANIK. Gue punya rencana. Lo jaga pintu, gue hadang dari sini. SEKARANG!" Juno memimpin pertahanan.' }, weight: 18 },
       { condition: { isAlone: true, minDanger: 50 }, action: { type: 'scout', desc: 'Juno bergerak tanpa suara — insting jalanan mengajarkan cara bergerak di kegelapan tanpa terdeteksi.' }, weight: 16 },
       { condition: { minDeaths: 2, emotion: 'hostile' }, action: { type: 'secure_exit', desc: 'Juno mencoba memecahkan jendela, mendobrak pintu — mencari jalan keluar dengan cara kasar.' }, weight: 18 },
-      { condition: { minDeaths: 4, emotion: 'hostile' }, action: { type: 'betray', desc: 'Juno tidak mau mati untuk orang asing. "Sorry. Gue keluar sendiri. Selamat tinggal."' }, weight: 12 }
+      { condition: { minDeaths: 4, emotion: 'hostile' }, action: { type: 'betray', desc: 'Juno tidak mau mati untuk orang asing. "Sorry. Gue keluar sendiri. Selamat tinggal."' }, weight: 12 },
+      // Trust-kill: Juno yang impulsif — paling mungkin membunuh karena ketidakpercayaan
+      { condition: { minDeaths: 1, emotion: 'suspicious', minTension: 40 }, action: { type: 'trust_kill', desc: '"GUE UDAH TAU LO DALANGNYA!" Juno menyerang tanpa pikir panjang — impulsif dan mematikan.' }, weight: 22 },
+      { condition: { minDeaths: 2, emotion: 'hostile' }, action: { type: 'trust_kill', desc: 'Juno meledak. "GUE NGGAK PERCAYA SIAPAPUN DI SINI." Tinju melayang sebelum siapapun sempat bereaksi.' }, weight: 24 },
+      { condition: { minDeaths: 1, emotion: 'panicked' }, action: { type: 'trust_kill', desc: 'Ketakutan berubah jadi kemarahan. Juno menyerang orang terdekat. "LO PASTI SALAH SATUNYA!"' }, weight: 20 }
     ],
 
     // ========== VIRA — The Survivor ==========
@@ -416,7 +428,9 @@ const CharDB = (() => {
       { condition: { isAlone: true, emotion: 'wary' }, action: { type: 'scout', desc: 'Vira menyusuri lorong rahasia, tubuhnya mengingat setiap belokan dari enam bulan lalu.' }, weight: 18 },
       { condition: { minDanger: 60, isAlone: false }, action: { type: 'secure_exit', desc: 'Vira membuka jalur pelarian tersembunyi. "Ada jalan keluar yang tidak diketahui siapapun. Lewat sini."' }, weight: 22 },
       { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'ambush', desc: 'Vira mengatur jebakan di lorong rahasia. "Dia pasti lewat sini. Aku tahu cara berpikirnya."' }, weight: 16 },
-      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Vira menutup pintu lorong rahasia — dari dalam. "Maaf. Aku sudah pernah hampir mati. Tidak lagi."' }, weight: 12 }
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Vira menutup pintu lorong rahasia — dari dalam. "Maaf. Aku sudah pernah hampir mati. Tidak lagi."' }, weight: 12 },
+      // Trust-kill: Vira yang sudah trauma — bertindak defensif jika merasa terancam
+      { condition: { minDeaths: 2, emotion: 'panicked', minTension: 55 }, action: { type: 'trust_kill', desc: '"Aku sudah pernah hampir mati di sini. TIDAK LAGI." Vira menyerang orang yang paling dia curigai — insting bertahan hidup yang gelap.' }, weight: 18 }
     ],
 
     // ========== REZA — The Detective ==========
@@ -464,7 +478,10 @@ const CharDB = (() => {
       { condition: { emotion: 'hostile', isAlone: false }, action: { type: 'ambush', desc: 'Reza menyiapkan penyergapan di bottleneck mansion. "Di sini. Kalau dia lewat, kita tangkap."' }, weight: 20 },
       { condition: { minDanger: 50, isAlone: false }, action: { type: 'secure_exit', desc: 'Reza mengamankan jalur evakuasi. "Standard procedure — selalu punya rencana mundur."' }, weight: 16 },
       { condition: { minDeaths: 2, isAlone: false }, action: { type: 'rally', desc: '"SEMUA BERKUMPUL. Kita buat perimeter. Tidak ada yang bergerak sendirian mulai sekarang."' }, weight: 20 },
-      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Reza mempertimbangkan opsi terburuk. Mengorbankan satu orang sebagai umpan. Keputusan yang hanya bisa diambil veteran.' }, weight: 8 }
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Reza mempertimbangkan opsi terburuk. Mengorbankan satu orang sebagai umpan. Keputusan yang hanya bisa diambil veteran.' }, weight: 8 },
+      // Trust-kill: Reza detektif — jika bukti cukup kuat, dia "mengeksekusi" tersangka utama
+      { condition: { minDeaths: 2, emotion: 'hostile', minTension: 55 }, action: { type: 'trust_kill', desc: '"Bukti cukup. Aku tidak butuh pengadilan di sini." Reza mengeksekusi keadilan sendiri — detektif yang sudah melampaui batas hukum.' }, weight: 18 },
+      { condition: { minDeaths: 3, emotion: 'suspicious', minTension: 65 }, action: { type: 'trust_kill', desc: 'Reza menarik napas. Dua puluh tahun di kepolisian mengajarkan satu hal: kadang kau harus bertindak sebelum bukti lengkap. Dan malam ini... dia bertindak.' }, weight: 16 }
     ],
 
     // ========== LANA — The Puppeteer (as survivor, if not killer) ==========
@@ -496,7 +513,9 @@ const CharDB = (() => {
       { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'distract', desc: 'Lana membuat distraksi — menjatuhkan vas antik dengan "tidak sengaja". Semua menoleh. Persis seperti yang dia rencanakan.' }, weight: 18 },
       { condition: { minDeaths: 2, emotion: 'panicked' }, action: { type: 'coordinate_defense', desc: '"Dengarkan aku. Aku tahu cara berpikir seperti pembunuh — aku menulisnya." Lana memimpin strategi pertahanan.' }, weight: 20 },
       { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Lana menuju lorong yang sepi. Keahliannya membaca narasi membawanya ke tempat yang belum dijelajahi.', moveTo: 'lorong_rahasia' }, weight: 14 },
-      { condition: { nearbyIncludes: 'sera', emotion: 'wary' }, action: { type: 'socialize', desc: '"Sera, gabungkan profilingmu dengan intuisi naratifku. Pembunuh ini punya pola — dan aku tahu pola cerita."' }, weight: 16 }
+      { condition: { nearbyIncludes: 'sera', emotion: 'wary' }, action: { type: 'socialize', desc: '"Sera, gabungkan profilingmu dengan intuisi naratifku. Pembunuh ini punya pola — dan aku tahu pola cerita."' }, weight: 16 },
+      // Trust-kill: Lana manipulatif — membunuh sambil berpura-pura itu self-defense
+      { condition: { minDeaths: 2, emotion: 'hostile', minTension: 50 }, action: { type: 'trust_kill', desc: '"Kau plot twist terburuk dalam ceritaku." Lana menyerang dengan tenang — membunuh sambil tersenyum. "Self-defense, tentu saja."' }, weight: 20 }
     ],
 
     // ========== DIMAS — The Operator (as survivor, if not killer) ==========
@@ -529,7 +548,9 @@ const CharDB = (() => {
       { condition: { minDeaths: 2, nearbyIncludes: 'reza' }, action: { type: 'share_clue', desc: '"Reza, lihat pola lukanya. Aku tahu jenis senjata yang dipakai — dan siapa yang punya akses."', target: 'reza' }, weight: 20 },
       { condition: { emotion: 'panicked' }, action: { type: 'barricade', desc: 'Dimas menutup dan mengunci pintu dengan presisi klinis. "Pintu ini tidak akan terbuka dari luar."' }, weight: 18 },
       { condition: { minDeaths: 3, hasClue: true }, action: { type: 'accuse', desc: 'Dimas berdiri tenang. "Berdasarkan analisis forensik — waktu kematian, senjata, akses — pelakunya sudah jelas."' }, weight: 22 },
-      { condition: { nearbyIncludes: 'arin', hasClue: true }, action: { type: 'share_clue', desc: '"Arin, sebagai jurnalis kau perlu fakta forensik ini. Ini bukti fisik yang tak terbantahkan."', target: 'arin' }, weight: 16 }
+      { condition: { nearbyIncludes: 'arin', hasClue: true }, action: { type: 'share_clue', desc: '"Arin, sebagai jurnalis kau perlu fakta forensik ini. Ini bukti fisik yang tak terbantahkan."', target: 'arin' }, weight: 16 },
+      // Trust-kill: Dimas yang klinis — membunuh berdasarkan "analisis forensik" yang salah sasaran
+      { condition: { minDeaths: 2, emotion: 'suspicious', minTension: 55 }, action: { type: 'trust_kill', desc: '"Pola luka, metode, timing — analisis forensikku menunjuk padamu." Dimas bertindak dengan presisi klinis — tapi kali ini salah sasaran.' }, weight: 18 }
     ],
 
     // ========== KIRA — The Hacker ==========
@@ -572,7 +593,9 @@ const CharDB = (() => {
       { condition: { isAlone: true, emotion: 'wary' }, action: { type: 'scout', desc: 'Kira menggunakan remote access ke CCTV untuk mengintai pergerakan di seluruh mansion dari laptopnya.' }, weight: 18 },
       { condition: { emotion: 'panicked' }, action: { type: 'secure_exit', desc: 'Kira meng-hack door lock system. "Semua pintu keluar terbuka. SEKARANG LARI!"' }, weight: 20 },
       { condition: { emotion: 'suspicious', isAlone: false }, action: { type: 'ambush', desc: 'Kira memasang trip-wire digital di koridor — alarm otomatis jika seseorang lewat.' }, weight: 16 },
-      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Kira mengunci semua pintu dari laptop — termasuk pintu yang mengurung temannya. "Maaf. Aku butuh waktu."' }, weight: 10 }
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Kira mengunci semua pintu dari laptop — termasuk pintu yang mengurung temannya. "Maaf. Aku butuh waktu."' }, weight: 10 },
+      // Trust-kill: Kira paranoid — menyerang jika data "membuktikan" seseorang berbahaya
+      { condition: { minDeaths: 2, emotion: 'panicked', minTension: 60 }, action: { type: 'trust_kill', desc: '"Data tidak bohong. Log CCTV, posisi GPS, timeline — semuanya menunjuk ke kau." Kira menyerang berdasarkan bukti digitalnya.' }, weight: 16 }
     ],
 
     // ========== FARAH — The Heiress ==========
@@ -616,7 +639,9 @@ const CharDB = (() => {
       { condition: { minDanger: 50, isAlone: false }, action: { type: 'secure_exit', desc: 'Farah membuka brankas keluarga. Di dalamnya — kunci master semua pintu mansion. "Warisan yang akhirnya berguna."' }, weight: 22 },
       { condition: { emotion: 'suspicious', nearbyIncludes: 'reza' }, action: { type: 'rally', desc: '"Reza, aku punya pengaruh. Kau punya otak. Gabungkan. Kumpulkan semua orang — aku yang tanggung biayanya."' }, weight: 16 },
       { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'scout', desc: 'Farah menyusuri lorong yang dibangun kakeknya. Pewaris yang akhirnya menggunakan pengetahuan keluarganya.' }, weight: 14 },
-      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Farah masuk ke safe room dan mengunci pintu dari dalam. "Maaf. Uang tidak bisa membeli keberanian."' }, weight: 12 }
+      { condition: { minDeaths: 4, emotion: 'panicked' }, action: { type: 'betray', desc: 'Farah masuk ke safe room dan mengunci pintu dari dalam. "Maaf. Uang tidak bisa membeli keberanian."' }, weight: 12 },
+      // Trust-kill: Farah yang ketakutan — menyerang jika merasa nyawanya terancam
+      { condition: { minDeaths: 3, emotion: 'panicked', minTension: 65 }, action: { type: 'trust_kill', desc: '"JANGAN MENDEKAT!" Farah meraih tongkat golf dan menyerang. Ketakutan mengubah pewaris menjadi pembunuh.' }, weight: 14 }
     ]
   };
 
