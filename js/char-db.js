@@ -650,97 +650,109 @@ const CharDB = (() => {
 
   const KILLER_TREES = {
     lana: [
-      // === FASE AWAL: Maintain cover, minimal action ===
+      // === FASE AWAL: Maintain cover ===
       { condition: { emotion: 'stalking', chapter: 0 }, action: { type: 'maintain_cover', desc: 'Lana memainkan perannya sempurna — novelis eksentrik yang ketakutan. Aktingnya tanpa celah.' }, weight: 20 },
       { condition: { emotion: 'stalking', isAlone: true }, action: { type: 'plan', desc: 'Lana meninjau naskahnya. Korban berikutnya sudah dipilih. Yang tersisa: timing dan metode.' }, weight: 18 },
 
-      // === SIASAT: Manipulasi hanya untuk memecah kelompok ===
+      // === SIASAT: Memecah kelompok survivor (KUNCI STRATEGI) ===
       { condition: { emotion: 'stalking', isAlone: false, minDeaths: 0 }, action: { type: 'manipulate', desc: 'Lana menanam benih ketidakpercayaan. Berbisik tentang satu orang ke orang lain — jaring laba-laba yang tak terlihat.' }, weight: 22 },
-      { condition: { emotion: 'stalking', isAlone: false, minDeaths: 1 }, action: { type: 'divide', desc: '"Kita harus berpencar untuk efisiensi." Lana memecah kelompok secara halus — domba dipisahkan dari kawanan.' }, weight: 24 },
+      { condition: { emotion: 'stalking', isAlone: false, minDeaths: 1 }, action: { type: 'divide', desc: '"Kita harus berpencar untuk efisiensi." Lana memecah kelompok secara halus — domba dipisahkan dari kawanan.' }, weight: 28 },
+      { condition: { isAlone: false, minDeaths: 0 }, action: { type: 'divide', desc: '"Aku dengar sesuatu di Galeri Timur. Sebagian dari kita harus cek." Lana memecah kawanan.' }, weight: 24 },
+      { condition: { isAlone: false }, action: { type: 'distract', desc: 'Lana membuat drama kecil — menangis, histeria palsu — untuk mengalihkan perhatian saat rekannya bergerak.' }, weight: 20 },
 
       // === HUNTING: Isolasi target, jebak, posisikan diri ===
-      { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'isolate', desc: '"Aku dengar suara dari Galeri Timur. Siapa yang mau cek?" Lana memisahkan kawanan — predator yang sabar.' }, weight: 25 },
-      { condition: { emotion: 'hunting', isAlone: true, nearbyExcludes: 'dimas' }, action: { type: 'trap', desc: 'Lana menyiapkan perangkap di koridor gelap. Penulis yang tahu persis bagaimana ceritanya harus berakhir.' }, weight: 22 },
-      { condition: { emotion: 'hunting', isAlone: true }, action: { type: 'move', desc: 'Lana berpindah ke posisi strategis — dekat target berikutnya, jauh dari saksi.', moveTo: 'koridor_selatan' }, weight: 18 },
+      { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'isolate', desc: '"Siapa yang mau cek Galeri Timur?" Lana memisahkan target dari kawanan — predator yang sabar.' }, weight: 25 },
+      { condition: { emotion: 'hunting', isAlone: true }, action: { type: 'trap', desc: 'Lana menyiapkan perangkap di koridor gelap. Penulis yang tahu persis bagaimana ceritanya harus berakhir.' }, weight: 22 },
+      { condition: { emotion: 'hunting', isAlone: true }, action: { type: 'move', desc: 'Lana berpindah ke posisi strategis — dekat target berikutnya, jauh dari saksi.' }, weight: 18 },
 
-      // === Koordinasi dengan Dimas (singkat, strategis) ===
+      // === Koordinasi dengan Dimas ===
       { condition: { nearbyIncludes: 'dimas', emotion: 'stalking' }, action: { type: 'plan', desc: 'Lana memberi instruksi ke Dimas lewat kode. "Bab selanjutnya dimulai sekarang."' }, weight: 20 },
 
-      // === KILL: Hanya saat kondisi tepat ===
-      { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Lana bergerak dengan presisi novelis yang mengeksekusi plot twist-nya sendiri. Sempurna. Mematikan.' }, weight: 30 },
-      { condition: { emotion: 'hunting', nearbyIncludes: 'sera', isAlone: false }, action: { type: 'strike', desc: 'Sera tahu terlalu banyak. Profiler yang bisa membacanya — ancaman terbesar. Lana harus bertindak.' }, weight: 28 },
+      // === KILL: HANYA saat sendirian dengan 1 target ===
+      { condition: { emotion: 'executing', isAlone: false }, action: { type: 'eliminate', desc: 'Lana bergerak dengan presisi novelis yang mengeksekusi plot twist-nya sendiri. Sempurna. Mematikan.' }, weight: 30 },
 
-      // === COVER UP: Tutup jejak ===
+      // === COVER UP ===
       { condition: { minDeaths: 1, isAlone: false }, action: { type: 'frame', desc: 'Lana "menemukan" bukti yang menunjuk ke orang lain. "Ya Tuhan, lihat ini..." Aktris terbaik.' }, weight: 25 },
-      { condition: { minDeaths: 2, isAlone: false }, action: { type: 'maintain_cover', desc: 'Lana menangis tersedu. "Aku takut... tolong..." Akting Oscar-worthy yang menyembunyikan predator di baliknya.' }, weight: 20 },
+      { condition: { minDeaths: 2, isAlone: false }, action: { type: 'maintain_cover', desc: 'Lana menangis tersedu. "Aku takut..." Akting Oscar-worthy yang menyembunyikan predator di baliknya.' }, weight: 20 },
 
       // === TERDESAK: Berkhianat pada killer lain ===
       { condition: { minTension: 60, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: '"Dimas menjadi beban." Lana merencanakan mengekspos Dimas demi keselamatannya sendiri.', target: 'dimas' }, weight: 26 },
       { condition: { minTension: 70, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Lana meninggalkan bukti mengarah ke Niko. "Tuan rumah selalu tersangka pertama."', target: 'niko' }, weight: 24 },
       { condition: { emotion: 'executing', minTension: 80 }, action: { type: 'flee', desc: 'Topeng jatuh. Lana berjalan pergi dengan anggun. "Setiap cerita butuh villain."' }, weight: 20 },
 
-      // === LATE GAME: Eksekusi atau khianat ===
+      // === LATE GAME: Fokus isolasi dan eksekusi ===
+      { condition: { chapter: 5, minDeaths: 2, isAlone: false }, action: { type: 'divide', desc: 'Late game. Lana memecah kelompok survivor yang tersisa — isolasi sebelum eksekusi.' }, weight: 28 },
       { condition: { chapter: 5, minDeaths: 2 }, action: { type: 'eliminate', desc: 'Final act. Lana mengeksekusi rencana besarnya. Karya agung sang penulis.' }, weight: 25 },
-      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Endgame. Lana memutuskan hanya satu yang boleh selamat — dan itu harus dirinya. Dimas hanyalah bidak.', target: 'dimas' }, weight: 28 },
-      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Lana memutuskan hanya satu yang boleh selamat — Niko harus disingkirkan.', target: 'niko' }, weight: 28 }
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Endgame. Lana memutuskan hanya satu yang boleh selamat — Dimas hanyalah bidak.', target: 'dimas' }, weight: 28 },
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Niko harus disingkirkan.', target: 'niko' }, weight: 28 },
+
+      // === PENGHILANGAN PETUNJUK (prioritas tinggi) ===
+      { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Lana mencari dan menghancurkan petunjuk pelarian. Kalau survivor menemukan 8, semuanya tamat.' }, weight: 26 }
     ],
 
     dimas: [
-      // === FASE AWAL: Cover, diam, tunggu momen ===
+      // === FASE AWAL: Cover ===
       { condition: { emotion: 'stalking', chapter: 0 }, action: { type: 'maintain_cover', desc: 'Dimas memainkan peran mahasiswa pendiam. Senyum sopan, mata kosong. Topeng seumur hidup.' }, weight: 20 },
       { condition: { emotion: 'stalking', isAlone: true }, action: { type: 'plan', desc: 'Dimas menyiapkan suntikan di kantong jasnya. Propofol — cepat, tenang, tanpa darah.' }, weight: 22 },
 
-      // === SIASAT: Posisi strategis, siapkan perangkap ===
-      { condition: { emotion: 'stalking', isAlone: true, chapter: 2 }, action: { type: 'move', desc: 'Dimas bergerak ke dapur. Akses ke bahan kimia rumah tangga — keuntungan farmakologi.', moveTo: 'dapur' }, weight: 18 },
+      // === SIASAT: Memisahkan survivor (KUNCI STRATEGI) ===
+      { condition: { emotion: 'stalking', isAlone: false }, action: { type: 'divide', desc: '"Sebaiknya kita cek di lantai bawah juga." Dimas memecah kelompok — target harus sendirian.' }, weight: 26 },
+      { condition: { isAlone: false }, action: { type: 'manipulate', desc: 'Dimas memanipulasi rasa takut survivor. "Aku rasa salah satu dari kita adalah pembunuhnya..." Curiga satu sama lain.' }, weight: 22 },
+      { condition: { emotion: 'stalking', isAlone: true, chapter: 2 }, action: { type: 'move', desc: 'Dimas bergerak ke dapur. Akses ke bahan kimia — keuntungan farmakologi.', moveTo: 'dapur' }, weight: 18 },
       { condition: { emotion: 'hunting', isAlone: true }, action: { type: 'sabotage', desc: 'Dimas memanipulasi obat di kotak P3K mansion. Pengetahuan farmakologi yang mematikan.' }, weight: 22 },
-      { condition: { emotion: 'hunting', isAlone: true }, action: { type: 'trap', desc: 'Dimas menyiapkan jebakan farmakologis di koridor gelap. Tidak kasar, tidak berdarah — klinis.' }, weight: 20 },
+      { condition: { emotion: 'hunting', isAlone: true }, action: { type: 'trap', desc: 'Dimas menyiapkan jebakan farmakologis di koridor gelap. Klinis.' }, weight: 20 },
 
-      // === Koordinasi dengan Lana (singkat) ===
+      // === Koordinasi dengan Lana ===
       { condition: { nearbyIncludes: 'lana', emotion: 'stalking' }, action: { type: 'plan', desc: 'Dimas menunggu sinyal Lana. Instrumen — senjata yang menunggu tangan yang mengarahkan.' }, weight: 18 },
 
-      // === Target Sera: Isolasi ===
+      // === Target Sera: Isolasi (BUKAN strike di depan orang) ===
       { condition: { nearbyIncludes: 'sera', emotion: 'hunting' }, action: { type: 'isolate', desc: '"Sera, aku perlu bicarakan sesuatu secara private." Dimas mencoba memisahkan Sera.' }, weight: 25 },
 
-      // === KILL: Presisi bedah ===
+      // === KILL: HANYA saat sendirian dengan 1 target ===
       { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Dimas bergerak dengan presisi bedah. Tidak ada emosi. Tidak ada ragu. Hanya prosedur.' }, weight: 28 },
 
-      // === COVER: Minimal, efisien ===
+      // === COVER ===
       { condition: { minDeaths: 1, isAlone: false, emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Dimas memeriksa "korban" dengan ketenangan klinis. Akting pembunuh yang berpura-pura penolong.' }, weight: 22 },
       { condition: { minTension: 60 }, action: { type: 'frame', desc: 'Dimas menempatkan bukti di tas seseorang. Framing rapi — seperti operasi bedah.' }, weight: 20 },
 
-      // === Detektif nearby: Maintain cover saja ===
+      // === Detektif nearby: Cover ===
       { condition: { nearbyIncludes: 'reza', emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Dimas menunjukkan "ketakutan" di depan Reza. Akting untuk membuat detektif mengabaikannya.' }, weight: 20 },
 
-      // === TERDESAK: Khianat Lana ===
+      // === TERDESAK: Khianat ===
       { condition: { minTension: 60, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Dimas muak diperintah. Dia meninggalkan bukti yang mengarah ke Lana.', target: 'lana' }, weight: 26 },
       { condition: { minTension: 80 }, action: { type: 'flee', desc: 'Dimas meninggalkan segalanya. Insting survival lebih kuat dari instruksi.' }, weight: 18 },
 
-      // === LATE GAME: Lepas kendali ===
+      // === LATE GAME ===
+      { condition: { chapter: 5, minDeaths: 2, isAlone: false }, action: { type: 'divide', desc: 'Late game. Dimas memecah kelompok survivor — isolasi target untuk kill.' }, weight: 28 },
       { condition: { chapter: 5, minDeaths: 2 }, action: { type: 'eliminate', desc: 'Dimas lepas dari kendali Lana. Dia membunuh bukan karena diperintah — tapi karena dia mau.' }, weight: 25 },
       { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Lana demi keselamatannya sendiri.', target: 'lana' }, weight: 28 },
-      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Niko — hanya satu yang boleh menang.', target: 'niko' }, weight: 28 }
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'niko' }, action: { type: 'sabotage_killer', desc: 'Endgame. Dimas mengkhianati Niko — hanya satu yang boleh menang.', target: 'niko' }, weight: 28 },
+
+      // === PENGHILANGAN PETUNJUK ===
+      { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Dimas mencari dan membakar petunjuk pelarian dengan presisi klinis.' }, weight: 24 }
     ],
 
     niko: [
       // === FASE AWAL: Tuan rumah yang concerned (cover) ===
       { condition: { emotion: 'stalking', chapter: 0 }, action: { type: 'maintain_cover', desc: 'Niko memainkan peran tuan rumah yang concerned. "Tenang semua." Ironi yang sempurna.' }, weight: 22 },
 
-      // === SIASAT: Kontrol mansion, pecah kelompok ===
+      // === SIASAT: Kontrol mansion, pecah kelompok (KUNCI STRATEGI) ===
       { condition: { isAlone: true, emotion: 'stalking' }, action: { type: 'plan', desc: 'Niko membuka panel rahasia dan mengakses kontrol mansion. "Rumahku. Aturanku."' }, weight: 20 },
-      { condition: { emotion: 'stalking', isAlone: false }, action: { type: 'divide', desc: '"Kita harus berpencar untuk cari clue." Niko memecah kelompok — kambing menjauhi kawanan.' }, weight: 25 },
+      { condition: { emotion: 'stalking', isAlone: false }, action: { type: 'divide', desc: '"Kita harus berpencar untuk cari clue." Niko memecah kelompok — kambing menjauhi kawanan.' }, weight: 28 },
+      { condition: { isAlone: false }, action: { type: 'sabotage', desc: 'Niko mematikan lampu di sayap mansion. Dalam kegelapan, kelompok terpisah — persis seperti yang dia rencanakan.' }, weight: 24 },
+      { condition: { isAlone: false }, action: { type: 'distract', desc: '"ADA SUARA DI LANTAI ATAS!" Niko membuat kepanikan palsu untuk memecah kelompok.' }, weight: 22 },
       { condition: { emotion: 'stalking', chapter: 2 }, action: { type: 'move', desc: 'Niko bergerak ke panel kontrol rahasia mansion.', moveTo: 'ruang_penyimpanan' }, weight: 16 },
 
       // === HUNTING: Sabotase infrastruktur, isolasi ===
-      { condition: { emotion: 'hunting' }, action: { type: 'sabotage', desc: 'Niko mematikan lampu di satu sayap mansion. Senyum di kegelapan.' }, weight: 22 },
-      { condition: { emotion: 'hunting', nearbyIncludes: 'vira' }, action: { type: 'isolate', desc: '"Vira, kau ingat malam itu? Ikut aku." Niko mencoba memisahkan Vira — berbahaya.' }, weight: 22 },
+      { condition: { emotion: 'hunting', isAlone: false }, action: { type: 'isolate', desc: '"Vira, kita perlu bicara." Niko mencoba memisahkan seseorang — lebih mudah dibunuh sendirian.' }, weight: 24 },
       { condition: { emotion: 'hunting', isAlone: true }, action: { type: 'trap', desc: 'Niko mengaktifkan jebakan mansion yang hanya dia tahu. Tuan rumah punya keuntungan absolut.' }, weight: 20 },
 
-      // === KILL ===
+      // === KILL: HANYA saat sendirian dengan 1 target ===
       { condition: { emotion: 'executing' }, action: { type: 'eliminate', desc: 'Niko menunjukkan wajah aslinya. Predator yang sudah merencanakan ini bertahun-tahun.' }, weight: 28 },
 
       // === COVER ===
       { condition: { minDeaths: 1, isAlone: false, emotion: 'stalking' }, action: { type: 'frame', desc: 'Niko "menemukan" bukti menunjuk ke seseorang. "Aku tidak percaya... teman kita sendiri?"' }, weight: 22 },
-      { condition: { minDeaths: 1, isAlone: false, emotion: 'stalking' }, action: { type: 'maintain_cover', desc: '"Aku akan pastikan keamanan kita semua." Niko bersikap protektif — ironi paling kejam.' }, weight: 18 },
+      { condition: { minDeaths: 1, isAlone: false, emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Niko bersikap sebagai tuan rumah yang peduli. "Aku yang paling tahu mansion ini." Ironi kejam.' }, weight: 18 },
 
       // === TERDESAK: Khianat killer lain ===
       { condition: { minTension: 60, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: '"Lana, kau bukan bagian dari rencana ini lagi." Niko mengekspos Lana.', target: 'lana' }, weight: 26 },
@@ -748,9 +760,13 @@ const CharDB = (() => {
       { condition: { minTension: 70 }, action: { type: 'confront', desc: 'Niko berhenti berpura-pura. "Mansion ini milikku. Kalian tamu."' }, weight: 20 },
 
       // === LATE GAME ===
+      { condition: { chapter: 6, minDeaths: 2, isAlone: false }, action: { type: 'divide', desc: 'Endgame. Niko menggunakan mansion untuk memisahkan survivor — matikan listrik, kunci pintu.' }, weight: 28 },
       { condition: { chapter: 6, minDeaths: 2 }, action: { type: 'eliminate', desc: 'Endgame. Niko mengaktifkan trap terakhir mansion.' }, weight: 25 },
-      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Di akhir permainan, Niko mengorbankan Lana demi menjadi satu-satunya yang selamat.', target: 'lana' }, weight: 28 },
-      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Di akhir permainan, Niko mengkhianati Dimas — mansion ini hanya untuk satu pemenang.', target: 'dimas' }, weight: 28 }
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'lana' }, action: { type: 'sabotage_killer', desc: 'Niko mengorbankan Lana demi menjadi satu-satunya yang selamat.', target: 'lana' }, weight: 28 },
+      { condition: { chapter: 6, minTension: 50, nearbyIncludes: 'dimas' }, action: { type: 'sabotage_killer', desc: 'Niko mengkhianati Dimas — mansion ini hanya untuk satu pemenang.', target: 'dimas' }, weight: 28 },
+
+      // === PENGHILANGAN PETUNJUK ===
+      { condition: { isAlone: true }, action: { type: 'destroy_clue', desc: 'Niko menggunakan pengetahuan mansionnya untuk menemukan dan menghancurkan petunjuk pelarian.' }, weight: 26 }
     ]
   };
 
