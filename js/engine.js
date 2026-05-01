@@ -936,9 +936,17 @@ const Engine = (() => {
       const timer = setTimeout(() => {
         item.classList.add('chat-visible');
 
-        // Smooth scroll to the newly visible item
+        // Smooth scroll to the newly visible item — keep above choices container
         if (storyArea && i > 2) {
-          item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const choicesEl = $('choices-container');
+          const choicesH = choicesEl ? choicesEl.offsetHeight : 0;
+          const itemRect = item.getBoundingClientRect();
+          const areaRect = storyArea.getBoundingClientRect();
+          const visibleBottom = areaRect.bottom - choicesH;
+          if (itemRect.bottom > visibleBottom || itemRect.top < areaRect.top) {
+            const scrollTarget = item.offsetTop - storyArea.offsetTop - (storyArea.clientHeight - choicesH) / 2;
+            storyArea.scrollTo({ top: Math.max(0, scrollTarget), behavior: 'smooth' });
+          }
         }
       }, delay);
       staggerTimers.push(timer);
@@ -1291,6 +1299,9 @@ const Engine = (() => {
 
     renderText(textContent, storyText, () => {
       $('story-area').scrollTop = 0;
+
+      // After rendering choices, adjust story-area padding so last message is above choices
+      adjustStoryPadding();
 
       // If win/loss triggered, show ending after delay
       if (state.winLossResult) {
@@ -2132,6 +2143,9 @@ const Engine = (() => {
       btn.style.animationDelay = (i * 0.15) + 's';
       container.appendChild(btn);
     });
+
+    // Adjust story padding so last message is visible above choices
+    requestAnimationFrame(() => adjustStoryPadding());
   }
 
   const CHAPTERS = {
@@ -2142,6 +2156,15 @@ const Engine = (() => {
     $('chapter-indicator').textContent = (CHAPTERS[lang] || CHAPTERS.id)[state.chapter] || '';
     // Update WhatsApp group members list
     updateWaMembers();
+  }
+
+  function adjustStoryPadding() {
+    const storyArea = $('story-area');
+    const choicesEl = $('choices-container');
+    if (!storyArea || !choicesEl) return;
+    const choicesH = choicesEl.offsetHeight;
+    // Ensure enough bottom padding so last message isn't hidden behind choices
+    storyArea.style.paddingBottom = Math.max(choicesH + 24, 120) + 'px';
   }
 
   function updateWaMembers() {
