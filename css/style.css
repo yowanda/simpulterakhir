@@ -1685,3 +1685,25 @@ body {
 .chance-high { color: #2ecc71; }
 .chance-mid { color: #f39c12; }
 .chance-low { color: #e63946; }
+
+/* ---- Location Context Header ---- */
+.location-context {
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.8rem;
+  background: rgba(200,169,110,0.08);
+  border-left: 3px solid #c8a96e;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.85rem;
+  color: #c8a96e;
+}
+.loc-icon { margin-right: 0.3rem; }
+
+/* ---- Distant Event Hints ---- */
+.npc-event-distant {
+  opacity: 0.6;
+  font-style: italic;
+  font-size: 0.85rem;
+  border-left: 2px solid rgba(200,169,110,0.2);
+  padding-left: 0.5rem;
+  margin-left: 0.5rem;
+}
