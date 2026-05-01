@@ -70,71 +70,99 @@ const Engine = (() => {
   };
 
   // ---- Role Selection System ----
+  // Player can only choose: Killer role (specific char) or Survivor role (random char)
   const ROLE_DESCRIPTIONS = {
     arin: {
       role: 'Investigator',
-      perk: 'Clue ekstra & insting jurnalis tajam',
-      desc: 'Jurnalis investigasi yang mengejar kebenaran. Perspektif default — kau mencari jawaban, mengumpulkan bukti, dan mengungkap konspirasi.',
+      perk: '+20% pencarian petunjuk',
+      desc: 'Jurnalis investigasi. Insting tajam untuk menemukan clue tersembunyi di setiap lokasi.',
       icon: 'pencarian'
     },
     niko: {
       role: 'Tuan Rumah',
-      perk: 'Akses area rahasia & pengetahuan mansion',
-      desc: 'Pewaris mansion dengan dosa keluarga. Kau tahu lebih banyak tentang mansion ini dari siapapun — tapi pengetahuan itu datang dengan beban.',
-      icon: 'kunci',
-      warning: 'Di Hard mode, kau adalah salah satu killer.'
+      perk: '+1 jalur gerakan ekstra',
+      desc: 'Pewaris mansion. Tahu jalan rahasia — selalu punya 1 opsi gerakan tambahan ke ruangan tersembunyi.',
+      icon: 'kunci'
     },
     sera: {
       role: 'Profiler',
-      perk: 'Baca emosi & deteksi kebohongan',
-      desc: 'Psikolog klinis yang bisa membaca jiwa. Kau melihat apa yang orang lain sembunyikan — ketakutan, kebohongan, dan cinta yang tidak terucapkan.',
+      perk: 'Lihat emosi & kecurigaan NPC akurat',
+      desc: 'Psikolog forensik. Bisa membaca level emosi dan kecurigaan NPC dengan presisi tinggi saat observasi.',
       icon: 'jiwa'
     },
     juno: {
       role: 'Pemberontak',
-      perk: 'Aksi langsung & jalur pelarian',
-      desc: 'Seniman jalanan dengan naluri bertarung. Kau tidak main tebak-tebakan — kau dobrak pintu, pecahkan jendela, dan hadapi masalah head-on.',
+      perk: '+20% defense & +15% flee',
+      desc: 'Street artist dengan naluri bertarung. Lebih tangguh saat diserang dan lebih cepat melarikan diri.',
       icon: 'api'
     },
     vira: {
       role: 'Saksi Selamat',
-      perk: 'Pengetahuan mansion & rute tersembunyi',
-      desc: 'Kau pernah di sini sebelumnya. Kau tahu di mana Sang Penenun bersembunyi. Tapi kebenaran itu datang dengan harga — trauma yang tidak pernah sembuh.',
+      perk: 'Mulai dengan 2 lokasi clue diketahui',
+      desc: 'Pernah di mansion ini. Sudah tahu lokasi 2 petunjuk pelarian sejak awal permainan.',
       icon: 'bayangan'
     },
     reza: {
       role: 'Detektif',
-      perk: 'Analisis taktis & negosiasi',
-      desc: 'Mantan detektif yang dipecat karena kasus ini. Kau kembali untuk menyelesaikan apa yang dulu gagal. Insting polisi tidak pernah mati.',
+      perk: '+15% akurasi tuduhan & deteksi',
+      desc: 'Mantan detektif. Tuduhan lebih akurat dan bisa mendeteksi perilaku mencurigakan lebih baik.',
       icon: 'lencana'
     },
     lana: {
       role: 'Dalang',
-      perk: 'Manipulasi & pengetahuan gelap',
-      desc: 'Novelis horor yang bukunya terlalu akurat. Kau melihat dunia sebagai narasi — dan setiap orang sebagai karakter yang bisa dimanipulasi.',
+      perk: '+20% framing & -15% terdeteksi',
+      desc: 'Novelis horor. Manipulasi dan framing lebih efektif, dan lebih sulit dideteksi sebagai killer.',
       icon: 'pena',
-      warning: 'Kau adalah operator Sang Penenun. Pengalaman bermain berbeda total.'
+      killerOnly: true
     },
     dimas: {
       role: 'Operator',
-      perk: 'Pengetahuan forensik & ketahanan mental',
-      desc: 'Mahasiswa forensik yang terlalu tenang di dekat kematian. Di bawah topeng sopan, ada kekosongan yang menakutkan.',
+      perk: '+15% kill & silent elimination',
+      desc: 'Mahasiswa forensik. Presisi klinis dalam eliminasi — lebih tinggi chance kill dan lebih sedikit bukti.',
       icon: 'pisau',
-      warning: 'Di Normal/Hard, kau adalah operator Sang Penenun.'
+      killerOnly: true
     },
     kira: {
       role: 'Hacker',
-      perk: 'Hack sistem & akses digital',
-      desc: 'Ethical hacker yang menemukan anomali digital. Kau hidup di dunia data — dan di mansion ini, data adalah senjata paling berbahaya.',
+      perk: '+25% investigasi digital',
+      desc: 'Ethical hacker. Investigasi digital super efektif — akses CCTV, log, dan data tersembunyi.',
       icon: 'terminal'
     },
     farah: {
       role: 'Pewaris',
-      perk: 'Pengaruh, negosiasi & rahasia keluarga',
-      desc: 'Pewaris estate Aldridge. Keluargamu membiayai mansion ini 50 tahun lalu. Kau tahu rahasianya — dan rahasiamu sendiri lebih kelam.',
+      perk: '+15% trust & aliansi',
+      desc: 'Pewaris Aldridge. Pengaruh sosial tinggi — lebih mudah membangun kepercayaan dan membentuk aliansi.',
       icon: 'mahkota'
     }
   };
+
+  // ---- Character Abilities (Passive Bonuses) ----
+  const CHARACTER_ABILITIES = {
+    // Survivor abilities
+    arin:  { clueSearch: 20, defense: 0, offense: 0, trust: 0, investigation: 0, flee: 0, accusation: 0, detection: 0 },
+    sera:  { clueSearch: 0, defense: 0, offense: 0, trust: 0, investigation: 0, flee: 0, accusation: 0, detection: 20, emotionRead: true },
+    niko:  { clueSearch: 0, defense: 0, offense: 0, trust: 0, investigation: 0, flee: 0, accusation: 0, detection: 0, extraMovement: true },
+    juno:  { clueSearch: 0, defense: 20, offense: 0, trust: 0, investigation: 0, flee: 15, accusation: 0, detection: 0 },
+    vira:  { clueSearch: 0, defense: 0, offense: 0, trust: 0, investigation: 0, flee: 0, accusation: 0, detection: 0, startClues: 2 },
+    reza:  { clueSearch: 0, defense: 0, offense: 0, trust: 0, investigation: 0, flee: 0, accusation: 15, detection: 10 },
+    kira:  { clueSearch: 0, defense: 0, offense: 0, trust: 0, investigation: 25, flee: 0, accusation: 0, detection: 0 },
+    farah: { clueSearch: 0, defense: 0, offense: 0, trust: 15, investigation: 0, flee: 0, accusation: 0, detection: 0, allianceBonus: 10 },
+    // Killer abilities
+    lana:  { clueSearch: 0, defense: 0, offense: 0, trust: 0, investigation: 0, flee: 0, accusation: 0, detection: 0, framingBonus: 20, stealthBonus: 15 },
+    dimas: { clueSearch: 0, defense: 0, offense: 15, trust: 0, investigation: 0, flee: 0, accusation: 0, detection: 0, silentKill: true }
+  };
+
+  function getCharAbility(charName, abilityType) {
+    const abilities = CHARACTER_ABILITIES[charName];
+    if (!abilities) return 0;
+    return abilities[abilityType] || 0;
+  }
+
+  function hasCharAbility(charName, abilityType) {
+    const abilities = CHARACTER_ABILITIES[charName];
+    if (!abilities) return false;
+    return !!abilities[abilityType];
+  }
 
   // Perspective text helpers
   function isPlayer(charName) {
@@ -280,7 +308,15 @@ const Engine = (() => {
 
   // ---- Suspicion system ----
   function modSuspicion(char, delta) {
-    state.suspicion[char] = Math.max(0, Math.min(100, (state.suspicion[char] || 0) + delta));
+    let adjustedDelta = delta;
+    // Lana's stealth ability: gains less suspicion when caught
+    if (delta > 0 && char === playerChar()) {
+      const stealthBonus = getCharAbility(char, 'stealthBonus');
+      if (stealthBonus > 0) {
+        adjustedDelta = Math.max(1, Math.round(delta * (1 - stealthBonus / 100)));
+      }
+    }
+    state.suspicion[char] = Math.max(0, Math.min(100, (state.suspicion[char] || 0) + adjustedDelta));
   }
 
   // ---- Is this character a killer? ----
@@ -431,7 +467,14 @@ const Engine = (() => {
       const diff = state.difficulty || 2;
       diffBonus = diff === 1 ? -15 : diff === 2 ? -10 : -5;
     }
-    const totalChance = Math.min(95, Math.max(5, baseChance + toolBonus + diffBonus));
+    // Character ability bonus
+    let abilityBonus = 0;
+    if (charName === playerChar()) {
+      if (bonusType === 'intel') abilityBonus += getCharAbility(charName, 'clueSearch') + getCharAbility(charName, 'investigation');
+      if (bonusType === 'defense') abilityBonus += getCharAbility(charName, 'defense');
+      if (bonusType === 'offense') abilityBonus += getCharAbility(charName, 'offense');
+    }
+    const totalChance = Math.min(95, Math.max(5, baseChance + toolBonus + diffBonus + abilityBonus));
     const roll = Math.random() * 100;
     return { success: roll < totalChance, chance: totalChance, roll: Math.round(roll) };
   }
@@ -1085,7 +1128,7 @@ const Engine = (() => {
       if (suspect) {
         const suspLvl = gameState.suspicion[suspect] || 0;
         const conf = suspLvl > 60 ? 'Bukti kuat' : 'Bukti menengah';
-        const accuseChance = Math.min(85, 30 + suspLvl);
+        const accuseChance = Math.min(85, 30 + suspLvl + getCharAbility(pc, 'accusation'));
         choices.push({
           text: `Tuduh ${CharBrain.charName(suspect)}: "Aku tahu apa yang kau lakukan."`,
           type: 'brain', category: 'accuse',
@@ -1227,18 +1270,27 @@ const Engine = (() => {
       const observeTarget = nearbyNpcs.find(n => !brainActionTaken('observe_' + n));
       if (observeTarget) {
         const mind = gameState.npcMinds[observeTarget];
+        const detBonus = getCharAbility(pc, 'detection');
+        const canReadEmotion = hasCharAbility(pc, 'emotionRead');
+        const emotionHint = canReadEmotion && mind
+          ? `Emosi: ${mind.emotion} | Tension: ${mind.tension}% | Kecurigaan: ${Math.round(mind.suspicions[pc] || 0)}%`
+          : (mind ? `Emosi: ${mind.emotion}` : 'Perhatikan perilakunya');
         choices.push({
           text: `Amati gerak-gerik ${CharBrain.charName(observeTarget)} secara diam-diam`,
           type: 'brain', category: 'observe',
-          hint: mind ? `Emosi: ${mind.emotion} — mungkin bisa membaca niatnya` : 'Perhatikan perilakunya',
+          hint: emotionHint,
           risk: 10, reward: 55,
           effect: (s) => {
             recordBrainAction('observe_' + observeTarget);
             const susp = s.suspicion[observeTarget] || 0;
             const isTarget = s.killers.includes(observeTarget);
-            if (isTarget && Math.random() < 0.4) {
-              s.suspicion[observeTarget] = Math.min(100, susp + 10);
-              Engine.notify(`Kau menangkap gelagat mencurigakan dari ${CharBrain.charName(observeTarget)}! Kecurigaan naik.`);
+            const detectChance = 0.4 + (detBonus / 100);
+            if (isTarget && Math.random() < detectChance) {
+              const suspGain = 10 + Math.floor(detBonus / 2);
+              s.suspicion[observeTarget] = Math.min(100, susp + suspGain);
+              Engine.notify(`Kau menangkap gelagat mencurigakan dari ${CharBrain.charName(observeTarget)}! Kecurigaan +${suspGain}%.`);
+            } else if (canReadEmotion && mind) {
+              Engine.notify(`${CharBrain.charName(observeTarget)}: Emosi ${mind.emotion}, Tension ${mind.tension}%.${isTarget ? ' Ada yang tidak beres...' : ''}`);
             } else {
               Engine.notify(`${CharBrain.charName(observeTarget)} tampak ${isTarget ? 'terlalu tenang...' : 'normal.'}`);
             }
@@ -1260,7 +1312,8 @@ const Engine = (() => {
           risk: 10, reward: 45,
           effect: (s) => {
             recordBrainAction('talk_' + talkTarget);
-            Engine.modTrust(pc, talkTarget, 5);
+            const trustGain = 5 + Math.floor(getCharAbility(pc, 'trust') / 3);
+            Engine.modTrust(pc, talkTarget, trustGain);
             const newTrust = s.trust[trustKey(pc, talkTarget)] || 55;
             Engine.notify(`Hubunganmu dengan ${CharBrain.charName(talkTarget)} membaik. Trust: ${newTrust}%`);
           },
@@ -1288,7 +1341,8 @@ const Engine = (() => {
           effect: (s) => {
             recordBrainAction('ally_' + potential);
             CharBrain.playerAction('ally', potential, s);
-            Engine.modTrust(pc, potential, 10);
+            const allyTrustGain = 10 + getCharAbility(pc, 'allianceBonus');
+            Engine.modTrust(pc, potential, allyTrustGain);
             Engine.notify(`Aliansi terbentuk dengan ${CharBrain.charName(potential)}!`);
           },
           next: (s) => currentNodeId
@@ -1318,12 +1372,14 @@ const Engine = (() => {
       const soloTarget = nearbyNpcs.find(n => !gameState.killers.includes(n) && !brainActionTaken('strike_' + n));
       if (soloTarget && nearbyNpcs.filter(n => !gameState.killers.includes(n)).length <= 2) {
         const witnesses = nearbyNpcs.filter(n => n !== soloTarget && !gameState.killers.includes(n)).length;
+        const isSilent = hasCharAbility(pc, 'silentKill');
         const strikeChance = witnesses === 0 ? 65 : 35;
+        const silentLabel = isSilent ? ' (silent kill)' : '';
         choices.push({
-          text: `Serang ${CharBrain.charName(soloTarget)}${witnesses === 0 ? ' — tidak ada saksi...' : ' — ada risiko saksi!'}`,
+          text: `Serang ${CharBrain.charName(soloTarget)}${witnesses === 0 ? ' — tidak ada saksi...' + silentLabel : ' — ada risiko saksi!'}`,
           type: 'brain-killer', category: 'killer',
           danger: witnesses > 0,
-          hint: witnesses === 0 ? 'Sendirian — kesempatan emas' : `${witnesses} saksi potensial — sangat berisiko!`,
+          hint: witnesses === 0 ? (isSilent ? 'Sendirian + silent kill — eliminasi tanpa bukti' : 'Sendirian — kesempatan emas') : `${witnesses} saksi potensial — sangat berisiko!`,
           risk: witnesses === 0 ? 45 : 85,
           reward: 90,
           successChance: strikeChance,
@@ -1332,9 +1388,15 @@ const Engine = (() => {
             const result = rollChance(strikeChance, pc, 'offense');
             if (result.success) {
               Engine.killChar(soloTarget);
-              Engine.notify(`${CharBrain.charName(soloTarget)} dieliminasi! (${result.chance}% chance, roll: ${result.roll})`);
+              // Dimas's silent kill: less suspicion gain on successful kill
+              if (isSilent && witnesses === 0) {
+                Engine.notify(`${CharBrain.charName(soloTarget)} dieliminasi tanpa jejak! (${result.chance}% chance, roll: ${result.roll})`);
+              } else {
+                Engine.notify(`${CharBrain.charName(soloTarget)} dieliminasi! (${result.chance}% chance, roll: ${result.roll})`);
+              }
             } else {
-              Engine.modSuspicion(pc, 20);
+              const failSusp = isSilent ? 12 : 20;
+              Engine.modSuspicion(pc, failSusp);
               Engine.notify(`Serangan gagal! ${CharBrain.charName(soloTarget)} berhasil lolos. (${result.chance}% chance, roll: ${result.roll})`);
             }
           },
@@ -1423,7 +1485,8 @@ const Engine = (() => {
             risk: 35, reward: 70,
             effect: (s) => {
               recordBrainAction('frame_' + frameTarget);
-              Engine.modSuspicion(frameTarget, 15);
+              const frameSusp = 15 + Math.floor(getCharAbility(pc, 'framingBonus') / 2);
+              Engine.modSuspicion(frameTarget, frameSusp);
               Engine.notify(`Kau diam-diam menanamkan bukti palsu yang mengarah ke ${CharBrain.charName(frameTarget)}.`);
             },
             next: (s) => currentNodeId
@@ -1436,7 +1499,9 @@ const Engine = (() => {
     const connections = CharBrain.LOCATION_CONNECTIONS[playerLoc] || [];
     if (connections.length > 0 && gameState.chapter >= 1) {
       const shuffled = connections.slice().sort(() => Math.random() - 0.5);
-      const moveDests = shuffled.slice(0, Math.min(3, shuffled.length));
+      // Niko's ability: +1 extra movement option (knows secret passages)
+      const moveLimit = hasCharAbility(pc, 'extraMovement') ? 4 : 3;
+      const moveDests = shuffled.slice(0, Math.min(moveLimit, shuffled.length));
       moveDests.forEach(loc => {
         if (brainActionTaken('move_' + loc)) return; // Don't show move to same loc twice
         const npcsAtLoc = Object.keys(gameState.npcMinds || {}).filter(n =>
@@ -1768,37 +1833,63 @@ const Engine = (() => {
     if (!container) return;
     container.innerHTML = '';
 
-    const roleOrder = ['arin', 'sera', 'niko', 'juno', 'vira', 'reza', 'kira', 'farah', 'lana', 'dimas'];
+    const killerNames = KILLER_CONFIG[selectedDifficulty].killers;
+    const survivorNames = CHARACTERS.filter(n => !killerNames.includes(n));
 
-    roleOrder.forEach((name, idx) => {
+    // --- SURVIVOR OPTION: Random character ---
+    const survCard = document.createElement('div');
+    survCard.className = 'role-card role-card-survivor';
+    survCard.style.setProperty('--role-color', '#4a7c59');
+    survCard.innerHTML = `
+      <span class="role-portrait css-avatar-role" style="background:#4a7c59">🛡️</span>
+      <div class="role-info">
+        <div class="role-name" style="color:#4a7c59">Survivor</div>
+        <div class="role-title">Karakter Acak</div>
+        <div class="role-perk">Kau akan mendapat salah satu dari ${survivorNames.length} protagonist secara acak</div>
+        <div class="role-desc">Setiap survivor punya kemampuan pasif unik. Bertahan hidup, kumpulkan petunjuk, ungkap identitas killer.</div>
+        <div class="role-survivor-list">${survivorNames.map(n => {
+          const r = ROLE_DESCRIPTIONS[n];
+          return `<span class="role-survivor-chip" style="border-color:${CHAR_COLORS[n]}">${CHAR_DISPLAY[n]} — ${r.perk}</span>`;
+        }).join('')}</div>
+      </div>
+    `;
+    survCard.addEventListener('click', () => {
+      const randomSurvivor = survivorNames[Math.floor(Math.random() * survivorNames.length)];
+      state = defaultState(selectedDifficulty, randomSurvivor);
+      // Vira's ability: start with 2 known clue locations
+      const startClueCount = getCharAbility(randomSurvivor, 'startClues');
+      if (startClueCount > 0) {
+        applyStartClues(state, startClueCount);
+      }
+      currentNodeId = null;
+      showScreen('screen-characters');
+      renderCharacterIntro();
+    });
+    container.appendChild(survCard);
+
+    // --- KILLER OPTIONS: Show each available killer ---
+    killerNames.forEach((name, idx) => {
       const role = ROLE_DESCRIPTIONS[name];
-      const profile = typeof CHARACTER_PROFILES !== 'undefined' ? CHARACTER_PROFILES[name] : null;
-      const color = CHAR_COLORS[name] || '#666';
+      const color = CHAR_COLORS[name] || '#8b0000';
       const displayName = CHAR_DISPLAY[name];
 
       const card = document.createElement('div');
-      card.className = 'role-card';
-      card.style.animationDelay = (idx * 0.08) + 's';
+      card.className = 'role-card role-card-killer';
+      card.style.animationDelay = ((idx + 1) * 0.12) + 's';
       card.style.setProperty('--role-color', color);
 
-      const isKillerRole = KILLER_CONFIG[selectedDifficulty].killers.includes(name);
       const portraitContent = CHAR_PORTRAITS[name]
         ? `<img class="role-portrait" src="${CHAR_PORTRAITS[name]}" alt="${displayName}">`
         : `<span class="role-portrait css-avatar-role" style="background:${color}">${CHAR_INITIALS[name] || displayName.charAt(0)}</span>`;
-
-      let warningHtml = '';
-      if (isKillerRole) {
-        warningHtml = `<div class="role-warning">Peran Gelap: Kau bermain sebagai antagonis</div>`;
-      }
 
       card.innerHTML = `
         ${portraitContent}
         <div class="role-info">
           <div class="role-name" style="color:${color}">${displayName}</div>
-          <div class="role-title">${role.role}</div>
+          <div class="role-title">${role.role} — Killer</div>
           <div class="role-perk">${role.perk}</div>
           <div class="role-desc">${role.desc}</div>
-          ${warningHtml}
+          <div class="role-warning">Peran Gelap: Kau bermain sebagai antagonis</div>
         </div>
       `;
 
@@ -1810,6 +1901,20 @@ const Engine = (() => {
       });
 
       container.appendChild(card);
+    });
+  }
+
+  // Apply Vira's startClues ability
+  function applyStartClues(gameState, count) {
+    if (!gameState.escapeClueLocations) return;
+    const locs = Object.keys(gameState.escapeClueLocations);
+    const shuffled = locs.sort(() => Math.random() - 0.5);
+    const revealed = shuffled.slice(0, Math.min(count, shuffled.length));
+    if (!gameState.revealedClueLocations) gameState.revealedClueLocations = [];
+    revealed.forEach(loc => {
+      if (!gameState.revealedClueLocations.includes(loc)) {
+        gameState.revealedClueLocations.push(loc);
+      }
     });
   }
 
