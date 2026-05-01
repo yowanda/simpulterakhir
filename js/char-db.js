@@ -196,7 +196,21 @@ const CharDB = (() => {
       { condition: { chapter: 5 }, action: { type: 'confront', desc: 'Arin mengumpulkan semua bukti. Saatnya mengungkap kebenaran di depan semua orang.' }, weight: 20 },
 
       // Emotional moments
-      { condition: { nearbyIncludes: 'sera', minDeaths: 3 }, action: { type: 'socialize', desc: 'Arin menggenggam tangan Sera. "Kalau kita tidak selamat..." — "Kita akan selamat," potong Sera.' }, weight: 12 }
+      { condition: { nearbyIncludes: 'sera', minDeaths: 3 }, action: { type: 'socialize', desc: 'Arin menggenggam tangan Sera. "Kalau kita tidak selamat..." — "Kita akan selamat," potong Sera.' }, weight: 12 },
+
+      // --- NEW: Progressive investigation chain ---
+      { condition: { chapter: 2, hasClue: true }, action: { type: 'confront', desc: 'Arin menunjukkan bukti ke kelompok: "Dengarkan. Ada pola di semua ini — kematian tidak acak."' }, weight: 18 },
+      { condition: { chapter: 4, minDeaths: 2 }, action: { type: 'accuse', desc: 'Arin menyusun semua bukti di dinding. "Aku sudah tahu siapa. Dan aku bisa buktikan."' }, weight: 22 },
+
+      // --- NEW: Movement & exploration decisions ---
+      { condition: { isAlone: true, emotion: 'calm' }, action: { type: 'move', desc: 'Arin bergerak ke ruangan lain, mengikuti insting jurnalisnya. Ada sesuatu yang belum ditemukan.', moveTo: 'perpustakaan' }, weight: 14 },
+      { condition: { minDanger: 40, emotion: 'wary' }, action: { type: 'move', desc: 'Arin merasa tidak aman di sini. Saatnya pindah ke tempat yang lebih strategis.', moveTo: 'aula_utama' }, weight: 12 },
+
+      // --- NEW: Unique character interactions ---
+      { condition: { nearbyIncludes: 'kira' }, action: { type: 'socialize', desc: '"Kira, bisa kau hack CCTV mansion ini? Aku butuh rekaman malam itu." Arin mengajak Kira berkolaborasi.' }, weight: 16 },
+      { condition: { nearbyIncludes: 'reza', minDeaths: 1 }, action: { type: 'socialize', desc: '"Reza, kau pernah menangani kasus seperti ini. Apa yang kau lihat?" Arin mengandalkan pengalaman Reza.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'niko', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Niko, ini mansionmu. Kau tahu lebih banyak dari yang kau akui. BICARA." Arin mendesak Niko.' }, weight: 18 },
+      { condition: { nearbyIncludes: 'vira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Vira, kau pernah di sini. Apa yang terjadi enam bulan lalu? Aku perlu tahu." Arin mencari jawaban dari Vira.' }, weight: 16 }
     ],
 
     // ========== NIKO — The Mastermind (as survivor) ==========
@@ -227,7 +241,19 @@ const CharDB = (() => {
       { condition: { minDeaths: 2, hasClue: true }, action: { type: 'accuse', desc: 'Niko mengeluarkan bukti yang dia simpan sejak awal. "Aku sudah tahu sejak tadi. Aku hanya menunggu konfirmasi."' }, weight: 20 },
 
       // Late game
-      { condition: { chapter: 6 }, action: { type: 'confront', desc: 'Niko akhirnya mengungkap semua kartunya. "Cukup bermain-main. Ini yang sebenarnya terjadi."' }, weight: 22 }
+      { condition: { chapter: 6 }, action: { type: 'confront', desc: 'Niko akhirnya mengungkap semua kartunya. "Cukup bermain-main. Ini yang sebenarnya terjadi."' }, weight: 22 },
+
+      // --- NEW: Movement decisions ---
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Niko bergerak ke ruang kontrol mansion. Rumahnya, keuntungannya.', moveTo: 'basement' }, weight: 16 },
+      { condition: { minDeaths: 1, emotion: 'suspicious' }, action: { type: 'move', desc: 'Niko menuju perpustakaan. Di sana ada catatan kakeknya yang belum semua orang lihat.', moveTo: 'perpustakaan' }, weight: 14 },
+
+      // --- NEW: Unique interactions ---
+      { condition: { nearbyIncludes: 'farah', emotion: 'calm' }, action: { type: 'socialize', desc: '"Farah, keluarga kita punya sejarah panjang. Mungkin sudah saatnya kita bicara jujur." Niko mencoba merekrut Farah.' }, weight: 16 },
+      { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Lana, novelmu... terlalu akurat. Kau tahu sesuatu yang tidak kau ceritakan." Niko curiga pada Lana.' }, weight: 18 },
+      { condition: { nearbyIncludes: 'sera', emotion: 'wary' }, action: { type: 'socialize', desc: '"Sera, aku butuh kau membaca seseorang untukku. Secara profesional." Niko memanfaatkan keahlian Sera.' }, weight: 15 },
+
+      // --- NEW: Desperation ---
+      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'share_clue', desc: 'Niko membuka brankas rahasia kakeknya. "Ini... ini yang disembunyikan keluargaku selama 50 tahun."' }, weight: 20 }
     ],
 
     // ========== SERA — The Profiler ==========
@@ -260,7 +286,20 @@ const CharDB = (() => {
       { condition: { minDanger: 70, emotion: 'panicked' }, action: { type: 'hide', desc: 'Sera berhenti menganalisis. Untuk pertama kalinya, dia hanya lari. Otak yang selalu berpikir akhirnya menyerah pada insting primitif.' }, weight: 18 },
 
       // Late game revelation
-      { condition: { chapter: 5 }, action: { type: 'accuse', desc: 'Sera berdiri di depan kelompok. "Aku sudah cukup mengumpulkan data. Pembunuhnya adalah—"' }, weight: 25 }
+      { condition: { chapter: 5 }, action: { type: 'accuse', desc: 'Sera berdiri di depan kelompok. "Aku sudah cukup mengumpulkan data. Pembunuhnya adalah—"' }, weight: 25 },
+
+      // --- NEW: Movement decisions ---
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Sera bergerak ke tempat yang lebih aman, mencari posisi di mana dia bisa mengamati tanpa terlihat.', moveTo: 'perpustakaan' }, weight: 14 },
+
+      // --- NEW: Unique interactions ---
+      { condition: { nearbyIncludes: 'juno', emotion: 'calm' }, action: { type: 'socialize', desc: '"Juno, impulsivitasmu bukan kelemahan. Itu insting survival. Tapi kau perlu fokus." Sera menenangkan Juno.' }, weight: 16 },
+      { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Sera memperhatikan Lana dengan intens. "Narcissistic personality, antisocial tendency, charm yang dipelajari... profil yang sempurna untuk—" Dia terdiam.' }, weight: 20 },
+      { condition: { nearbyIncludes: 'farah' }, action: { type: 'socialize', desc: '"Farah, uangmu tidak bisa membeli keselamatan di sini. Tapi informasimu bisa. Apa yang kau tahu tentang keluarga Wardhana?"' }, weight: 14 },
+      { condition: { nearbyIncludes: 'kira', hasClue: true }, action: { type: 'share_clue', desc: 'Sera membagi analisis profilingnya dengan Kira. "Gabungkan ini dengan data digitalmu. Pola akan muncul."', target: 'kira' }, weight: 18 },
+
+      // --- NEW: Escalation ---
+      { condition: { minDeaths: 2, emotion: 'suspicious' }, action: { type: 'confront', desc: 'Sera tidak lagi menganalisis dari kejauhan. "Aku sudah melihat tanda-tandanya. Salah satu dari kita adalah pembunuh. Dan aku tahu siapa."' }, weight: 22 },
+      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'flee', desc: 'Sera kehilangan ketenangan profesionalnya. Terlalu banyak kematian. "Aku... aku tidak bisa terus menganalisis mayat."' }, weight: 18 }
     ],
 
     // ========== JUNO — The Rebel ==========
@@ -290,7 +329,19 @@ const CharDB = (() => {
       { condition: { chapter: 4, emotion: 'panicked' }, action: { type: 'flee', desc: 'Juno berlari ke jendela terdekat dan mencoba memecahkannya. "KITA KELUAR SEKARANG!"' }, weight: 18 },
 
       // Late game
-      { condition: { chapter: 6, emotion: 'hostile' }, action: { type: 'confront', desc: '"Sini lo." Juno sudah tidak takut. Yang tersisa hanya kemarahan dan tekad untuk bertahan hidup.' }, weight: 25 }
+      { condition: { chapter: 6, emotion: 'hostile' }, action: { type: 'confront', desc: '"Sini lo." Juno sudah tidak takut. Yang tersisa hanya kemarahan dan tekad untuk bertahan hidup.' }, weight: 25 },
+
+      // --- NEW: Movement ---
+      { condition: { emotion: 'hostile', isAlone: true }, action: { type: 'move', desc: 'Juno bergerak agresif menyusuri mansion, mencari konfrontasi langsung.', moveTo: 'koridor_utara' }, weight: 16 },
+
+      // --- NEW: Unique interactions ---
+      { condition: { nearbyIncludes: 'arin', emotion: 'wary' }, action: { type: 'socialize', desc: '"Arin, lo selalu nyari bukti. Kadang bukti itu di depan mata — cuma butuh orang yang berani ngambil." Juno mendorong Arin bertindak.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'dimas', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Dimas, lo terlalu tenang buat situasi kayak gini. KENAPA lo nggak takut?!" Juno menuduh Dimas.' }, weight: 20 },
+      { condition: { nearbyIncludes: 'niko', minDeaths: 1 }, action: { type: 'confront', desc: '"Niko! Ini rumah lo! Lo BERTANGGUNG JAWAB atas semua yang terjadi di sini!" Juno mengamuk.' }, weight: 18 },
+      { condition: { nearbyIncludes: 'vira', emotion: 'calm' }, action: { type: 'socialize', desc: '"Vira, gue respect lo. Lo selamat dari sini sekali. Ajarin gue caranya." Sisi lembut Juno yang jarang muncul.' }, weight: 12 },
+
+      // --- NEW: Escalation ---
+      { condition: { minDeaths: 3, emotion: 'hostile' }, action: { type: 'guard', desc: 'Juno mengambil posisi di depan kelompok. "Gue nggak akan diam lagi. Siapapun yang datang lewat pintu itu mati."' }, weight: 22 }
     ],
 
     // ========== VIRA — The Survivor ==========
@@ -317,7 +368,19 @@ const CharDB = (() => {
       { condition: { hasClue: true }, action: { type: 'share_clue', desc: 'Vira akhirnya bicara: "Enam bulan lalu, aku hampir mati di sini. Ini yang aku tahu tentang sang dalang..."' }, weight: 20 },
 
       // Late game
-      { condition: { chapter: 5 }, action: { type: 'investigate', desc: 'Vira kembali ke tempat di mana dia hampir mati enam bulan lalu. Kali ini, dengan tekad berbeda.' }, weight: 22 }
+      { condition: { chapter: 5 }, action: { type: 'investigate', desc: 'Vira kembali ke tempat di mana dia hampir mati enam bulan lalu. Kali ini, dengan tekad berbeda.' }, weight: 22 },
+
+      // --- NEW: Movement ---
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'move', desc: 'Vira berlari ke lorong rahasia yang hanya dia tahu. Tubuhnya mengingat jalan meskipun pikirannya chaos.', moveTo: 'lorong_rahasia' }, weight: 20 },
+      { condition: { emotion: 'calm', chapter: 3 }, action: { type: 'move', desc: 'Vira memimpin kelompok kecil melalui jalan tersembunyi di dinding mansion.', moveTo: 'bunker_b3' }, weight: 16 },
+
+      // --- NEW: Unique interactions ---
+      { condition: { nearbyIncludes: 'arin', emotion: 'calm' }, action: { type: 'socialize', desc: '"Arin, aku percaya padamu. Kau mengingatkanku pada diriku sendiri enam bulan lalu — sebelum semuanya berubah." Vira terbuka.' }, weight: 16 },
+      { condition: { nearbyIncludes: 'sera', emotion: 'wary' }, action: { type: 'socialize', desc: '"Sera, baca aku. Aku serius. Kalau kau bisa melihat kebohongan, kau akan tahu aku tidak berbohong tentang apa yang terjadi dulu."' }, weight: 14 },
+      { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'confront', desc: '"Lana. Aku membaca novelmu. Bab 17 — itu bukan fiksi, kan? Kau di sini malam itu." Vira tahu lebih dari yang dia tunjukkan.' }, weight: 20 },
+
+      // --- NEW: Desperation ---
+      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'share_clue', desc: 'Vira akhirnya mengungkap semua yang dia tahu tentang malam enam bulan lalu. "Dengarkan baik-baik, karena aku tidak akan mengulanginya."' }, weight: 22 }
     ],
 
     // ========== REZA — The Detective ==========
@@ -346,7 +409,18 @@ const CharDB = (() => {
       { condition: { minDeaths: 2, hasClue: true }, action: { type: 'accuse', desc: 'Reza mengeluarkan semua bukti. "Aku sudah menyusun kasus. Pelakunya jelas." Suara detektif yang tidak pernah benar-benar pensiun.' }, weight: 25 },
 
       // Late game
-      { condition: { chapter: 6 }, action: { type: 'guard', desc: 'Reza menjadi benteng terakhir kelompok. "Aku tidak akan kehilangan siapapun lagi malam ini."' }, weight: 22 }
+      { condition: { chapter: 6 }, action: { type: 'guard', desc: 'Reza menjadi benteng terakhir kelompok. "Aku tidak akan kehilangan siapapun lagi malam ini."' }, weight: 22 },
+
+      // --- NEW: Movement ---
+      { condition: { emotion: 'suspicious', isAlone: true }, action: { type: 'move', desc: 'Reza melakukan patroli perimeter. Kebiasaan lama tidak pernah mati.', moveTo: 'koridor_utara' }, weight: 16 },
+
+      // --- NEW: Unique interactions ---
+      { condition: { nearbyIncludes: 'kira', hasClue: true }, action: { type: 'share_clue', desc: '"Kira, cross-reference data digitalmu dengan bukti fisik ini. Aku butuh timeline yang akurat." Reza dan Kira berkolaborasi.', target: 'kira' }, weight: 18 },
+      { condition: { nearbyIncludes: 'dimas', emotion: 'suspicious' }, action: { type: 'question', desc: '"Dimas, kau memeriksa tubuh tadi dengan terlalu... nyaman. Jelaskan padaku." Reza menginterogasi Dimas.' }, weight: 20 },
+      { condition: { nearbyIncludes: 'arin', emotion: 'wary' }, action: { type: 'socialize', desc: '"Arin, kau jurnalis investigasi. Aku butuh partnerku yang dulu. Bantu aku memecahkan ini." Reza merekrut Arin.' }, weight: 14 },
+
+      // --- NEW: Escalation ---
+      { condition: { minDeaths: 3, hasClue: true }, action: { type: 'accuse', desc: 'Reza memasang wajah detektifnya. "Cukup. Aku sudah menyusun semua bukti. Pembunuhnya di antara kita — dan aku tahu siapa."' }, weight: 24 }
     ],
 
     // ========== LANA — The Puppeteer (as survivor, if not killer) ==========
@@ -423,7 +497,18 @@ const CharDB = (() => {
       { condition: { chapter: 4 }, action: { type: 'investigate', desc: 'Kira meng-hack door lock system mansion. "Aku bisa membuka semua pintu... atau mengunci semuanya. Pilihan kita."' }, weight: 22 },
 
       // Late game
-      { condition: { chapter: 6 }, action: { type: 'investigate', desc: 'Kira menemukan pesan terenkripsi terakhir di server. Ketika di-decrypt, isinya mengubah segalanya.' }, weight: 25 }
+      { condition: { chapter: 6 }, action: { type: 'investigate', desc: 'Kira menemukan pesan terenkripsi terakhir di server. Ketika di-decrypt, isinya mengubah segalanya.' }, weight: 25 },
+
+      // --- NEW: Movement ---
+      { condition: { emotion: 'wary', isAlone: true }, action: { type: 'move', desc: 'Kira bergerak ke basement mencari server room. "Semua jawaban ada di data."', moveTo: 'basement' }, weight: 16 },
+
+      // --- NEW: Unique interactions ---
+      { condition: { nearbyIncludes: 'niko' }, action: { type: 'question', desc: '"Niko, siapa yang memasang Wi-Fi mesh di mansion ini? Arsitekturnya terlalu canggih untuk rumah tua." Kira curiga pada infrastruktur mansion.' }, weight: 18 },
+      { condition: { nearbyIncludes: 'sera', hasClue: true }, action: { type: 'share_clue', desc: '"Sera, lihat metadata foto ini. Timestamp-nya diedit. Seseorang sengaja memalsukan alibi digital."', target: 'sera' }, weight: 20 },
+      { condition: { nearbyIncludes: 'farah' }, action: { type: 'socialize', desc: '"Farah, aku hack email keluargamu. Jangan marah — tapi kakekmu transfer dana ke rekening yang sama dengan pemilik mansion ini."' }, weight: 16 },
+
+      // --- NEW: Escalation ---
+      { condition: { minDeaths: 2, hasClue: true }, action: { type: 'accuse', desc: 'Kira menunjukkan layar laptop: "Lihat log CCTV yang di-recover. Timestamp. Lokasi. Identitas. Game over untuk pembunuh."' }, weight: 22 }
     ],
 
     // ========== FARAH — The Heiress ==========
@@ -448,7 +533,19 @@ const CharDB = (() => {
       { condition: { minDeaths: 3 }, action: { type: 'share_clue', desc: '"Baiklah. Aku akan bicara." Farah akhirnya mengungkap rahasia keluarganya. "Kakekku tahu tentang mansion ini. Dan ini yang dia sembunyikan."' }, weight: 20 },
 
       // Late game
-      { condition: { chapter: 6 }, action: { type: 'negotiate', desc: 'Farah membuat penawaran terakhir: "Aku tahu siapa pemilik asli mansion ini. Informasi ini berharga — tapi aku akan memberikannya gratis. Karena tidak ada gunanya kaya kalau kau mati."' }, weight: 22 }
+      { condition: { chapter: 6 }, action: { type: 'negotiate', desc: 'Farah membuat penawaran terakhir: "Aku tahu siapa pemilik asli mansion ini. Informasi ini berharga — tapi aku akan memberikannya gratis. Karena tidak ada gunanya kaya kalau kau mati."' }, weight: 22 },
+
+      // --- NEW: Movement ---
+      { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'move', desc: 'Farah berlari ke kamar atas, mencari safe room keluarga Aldridge.', moveTo: 'kamar_atas' }, weight: 18 },
+
+      // --- NEW: Unique interactions ---
+      { condition: { nearbyIncludes: 'niko', emotion: 'calm' }, action: { type: 'negotiate', desc: '"Niko, keluarga kita terikat oleh mansion ini. Aku punya dokumen yang membuktikannya. Ayo bekerja sama."' }, weight: 16 },
+      { condition: { nearbyIncludes: 'reza', minDeaths: 1 }, action: { type: 'socialize', desc: '"Detektif Reza. Aku akan memberikan semua informasi keluargaku. Tapi jaga aku tetap hidup. Deal?" Farah bernegosiasi.' }, weight: 14 },
+      { condition: { nearbyIncludes: 'kira' }, action: { type: 'socialize', desc: '"Kira, aku butuh kau menghapus sesuatu dari server mansion. Rahasia keluargaku tidak boleh bocor." Farah panik tentang reputasi.' }, weight: 16 },
+
+      // --- NEW: Escalation & character growth ---
+      { condition: { minDeaths: 3, emotion: 'panicked' }, action: { type: 'guard', desc: 'Farah meraih tongkat golf antik dari dinding. Untuk pertama kalinya dalam hidupnya, pewaris ini siap bertarung sendiri.' }, weight: 20 },
+      { condition: { minDeaths: 4 }, action: { type: 'share_clue', desc: '"Aku sudah tidak peduli dengan reputasi. Kakekku mendanai pembangunan mansion ini untuk eksperimen. INI yang dia sembunyikan." Farah mengungkap segalanya.' }, weight: 22 }
     ]
   };
 
@@ -480,7 +577,12 @@ const CharDB = (() => {
       { condition: { emotion: 'executing', minTension: 70 }, action: { type: 'flee', desc: 'Topeng jatuh. Lana tidak lari — dia berjalan pergi dengan anggun. "Setiap cerita butuh villain. Aku hanya mengisi peran."' }, weight: 20 },
 
       // Late game dominance
-      { condition: { chapter: 5 }, action: { type: 'eliminate', desc: 'Final act. Lana mengeksekusi rencana besarnya — bukan satu korban, tapi pernyataan. Karya agung sang penulis.' }, weight: 25 }
+      { condition: { chapter: 5 }, action: { type: 'eliminate', desc: 'Final act. Lana mengeksekusi rencana besarnya — bukan satu korban, tapi pernyataan. Karya agung sang penulis.' }, weight: 25 },
+
+      // --- NEW: Diverse killer actions ---
+      { condition: { emotion: 'stalking', chapter: 2 }, action: { type: 'move', desc: 'Lana berpindah ke posisi strategis. Penulis yang tahu setting cerita sama pentingnya dengan karakter.', moveTo: 'galeri_timur' }, weight: 16 },
+      { condition: { emotion: 'hunting', nearbyIncludes: 'arin' }, action: { type: 'manipulate', desc: '"Arin, aku punya informasi penting." Lana menyeret Arin ke percakapan private — menjauhkan investigator dari kebenaran.' }, weight: 22 },
+      { condition: { emotion: 'stalking', minDeaths: 2 }, action: { type: 'observe', desc: 'Lana mengamati reaksi kelompok terhadap kematian. Setiap ekspresi, setiap air mata — semua jadi data untuk langkah selanjutnya.' }, weight: 18 }
     ],
 
     dimas: [
@@ -506,7 +608,12 @@ const CharDB = (() => {
       { condition: { minTension: 60 }, action: { type: 'frame', desc: 'Dimas menempatkan bukti di tas seseorang. Framing yang rapi — seperti operasi bedah.' }, weight: 20 },
 
       // Late game
-      { condition: { chapter: 5 }, action: { type: 'eliminate', desc: 'Dimas lepas dari kendali Lana. Untuk pertama kalinya, dia membunuh bukan karena diperintah — tapi karena dia mau.' }, weight: 25 }
+      { condition: { chapter: 5 }, action: { type: 'eliminate', desc: 'Dimas lepas dari kendali Lana. Untuk pertama kalinya, dia membunuh bukan karena diperintah — tapi karena dia mau.' }, weight: 25 },
+
+      // --- NEW: Diverse killer actions ---
+      { condition: { emotion: 'stalking', chapter: 3 }, action: { type: 'move', desc: 'Dimas bergerak ke dapur mansion. Pengetahuan farmakologinya memerlukan akses ke bahan kimia rumah tangga.', moveTo: 'dapur' }, weight: 16 },
+      { condition: { emotion: 'hunting', nearbyIncludes: 'reza' }, action: { type: 'maintain_cover', desc: 'Dimas sengaja menunjukkan "ketakutan" di depan Reza. Akting yang dirancang untuk membuat detektif itu mengabaikannya.' }, weight: 20 },
+      { condition: { emotion: 'stalking', isAlone: false }, action: { type: 'socialize', desc: '"Aku khawatir tentang keselamatan kita semua." Dimas memainkan peran mahasiswa yang concerned. Sempurna.' }, weight: 18 }
     ],
 
     niko: [
@@ -531,7 +638,12 @@ const CharDB = (() => {
       { condition: { minTension: 70 }, action: { type: 'confront', desc: 'Niko berhenti berpura-pura. "Mansion ini milikku. Kalian semua tamu — dan tamu tidak membuat aturan."' }, weight: 20 },
 
       // Late game
-      { condition: { chapter: 6 }, action: { type: 'eliminate', desc: 'Endgame. Niko mengaktifkan trap terakhir mansion. "Selamat datang di Simpul Terakhir. Sesungguhnya."' }, weight: 25 }
+      { condition: { chapter: 6 }, action: { type: 'eliminate', desc: 'Endgame. Niko mengaktifkan trap terakhir mansion. "Selamat datang di Simpul Terakhir. Sesungguhnya."' }, weight: 25 },
+
+      // --- NEW: Diverse killer actions ---
+      { condition: { emotion: 'stalking', chapter: 2 }, action: { type: 'move', desc: 'Niko bergerak ke panel kontrol rahasia mansion. Tuan rumah selalu punya keuntungan.', moveTo: 'ruang_penyimpanan' }, weight: 16 },
+      { condition: { emotion: 'hunting', nearbyIncludes: 'vira' }, action: { type: 'manipulate', desc: '"Vira, kau ingat malam itu? Aku bisa menjelaskan segalanya. Ikut aku." Niko mencoba memisahkan Vira dari kelompok — berbahaya.' }, weight: 22 },
+      { condition: { emotion: 'stalking', isAlone: false, minDeaths: 1 }, action: { type: 'socialize', desc: '"Kita harus tetap tenang. Aku pemilik mansion ini — aku akan melindungi kalian." Ironi yang menyakitkan.' }, weight: 18 }
     ]
   };
 
