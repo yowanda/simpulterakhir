@@ -229,6 +229,9 @@ const Engine = (() => {
       npcActionLog: [],
       winLossResult: null,
       killersDead: [],            // Track killed killers specifically
+      witnessedKillers: [],       // Killers whose murder was witnessed
+      autoSimDone: false,         // Whether auto-simulation has run
+      autoSimLog: [],             // Log of auto-simulation events
       toolOwnership: {},       // { toolId: charName } — each tool held by max 1 char
       playerStatus: {          // Realtime player condition
         detected: false,       // Killer knows player is investigating
@@ -483,8 +486,11 @@ const Engine = (() => {
     const escDestroyed = (state.destroyedClues || []).length;
     const killersAlive = (state.killers || []).filter(k => state.alive[k]).length;
     const totalKillers = (state.killers || []).length;
+    const witnessedCount = (state.witnessedKillers || []).filter(k => state.alive[k]).length;
     if (!isK) {
-      html += `<div class="ps-escape">Petunjuk: ${escFound}/${escTotal} | Killer: ${totalKillers - killersAlive}/${totalKillers}</div>`;
+      html += `<div class="ps-escape">Petunjuk: ${escFound}/${escTotal} | Killer: ${totalKillers - killersAlive}/${totalKillers}`;
+      if (witnessedCount > 0) html += ` | Diburu: ${witnessedCount}`;
+      html += `</div>`;
     } else {
       const survivorsLeft = Object.keys(state.alive).filter(k => state.alive[k] && !(state.killers || []).includes(k)).length;
       html += `<div class="ps-escape">Target: ${survivorsLeft} tersisa | Petunjuk dihancurkan: ${escDestroyed}</div>`;
@@ -647,42 +653,180 @@ const Engine = (() => {
   }
 
   function showWinLossScreen(result) {
-    const isWin = result.type === 'win' || result.type === 'partial_win';
     const pc = playerChar();
     const isK = state.killers && state.killers.includes(pc);
-    const ratingMap = {
-      survivor_victory: 'S',
-      all_killers_eliminated: 'S',
-      mansion_escape: 'S',
-      killer_victory: 'S',
-      killer_clues_destroyed: 'A',
-      survived_unresolved: 'B',
-      total_elimination: 'A',
-      sole_survivor_victory: 'A',
-      killer_killed: 'D',
-      survivor_killed: 'F',
-      killer_exposed: 'D',
-      total_massacre: 'F'
-    };
-    const rating = ratingMap[result.reason] || 'C';
+    const playerAlive = state.alive[pc];
 
-    const escapeProgress = `${(state.escapeClues || []).length}/${state.totalEscapeClues || 6}`;
-    const killersDown = `${(state.killersDead || []).length}/${(state.killers || []).length}`;
+    // If player died, auto-simulate the rest of the game first
+    if (!playerAlive && !state.autoSimDone) {
+      autoSimulateGame();
+    }
 
-    const endingData = {
-      endingNumber: 26 + (isK ? 1 : 0),
-      title: result.title,
-      rating: rating,
-      isEnding: true,
-      endingText: `<p class="narration">${result.desc}</p>
-        <p class="journal"><em>${isK ? 'Sebagai pembunuh, kau ' + (isWin ? 'berhasil menyelesaikan misimu.' : 'gagal. Mangsamu terlalu kuat.') :
-        'Sebagai survivor, kau ' + (isWin ? 'mengalahkan kegelapan.' : 'jatuh ke dalam kegelapan.')}</em></p>
-        <p>Ronde bertahan: ${state.roundCount}</p>
-        <p>Kematian total: ${state.deathCount}</p>
-        <p>Petunjuk pelarian: ${escapeProgress}</p>
-        <p>Killer dieliminasi: ${killersDown}</p>`
+    // Build dynamic result summary
+    const summaryData = buildGameSummary(result);
+    showGameResultScreen(summaryData);
+  }
+
+  // Auto-simulate game after player death — NPC brain runs until conclusion
+  function autoSimulateGame() {
+    if (!state.npcMinds || typeof CharBrain === 'undefined') {
+      state.autoSimDone = true;
+      return;
+    }
+    state.autoSimLog = [];
+    const maxRounds = 30;
+    let round = 0;
+    while (round < maxRounds) {
+      round++;
+      state.roundCount++;
+      const result = CharBrain.executeRound(state);
+      if (result && result.events) {
+        result.events.forEach(ev => {
+          if (ev.desc) state.autoSimLog.push(ev.desc);
+        });
+        // Sync deaths
+        CHARACTERS.forEach(name => {
+          if (!state.alive[name] && state.npcMinds[name]) {
+            delete state.npcMinds[name];
+          }
+        });
+      }
+      // Check if game is resolved
+      const allKillersDead = (state.killers || []).every(k => !state.alive[k]);
+      const aliveSurvivors = CHARACTERS.filter(c => state.alive[c] && !(state.killers || []).includes(c));
+      if (allKillersDead || aliveSurvivors.length <= 1) break;
+    }
+    state.autoSimDone = true;
+  }
+
+  // Build dynamic game summary from actual game state
+  function buildGameSummary(result) {
+    const pc = playerChar();
+    const isK = state.killers && state.killers.includes(pc);
+    const playerAlive = state.alive[pc];
+    const allKillersDead = (state.killers || []).every(k => !state.alive[k]);
+    const aliveSurvivors = CHARACTERS.filter(c => state.alive[c] && !(state.killers || []).includes(c));
+    const aliveKillers = (state.killers || []).filter(k => state.alive[k]);
+    const deadChars = CHARACTERS.filter(c => !state.alive[c]);
+
+    // Determine winner
+    let winner, winDesc;
+    if (allKillersDead) {
+      winner = 'protagonist';
+      winDesc = 'Tim Protagonis menang! Semua killer telah dieliminasi.';
+    } else if (aliveSurvivors.length <= 1) {
+      winner = 'killer';
+      winDesc = aliveSurvivors.length === 0
+        ? 'Tim Killer menang! Tidak ada protagonis yang tersisa.'
+        : `Tim Killer menang! Hanya ${CharBrain.charName(aliveSurvivors[0])} yang tersisa.`;
+    } else if (typeof Engine !== 'undefined' && canEscape && canEscape()) {
+      winner = 'protagonist';
+      winDesc = 'Tim Protagonis menang! Berhasil melarikan diri dari mansion — killer terjebak.';
+    } else {
+      winner = result && result.type === 'win' ? (isK ? 'killer' : 'protagonist') : 'unresolved';
+      winDesc = result ? result.desc : 'Permainan berakhir tanpa pemenang yang jelas.';
+    }
+
+    // Character fates
+    const charFates = CHARACTERS.map(name => {
+      const display = CHAR_DISPLAY[name];
+      const alive = state.alive[name];
+      const wasKiller = (state.killers || []).includes(name);
+      const isRevealed = (state.killerRevealed || []).includes(name);
+      const isPlayer = name === pc;
+      const isWitnessed = (state.witnessedKillers || []).includes(name);
+
+      let status;
+      if (!alive && wasKiller) status = 'Tereliminasi (Killer)';
+      else if (!alive) status = 'Tereliminasi';
+      else if (wasKiller && isRevealed) status = 'Hidup — Terungkap sebagai Killer';
+      else if (wasKiller) status = 'Hidup — Identitas tersembunyi';
+      else status = 'Selamat';
+
+      return { name: display, charId: name, alive, wasKiller, isPlayer, isRevealed, isWitnessed, status };
+    });
+
+    return {
+      winner,
+      winDesc,
+      playerAlive,
+      isPlayerKiller: isK,
+      roundCount: state.roundCount,
+      deathCount: state.deathCount,
+      escapeClues: (state.escapeClues || []).length,
+      totalEscapeClues: state.totalEscapeClues || 6,
+      destroyedClues: (state.destroyedClues || []).length,
+      charFates,
+      deadChars,
+      autoSimLog: state.autoSimLog || [],
+      aliveKillerCount: aliveKillers.length,
+      aliveSurvivorCount: aliveSurvivors.length
     };
-    showDirectEnding(endingData.endingNumber, endingData);
+  }
+
+  // Show dynamic game result screen
+  function showGameResultScreen(data) {
+    showScreen('screen-ending');
+    const winnerLabel = data.winner === 'protagonist' ? 'PROTAGONIS MENANG' :
+                        data.winner === 'killer' ? 'KILLER MENANG' : 'TIDAK ADA PEMENANG';
+    const winnerClass = data.winner === 'protagonist' ? 'winner-protagonist' :
+                        data.winner === 'killer' ? 'winner-killer' : 'winner-draw';
+
+    $('ending-number').textContent = '';
+    $('ending-title').textContent = winnerLabel;
+    const ratingEl = $('ending-rating');
+    ratingEl.textContent = data.winner === 'protagonist' ? 'S' : data.winner === 'killer' ? 'A' : 'C';
+    ratingEl.className = 'ending-rating rating-' + (data.winner === 'protagonist' ? 'S' : data.winner === 'killer' ? 'A' : 'C');
+
+    let html = `<div class="game-result ${winnerClass}">`;
+    html += `<p class="result-headline">${data.winDesc}</p>`;
+
+    // Player status
+    if (!data.playerAlive) {
+      html += `<p class="result-player-dead">Kau tereliminasi. Permainan dilanjutkan oleh NPC...</p>`;
+    }
+
+    // Stats
+    html += `<div class="result-stats">`;
+    html += `<div class="stat-item"><span class="stat-label">Ronde</span><span class="stat-value">${data.roundCount}</span></div>`;
+    html += `<div class="stat-item"><span class="stat-label">Tereliminasi</span><span class="stat-value">${data.deathCount}</span></div>`;
+    html += `<div class="stat-item"><span class="stat-label">Petunjuk</span><span class="stat-value">${data.escapeClues}/${data.totalEscapeClues}</span></div>`;
+    html += `<div class="stat-item"><span class="stat-label">Petunjuk Hancur</span><span class="stat-value">${data.destroyedClues}</span></div>`;
+    html += `</div>`;
+
+    // Character fates table
+    html += `<div class="result-fates">`;
+    html += `<h3 class="fates-title">Nasib Karakter</h3>`;
+    data.charFates.forEach(f => {
+      const cls = !f.alive ? 'fate-dead' : f.wasKiller ? 'fate-corrupted' : 'fate-alive';
+      const roleTag = f.wasKiller ? ' <span class="role-tag killer-tag">KILLER</span>' : '';
+      const playerTag = f.isPlayer ? ' <span class="role-tag player-tag">KAMU</span>' : '';
+      const witnessTag = f.isWitnessed ? ' <span class="role-tag witness-tag">DISAKSI</span>' : '';
+      html += `<div class="fate-item"><span class="fate-name ${cls}">${f.name}${roleTag}${playerTag}${witnessTag}</span>: ${f.status}</div>`;
+    });
+    html += `</div>`;
+
+    // Auto-simulation log (if player died)
+    if (data.autoSimLog && data.autoSimLog.length > 0) {
+      html += `<div class="result-autosim">`;
+      html += `<h3 class="fates-title">Setelah Kau Tereliminasi...</h3>`;
+      const maxShow = Math.min(data.autoSimLog.length, 15);
+      for (let i = 0; i < maxShow; i++) {
+        html += `<p class="autosim-entry">${data.autoSimLog[i]}</p>`;
+      }
+      if (data.autoSimLog.length > maxShow) {
+        html += `<p class="autosim-more">...dan ${data.autoSimLog.length - maxShow} aksi lainnya</p>`;
+      }
+      html += `</div>`;
+    }
+
+    html += `</div>`;
+    $('ending-text').innerHTML = html;
+
+    // Fates already shown in the main content
+    $('ending-fates').innerHTML = '';
+
+    updateEndingsCount();
   }
 
   // ---- Node Rendering ----

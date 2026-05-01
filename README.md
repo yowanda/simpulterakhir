@@ -24,8 +24,9 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 
 ### Gameplay & Cerita
 - **7 chapter** dengan percabangan kompleks (Prolog + Bab 1-7)
-- **30+ ending unik** dengan rating S / A / B / C / D / F
-- **Ending bisa trigger di chapter manapun** — keputusan menentukan kapan cerita berakhir
+- **Hasil akhir dinamis** — bukan ending pre-scripted, tapi berdasarkan hasil permainan sebenarnya
+- **Ringkasan game otomatis** — tampilkan siapa yang tereliminasi, siapa yang menang, dan statistik permainan
+- **Auto-simulasi** — jika player mati, NPC melanjutkan permainan sampai ada pemenang
 - **3 tingkat kesulitan** yang mengubah jumlah killer:
   - **Mudah**: 1 killer (Lana)
   - **Normal**: 2 killers (Lana + Dimas)
@@ -64,15 +65,13 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - Clue yang sudah ditemukan
   - Aliansi dan musuh
 - **100+ Decision Node per Karakter** — setiap karakter punya pohon keputusan unik
-- **Sistem Win/Loss (Baru!)** — kamu bisa menang atau kalah sebagai killer maupun survivor:
-  - **Survivor Win Path A**: Habisi SEMUA killer yang menyamar — eliminasi langsung
-  - **Survivor Win Path B**: Kumpulkan semua petunjuk pelarian → kabur dari mansion → killer otomatis mati terjebak
-  - **Survivor Loss**: Mati / tersisa sendirian tanpa bisa melawan
-  - **Killer Win Path A**: Habisi protagonis sehingga tersisa 1 orang
-  - **Killer Win Path B**: Hancurkan semua petunjuk pelarian agar survivor tidak bisa kabur
-  - **Killer Cooperation**: Killer bisa saling membantu untuk menghabisi protagonis
-  - **Killer Betrayal**: Jika identitas terancam terbongkar, killer bisa mengkhianati killer lain
-  - **Killer Loss**: Semua killer tereliminasi / terjebak saat mansion escape
+- **Sistem Win/Loss Dinamis** — hasil ditentukan oleh aksi NPC, bukan ending pre-scripted:
+  - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan petunjuk pelarian untuk kabur dari mansion
+  - **Killer Menang**: Eliminasi protagonis hingga tersisa 1 ATAU hancurkan semua petunjuk pelarian
+  - **Killer Kalah**: Semua killer tereliminasi
+  - **Saksi Pembunuhan**: Jika NPC menyaksikan killer membunuh, killer langsung DIBURU oleh tim protagonis
+  - **Auto-Simulasi**: Jika player tereliminasi, NPC brain melanjutkan sampai ada pemenang
+  - **Ringkasan Akhir**: Tampilkan semua karakter — siapa hidup, siapa mati, role masing-masing
 - **NPC Encounters** — NPC bertemu satu sama lain, membentuk aliansi, atau saling menyerang
 - **NPC Action Log** — panel real-time untuk melihat apa yang dilakukan setiap NPC
 - **Dynamic Choices** — pilihan baru muncul berdasarkan aksi NPC (tuduh, aliansi, serang, investigasi)
@@ -115,6 +114,7 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
 - Tool yang dipegang ditampilkan di status bar
 - **Petunjuk Pelarian** — progress petunjuk ditemukan vs total
 - **Killer Dieliminasi** — jumlah killer yang sudah dikalahkan
+- **Diburu** — jumlah killer yang sedang diburu (disaksikan membunuh)
 
 ### Sistem Petunjuk Pelarian (Baru!)
 - **7 Petunjuk Pelarian** tersebar di mansion — cari semuanya untuk membuka jalan keluar
@@ -288,11 +288,14 @@ Antagonis utama: **Ragil Pramudya** alias **Sang Penenun** — pria tua yang hid
    - Kumpulkan **petunjuk pelarian** untuk membuka jalan keluar mansion
    - ATAU habisi semua killer yang menyamar
    - Bangun aliansi, investigasi, dan bertahan hidup
+   - Jika kamu menyaksikan pembunuhan, killer akan DIBURU oleh tim protagonis
 8. Sebagai **killer**:
    - Habisi protagonis sampai tersisa 1
    - ATAU hancurkan semua petunjuk pelarian agar survivor tidak bisa kabur
    - Killer bisa saling membantu atau mengkhianati jika terancam
-9. Capai salah satu dari 30+ ending
+   - Hati-hati membunuh di depan saksi — kamu akan diburu!
+9. Jika kamu tereliminasi, NPC melanjutkan permainan sampai ada pemenang
+10. Lihat **ringkasan akhir** — siapa yang menang, siapa tereliminasi, statistik permainan
 
 ---
 
@@ -322,7 +325,7 @@ simpul-terakhir/
     ├── story-ch5.js        # Bab 5: Wahyu
     ├── story-ch6.js        # Bab 6: Konfrontasi
     ├── story-ch7.js        # Bab 7: Simpul Terakhir
-    └── story-endings.js    # 30+ endings (S/A/B/C/D/F rating + win/loss endings)
+    └── story-endings.js    # Story endings + dynamic game result system
 ```
 
 ---
