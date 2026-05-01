@@ -784,34 +784,20 @@ const Engine = (() => {
     return perspectives[pc] || perspectives.arin;
   }
 
-  // Killer count per difficulty (killers are randomly assigned)
-  const KILLER_COUNT = { 1: 1, 2: 2, 3: 3 };
-
-  // Fixed killer pool: only Lana, Dimas, Niko can be killers
+  // Fixed killer assignments per difficulty (Lana = Sang Penenun, always killer)
+  // Easy: Lana only | Normal: Lana + Dimas | Hard: Lana + Dimas + Niko
+  const KILLER_BY_DIFF = { 1: ['lana'], 2: ['lana', 'dimas'], 3: ['lana', 'dimas', 'niko'] };
   const KILLER_POOL = ['lana', 'dimas', 'niko'];
 
-  // Randomly pick N killers from KILLER_POOL only
-  function randomizeKillers(difficulty, playerCharacter, playerIsKiller) {
-    const diff = difficulty || 2;
-    const count = KILLER_COUNT[diff] || 2;
-
-    if (playerIsKiller) {
-      // Player is one of the killers — pick (count - 1) more from killer pool
-      const others = KILLER_POOL.filter(n => n !== playerCharacter);
-      const shuffled = others.sort(() => Math.random() - 0.5);
-      return [playerCharacter, ...shuffled.slice(0, count - 1)];
-    } else {
-      // Player is survivor — pick killers from killer pool (excluding player)
-      const pool = KILLER_POOL.filter(n => n !== playerCharacter);
-      const shuffled = pool.sort(() => Math.random() - 0.5);
-      return shuffled.slice(0, count);
-    }
+  // Get killers for this difficulty (fixed, not random)
+  function getKillers(difficulty) {
+    return (KILLER_BY_DIFF[difficulty] || KILLER_BY_DIFF[2]).slice();
   }
 
   function defaultState(difficulty, playerCharacter, playerIsKiller) {
     const diff = difficulty || 2;
     const pc = playerCharacter || 'arin';
-    const killers = randomizeKillers(diff, pc, playerIsKiller);
+    const killers = getKillers(diff);
     return {
       chapter: 0,
       difficulty: diff,
@@ -3411,10 +3397,11 @@ const Engine = (() => {
     if (!container) return;
     container.innerHTML = '';
 
-    const killerCount = KILLER_COUNT[selectedDifficulty] || 2;
+    const killers = getKillers(selectedDifficulty);
+    const killerCount = killers.length;
 
-    // --- SURVIVOR OPTION: Random character (exclude killer pool) ---
-    const survivorPool = CHARACTERS.filter(n => !KILLER_POOL.includes(n));
+    // --- SURVIVOR OPTION: Random character (exclude active killers for this difficulty) ---
+    const survivorPool = CHARACTERS.filter(n => !killers.includes(n));
     const survCard = document.createElement('div');
     survCard.className = 'role-card role-card-survivor';
     survCard.style.setProperty('--role-color', '#4a7c59');
@@ -3461,7 +3448,7 @@ const Engine = (() => {
       </div>
     `;
     killCard.addEventListener('click', () => {
-      const randomKiller = KILLER_POOL[Math.floor(Math.random() * KILLER_POOL.length)];
+      const randomKiller = killers[Math.floor(Math.random() * killers.length)];
       state = defaultState(selectedDifficulty, randomKiller, true);
       resetChatTimestamp();
       currentNodeId = null;
