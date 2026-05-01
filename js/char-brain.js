@@ -729,8 +729,9 @@ const CharBrain = (() => {
         return; // Killer hesitates — skips this round
       }
 
-      // === KILLER PLAYER TRACKING: 30% chance killer locks onto player ===
-      if (isNpcKiller && Math.random() < 0.30) {
+      // === KILLER PLAYER TRACKING: 30% chance killer locks onto player (only if player is protagonist) ===
+      const isPlayerProtagonist = !(gameState.killers && gameState.killers.includes(pc));
+      if (isNpcKiller && isPlayerProtagonist && Math.random() < 0.30) {
         const playerLoc = gameState.playerLocation || 'aula_utama';
         const killerLoc = mind.location;
         if (killerLoc !== playerLoc) {
@@ -805,6 +806,35 @@ const CharBrain = (() => {
         minds[a.character].location = a.action.moveTo;
       }
     });
+
+    // === PROTAGONIST ALLIANCE CAMPING: When player is killer, NPC survivors band together ===
+    const isPlayerKiller = gameState.killers && gameState.killers.includes(pc);
+    if (isPlayerKiller) {
+      const diff = gameState.difficulty || 2;
+      const campChance = diff >= 3 ? 0.45 : diff >= 2 ? 0.40 : 0.30;
+      const aliveProtagonists = Object.keys(minds).filter(n =>
+        n !== pc && gameState.alive[n] && !gameState.killers.includes(n)
+      );
+      if (aliveProtagonists.length >= 2 && Math.random() < campChance) {
+        // Pick two random protagonists to form alliance
+        const shuffled = aliveProtagonists.slice().sort(() => Math.random() - 0.5);
+        const a = shuffled[0], b = shuffled[1];
+        const mindA = minds[a], mindB = minds[b];
+        if (mindA && mindB && !mindA.allies.includes(b)) {
+          mindA.allies.push(b);
+          mindB.allies.push(a);
+          // Move to same location if not already
+          if (mindA.location !== mindB.location) {
+            mindB.location = mindA.location;
+          }
+          events.push({
+            type: 'alliance',
+            character: a,
+            desc: `${charName(a)} dan ${charName(b)} membentuk aliansi dan berkumpul di ${locName(mindA.location)} — saling menjaga.`
+          });
+        }
+      }
+    }
 
     // Check for NPC encounters (two NPCs in same location)
     const locationGroups = {};
@@ -931,6 +961,28 @@ const CharBrain = (() => {
             targetMind.enemies.push(mind.name);
           }
           gameState.suspicion[mind.name] = Math.min(100, (gameState.suspicion[mind.name] || 0) + 30);
+
+          // === PEMBURU MECHANIC: If killer fails AND >1 protagonists alive → hunter eliminates killer ===
+          if (isAttackerKiller) {
+            const aliveProtags = Object.keys(allMinds).filter(n =>
+              n !== mind.name && gameState.alive[n] && !gameState.killers.includes(n)
+            );
+            if (aliveProtags.length > 1) {
+              // Pick random protagonist as hunter
+              const hunterName = aliveProtags[Math.floor(Math.random() * aliveProtags.length)];
+              // Hunter eliminates killer with pistol
+              gameState.alive[mind.name] = false;
+              gameState.deathCount++;
+              if (!gameState.killersDead) gameState.killersDead = [];
+              if (!gameState.killersDead.includes(mind.name)) gameState.killersDead.push(mind.name);
+              if (!gameState.killerRevealed.includes(mind.name)) gameState.killerRevealed.push(mind.name);
+              // Move hunter to killer's location
+              if (allMinds[hunterName]) allMinds[hunterName].location = mind.location;
+              return { type: 'hunter_kill', hunter: hunterName, killer: mind.name, target: action.target,
+                desc: `${charName(mind.name)} gagal membunuh ${charName(action.target)}! 🔫 ${charName(hunterName)} muncul sebagai Pemburu — menembak ${charName(mind.name)} dengan pistol! ${charName(mind.name)} TEWAS.` };
+            }
+          }
+
           return { type: 'attack_failed', attacker: mind.name, target: action.target,
             desc: `${charName(mind.name)} menyerang ${charName(action.target)}, tapi ${charName(action.target)} berhasil bertahan!` };
         }
@@ -1667,17 +1719,22 @@ const CharBrain = (() => {
 
     // Check if an event involves a character near the player
     const isLocalEvent = (event) => {
+      // Track/nearby events always show (they're about the player)
+      if (event.type === 'track_player' || event.type === 'killer_nearby') return true;
+      if (event.type === 'hunter_kill') return true;
       if (event.character && isNearPlayer(event.character)) return true;
       if (event.target && isNearPlayer(event.target)) return true;
       if (event.saboteur && isNearPlayer(event.saboteur)) return true;
       if (event.victim && isNearPlayer(event.victim)) return true;
+      if (event.hunter && isNearPlayer(event.hunter)) return true;
+      if (event.killer && isNearPlayer(event.killer)) return true;
       if (event.location === playerLoc) return true;
       return false;
     };
 
     // Sort events by priority
     const sorted = roundResult.events.sort((a, b) => {
-      const priority = { death: 0, encounter_death: 0, witnessed_murder: 0, trust_kill: 0, killer_eliminated: 0, witnessed_attack: 1, trust_conflict: 1, killer_sabotage: 1, attack_failed: 1, encounter_escape: 1, clue_destroyed: 1, escape_clue_found: 1, tool_found: 2, accusation: 2, alliance_formed: 3, alliance: 3, framed: 4, manipulation: 4, sabotage: 5, confrontation: 5, clue_found: 6 };
+      const priority = { death: 0, encounter_death: 0, witnessed_murder: 0, trust_kill: 0, killer_eliminated: 0, hunter_kill: 0, witnessed_attack: 1, trust_conflict: 1, killer_sabotage: 1, attack_failed: 1, encounter_escape: 1, clue_destroyed: 1, escape_clue_found: 1, tool_found: 2, accusation: 2, alliance_formed: 3, alliance: 3, framed: 4, manipulation: 4, sabotage: 5, confrontation: 5, clue_found: 6, track_player: 1, killer_nearby: 1 };
       return (priority[a.type] || 10) - (priority[b.type] || 10);
     });
 
@@ -1702,9 +1759,11 @@ const CharBrain = (() => {
       else if (event.type === 'confrontation') icon = '\u26A1';
       else if (event.type === 'track_player') icon = '\uD83D\uDC63';
       else if (event.type === 'killer_nearby') icon = '\uD83D\uDE28';
+      else if (event.type === 'hunter_kill') icon = '\uD83D\uDD2B';
 
       let cssClass = 'npc-event';
       if (event.type === 'death' || event.type === 'encounter_death') cssClass += ' npc-event-death';
+      else if (event.type === 'hunter_kill') cssClass += ' npc-event-hunter';
       else if (event.type === 'attack_failed' || event.type === 'encounter_escape') cssClass += ' npc-event-danger';
       else if (event.type === 'alliance_formed' || event.type === 'alliance') cssClass += ' npc-event-alliance';
       else if (event.type === 'clue_found') cssClass += ' npc-event-clue';
