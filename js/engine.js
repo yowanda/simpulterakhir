@@ -218,12 +218,17 @@ const Engine = (() => {
       keyChoices: [],
       deathCount: 0,
       cluesFound: 0,
+      // Escape Clue System: survivors find clues to escape mansion
+      escapeClues: [],           // Array of found escape clue IDs
+      destroyedClues: [],        // Array of destroyed escape clue IDs (by killers)
+      totalEscapeClues: diff === 1 ? 5 : diff === 2 ? 6 : 7,  // Total needed to escape
       alliances: [],
       npcMinds: null,
       roundCount: 0,
       playerLocation: 'aula_utama',
       npcActionLog: [],
       winLossResult: null,
+      killersDead: [],            // Track killed killers specifically
       toolOwnership: {},       // { toolId: charName } — each tool held by max 1 char
       playerStatus: {          // Realtime player condition
         detected: false,       // Killer knows player is investigating
@@ -279,10 +284,25 @@ const Engine = (() => {
     return state.killers && state.killers.includes(name);
   }
 
+  // ---- Escape Clue Locations ----
+  const ESCAPE_CLUE_LOCATIONS = {
+    perpustakaan:      { id: 'esc_peta_mansion',    name: 'Peta Rahasia Mansion',    desc: 'Peta tua yang menunjukkan jalur rahasia keluar mansion.' },
+    basement:          { id: 'esc_kode_pintu',      name: 'Kode Pintu Darurat',      desc: 'Serangkaian angka yang tertulis di dinding — kode untuk pintu darurat.' },
+    bunker_b3:         { id: 'esc_blueprint',       name: 'Blueprint Terowongan',    desc: 'Cetak biru terowongan bawah tanah yang mengarah ke luar.' },
+    menara:            { id: 'esc_sinyal',          name: 'Frekuensi Radio Darurat', desc: 'Frekuensi radio yang bisa memanggil bantuan dari luar.' },
+    lorong_rahasia:    { id: 'esc_kunci_terowongan', name: 'Kunci Terowongan',       desc: 'Kunci berkarat yang membuka pintu terowongan pelarian.' },
+    ruang_penyimpanan: { id: 'esc_jurnal_pendiri',  name: 'Jurnal Pendiri',          desc: 'Jurnal Hendarto Wardhana yang mencatat semua jalan keluar mansion.' },
+    atap:              { id: 'esc_jalur_atap',      name: 'Jalur Pelarian Atap',     desc: 'Tangga darurat tersembunyi di sisi atap yang mengarah ke tebing.' }
+  };
+
   // ---- Kill character ----
   function killChar(name) {
     state.alive[name] = false;
     state.deathCount++;
+    if (state.killers && state.killers.includes(name)) {
+      if (!state.killersDead) state.killersDead = [];
+      if (!state.killersDead.includes(name)) state.killersDead.push(name);
+    }
     bloodDrip();
     screenShake();
     deathFlash();
@@ -301,6 +321,53 @@ const Engine = (() => {
   }
   function aliveMainCount() {
     return MAIN_CHARACTERS.filter(c => state.alive[c]).length;
+  }
+  function aliveKillerCount() {
+    return (state.killers || []).filter(k => state.alive[k]).length;
+  }
+  function aliveSurvivorCount() {
+    return CHARACTERS.filter(c => state.alive[c] && !(state.killers || []).includes(c)).length;
+  }
+
+  // ---- Escape Clue Helpers ----
+  function getEscapeClueAtLocation(loc) {
+    const clue = ESCAPE_CLUE_LOCATIONS[loc];
+    if (!clue) return null;
+    if (state.escapeClues && state.escapeClues.includes(clue.id)) return null;
+    if (state.destroyedClues && state.destroyedClues.includes(clue.id)) return null;
+    return clue;
+  }
+  function findEscapeClue(clueId) {
+    if (!state.escapeClues) state.escapeClues = [];
+    if (!state.escapeClues.includes(clueId)) {
+      state.escapeClues.push(clueId);
+    }
+  }
+  function destroyEscapeClue(clueId) {
+    if (!state.destroyedClues) state.destroyedClues = [];
+    if (!state.destroyedClues.includes(clueId)) {
+      state.destroyedClues.push(clueId);
+    }
+  }
+  function canEscape() {
+    const needed = state.totalEscapeClues || 6;
+    return (state.escapeClues || []).length >= needed;
+  }
+  function triggerMansionEscape() {
+    // All killers auto-die when survivors escape
+    (state.killers || []).forEach(k => {
+      if (state.alive[k]) {
+        state.alive[k] = false;
+        state.deathCount++;
+        if (!state.killersDead) state.killersDead = [];
+        if (!state.killersDead.includes(k)) state.killersDead.push(k);
+      }
+    });
+    bloodDrip();
+    screenShake();
+  }
+  function allKillersDead() {
+    return (state.killers || []).every(k => !state.alive[k]);
   }
 
   // ---- Alliance system ----
@@ -408,6 +475,19 @@ const Engine = (() => {
     html += `</div>`;
     if (tool) {
       html += `<div class="ps-tool">${tool.icon} ${tool.name}</div>`;
+    }
+    // Escape clue progress
+    const isK = state.killers && state.killers.includes(pc);
+    const escFound = (state.escapeClues || []).length;
+    const escTotal = state.totalEscapeClues || 6;
+    const escDestroyed = (state.destroyedClues || []).length;
+    const killersAlive = (state.killers || []).filter(k => state.alive[k]).length;
+    const totalKillers = (state.killers || []).length;
+    if (!isK) {
+      html += `<div class="ps-escape">Petunjuk: ${escFound}/${escTotal} | Killer: ${totalKillers - killersAlive}/${totalKillers}</div>`;
+    } else {
+      const survivorsLeft = Object.keys(state.alive).filter(k => state.alive[k] && !(state.killers || []).includes(k)).length;
+      html += `<div class="ps-escape">Target: ${survivorsLeft} tersisa | Petunjuk dihancurkan: ${escDestroyed}</div>`;
     }
     bar.innerHTML = html;
     bar.style.display = 'flex';
@@ -572,15 +652,22 @@ const Engine = (() => {
     const isK = state.killers && state.killers.includes(pc);
     const ratingMap = {
       survivor_victory: 'S',
+      all_killers_eliminated: 'S',
+      mansion_escape: 'S',
       killer_victory: 'S',
+      killer_clues_destroyed: 'A',
       survived_unresolved: 'B',
       total_elimination: 'A',
+      sole_survivor_victory: 'A',
       killer_killed: 'D',
       survivor_killed: 'F',
       killer_exposed: 'D',
       total_massacre: 'F'
     };
     const rating = ratingMap[result.reason] || 'C';
+
+    const escapeProgress = `${(state.escapeClues || []).length}/${state.totalEscapeClues || 6}`;
+    const killersDown = `${(state.killersDead || []).length}/${(state.killers || []).length}`;
 
     const endingData = {
       endingNumber: 26 + (isK ? 1 : 0),
@@ -592,7 +679,8 @@ const Engine = (() => {
         'Sebagai survivor, kau ' + (isWin ? 'mengalahkan kegelapan.' : 'jatuh ke dalam kegelapan.')}</em></p>
         <p>Ronde bertahan: ${state.roundCount}</p>
         <p>Kematian total: ${state.deathCount}</p>
-        <p>Petunjuk ditemukan: ${state.cluesFound}</p>`
+        <p>Petunjuk pelarian: ${escapeProgress}</p>
+        <p>Killer dieliminasi: ${killersDown}</p>`
     };
     showDirectEnding(endingData.endingNumber, endingData);
   }
@@ -879,6 +967,94 @@ const Engine = (() => {
       });
     }
 
+    // --- SEARCH ESCAPE CLUE at location (survivor only, one-time per location) ---
+    if (!isK && !brainActionTaken('escape_clue_' + playerLoc)) {
+      const escClue = getEscapeClueAtLocation(playerLoc);
+      if (escClue) {
+        const escChance = 45 + (gameState.chapter * 6);
+        const found = (gameState.escapeClues || []).length;
+        const total = gameState.totalEscapeClues || 6;
+        choices.push({
+          text: `Cari petunjuk pelarian di ${CharBrain.locName(playerLoc)}`,
+          type: 'brain', category: 'investigate',
+          hint: `Petunjuk pelarian: ${found}/${total} — temukan semua untuk membuka jalan keluar mansion`,
+          risk: nearbyNpcs.length === 0 ? 10 : 30,
+          reward: 90,
+          successChance: escChance,
+          effect: (s) => {
+            recordBrainAction('escape_clue_' + playerLoc);
+            const result = rollChance(escChance, pc, 'intel');
+            if (result.success) {
+              findEscapeClue(escClue.id);
+              s.cluesFound = (s.cluesFound || 0) + 1;
+              const newFound = (s.escapeClues || []).length;
+              Engine.notify(`${escClue.name} ditemukan! Petunjuk pelarian: ${newFound}/${total} (${result.chance}% chance, roll: ${result.roll})`);
+              if (canEscape()) {
+                Engine.notify('SEMUA PETUNJUK TERKUMPUL! Jalan keluar mansion terbuka!');
+              }
+            } else {
+              Engine.notify(`Tidak menemukan petunjuk pelarian. (${result.chance}% chance, roll: ${result.roll})`);
+            }
+          },
+          next: (s) => currentNodeId
+        });
+      }
+    }
+
+    // --- TRIGGER ESCAPE (survivor only, all escape clues found) ---
+    if (!isK && canEscape() && !brainActionTaken('trigger_escape')) {
+      choices.push({
+        text: 'KABUR DARI MANSION — semua petunjuk terkumpul!',
+        type: 'brain', category: 'escape',
+        hint: 'Aktifkan jalur pelarian — semua killer otomatis tereliminasi!',
+        risk: 5, reward: 100,
+        successChance: 100,
+        danger: false,
+        effect: (s) => {
+          recordBrainAction('trigger_escape');
+          triggerMansionEscape();
+          Engine.notify('Mansion terbuka! Semua killer terjebak dan tereliminasi!');
+        },
+        next: (s) => currentNodeId
+      });
+    }
+
+    // --- ATTACK KILLER (survivor, if killer is revealed/exposed at location) ---
+    if (!isK && nearbyNpcs.length > 0 && gameState.deathCount >= 1) {
+      const revealedKiller = nearbyNpcs.find(n =>
+        gameState.killers.includes(n) &&
+        (gameState.killerRevealed.includes(n) || (gameState.suspicion[n] || 0) >= 80) &&
+        !brainActionTaken('attack_killer_' + n)
+      );
+      if (revealedKiller) {
+        const atkChance = 35 + Math.min(30, (gameState.suspicion[revealedKiller] || 0) / 3);
+        choices.push({
+          text: `Serang ${CharBrain.charName(revealedKiller)} — eliminasi killer!`,
+          type: 'brain', category: 'confront',
+          hint: `Habisi killer yang terungkap! Chance: ${Math.round(atkChance)}%`,
+          risk: 75, reward: 95,
+          danger: true,
+          successChance: Math.round(atkChance),
+          effect: (s) => {
+            recordBrainAction('attack_killer_' + revealedKiller);
+            const result = rollChance(atkChance, pc, 'offense');
+            if (result.success) {
+              Engine.killChar(revealedKiller);
+              Engine.notify(`${CharBrain.charName(revealedKiller)} dieliminasi! (${result.chance}% chance, roll: ${result.roll})`);
+              if (allKillersDead()) {
+                Engine.notify('SEMUA KILLER TELAH DIELIMINASI! Protagonis menang!');
+              }
+            } else {
+              Engine.modDanger(10);
+              if (s.playerStatus) s.playerStatus.wounded = true;
+              Engine.notify(`Serangan gagal! ${CharBrain.charName(revealedKiller)} membalas! (${result.chance}% chance, roll: ${result.roll})`);
+            }
+          },
+          next: (s) => currentNodeId
+        });
+      }
+    }
+
     // --- OBSERVE nearby NPCs (one-time per NPC per node) ---
     if (nearbyNpcs.length > 0) {
       const observeTarget = nearbyNpcs.find(n => !brainActionTaken('observe_' + n));
@@ -1040,6 +1216,33 @@ const Engine = (() => {
           },
           next: (s) => currentNodeId
         });
+      }
+
+      // DESTROY ESCAPE CLUE (killer only, one-time per location)
+      if (!brainActionTaken('destroy_clue_' + playerLoc)) {
+        const escClue = getEscapeClueAtLocation(playerLoc);
+        if (escClue) {
+          const destroyChance = 60;
+          const destroyed = (gameState.destroyedClues || []).length;
+          choices.push({
+            text: `Hancurkan petunjuk pelarian di ${CharBrain.locName(playerLoc)}`,
+            type: 'brain-killer', category: 'stealth',
+            hint: `Hancurkan ${escClue.name} agar survivor tidak bisa kabur. Dihancurkan: ${destroyed}`,
+            risk: 20, reward: 85,
+            successChance: destroyChance,
+            effect: (s) => {
+              recordBrainAction('destroy_clue_' + playerLoc);
+              const result = rollChance(destroyChance, pc, 'offense');
+              if (result.success) {
+                destroyEscapeClue(escClue.id);
+                Engine.notify(`${escClue.name} berhasil dihancurkan! Survivor kehilangan akses ke petunjuk ini. (${result.chance}% chance, roll: ${result.roll})`);
+              } else {
+                Engine.notify(`Gagal menghancurkan petunjuk. (${result.chance}% chance, roll: ${result.roll})`);
+              }
+            },
+            next: (s) => currentNodeId
+          });
+        }
       }
 
       // Manipulate/Frame (one-time per target)
@@ -1779,6 +1982,10 @@ const Engine = (() => {
     // Tool system
     pickupTool, getCharTool, getToolOwner, isToolAvailable, npcPickupTool,
     getToolBonus, rollChance, updatePlayerStatus,
+    // Escape system
+    getEscapeClueAtLocation, findEscapeClue, destroyEscapeClue, canEscape,
+    triggerMansionEscape, allKillersDead, aliveKillerCount, aliveSurvivorCount,
+    ESCAPE_CLUE_LOCATIONS,
     GAME_TOOLS, ROLE_DESCRIPTIONS,
     get state() { return state; },
     get lang() { return lang; },
