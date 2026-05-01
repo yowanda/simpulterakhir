@@ -70,7 +70,10 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan **8 dari 15 petunjuk** → semua killer terungkap & dieksekusi
   - **Killer Menang**: Eliminasi protagonis hingga tersisa 1 ATAU hancurkan cukup petunjuk agar protagonist tak bisa capai 8
   - **Killer Kalah**: Semua killer tereliminasi
-  - **Saksi Pembunuhan**: Jika NPC menyaksikan killer membunuh, killer langsung DIBURU oleh tim protagonis
+  - **Saksi + Buru + Eksekusi**: Jika killer ketahuan membunuh (ada saksi) atau gagal menyerang, killer langsung DIBURU oleh semua survivor. Jika killer ditemukan di ruangan dengan 2+ survivor → dieksekusi. Killer hanya selamat jika sembunyi sendirian.
+  - **Survivor Melawan**: Jika killer menyerang di ruangan dengan 2+ survivor → killer MATI (survivor fight back)
+  - **2 Killer vs 1 Survivor**: Jika 2+ killer di ruangan dengan 1 survivor → survivor 100% mati, tidak ada kesempatan
+  - **Killer Strategi**: Killer TIDAK bisa bantu/lindungi survivor. Fokus: memisahkan kelompok (divide, isolate, manipulate) lalu membunuh target yang sendirian
   - **Auto-Simulasi**: Jika player tereliminasi, NPC brain melanjutkan sampai ada pemenang
   - **Ringkasan Akhir**: Tampilkan semua karakter — siapa hidup, siapa mati, role masing-masing
 - **Trust-Kill Mechanic** — NPC bisa membunuh NPC lain karena ketidakpercayaan:
