@@ -1623,6 +1623,18 @@ const CharBrain = (() => {
     let narrative = '<div class="npc-round-narrative">';
 
     localEvents.forEach(event => {
+      let icon = '\u26A0\uFE0F';
+      if (event.type === 'death' || event.type === 'encounter_death' || event.type === 'witnessed_murder' || event.type === 'trust_kill') icon = '\uD83D\uDC80';
+      else if (event.type === 'killer_eliminated') icon = '\u2694\uFE0F';
+      else if (event.type === 'attack_failed' || event.type === 'encounter_escape') icon = '\uD83C\uDFC3';
+      else if (event.type === 'alliance_formed' || event.type === 'alliance') icon = '\uD83E\uDD1D';
+      else if (event.type === 'clue_found' || event.type === 'escape_clue_found') icon = '\uD83D\uDD0D';
+      else if (event.type === 'tool_found') icon = '\uD83D\uDEE0\uFE0F';
+      else if (event.type === 'framed' || event.type === 'manipulation') icon = '\uD83C\uDFAD';
+      else if (event.type === 'killer_sabotage' || event.type === 'sabotage') icon = '\uD83D\uDCA3';
+      else if (event.type === 'accusation') icon = '\u261D\uFE0F';
+      else if (event.type === 'confrontation') icon = '\u26A1';
+
       let cssClass = 'npc-event';
       if (event.type === 'death' || event.type === 'encounter_death') cssClass += ' npc-event-death';
       else if (event.type === 'attack_failed' || event.type === 'encounter_escape') cssClass += ' npc-event-danger';
@@ -1632,7 +1644,7 @@ const CharBrain = (() => {
       else if (event.type === 'killer_sabotage') cssClass += ' npc-event-death';
       else if (event.type === 'tool_found') cssClass += ' npc-event-clue';
 
-      narrative += `<p class="${cssClass}">${event.desc}</p>`;
+      narrative += `<p class="${cssClass}">${icon} ${event.desc}</p>`;
     });
 
     narrative += '</div>';
