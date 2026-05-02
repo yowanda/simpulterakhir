@@ -906,6 +906,14 @@ body {
   font-size: 0.65rem;
   color: #0a0908;
 }
+.tc-avatar-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin: 0 auto 0.2rem;
+  object-fit: cover;
+  display: block;
+}
 .tc-name {
   font-size: 0.65rem;
   font-weight: 600;
