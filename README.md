@@ -231,7 +231,7 @@ NPC bukan hanya bereaksi secara generik — mereka **bereaksi spesifik terhadap 
 - **NPC Movement Priority** — NPC survivor dan killer dipaksa bergerak jika sudah melakukan 2+ aksi pasif berturut-turut, mencegah NPC camping
 - **Global Action Memory** — sistem melacak jenis aksi yang dilakukan lintas reset untuk mencegah loop sejenis (observe→observe→observe)
 - **Location-Based Reset** — pindah ke lokasi baru me-reset aksi spesifik lokasi dan mereset staleness counter
-- **Max Opsi** — Survivor: 6 pilihan, Killer: 4 pilihan per node (brain interactive prioritas, 1 story max), shuffled setiap game
+- **Max Opsi** — Survivor: 3 pilihan, Killer: 2 pilihan per node (compact & focused, brain interactive prioritas, 1 story max), shuffled setiap game
 
 ### 7 Alat Unik
 Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat event terpicu di lokasi tertentu.
