@@ -241,6 +241,16 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'dimas', emotion: 'wary' }, action: { type: 'socialize', desc: '"Dimas, ketenangan forensikmu berguna. Tapi kenapa kau begitu tenang? Jurnalis selalu bertanya."' }, weight: 14 },
       { condition: { nearbyIncludes: 'farah', emotion: 'calm' }, action: { type: 'socialize', desc: '"Farah, aku ingin mewawancaraimu. Sebagai pewaris Wardhana, kau pasti tahu sejarah mansion ini."' }, weight: 12 },
 
+      // --- Player-reactive: Arya reacts to what the player is doing ---
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'investigate', desc: '"Aku juga melihatnya." Arya membantu investigasi pemain, memeriksa sisi lain ruangan.' }, weight: 22 },
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'confront', desc: '"Aku punya bukti tambahan." Arya mendukung tuduhan pemain dengan catatan dari recordernya.' }, weight: 20 },
+      { condition: { playerNearby: true, playerIsAlly: true, minDeaths: 1 }, action: { type: 'coordinate_defense', desc: 'Arya berbisik ke pemain: "Aku sudah susun timeline. Dengarkan — aku tahu siapa yang berbahaya."' }, weight: 24 },
+      { condition: { playerNearby: true, playerIsAlly: true, hasClue: true }, action: { type: 'share_clue', desc: 'Arya menarik pemain ke sudut ruangan: "Lihat ini — bukti ini mengubah segalanya." Dia berbagi semua yang ditemukan.' }, weight: 26 },
+      { condition: { playerNearby: true, playerIsEnemy: true }, action: { type: 'confront', desc: '"Kau menyembunyikan sesuatu." Arya menatap pemain tajam. Instingnya tidak pernah salah — atau begitulah yang dia percaya.' }, weight: 20 },
+      { condition: { playerNearby: true, playerLastAction: 'move', emotion: 'wary' }, action: { type: 'observe', desc: 'Arya memperhatikan pemain yang baru datang. "Dari mana kau? Apa yang kau lihat di sana?"' }, weight: 18 },
+      { condition: { playerNearby: false, playerIsAlly: true, minDanger: 40 }, action: { type: 'move', desc: 'Arya harus menemui pemain. Sebagai partner investigasi, mereka lebih kuat bersama.' }, weight: 16 },
+      { condition: { playerNearby: true, minPlayerSusp: 40 }, action: { type: 'question', desc: '"Aku ingin percaya padamu, tapi beberapa hal tidak masuk akal." Arya menginterogasi pemain secara halus.' }, weight: 18 },
+
       // --- Broad catch-all: different for every emotion so brain ALWAYS triggers ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Arya diam-diam mencatat siapa bicara dengan siapa dan siapa yang menghindari kontak mata.' }, weight: 10 },
       { condition: { emotion: 'wary', isAlone: false }, action: { type: 'investigate', desc: 'Arya memeriksa ruangan, mata jurnalisnya menangkap sesuatu yang tidak terlihat oleh yang lain.' }, weight: 10 },
@@ -325,6 +335,14 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'dimas', emotion: 'calm' }, action: { type: 'socialize', desc: '"Dimas, forensikmu bisa berguna. Tapi di mansion ini, sains tidak selalu menang atas kegelapan."' }, weight: 12 },
       { condition: { nearbyIncludes: 'kira', emotion: 'wary' }, action: { type: 'question', desc: '"Kai, apa yang kau temukan di server mansion? Aku tahu infrastrukturnya — tapi apa yang disembunyikannya?"' }, weight: 16 },
 
+      // --- Player-reactive: Niko (mastermind) manipulates/helps based on player actions ---
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'observe', desc: 'Niko mengamati pemain dari kejauhan. "Menarik... kau mencari di tempat yang tepat. Atau yang salah."' }, weight: 22 },
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'manipulate', desc: '"Tuduhan yang berani." Niko tersenyum ke pemain. "Tapi apakah kau yakin, atau hanya menebak?"' }, weight: 20 },
+      { condition: { playerNearby: true, playerIsAlly: true }, action: { type: 'plan', desc: 'Niko berbagi peta mansion dengan pemain. "Aku tahu setiap lorong rahasia di sini. Kita bisa memanfaatkannya."' }, weight: 24 },
+      { condition: { playerNearby: true, playerIsEnemy: true }, action: { type: 'manipulate', desc: 'Niko menyebarkan rumor tentang pemain ke NPC lain. Mastermind tidak pernah menyerang langsung.' }, weight: 22 },
+      { condition: { playerNearby: true, minPlayerSusp: 30 }, action: { type: 'question', desc: '"Kau tahu, beberapa orang di sini mulai membicarakanmu." Niko menatap pemain dengan senyum kalkulatif.' }, weight: 18 },
+      { condition: { playerNearby: false, playerIsAlly: true }, action: { type: 'move', desc: 'Niko memutuskan untuk menemui pemain. Aliansi strategis perlu dijaga — terutama dengan orang yang berguna.' }, weight: 14 },
+
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'manipulate', desc: 'Niko menyebar informasi setengah benar ke kelompok. Membuat mereka saling curiga — sementara dia mengamati.' }, weight: 10 },
       { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Niko membuka panel tersembunyi di dinding. Mansion ini penuh rahasia — dan dia tahu semuanya.' }, weight: 12 },
@@ -407,6 +425,15 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'niko', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Sera mengamati Niko. Micro-expression terlalu terkontrol. "Kau menyembunyikan sesuatu, Niko. Pupilmu berkhianat."' }, weight: 16 },
       { condition: { nearbyIncludes: 'vira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Vira, aku bisa melihat kau menyimpan trauma. Aku terlatih mendengarkan. Ceritakan." Sera menawarkan dukungan psikologis.' }, weight: 14 },
 
+      // --- Player-reactive: Sera (profiler) reads the player ---
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'observe', desc: 'Sera mengamati cara pemain menginvestigasi. "Menarik... caramu mencari menunjukkan sesuatu tentang dirimu."' }, weight: 22 },
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'observe', desc: 'Sera memperhatikan reaksi semua orang saat pemain menuduh. "Bukan tuduhannya yang penting — tapi reaksi mereka."' }, weight: 20 },
+      { condition: { playerNearby: true, playerIsAlly: true, hasClue: true }, action: { type: 'share_clue', desc: '"Aku punya profil psikologis lengkap. Gabungkan dengan buktimu — kita bisa mengidentifikasi killer." Sera berbagi analisisnya.' }, weight: 26 },
+      { condition: { playerNearby: true, playerIsEnemy: true }, action: { type: 'observe', desc: 'Sera mencatat setiap gerakan pemain. "Pupil melebar, detak jantung meningkat... kau menyembunyikan sesuatu."' }, weight: 20 },
+      { condition: { playerNearby: true, minPlayerSusp: 50 }, action: { type: 'confront', desc: '"Aku sudah membaca profilmu." Sera menatap pemain. "Dan ada ketidaksesuaian yang menggangguku."' }, weight: 22 },
+      { condition: { playerNearby: false, playerIsAlly: true, minDanger: 50 }, action: { type: 'move', desc: 'Sera memutuskan mencari pemain. Profilernya butuh data langsung — dan pemain adalah satu-satunya yang bisa dipercaya.' }, weight: 16 },
+      { condition: { playerNearby: true, playerLastAction: 'talk' }, action: { type: 'socialize', desc: '"Kau pandai membaca orang." Sera tersenyum ke pemain. "Kita harusnya bekerja sama dari awal."' }, weight: 18 },
+
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Sera menganalisis dinamika kelompok — siapa memimpin, siapa mengikuti, siapa yang terlalu diam.' }, weight: 10 },
       { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Sera menulis profil psikologis lengkap setiap orang. Pola mulai terbentuk.' }, weight: 12 },
@@ -487,6 +514,15 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'kira', emotion: 'wary' }, action: { type: 'socialize', desc: '"Kai, lo bisa hack apapun kan? Bantu gue buka pintu mansion ini. Gue cover lo."' }, weight: 14 },
       { condition: { nearbyIncludes: 'farah', emotion: 'calm' }, action: { type: 'confront', desc: '"Farah, lo pewaris. Lo punya kunci rumah ini. Jangan bilang lo nggak bisa buka pintu keluar."' }, weight: 14 },
 
+      // --- Player-reactive: Juno (rebel) — impulsive, loyal, direct ---
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'confront', desc: '"Lo berani nuduh? GUE LEBIH BERANI." Juno langsung mendukung pemain tanpa pikir panjang.' }, weight: 24 },
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'guard', desc: 'Juno berdiri jaga sementara pemain menginvestigasi. "Lo cari, gue jaga. Deal?"' }, weight: 20 },
+      { condition: { playerNearby: true, playerIsAlly: true, minDeaths: 1 }, action: { type: 'coordinate_defense', desc: '"Lo dan gue, kita tim. Gue nggak peduli siapa lagi — KITA yang selamat malam ini."' }, weight: 26 },
+      { condition: { playerNearby: true, playerIsEnemy: true }, action: { type: 'confront', desc: '"GUE NGGAK PERCAYA SAMA LO." Juno mendekat ke pemain dengan tangan mengepal. "Buktiin gue salah."' }, weight: 24 },
+      { condition: { playerNearby: true, minPlayerSusp: 40 }, action: { type: 'confront', desc: '"Banyak yang curiga sama lo. Gue mau denger langsung dari mulut lo — APA YANG LO SEMBUNYIIN?"' }, weight: 22 },
+      { condition: { playerNearby: false, playerIsAlly: true, minDanger: 30 }, action: { type: 'move', desc: 'Juno bergerak cepat mencari pemain. Loyalitas rebel: sekali jadi tim, nggak pernah ditinggal.' }, weight: 18 },
+      { condition: { playerNearby: true, playerLastAction: 'vote' }, action: { type: 'accuse', desc: '"VOTING? GUE ALL IN!" Juno langsung ikut voting tanpa ragu. Impulsif sampai akhir.' }, weight: 22 },
+
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Juno memeriksa jendela dan pintu. "Kalau ada jalan keluar, gue yang pertama nemu."' }, weight: 10 },
       { condition: { emotion: 'calm', isAlone: true }, action: { type: 'move', desc: 'Juno jalan-jalan sendirian, gelisah. Diam di satu tempat bukan gayanya.' }, weight: 12 },
@@ -565,6 +601,14 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'dimas', emotion: 'wary' }, action: { type: 'observe', desc: 'Vira menatap Dimas. Terlalu tenang. Terlalu terkontrol. Seperti seseorang yang sudah tahu apa yang akan terjadi.' }, weight: 14 },
       { condition: { nearbyIncludes: 'kira', emotion: 'calm' }, action: { type: 'socialize', desc: '"Kai, bisakah kau cari rekaman 6 bulan lalu? Aku perlu tahu apa yang terjadi di malam itu — yang tidak aku ingat."' }, weight: 14 },
       { condition: { nearbyIncludes: 'farah', emotion: 'wary' }, action: { type: 'socialize', desc: '"Farah, keluarga Wardhana memiliki mansion ini. Apa kau tahu kenapa kami semua diundang?"' }, weight: 12 },
+
+      // --- Player-reactive: Vira (survivor) — trauma-driven, follows strength ---
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'observe', desc: '"Hati-hati..." Vira berbisik ke pemain. "Terakhir kali seseorang menyelidiki terlalu dalam... mereka tidak kembali."' }, weight: 20 },
+      { condition: { playerNearby: true, playerIsAlly: true }, action: { type: 'guard', desc: 'Vira menempel di dekat pemain. Kehadiran seseorang yang kuat membuatnya merasa sedikit lebih aman.' }, weight: 22 },
+      { condition: { playerNearby: true, playerIsEnemy: true }, action: { type: 'flee', desc: 'Vira mundur perlahan dari pemain. Instingnya berteriak: orang ini berbahaya.' }, weight: 22 },
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'observe', desc: 'Vira menyaksikan pemain menuduh seseorang. Matanya yang trauma mencari tanda — apakah ini benar atau panik?' }, weight: 18 },
+      { condition: { playerNearby: true, minPlayerSusp: 50, minDeaths: 2 }, action: { type: 'flee', desc: '"Tidak... tidak lagi." Vira menatap pemain dengan mata ketakutan dan berlari. Trauma mengambil alih logika.' }, weight: 24 },
+      { condition: { playerNearby: false, playerIsAlly: true }, action: { type: 'move', desc: 'Vira mencari pemain dengan tangan gemetar. Sendirian di mansion ini seperti mimpi buruk yang berulang.' }, weight: 16 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Vira duduk di sudut, memeluk lututnya. Matanya tidak pernah lepas dari pintu keluar.' }, weight: 10 },
@@ -646,6 +690,15 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Reza menatap Lana. Penulis. Kreatif. Terlalu pintar berbohong. "Lana, dalam pengalamanku, penulis fiksi adalah pembohong terbaik."' }, weight: 16 },
       { condition: { nearbyIncludes: 'farah', emotion: 'wary' }, action: { type: 'question', desc: '"Farah, siapa yang mengundang kami semua ke sini? Sebagai pewaris, kau pasti tahu motifnya."' }, weight: 14 },
 
+      // --- Player-reactive: Reza (detective) — methodical, professional, interrogates ---
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'investigate', desc: '"Teknik investigasimu boleh juga." Reza bekerja bersama pemain, memeriksa bukti dengan mata detektif.' }, weight: 24 },
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'question', desc: '"Tunggu. Tuduhanmu butuh bukti." Reza menahan pemain. "Aku sudah terlalu sering lihat kasus gagal karena emosi."' }, weight: 22 },
+      { condition: { playerNearby: true, playerIsAlly: true, hasClue: true }, action: { type: 'share_clue', desc: 'Reza membuka buku catatannya. "Aku sudah susun timeline. Lihat — ada celah waktu yang tidak bisa dijelaskan oleh siapapun."' }, weight: 26 },
+      { condition: { playerNearby: true, playerIsEnemy: true }, action: { type: 'question', desc: '"Aku perlu kau menjawab beberapa pertanyaan." Reza menatap pemain dengan tatapan interogasi. "Di mana kau satu jam yang lalu?"' }, weight: 24 },
+      { condition: { playerNearby: true, minPlayerSusp: 50 }, action: { type: 'confront', desc: '"Bukti menunjuk ke satu arah." Reza menunjukkan catatannya ke pemain. "Dan arah itu menuju KAU."' }, weight: 24 },
+      { condition: { playerNearby: false, playerIsAlly: true, minDeaths: 1 }, action: { type: 'move', desc: 'Reza mencari pemain. Partnership investigasi terlalu berharga untuk dibuang — terutama saat kasus memanas.' }, weight: 16 },
+      { condition: { playerNearby: true, playerLastAction: 'talk' }, action: { type: 'socialize', desc: '"Dalam investigasi, percakapan adalah senjata paling kuat." Reza berbagi teknik interogasinya dengan pemain.' }, weight: 18 },
+
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Reza memeriksa ruangan secara metodis. "Standard sweep — cek setiap sudut, setiap celah."' }, weight: 10 },
       { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Reza mengeluarkan buku catatan usangnya. Menulis timeline, menandai inkonsistensi.' }, weight: 12 },
@@ -712,6 +765,13 @@ const CharDB = (() => {
       { condition: { emotion: 'wary', minDanger: 30 }, action: { type: 'observe', desc: 'Lana mencatat di bukunya. Setiap detail bisa jadi petunjuk — atau bahan novel selanjutnya.' }, weight: 12 },
       { condition: { minDeaths: 1, emotion: 'calm' }, action: { type: 'socialize', desc: 'Lana menenangkan kelompok dengan storytelling. "Dalam setiap cerita, ada harapan. Kita akan menemukan jalan keluar."' }, weight: 14 },
 
+      // --- Player-reactive: Lana (puppeteer as survivor) — manipulative, observant ---
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'manipulate', desc: '"Investigasi yang menarik." Lana tersenyum ke pemain. "Tapi kau melewatkan sesuatu — aku lihat dari angle novelisku."' }, weight: 22 },
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'observe', desc: 'Lana menyaksikan pemain menuduh. Matanya menulis setiap kata di kepalanya. "Plot twist yang bagus..."' }, weight: 20 },
+      { condition: { playerNearby: true, playerIsAlly: true }, action: { type: 'plan', desc: '"Aku sudah menulis skenario ini di kepalaku." Lana berbagi strategi novelistiknya dengan pemain.' }, weight: 22 },
+      { condition: { playerNearby: true, playerIsEnemy: true }, action: { type: 'manipulate', desc: 'Lana berbisik ke NPC lain sambil melirik pemain. Puppeteer selalu punya boneka baru.' }, weight: 24 },
+      { condition: { playerNearby: true, minPlayerSusp: 40 }, action: { type: 'question', desc: '"Kau karakter yang menarik." Lana mendekat. "Tapi dalam novelku, karakter sepertimu biasanya... antagonis."' }, weight: 20 },
+
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'manipulate', desc: 'Lana menyebarkan "gosip" strategis. Setiap kata dirancang untuk memecah aliansi.' }, weight: 10 },
       { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Lana menulis. Bukan novel — tapi catatan tentang semua orang. Kelemahan mereka. Ketakutan mereka.' }, weight: 12 },
@@ -777,6 +837,14 @@ const CharDB = (() => {
       { condition: { emotion: 'suspicious', minDeaths: 2 }, action: { type: 'investigate', desc: 'Dimas memeriksa pola gerakan semua orang. Waktu, lokasi, alibi — semuanya diplot di kepalanya.' }, weight: 14 },
       { condition: { emotion: 'wary', minDanger: 40 }, action: { type: 'barricade', desc: 'Dimas memblokir pintu dengan presisi teknis. "Perimeter aman. Tidak ada yang masuk tanpa sepengetahuan kita."' }, weight: 14 },
       { condition: { minDeaths: 1, emotion: 'calm' }, action: { type: 'observe', desc: 'Dimas mengamati reaksi semua orang terhadap kematian. "Psikologi berkabung versus guilt response — perbedaannya halus."' }, weight: 14 },
+
+      // --- Player-reactive: Dimas (forensic) — clinical, analytical, reads bodies ---
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'investigate', desc: '"Biar aku analisis bukti itu." Dimas mengambil alih investigasi pemain dengan presisi forensik.' }, weight: 24 },
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'observe', desc: 'Dimas mengukur detak jantung pemain saat menuduh. "Tuduhanmu... jujur. Cortisol dan pupilmu konsisten."' }, weight: 20 },
+      { condition: { playerNearby: true, playerIsAlly: true, hasClue: true }, action: { type: 'share_clue', desc: '"Aku punya analisis forensik." Dimas membagi data ke pemain. "Pola darah, sidik jari — semuanya menunjuk ke satu orang."' }, weight: 26 },
+      { condition: { playerNearby: true, playerIsEnemy: true }, action: { type: 'observe', desc: 'Dimas diam-diam mengambil sampel dari pemain. Sidik jari, pola gerakan, micro-expression. Data tidak pernah bohong.' }, weight: 22 },
+      { condition: { playerNearby: true, minPlayerSusp: 50 }, action: { type: 'confront', desc: '"Aku sudah analisis semua data." Dimas menatap pemain tanpa emosi. "Kau cocok dengan profil tersangka."' }, weight: 24 },
+      { condition: { playerNearby: false, playerIsAlly: true }, action: { type: 'move', desc: 'Dimas butuh partner untuk analisis silang. Pemain adalah satu-satunya yang cukup logis untuk diajak berpikir.' }, weight: 14 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'observe', desc: 'Dimas mengamati setiap orang dengan detachment klinis. Data. Pola. Probabilitas.' }, weight: 10 },
@@ -850,6 +918,14 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'vira', emotion: 'calm' }, action: { type: 'socialize', desc: '"Vira, enam bulan lalu apa ada sistem keamanan yang sama? Aku perlu tau arsitektur lamanya."' }, weight: 14 },
       { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Kai cek log Lana. "Menarik... kau browsing blueprint mansion tiga bulan sebelum pesta ini."' }, weight: 16 },
       { condition: { nearbyIncludes: 'dimas', emotion: 'wary' }, action: { type: 'observe', desc: 'Kai menatap Dimas. "Digital footprint-mu terlalu bersih. Orang normal meninggalkan jejak. Kau tidak."' }, weight: 16 },
+
+      // --- Player-reactive: Kira/Kai (hacker) — tech-savvy, helpful with data ---
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'investigate', desc: '"Tunggu, aku punya data buat itu." Kai membuka laptop dan menunjukkan log CCTV ke pemain.' }, weight: 24 },
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'investigate', desc: '"Mau bukti digital?" Kai langsung cek alibi target yang dituduh pemain lewat door access log.' }, weight: 22 },
+      { condition: { playerNearby: true, playerIsAlly: true }, action: { type: 'share_clue', desc: '"Aku nemu sesuatu." Kai menunjukkan layar laptop ke pemain. "Log ini harusnya udah dihapus — tapi aku recover."' }, weight: 26 },
+      { condition: { playerNearby: true, playerIsEnemy: true }, action: { type: 'observe', desc: 'Kai diam-diam trace aktivitas digital pemain. "Menarik... kau akses ruangan yang nggak seharusnya kau akses."' }, weight: 22 },
+      { condition: { playerNearby: true, minPlayerSusp: 40 }, action: { type: 'confront', desc: '"Aku track pergerakan semua orang lewat WiFi." Kai menunjuk pemain. "Dan pattern-mu... anomali."' }, weight: 22 },
+      { condition: { playerNearby: false, playerIsAlly: true, minDanger: 40 }, action: { type: 'move', desc: 'Kai butuh protection saat hacking. Pemain paling reliable buat jaga punggungnya.' }, weight: 16 },
 
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'investigate', desc: 'Kai scan jaringan WiFi. "Hm, ada device baru yang terkoneksi... siapa yang bawa phone ke sini?"' }, weight: 10 },
@@ -927,6 +1003,14 @@ const CharDB = (() => {
       { condition: { nearbyIncludes: 'lana', emotion: 'suspicious' }, action: { type: 'observe', desc: 'Farah menatap Lana. Penulis yang terlalu tahu. "Lana, novelmu... itu bukan fiksi, kan?"' }, weight: 16 },
       { condition: { nearbyIncludes: 'dimas', emotion: 'calm' }, action: { type: 'observe', desc: 'Farah memperhatikan Dimas. "Forensik. Menarik. Tapi kenapa mahasiswa forensik ada di pesta keluarga Wardhana?"' }, weight: 14 },
 
+      // --- Player-reactive: Farah (heiress) — uses resources/influence based on player ---
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'share_clue', desc: '"Kau menyelidiki tempat yang tepat." Farah membuka brankas tersembunyi untuk pemain. "Ini milik keluargaku — gunakan."' }, weight: 24 },
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'socialize', desc: '"Tuduhan yang berani." Farah menatap pemain. "Aku bisa menjamin keamananmu kalau kau benar. Tapi kalau salah..."' }, weight: 20 },
+      { condition: { playerNearby: true, playerIsAlly: true }, action: { type: 'coordinate_defense', desc: '"Aku punya akses ke safe room dan brankas keluarga." Farah menawarkan resource ke pemain. "Aliansi kita saling menguntungkan."' }, weight: 24 },
+      { condition: { playerNearby: true, playerIsEnemy: true }, action: { type: 'manipulate', desc: 'Farah berbisik ke NPC lain: "Pemain itu tidak bisa dipercaya. Aku akan pastikan mereka tidak dapat dukungan."' }, weight: 22 },
+      { condition: { playerNearby: true, minPlayerSusp: 50 }, action: { type: 'confront', desc: '"Aku pewaris Wardhana. Aku bisa membuatmu dikeluarkan dari mansion ini." Farah mengancam pemain dengan otoritasnya.' }, weight: 22 },
+      { condition: { playerNearby: false, playerIsAlly: true }, action: { type: 'move', desc: 'Farah mencari pemain. Sendirian dia hanya pewaris kaya — bersama pemain, dia punya proteksi.' }, weight: 14 },
+
       // --- Broad catch-all ---
       { condition: { emotion: 'calm', isAlone: false }, action: { type: 'socialize', desc: '"Aku bisa membayar siapapun untuk membantu." Farah menggunakan satu-satunya senjata yang dia tahu — uang.' }, weight: 10 },
       { condition: { emotion: 'calm', isAlone: true }, action: { type: 'investigate', desc: 'Farah memeriksa dokumen keluarga yang tersebar di meja. Rahasia Wardhana-Aldridge tertulis di sini.' }, weight: 12 },
@@ -1001,6 +1085,13 @@ const CharDB = (() => {
       { condition: { chapter: 5, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Bab terakhir. "Setiap cerita butuh ending. Dan aku yang menulis milikmu." Lana menyerang.' }, weight: 30 },
       { condition: { chapter: 5, isAlone: false }, action: { type: 'divide', desc: 'Final chapter. Lana membuat kepanikan terakhir — ledakan emosi yang memecah kelompok.' }, weight: 28 },
 
+      // --- Player-reactive (killer): Lana targets/manipulates the player ---
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'distract', desc: '"Oh! Aku juga menemukan sesuatu!" Lana mengalihkan pemain dari bukti yang sebenarnya.' }, weight: 26 },
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'frame', desc: 'Lana menangis saat pemain menuduh seseorang. "Kau yakin itu benar? Karena aku lihat orang lain..." — redirect suspicion.' }, weight: 24 },
+      { condition: { playerNearby: true, playerIsAlly: true }, action: { type: 'manipulate', desc: '"Aku percaya padamu." Lana merangkul pemain — menjaganya tetap dekat, dan tetap tidak curiga.' }, weight: 24 },
+      { condition: { playerNearby: true, minPlayerSusp: 40 }, action: { type: 'frame', desc: 'Lana diam-diam menyebarkan rumor tentang pemain ke survivor lain. Redirect perhatian.' }, weight: 22 },
+      { condition: { playerNearby: false, emotion: 'hunting' }, action: { type: 'move', desc: 'Lana mencari pemain. Target utama harus diawasi — atau disingkirkan.' }, weight: 20 },
+
       // --- Broad catch-all killer ---
       { condition: { emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Lana tersenyum dan bersosialisasi. Serigala di antara domba.' }, weight: 8 },
       { condition: { emotion: 'hunting' }, action: { type: 'move', desc: 'Lana mencari posisi strategis — dekat target, jauh dari saksi.' }, weight: 8 },
@@ -1064,6 +1155,13 @@ const CharDB = (() => {
       { condition: { chapter: 5, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Bab terakhir. Dimas menunjukkan wajah aslinya. "Aku bukan mahasiswa. Aku instrumen."' }, weight: 30 },
       { condition: { chapter: 5, isAlone: false }, action: { type: 'divide', desc: 'Final. Dimas membuat kepanikan terakhir — sabotase sistem mansion untuk memecah kelompok.' }, weight: 28 },
 
+      // --- Player-reactive (killer): Dimas uses forensic knowledge to deceive player ---
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'manipulate', desc: '"Aku bisa bantu analisis." Dimas menawarkan bantuan forensik — untuk mengacaukan investigasi pemain dari dalam.' }, weight: 26 },
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'maintain_cover', desc: 'Dimas dengan tenang menunjukkan "bukti forensik" yang mengarah ke orang lain. "Data tidak bohong — tapi aku yang kontrol datanya."' }, weight: 24 },
+      { condition: { playerNearby: true, playerIsAlly: true }, action: { type: 'maintain_cover', desc: 'Dimas tersenyum ke pemain. Partner forensik yang sempurna — dan predator yang sabar.' }, weight: 22 },
+      { condition: { playerNearby: true, minPlayerSusp: 30 }, action: { type: 'frame', desc: 'Dimas menanam "bukti forensik" yang mengarah ke pemain. Sidik jari yang ditempatkan dengan hati-hati.' }, weight: 24 },
+      { condition: { playerNearby: false, emotion: 'hunting' }, action: { type: 'move', desc: 'Dimas mencari pemain. Target yang paling berbahaya harus diawasi — atau dinetralkan.' }, weight: 20 },
+
       // --- Broad catch-all killer ---
       { condition: { emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Dimas berdiri diam, mengamati. Ketenangan klinis yang menyembunyikan predator.' }, weight: 8 },
       { condition: { emotion: 'hunting' }, action: { type: 'move', desc: 'Dimas bergerak tanpa suara. Mencari target yang terpisah dari kelompok.' }, weight: 8 },
@@ -1121,6 +1219,13 @@ const CharDB = (() => {
       { condition: { chapter: 5, isAlone: true }, action: { type: 'trap', desc: 'Niko mengaktifkan jebakan-jebakan tersembunyi mansion — warisan keluarganya yang mematikan.' }, weight: 24 },
       { condition: { chapter: 5, emotion: 'executing' }, action: { type: 'eliminate', desc: 'Bab terakhir. Niko berdiri di aula utama. "Selamat datang di endgame. Mansion ini kuburan kalian."' }, weight: 30 },
       { condition: { chapter: 5, isAlone: false }, action: { type: 'sabotage', desc: 'Final. Niko mengunci semua pintu mansion dari panel kontrol. "Tidak ada yang keluar."' }, weight: 28 },
+
+      // --- Player-reactive (killer): Niko uses mansion knowledge against the player ---
+      { condition: { playerNearby: true, playerLastAction: 'investigate' }, action: { type: 'manipulate', desc: '"Biar kutunjukkan tempat yang lebih menarik." Niko mengarahkan pemain ke jalan buntu — tuan rumah yang berbahaya.' }, weight: 26 },
+      { condition: { playerNearby: true, playerLastAction: 'accuse' }, action: { type: 'manipulate', desc: '"Tuduhan yang menarik." Niko tersenyum. "Tapi sebagai tuan rumah, aku punya perspektif yang berbeda..." — redirect.' }, weight: 24 },
+      { condition: { playerNearby: true, playerIsAlly: true }, action: { type: 'maintain_cover', desc: '"Kita satu tim." Niko menawarkan akses ke ruangan rahasia — menjebak pemain dalam aliansi palsu.' }, weight: 24 },
+      { condition: { playerNearby: true, minPlayerSusp: 30 }, action: { type: 'frame', desc: 'Niko "menemukan" bukti di dekat pemain. "Hmm, ini menarik..." Tuan rumah yang menyiapkan perangkap.' }, weight: 24 },
+      { condition: { playerNearby: false, emotion: 'hunting' }, action: { type: 'sabotage', desc: 'Niko mengunci koridor menuju pemain. Mansion ini senjatanya — dan pemain adalah target utama.' }, weight: 22 },
 
       // --- Broad catch-all killer ---
       { condition: { emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Niko tersenyum. Tuan rumah yang sempurna. Tidak ada yang curiga.' }, weight: 8 },

@@ -77,7 +77,7 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - Siapa yang ada di dekat mereka
   - Clue yang sudah ditemukan
   - Aliansi dan musuh
-- **550+ Decision Entries** — 39-58 keputusan per karakter survivor + 34-36 per killer (termasuk chapters 4-5 endgame) dengan weighted random selection + catch-all fallbacks
+- **700+ Decision Entries** — 45-65 keputusan per karakter survivor + 39-41 per killer (termasuk player-reactive branches, chapters 4-5 endgame) dengan weighted random selection + catch-all fallbacks
 - **Sistem Win/Loss Dinamis** — hasil ditentukan oleh aksi NPC, bukan ending pre-scripted:
   - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan **5 dari 8 petunjuk** → semua killer terungkap & dieksekusi ATAU temukan **Kunci Master** (5% chance muncul di lokasi acak) → misi petunjuk langsung selesai
   - **Killer Menang**: Eliminasi protagonis hingga tersisa 1 ATAU hancurkan cukup petunjuk agar protagonist tak bisa capai 5
@@ -113,6 +113,48 @@ NPC tidak hanya bereaksi — mereka **aktif berpikir dan bertindak di background
 - **Spontaneous Confrontation** — NPC dengan suspicion >55% terhadap NPC lain bisa mengonfrontasi secara spontan (20% chance). Jika benar → suspicion +8%, jika salah → trust turun
 - **Tense Encounters** — Ketika NPC bertemu orang yang sangat dicurigai (>60%), terjadi encounter dramatik dengan narasi ketegangan
 - **Max 3 background events per ronde** — mencegah spam narasi, hanya event paling impactful yang ditampilkan
+
+### Player-Aware Brain Tree System (Dynamic Story Connection)
+NPC bukan hanya bereaksi secara generik — mereka **bereaksi spesifik terhadap karakter yang dipilih pemain** dan gaya bermain pemain:
+
+**Player-Reactive Decision Branches:**
+- Setiap karakter (10 survivor + 3 killer) punya **cabang keputusan khusus** yang trigger berdasarkan:
+  - `playerNearby` — apakah pemain ada di lokasi yang sama
+  - `playerLastAction` — aksi terakhir pemain (investigate, accuse, move, talk, vote, ally)
+  - `playerIsAlly/playerIsEnemy` — hubungan NPC dengan pemain
+  - `minPlayerSusp` — level kecurigaan NPC terhadap pemain
+- **Contoh reaksi per archetype:**
+  - **Arya (Investigator)**: Membantu investigasi pemain, berbagi bukti, menginterogasi jika curiga
+  - **Sera (Profiler)**: Membaca body language pemain, profiling psikologis, berbagi analisis
+  - **Juno (Rebel)**: Langsung mendukung/menentang tanpa pikir panjang, loyalitas absolut
+  - **Niko (Mastermind)**: Manipulasi halus, berbagi info strategis ke ally, menyebarkan rumor ke enemy
+  - **Vira (Survivor)**: Mengikuti pemain yang kuat, kabur dari yang dicurigai, trauma-driven reaction
+  - **Reza (Detective)**: Interogasi profesional, berbagi timeline, menahan tuduhan prematur
+  - **Kai (Hacker)**: Menyediakan bukti digital, cek alibi lewat log, track pergerakan
+  - **Farah (Heiress)**: Menawarkan resource/akses, mengancam dengan otoritas, negosiasi
+  - **Lana (Killer)**: Mengalihkan investigasi, frame pemain, redirect suspicion
+  - **Dimas (Killer)**: Menanam bukti palsu, menawarkan "bantuan" forensik palsu
+  - **Niko (Killer)**: Mengarahkan ke jalan buntu, mengunci koridor, memanipulasi infrastruktur
+
+**Player Action Influence System:**
+- Game melacak **10 aksi terakhir pemain** (`playerActionHistory`)
+- NPC menganalisis pola bermain pemain secara real-time:
+  - **Pemain investigatif** (3+ investigate/observe) → NPC ikut terinspirasi mencari bukti, suspicion killer naik
+  - **Pemain agresif** (2+ accuse/attack/vote) → NPC jadi lebih berani bertindak, tension naik
+  - **Pemain sosial** (3+ talk/ally) → Trust dengan NPC naik lebih cepat, aliansi terbentuk lebih mudah
+
+**Player-Aware Background Events:**
+- NPC di lokasi pemain bereaksi spesifik terhadap aksi terakhir pemain (40% chance per NPC)
+- NPC di lokasi lain membicarakan pemain di background (gossip positif/negatif berdasarkan trust/suspicion)
+- Killer NPC aktif menargetkan pemain — redirect suspicion, framing, manipulasi
+- Personality clash/sync events — interaksi unik berdasarkan kombinasi archetype pemain dan NPC
+- Event prioritas: player-relevant events diprioritaskan (max 2 player + 2 general = 4 per ronde)
+
+**Pemain Bisa Kalah:**
+- NPC survivor bisa salah curiga ke pemain → trust drop, bahkan trust-kill
+- NPC killer redirect suspicion ke pemain → pemain jadi target voting
+- NPC bisa memulai voting eliminasi terhadap pemain jika suspicion tinggi
+- Spontaneous confrontation dari NPC → pemain harus hati-hati dengan setiap aksi
 
 ### WhatsApp-Style Chat UI (Dialog-Only Mode)
 - **100% Dialog-Focused** — cerita dibangun SEPENUHNYA lewat percakapan antar karakter. Narasi panjang dihilangkan total. Plot berkembang lewat dialog, bukan novel

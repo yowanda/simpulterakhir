@@ -263,6 +263,10 @@ const CharBrain = (() => {
   }
 
   function buildContextKey(mind, gameState, allMinds) {
+    const pc = gameState.playerCharacter || 'arin';
+    const playerLoc = gameState.playerLocation || 'aula_utama';
+    const pcProfile = typeof CharDB !== 'undefined' ? CharDB.getProfile(pc) : null;
+    const playerHistory = gameState.playerActionHistory || [];
     return {
       emotion: mind.emotion,
       chapter: gameState.chapter,
@@ -276,7 +280,13 @@ const CharBrain = (() => {
       nearbyChars: Object.values(allMinds).filter(m => m !== mind && m.location === mind.location && gameState.alive[m.name]).map(m => m.name),
       tension: mind.tension,
       allies: mind.allies,
-      enemies: mind.enemies
+      enemies: mind.enemies,
+      playerNearby: mind.location === playerLoc,
+      playerArchetype: pcProfile && pcProfile.personality ? pcProfile.personality.archetype : 'unknown',
+      playerLastAction: playerHistory.length > 0 ? playerHistory[playerHistory.length - 1] : null,
+      playerIsAlly: mind.allies.includes(pc),
+      playerIsEnemy: mind.enemies.includes(pc),
+      playerSusp: mind.suspicions[pc] || 0
     };
   }
 
@@ -294,6 +304,11 @@ const CharBrain = (() => {
       if (d.condition.location && d.condition.location !== ctx.location) return false;
       if (d.condition.nearbyIncludes && !ctx.nearbyChars.includes(d.condition.nearbyIncludes)) return false;
       if (d.condition.nearbyExcludes && ctx.nearbyChars.includes(d.condition.nearbyExcludes)) return false;
+      if (d.condition.playerNearby !== undefined && d.condition.playerNearby !== ctx.playerNearby) return false;
+      if (d.condition.playerLastAction && d.condition.playerLastAction !== ctx.playerLastAction) return false;
+      if (d.condition.playerIsAlly !== undefined && d.condition.playerIsAlly !== ctx.playerIsAlly) return false;
+      if (d.condition.playerIsEnemy !== undefined && d.condition.playerIsEnemy !== ctx.playerIsEnemy) return false;
+      if (d.condition.minPlayerSusp && ctx.playerSusp < d.condition.minPlayerSusp) return false;
       return true;
     });
 
@@ -324,6 +339,11 @@ const CharBrain = (() => {
       if (d.condition.location && d.condition.location !== ctx.location) return false;
       if (d.condition.nearbyIncludes && !ctx.nearbyChars.includes(d.condition.nearbyIncludes)) return false;
       if (d.condition.nearbyExcludes && ctx.nearbyChars.includes(d.condition.nearbyExcludes)) return false;
+      if (d.condition.playerNearby !== undefined && d.condition.playerNearby !== ctx.playerNearby) return false;
+      if (d.condition.playerLastAction && d.condition.playerLastAction !== ctx.playerLastAction) return false;
+      if (d.condition.playerIsAlly !== undefined && d.condition.playerIsAlly !== ctx.playerIsAlly) return false;
+      if (d.condition.playerIsEnemy !== undefined && d.condition.playerIsEnemy !== ctx.playerIsEnemy) return false;
+      if (d.condition.minPlayerSusp && ctx.playerSusp < d.condition.minPlayerSusp) return false;
       return true;
     });
     if (matches.length === 0) return null;
@@ -1172,8 +1192,179 @@ const CharBrain = (() => {
       }
     });
 
-    // Limit background events to prevent spam (max 3 per round)
-    return bgEvents.slice(0, 3);
+    // 8. PLAYER-AWARE REACTIONS: NPCs react specifically to the player character's actions/presence
+    const playerLoc = gameState.playerLocation || 'aula_utama';
+    const playerHistory = gameState.playerActionHistory || [];
+    const lastPlayerAction = playerHistory.length > 0 ? playerHistory[playerHistory.length - 1] : null;
+    const pcPersonality = typeof CharDB !== 'undefined' ? CharDB.getProfile(pc) : null;
+    const pcArchetype = pcPersonality && pcPersonality.personality ? pcPersonality.personality.archetype : 'unknown';
+
+    // NPCs at the same location as the player react to their presence
+    const npcsAtPlayerLoc = Object.keys(minds).filter(n =>
+      n !== pc && gameState.alive[n] && minds[n] && minds[n].location === playerLoc
+    );
+
+    npcsAtPlayerLoc.forEach(name => {
+      const mind = minds[name];
+      if (!mind) return;
+      const isK = gameState.killers.includes(name);
+      const npcPersonality = typeof CharDB !== 'undefined' ? CharDB.getProfile(name) : null;
+      const archetype = npcPersonality && npcPersonality.personality ? npcPersonality.personality.archetype : 'unknown';
+      const tk = trustKeyFor(name, pc);
+      const trustLevel = gameState.trust[tk] !== undefined ? gameState.trust[tk] : 50;
+      const suspOnPlayer = mind.suspicions[pc] || 0;
+      const isAlly = mind.allies.includes(pc);
+      const isEnemy = mind.enemies.includes(pc);
+
+      // Player just accused someone — NPCs react
+      if (lastPlayerAction === 'accuse' && Math.random() < 0.4) {
+        if (isAlly && trustLevel > 60) {
+          bgEvents.push({ type: 'player_reaction', character: name,
+            desc: `${charName(name)} mengangguk setuju dengan tuduhan ${charName(pc)}. "Aku juga merasakan hal yang sama."` });
+          mind.tension = Math.max(0, mind.tension - 5);
+        } else if (isEnemy || trustLevel < 30) {
+          bgEvents.push({ type: 'player_reaction', character: name,
+            desc: `${charName(name)} menolak tuduhan ${charName(pc)}: "Jangan asal tuduh! Kau sendiri yang mencurigakan!"` });
+          mind.suspicions[pc] = Math.min(100, (mind.suspicions[pc] || 0) + 8);
+        } else {
+          bgEvents.push({ type: 'player_reaction', character: name,
+            desc: `${charName(name)} tampak ragu mendengar tuduhan ${charName(pc)}, mempertimbangkan setiap kata.` });
+        }
+      }
+
+      // Player just investigated — some NPCs become curious or suspicious
+      if (lastPlayerAction === 'investigate' && Math.random() < 0.3) {
+        if (!isK && trustLevel > 50) {
+          bgEvents.push({ type: 'player_reaction', character: name,
+            desc: `${charName(name)} mengikuti arah pandangan ${charName(pc)}. "Kau menemukan sesuatu? Tunjukkan padaku."` });
+          if (!mind.allies.includes(pc)) mind.allies.push(pc);
+        } else if (isK && !mind.killerExposed) {
+          bgEvents.push({ type: 'player_reaction', character: name,
+            desc: `${charName(name)} memperhatikan ${charName(pc)} yang sedang menginvestigasi. Matanya berkilat gelisah...` });
+          mind.tension += 5;
+        }
+      }
+
+      // Player moved to this location — NPCs acknowledge
+      if (lastPlayerAction === 'move' && Math.random() < 0.25) {
+        if (isAlly) {
+          bgEvents.push({ type: 'player_reaction', character: name,
+            desc: `${charName(name)} menyambut ${charName(pc)} dengan anggukan lega. "Syukurlah kau datang."` });
+        } else if (isK && !mind.killerExposed) {
+          const killerReact = Math.random();
+          if (killerReact < 0.4) {
+            bgEvents.push({ type: 'player_reaction', character: name,
+              desc: `${charName(name)} memasang senyum saat ${charName(pc)} datang, tapi matanya menerawang ke pintu keluar...` });
+          }
+        } else if (suspOnPlayer > 40) {
+          bgEvents.push({ type: 'player_reaction', character: name,
+            desc: `${charName(name)} menegang saat ${charName(pc)} masuk. Tangannya bergerak ke sesuatu di sakunya.` });
+        }
+      }
+
+      // Player talked to someone — relationship deepens
+      if (lastPlayerAction === 'talk' && Math.random() < 0.3) {
+        if (trustLevel > 50 && !isK) {
+          const tk2 = trustKeyFor(name, pc);
+          if (gameState.trust[tk2] !== undefined) gameState.trust[tk2] = Math.min(100, gameState.trust[tk2] + 3);
+          bgEvents.push({ type: 'player_reaction', character: name,
+            desc: `${charName(name)} merasa lebih dekat dengan ${charName(pc)} setelah percakapan. Trust meningkat.` });
+        }
+      }
+
+      // Player formed alliance — other NPCs react
+      if (lastPlayerAction === 'ally' && Math.random() < 0.3) {
+        if (!isAlly && !isEnemy) {
+          bgEvents.push({ type: 'player_reaction', character: name,
+            desc: `${charName(name)} memperhatikan ${charName(pc)} membentuk aliansi. "Aku juga butuh perlindungan..."` });
+        }
+      }
+
+      // NPC's personality-specific reaction to player archetype
+      if (Math.random() < 0.15) {
+        if (archetype === 'rebel' && pcArchetype === 'investigator') {
+          bgEvents.push({ type: 'personality_clash', character: name,
+            desc: `${charName(name)} dan ${charName(pc)} punya cara berbeda. Yang satu aksi, yang lain analisis — tapi mereka saling melengkapi.` });
+        } else if (archetype === 'profiler' && pcArchetype === 'investigator') {
+          bgEvents.push({ type: 'personality_sync', character: name,
+            desc: `${charName(name)} diam-diam menganalisis orang yang sama dengan ${charName(pc)}. Pikiran mereka sejalan.` });
+        } else if (archetype === 'puppeteer' && !isK) {
+          bgEvents.push({ type: 'personality_dynamic', character: name,
+            desc: `${charName(name)} memperhatikan strategi ${charName(pc)} dengan mata tajam. Setiap gerakan dicatat.` });
+        } else if (archetype === 'survivor' && (gameState.deathCount || 0) >= 2) {
+          bgEvents.push({ type: 'personality_dynamic', character: name,
+            desc: `${charName(name)} mengikuti ${charName(pc)} diam-diam. Lebih aman bersama daripada sendirian.` });
+        }
+      }
+    });
+
+    // 9. NPC DRAMA TOWARD PLAYER: NPCs at OTHER locations talk about the player
+    const npcsElsewhere = Object.keys(minds).filter(n =>
+      n !== pc && gameState.alive[n] && minds[n] && minds[n].location !== playerLoc
+    );
+    if (npcsElsewhere.length >= 2 && Math.random() < 0.2) {
+      const gossiper = npcsElsewhere[Math.floor(Math.random() * npcsElsewhere.length)];
+      const gossiperMind = minds[gossiper];
+      if (gossiperMind) {
+        const suspOnPc = gossiperMind.suspicions[pc] || 0;
+        const isAllyPc = gossiperMind.allies.includes(pc);
+        if (suspOnPc > 30) {
+          bgEvents.push({ type: 'distant_gossip', character: gossiper,
+            desc: `Di kejauhan, ${charName(gossiper)} membicarakan ${charName(pc)}: "Apa sebenarnya yang dilakukan ${charName(pc)}? Aku tidak yakin dia bisa dipercaya..."` });
+        } else if (isAllyPc) {
+          bgEvents.push({ type: 'distant_gossip', character: gossiper,
+            desc: `${charName(gossiper)} menyebut ${charName(pc)} di percakapan: "Kita butuh ${charName(pc)} di sini. Dia satu-satunya yang punya rencana."` });
+        }
+      }
+    }
+
+    // 10. PLAYER ACTION INFLUENCE ON NPC GOALS: NPCs adjust behavior based on player's pattern
+    if (playerHistory.length >= 3) {
+      const recentActions = playerHistory.slice(-5);
+      const investigateCount = recentActions.filter(a => a === 'investigate' || a === 'observe').length;
+      const aggressiveCount = recentActions.filter(a => a === 'accuse' || a === 'attack_killer' || a === 'vote_eliminate').length;
+      const socialCount = recentActions.filter(a => a === 'talk' || a === 'ally').length;
+
+      npcsAtPlayerLoc.forEach(name => {
+        const mind = minds[name];
+        if (!mind || gameState.killers.includes(name)) return;
+
+        if (investigateCount >= 3 && Math.random() < 0.3) {
+          // Player is investigative — NPCs follow suit
+          mind.suspicions = mind.suspicions || {};
+          gameState.killers.forEach(k => {
+            if (gameState.alive[k]) {
+              mind.suspicions[k] = Math.min(100, (mind.suspicions[k] || 0) + 3);
+            }
+          });
+          bgEvents.push({ type: 'player_influence', character: name,
+            desc: `Terinspirasi oleh investigasi ${charName(pc)}, ${charName(name)} juga mulai memperhatikan detail mencurigakan.` });
+        }
+
+        if (aggressiveCount >= 2 && Math.random() < 0.25) {
+          // Player is aggressive — NPCs get emboldened or scared
+          mind.tension += 5;
+          bgEvents.push({ type: 'player_influence', character: name,
+            desc: `Keberanian ${charName(pc)} dalam mengonfrontasi suspect menular. ${charName(name)} juga siap bertindak.` });
+        }
+
+        if (socialCount >= 3 && Math.random() < 0.3) {
+          // Player is social — trust grows faster
+          const tk = trustKeyFor(name, pc);
+          if (gameState.trust[tk] !== undefined) {
+            gameState.trust[tk] = Math.min(100, gameState.trust[tk] + 5);
+          }
+          bgEvents.push({ type: 'player_influence', character: name,
+            desc: `${charName(pc)} yang komunikatif membuat ${charName(name)} lebih terbuka. Kepercayaan bertumbuh.` });
+        }
+      });
+    }
+
+    // Limit background events to prevent spam (max 4 per round, prioritize player-relevant)
+    const playerEvents = bgEvents.filter(e => e.type.startsWith('player_') || e.type.includes('personality') || e.type === 'distant_gossip');
+    const otherEvents = bgEvents.filter(e => !e.type.startsWith('player_') && !e.type.includes('personality') && e.type !== 'distant_gossip');
+    const prioritized = [...playerEvents.slice(0, 2), ...otherEvents.slice(0, 2)];
+    return prioritized.length > 0 ? prioritized : bgEvents.slice(0, 3);
   }
 
   // ---- Apply Action Consequences ----
