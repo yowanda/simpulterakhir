@@ -1176,9 +1176,9 @@ const Engine = (() => {
   // Jika ditemukan, langsung selesai misi petunjuk pelarian
   function rollMasterKey() {
     if (state.masterKeyFound) return false;
-    // Easy 5%, Normal 4%, Hard 3.5% (tighter spread for balanced win rates)
+    // Easy 3%, Normal 2%, Hard 1.5% (reduced for clue balance)
     const diff = state.difficulty || 2;
-    const masterKeyChance = diff === 1 ? 0.05 : diff === 3 ? 0.035 : 0.04;
+    const masterKeyChance = diff === 1 ? 0.03 : diff === 3 ? 0.015 : 0.02;
     if (Math.random() < masterKeyChance) {
       state.masterKeyFound = true;
       return true;
@@ -2830,9 +2830,9 @@ const Engine = (() => {
                 Engine.notify('🔑 KUNCI ROOM MASTER DITEMUKAN saat investigasi! Misi petunjuk pelarian SELESAI!');
                 return;
               }
-              // Chance to also find an escape clue as bonus (30%)
+              // Chance to also find an escape clue as bonus (12%)
               const escClue = getEscapeClueAtLocation(playerLoc);
-              if (escClue && Math.random() < 0.30) {
+              if (escClue && Math.random() < 0.12) {
                 findEscapeClue(escClue.id);
                 s.cluesFound = (s.cluesFound || 0) + 1;
                 const newFound = (s.escapeClues || []).length;
@@ -2857,7 +2857,7 @@ const Engine = (() => {
     if (!isK && !brainActionTaken('escape_clue_' + playerLoc)) {
       const escClue = getEscapeClueAtLocation(playerLoc);
       if (escClue) {
-        const baseEscChance = 55 + (gameState.chapter * 6);
+        const baseEscChance = 35 + (gameState.chapter * 3);
         const escChance = previewChance(baseEscChance, pc, 'intel');
         const found = (gameState.escapeClues || []).length;
         const needed = gameState.cluesNeededToWin || 5;
@@ -2873,7 +2873,7 @@ const Engine = (() => {
         choices.push({
           text: flavor.escape_clue ? flavor.escape_clue(playerLoc) : `Cari petunjuk pelarian di ${CharBrain.locName(playerLoc)}`,
           type: 'brain', category: 'investigate',
-          hint: `Petunjuk: ${found}/${needed} dibutuhkan (${total} total)${peopleInfo} | 🔑 5% chance Kunci Room Master`,
+          hint: `Petunjuk: ${found}/${needed} dibutuhkan (${total} total)${peopleInfo} | 🔑 chance Kunci Master`,
           risk: escRisk,
           reward: escReward,
           successChance: escChance,
@@ -3357,7 +3357,7 @@ const Engine = (() => {
       if (!brainActionTaken('destroy_clue_' + playerLoc)) {
         const escClue = getEscapeClueAtLocation(playerLoc);
         if (escClue) {
-          const destroyChance = 40;
+          const destroyChance = 55;
           const destroyed = (gameState.destroyedClues || []).length;
           choices.push({
             text: `Hancurkan petunjuk pelarian di ${CharBrain.locName(playerLoc)}`,
