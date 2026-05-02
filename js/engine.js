@@ -2235,8 +2235,8 @@ const Engine = (() => {
     }).join('');
     fatesEl.innerHTML = fatesHtml;
 
-    // Save ending to gallery
-    endingsUnlocked[endingNum] = { title: endingTitle, rating };
+    // Save ending to gallery — include full narrative text and fates for re-reading
+    endingsUnlocked[endingNum] = { title: endingTitle, rating, narrative: narrativeText, fates: fatesHtml };
     SecGuard.safeSetItem('simpul_endings', JSON.stringify(endingsUnlocked));
 
     updateEndingsCount();
@@ -4126,21 +4126,42 @@ const Engine = (() => {
 
   function showGallery() {
     showScreen('screen-gallery');
-    $('gallery-title').textContent = 'Galeri Ending';
+    const unlockedCount = Object.keys(endingsUnlocked).length;
+    $('gallery-title').textContent = `Galeri Ending (${unlockedCount}/30)`;
     const grid = $('gallery-grid');
     grid.innerHTML = '';
+    const hasAnyUnlocked = unlockedCount > 0;
     for (let i = 1; i <= 30; i++) {
       const item = document.createElement('div');
       item.className = 'gallery-item';
       if (endingsUnlocked[i]) {
         item.classList.add('unlocked');
         const ratingClass = endingsUnlocked[i].rating ? 'rating-' + endingsUnlocked[i].rating : '';
-        item.innerHTML = `<div class="gi-number ${ratingClass}">#${i}</div><div class="gi-title">${endingsUnlocked[i].title}</div>`;
+        item.innerHTML = `<div class="gi-number ${ratingClass}">#${i}</div><div class="gi-title">${endingsUnlocked[i].title}</div><div class="gi-tap">Tap untuk baca</div>`;
+        item.style.cursor = 'pointer';
+        item.addEventListener('click', (function(num) { return function() { showEndingReader(num); }; })(i));
       } else {
-        item.innerHTML = `<div class="gi-number">#${i}</div><div class="gi-locked">\uD83D\uDD12</div>`;
+        let lockedHtml = `<div class="gi-number">#${i}</div><div class="gi-locked">\uD83D\uDD12</div>`;
+        if (hasAnyUnlocked && typeof ENDING_REQUIREMENTS !== 'undefined' && ENDING_REQUIREMENTS[i]) {
+          const req = ENDING_REQUIREMENTS[i];
+          const ratingBadge = req.rating ? `<span class="gi-req-rating rating-${req.rating}">${req.rating}</span>` : '';
+          lockedHtml += `<div class="gi-requirements">${ratingBadge} ${req.hint}</div>`;
+        }
+        item.innerHTML = lockedHtml;
       }
       grid.appendChild(item);
     }
+  }
+
+  function showEndingReader(endingNum) {
+    const data = endingsUnlocked[endingNum];
+    if (!data) return;
+    const reader = $('screen-ending-reader');
+    reader.style.display = 'flex';
+    $('reader-title').textContent = `#${endingNum}: ${data.title} [${data.rating}]`;
+    $('reader-content').innerHTML = data.narrative || '<p>Cerita tidak tersimpan. Buka ending ini lagi untuk menyimpan teks lengkap.</p>';
+    $('reader-fates').innerHTML = data.fates || '';
+    $('btn-close-reader').onclick = function() { reader.style.display = 'none'; };
   }
 
   function updateEndingsCount() {

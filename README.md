@@ -552,13 +552,34 @@ simpul-terakhir/
 
 Ending otomatis terpicu berdasarkan kondisi game saat ini — bukan terkunci di chapter. Rating S (terbaik) → F (terburuk).
 
+#### Fitur Ending System
+
+- **Cerita Multi-Layer**: Setiap ending memiliki 4 lapisan narasi:
+  1. **Immediate Victory/Defeat** — apa yang terjadi saat game berakhir
+  2. **Hidden Truth** — kebenaran tersembunyi yang terungkap berminggu/bertahun kemudian
+  3. **Character Background Reveals** — backstory mendalam setiap karakter: koneksi ke Dewan Penenun, identitas asli, rahasia keluarga
+  4. **Relationship Aftermath** — dampak pada hubungan antar karakter (Arin↔Sera, Niko↔Vira, dll)
+- **Koneksi Karakter Tersembunyi**: Semua karakter ternyata terhubung ke korban/operator Dewan sebelumnya:
+  - Ibu Arya (Ratna Prasetya) = mantan operator Dewan R-03, dieliminasi 2009
+  - Ibu Sera (Dr. Lestari Amalina) = psikolog residen Dewan yang masih aktif
+  - Kakak Vira (Mira) = agen undercover yang mati di mansion sebelumnya
+  - Ayah Juno = korban pertama eksperimen Ragil
+  - Lana = Lana Wardhana, cucu haram Hendarto (sepupu Niko)
+  - Dimas = anak jalanan tanpa nama, diadopsi Ragil usia 8 tahun, di-program 15 tahun jadi operator
+- **Galeri Ending dengan Requirement System**:
+  - Setelah membuka 1 ending, **requirement semua ending terkunci** ditampilkan (rating + hint kondisi)
+  - Cerita ending tetap **tersembunyi** sampai ending tersebut benar-benar dibuka
+  - Ending yang sudah terbuka bisa **dibaca ulang** kapan saja dari galeri (tap untuk baca)
+  - Progress galeri tersimpan di localStorage dan persisten antar sesi
+- **Brain Tree Integration**: Semua kondisi ending dipicu secara natural oleh keputusan otonom NPC (moral score, trust, suspicion, clue discovery, combat, dll)
+
 ---
 
 #### S-RANK (Best Outcomes)
 
 **#1 — Sang Penenun Terakhir (S)**
 - **Kondisi:** Semua killer mati + ≥5 clue + ≥4 survivor hidup + moral ≥0
-- **Cerita:** Bukti tersebar ke dunia. Ragil Pramudya ditangkap. "Dewan Penenun" teridentifikasi satu per satu. 47 kasus kematian terungkap, 23 terpidana. Siklus 50 tahun — berakhir. Setiap karakter mendapat epilog unik berdasarkan siapa yang dimainkan.
+- **Cerita:** Bukti tersebar ke dunia. Ragil ditangkap. Investigasi Interpol mengungkap "Dewan Penenun" — eksperimen seleksi sosial 50 tahun oleh Hendarto Wardhana. 47 kasus terungkap. Setiap karakter mendapat epilog mendalam — termasuk reveal bahwa semua tamu dipilih berdasarkan "Indeks Kerentanan" dan koneksi ke korban-korban sebelumnya.
 
 **#2 — Detektif Sejati (S)**
 - **Kondisi:** Semua killer mati + semua clue (8/8) ditemukan
