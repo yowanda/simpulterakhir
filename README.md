@@ -550,41 +550,154 @@ simpul-terakhir/
 
 ### Sistem Ending (30 Ending — Condition-Based)
 
-Ending tidak lagi terkunci di chapter tertentu. Setiap ending otomatis terpicu berdasarkan kondisi game saat ini:
+Ending otomatis terpicu berdasarkan kondisi game saat ini — bukan terkunci di chapter. Rating S (terbaik) → F (terburuk).
 
-| # | Judul | Rating | Kondisi Trigger |
-|---|-------|--------|-----------------|
-| 1 | Sang Penenun Terakhir | S | Semua killer mati + ≥5 clue + ≥4 survivor hidup + moral ≥0 |
-| 2 | Detektif Sejati | S | Semua killer mati + semua clue (8/8) ditemukan |
-| 26 | Pelarian dari Mansion | S | ≥5 clue / master key + escape berhasil |
-| 27 | Pembantai Pembunuh | S | Semua killer dieliminasi lewat combat + ≥3 survivor |
-| 30 | Yang Terakhir Berdiri | A | Semua killer mati + hanya 1 survivor tersisa |
-| 3 | Fajar yang Cukup | A | Semua killer mati + 2-4 clue + ≥2 survivor |
-| 28 | Pengkhianatan Sempurna | A | Semua killer mati + ≥2 killer + killer saling bunuh |
-| 4 | Pengorbanan | A | Player mati + ≥3 survivor selamat + ≥3 clue |
-| 5 | Kesaksian Terakhir | A | Vira hidup + ≥4 survivor + escape/eliminasi berhasil |
-| 8 | Penebusan Penulis | B | Lana (killer) mati + moral ≥0 |
-| 21 | Pahlawan yang Jatuh | B | Player (Arin) mati + ≥2 survivor selamat |
-| 9 | Lingkaran Vira | B | Vira hidup + ≥3 survivor + player bukan Vira |
-| 7 | Kemenangan yang Pecah | B | Semua killer mati + ≤3 survivor + ≥3 kematian |
-| 6 | Abu dan Fajar | B | Semua killer mati + ≥3 clue hancur + <5 clue |
-| 13 | Warisan Wardhana | C | Niko hidup (bukan killer) |
-| 23 | Plot Twist Penulis | C | Lana (killer) hidup + identitas tersembunyi |
-| 24 | Profiler dan Subjek | C | Sera hidup + fajar tercapai |
-| 10 | Kemenangan Pyrrhic | C | Semua killer mati + <3 clue |
-| 11 | Perjanjian dengan Iblis | C | ≥8 karakter hidup + moral <-5 |
-| 12 | Perpecahan Fatal | C | 2-4 survivor + fajar tercapai |
-| 29 | Jejak yang Terhapus | D | Clue dihancurkan killer → tidak cukup bukti |
-| 14 | Paranoia Menang | D | Trust rata-rata <25 + ≥2 kematian |
-| 15 | Tuduhan Salah | D | Killer menang + Sera hidup (salah tuduh) |
-| 17 | Pengkhianatan Dokter | D | Dimas (killer) hidup + killer menang |
-| 16 | Sang Penenun Menang | D | Killer menang secara umum |
-| 22 | Siklus Berlanjut | D | Escape awal (≤ch3) + ≤1 clue |
-| 25 | Mayoritas yang Diam | F | ≥7 karakter hidup + moral <-10 |
-| 18 | Simpul Terputus Total | F | Player sendirian + ≥5 kematian |
+---
+
+#### S-RANK (Best Outcomes)
+
+**#1 — Sang Penenun Terakhir (S)**
+- **Kondisi:** Semua killer mati + ≥5 clue + ≥4 survivor hidup + moral ≥0
+- **Cerita:** Bukti tersebar ke dunia. Ragil Pramudya ditangkap. "Dewan Penenun" teridentifikasi satu per satu. 47 kasus kematian terungkap, 23 terpidana. Siklus 50 tahun — berakhir. Setiap karakter mendapat epilog unik berdasarkan siapa yang dimainkan.
+
+**#2 — Detektif Sejati (S)**
+- **Kondisi:** Semua killer mati + semua clue (8/8) ditemukan
+- **Cerita:** Semua clue ditemukan. Semua operator terungkap. Dewan Penenun dilacak. Ragil diadili hidup-hidup. Proses pengadilan 3 tahun menghasilkan keadilan. Arya menerima penghargaan jurnalisme tertinggi.
+
+**#26 — Pelarian dari Mansion (S)**
+- **Kondisi:** ≥5 clue / master key + escape via mansion_escape
+- **Cerita:** Semua petunjuk membentuk gambaran utuh — jalan keluar ada di terowongan bawah basement yang dibangun 50 tahun lalu. Mansion mengaktifkan lockdown, tapi killer terjebak di dalam sementara protagonis berlari ke kebebasan. Cahaya fajar menyambut di ujung terowongan.
+
+**#27 — Pembantai Pembunuh (S)**
+- **Kondisi:** Semua killer dieliminasi lewat combat + ≥3 survivor
+- **Cerita:** Killer dieliminasi satu per satu melalui pertempuran langsung. Survivor bersatu, melawan balik, dan menang melalui kekuatan kolektif. Mansion menjadi kuburan bagi para pembunuh.
+
+---
+
+#### A-RANK (Good Outcomes)
+
+**#3 — Fajar yang Cukup (A)**
+- **Kondisi:** Semua killer mati + 2-4 clue + ≥2 survivor
+- **Cerita:** Bukti cukup untuk memulai investigasi tapi tidak untuk menghancurkan seluruh jaringan. Ragil meninggal karena kanker. 3 dari 6 Dewan Penenun diadili, sisanya menghilang. Siklus Wardhana berakhir — tapi mesin di tempat lain masih berjalan.
+
+**#4 — Pengorbanan (A)**
+- **Kondisi:** Player mati + ≥3 survivor selamat + ≥3 clue
+- **Cerita:** Player turun ke B-3 terakhir kali untuk memastikan bukti terkirim. Upload 100%. Tapi tangga kembali sudah tertutup puing. Terjebak. Teman-teman selamat di luar. Sera menjerit namamu. Podcast terakhir direkam dari ruangan yang dipenuhi asap.
+
+**#5 — Kesaksian Terakhir (A)**
+- **Kondisi:** Vira hidup + ≥4 survivor + escape/eliminasi berhasil
+- **Cerita:** Vira membawa grup ke pintu darurat yang hanya dia ketahui — warisan dari malam pertamanya 6 bulan lalu. Bersama-sama memberikan kesaksian ke media, polisi, dan komisi HAM. Bukan satu suara — tapi paduan suara yang tidak bisa dibungkam.
+
+**#28 — Pengkhianatan Sempurna (A)**
+- **Kondisi:** Semua killer mati + ≥2 killer + killer saling bunuh (betrayal)
+- **Cerita:** Killer saling mengkhianati demi survival sendiri. Trust-kill antar killer memecah tim antagonis dari dalam. Protagonis menang berkat perpecahan musuh.
+
+**#30 — Yang Terakhir Berdiri (A)**
+- **Kondisi:** Semua killer mati + hanya 1 survivor tersisa
+- **Cerita:** Semua killer tereliminasi — tapi dengan harga yang sangat besar. Hanya satu orang yang selamat. Kemenangan yang terasa seperti kekalahan. Survivor terakhir berdiri sendirian di fajar.
+
+---
+
+#### B-RANK (Bittersweet)
+
+**#6 — Abu dan Fajar (B)**
+- **Kondisi:** Semua killer mati + ≥3 clue hancur + <5 clue ditemukan
+- **Cerita:** Mansion terbakar. Bukti terbakar. Ragil terbakar. Tanpa bukti fisik, kasus menjadi "cerita" bukan fakta. Podcast Arya viral tapi kontroversial — separuh percaya, separuh menganggap fiksi.
+
+**#7 — Kemenangan yang Pecah (B)**
+- **Kondisi:** Semua killer mati + ≤3 survivor + ≥3 kematian
+- **Cerita:** Menang. Ragil diadili. Bukti tersebar. Siklus berakhir. Tapi kemenangan terasa seperti kaca pecah di mulut. PTSD. Insomnia. Teman-teman yang mati masih muncul di mimpi. 10 tahun kemudian, Arya berdiri di reruntuhan mansion — menaruh bunga dan pergi.
+
+**#8 — Penebusan Penulis (B)**
+- **Kondisi:** Lana (killer) mati + moral ≥0
+- **Cerita:** Lana Kusuma memilih redemption arc. Menghadapi Ragil sendirian, mengalihkan perhatian sementara yang lain kabur. Mansion terbakar — Lana tidak keluar. Novel terakhirnya ditemukan di tas: tentang kakaknya, trauma, dan sistem yang menghancurkan manusia biasa. Best-seller posthumous.
+
+**#9 — Lingkaran Vira (B)**
+- **Kondisi:** Vira hidup + ≥3 survivor + player bukan Vira
+- **Cerita:** Vira membawa grup ke pintu yang hanya dia tahu. Tapi sebelum keluar, dia berhenti: "Aku harus kembali." Terakhir kali dia keluar dan meninggalkan orang di dalam. Vira kembali — membawa 3 orang lagi sebelum pintu terkunci permanen. Saksi Selamat yang menjadi Penyelamat.
+
+**#21 — Pahlawan yang Jatuh (B)**
+- **Kondisi:** Player (Arin) mati + ≥2 survivor selamat
+- **Cerita:** Arya turun ke B-3 sendirian, memaksa Ragil membuka semua kunci. Ragil mati — dead man's switch mengisi basement dengan gas. Arya tidak sempat naik, tapi semua pintu terbuka. Podcast terakhir 6 menit dari ruangan yang dipenuhi gas — termasuk pengakuan cinta ke Sera yang tidak pernah terucapkan.
+
+---
+
+#### C-RANK (Mixed — System Continues)
+
+**#10 — Kemenangan Pyrrhic (C)**
+- **Kondisi:** Semua killer mati + <3 clue
+- **Cerita:** Selamat, tapi Dewan Penenun tidak teridentifikasi. Bukti tidak cukup. Setahun kemudian — undangan hitam muncul lagi. Kota berbeda. Mansion berbeda. Siklus berlanjut dengan nama dan wajah baru.
+
+**#11 — Perjanjian dengan Iblis (C)**
+- **Kondisi:** ≥8 karakter hidup + moral <-5
+- **Cerita:** Ragil menawarkan deal: lepaskan dia, semua orang selamat. Deal diterima. Semua keluar. Ragil menghilang bersama systemnya. Sebulan kemudian Ragil mati — tapi mewariskan sistem kepada seseorang. Nyawa diselamatkan, keadilan dikorbankan.
+
+**#12 — Perpecahan Fatal (C)**
+- **Kondisi:** 2-4 survivor + fajar tercapai (dawn_reached)
+- **Cerita:** Kelompok terpecah, tidak pernah bersatu kembali. Sebagian keluar melalui jendela, sebagian terjebak sampai fajar. Saat polisi tiba, mansion sudah bersih — self-destruct menghapus semua bukti. Tidak ada yang diadili.
+
+**#13 — Warisan Wardhana (C)**
+- **Kondisi:** Niko hidup (bukan killer)
+- **Cerita:** Niko membawa grup ke exit rahasia — lorong di balik perpustakaan yang dibangun 50 tahun lalu. "Kakekku membangun jalan keluar. Mungkin di akhir, dia juga ingin lari." Niko menyerahkan diri sebagai saksi dan tersangka. Dibebaskan — insufficient evidence. Tapi hidup dengan beban selamanya.
+
+**#19 — Pelarian Tanpa Akhir (C)**
+- **Kondisi:** Trigger via story node (chapter 5) — keluar tanpa bukti
+- **Cerita:** Keluar melalui jendela pecah, hutan, pagar kawat dengan tangan berdarah. Polisi datang ke mansion — kosong. Bersih. Tidak ada bukti. Podcast Arya viral tapi "creepypasta terbaik tahun ini." Siklus berlanjut. Mengetahui tanpa bisa bertindak — hukuman lebih buruk dari kematian.
+
+**#23 — Plot Twist Penulis (C)**
+- **Kondisi:** Lana (killer) hidup + identitas tersembunyi + bukan menang
+- **Cerita:** Lana bukan hanya operator double agent — tapi calon PEWARIS Sang Penenun. Cerita kakaknya nyata, tapi motivasi bukan balas dendam — mengambil alih. Menjadi Penenun baru. Siklus bukan berakhir — justru ter-upgrade.
+
+**#24 — Profiler dan Subjek (C)**
+- **Kondisi:** Sera hidup + fajar tercapai (dawn_reached)
+- **Cerita:** Sera berhasil memprofilkan Sang Penenun dengan akurasi menakutkan. Tapi profil itu sendiri menjadi senjata — Ragil gunakan prediksi Sera untuk selalu selangkah di depan. Kelompok keluar selamat tapi Ragil sudah menghapus semua bukti.
+
+---
+
+#### D-RANK (Bad Outcomes)
+
+**#14 — Paranoia Menang (D)**
+- **Kondisi:** Trust rata-rata <25 + ≥2 kematian
+- **Cerita:** Kepercayaan hancur total. Semua mencurigai semua. Kelompok pecah menjadi individu yang mengunci diri di kamar masing-masing. Sang Penenun tidak perlu membunuh siapapun — paranoia melakukannya. Arya tidak membuka pintu saat Sera meminta tolong — dan kehilangan sesuatu lebih penting dari keselamatan.
+
+**#15 — Tuduhan Salah (D)**
+- **Kondisi:** Killer menang + Sera hidup (killer_victory)
+- **Cerita:** Menuduh orang yang salah. Sera — sekutu terbesar — dikunci oleh kelompok. Operator sebenarnya bergerak bebas. Dua kematian lagi sebelum fajar. "Kau memilih ketakutan daripada kepercayaan. Kau memilih ego daripada aku."
+
+**#16 — Sang Penenun Menang (D)**
+- **Kondisi:** Killer menang secara umum (killer_victory)
+- **Cerita:** Tiga simpul terputus. Mansion kembali normal saat fajar. Polisi tidak menemukan apa-apa. Kasus ditutup. Sang Penenun mengirim email: "Terima kasih atas partisipasinya. Sampai siklus berikutnya."
+
+**#17 — Pengkhianatan Dokter (D)**
+- **Kondisi:** Dimas (killer) hidup + killer menang/player kalah
+- **Cerita:** Mempercayai Dimas untuk merawat yang terluka — kesalahan fatal. Dimas menggunakan akses medis untuk sabotase: obat tidur sebagai pengganti obat nyeri, dosage sedikit terlalu tinggi. Profesional sampai akhir. Menghilang ke malam, tugas selesai.
+
+**#20 — Pengecut yang Hidup (D)**
+- **Kondisi:** Trigger via story node (chapter 4) — kabur sendirian
+- **Cerita:** Berlari ke malam sendirian. Meninggalkan semua orang di dalam. Polisi datang — sudah terlambat, 2 orang lagi meninggal. Mansion dibersihkan. Podcast mati — tidak ada yang mau mendengar cerita dari orang yang meninggalkan teman-temannya untuk mati.
+
+**#22 — Siklus Berlanjut (D)**
+- **Kondisi:** Escape awal (≤chapter 3) + ≤1 clue
+- **Cerita:** Kabur di chapter awal lewat pagar yang belum terpasang. Polisi datang — mansion sudah bersih. Setahun kemudian, amplop hitam lagi. Undangan yang sama, mansion berbeda. Dan kali ini — ada nama seseorang yang kau cintai.
+
+**#29 — Jejak yang Terhapus (D)**
+- **Kondisi:** Clue dihancurkan killer → tidak cukup bukti (killer_clues_destroyed)
+- **Cerita:** Killer berhasil menghancurkan cukup banyak petunjuk sehingga protagonis tidak bisa mengumpulkan 5 yang dibutuhkan. Tanpa bukti, tidak ada jalan keluar. Tidak ada yang bisa mengungkap identitas killer.
+
+---
+
+#### F-RANK (Worst Outcomes)
+
+**#18 — Simpul Terputus Total (F)**
+- **Kondisi:** Player sendirian + ≥5 kematian
+- **Cerita:** Semua simpul terputus. Setiap orang yang seharusnya dilindungi — hilang. Satu per satu. Player selamat sendirian — saksi sempurna yang cukup pintar untuk menggali, cukup naif untuk gagal. Siklus berlanjut, dan harganya adalah sepi. Epilog berbeda per karakter yang dimainkan.
+
+**#25 — Mayoritas yang Diam (F)**
+- **Kondisi:** ≥7 karakter hidup + moral <-10
+- **Cerita:** Semua selamat secara fisik. Tapi tidak ada yang bicara. Tidak ada yang melapor. Egoisme menang atas keberanian. Masing-masing pulang, masing-masing diam. Sang Penenun menang bukan dengan kekerasan, tapi dengan keheningan. Tahun depan, 10 amplop hitam dikirim ke 10 alamat baru. Setiap hubungan yang tumbuh malam itu — mati dalam keheningan yang dipilih.
 
 ---
 
 ## Lisensi
 
-Proyek ini bersifat pribadi. Hak cipta dilindungi.
+Proyek ini bersifat pribadi. Hak cipta dilindungi. by cacapaspas.
