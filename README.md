@@ -579,19 +579,19 @@ Ending otomatis terpicu berdasarkan kondisi game saat ini — bukan terkunci di 
 
 **#1 — Sang Penenun Terakhir (S)**
 - **Kondisi:** Semua killer mati + ≥5 clue + ≥4 survivor hidup + moral ≥0
-- **Cerita:** Bukti tersebar ke dunia. Ragil ditangkap. Investigasi Interpol mengungkap "Dewan Penenun" — eksperimen seleksi sosial 50 tahun oleh Hendarto Wardhana. 47 kasus terungkap. Setiap karakter mendapat epilog mendalam — termasuk reveal bahwa semua tamu dipilih berdasarkan "Indeks Kerentanan" dan koneksi ke korban-korban sebelumnya.
+- **Cerita:** Bukti tersebar ke dunia. Ragil ditangkap. Investigasi Interpol mengungkap **Dewan Penenun** — eksperimen seleksi sosial 50 tahun oleh **Hendarto Wardhana** yang mempelajari "seleksi alam dalam masyarakat urban." 47 kasus terungkap, 23 terpidana. Setiap tamu ternyata dipilih berdasarkan "Indeks Kerentanan" — profil psikologis yang menunjukkan mereka "terlalu rusak untuk dipercaya" jika bersaksi. Reveal terbesar: ibu Arya (**Ratna Prasetya**) ternyata mantan **Operator R-03** yang dieliminasi 2009 setelah percobaan desersi. Ibu Sera (**Dr. Lestari Amalina**) masih aktif sebagai psikolog residen Dewan — kemampuan profiling Sera adalah hasil "pelatihan subliminal" dari ibunya sejak usia 4 tahun. Kakak Vira (**Mira**) mati sebagai agen undercover di mansion 2 tahun lalu. Ayah Juno yang "menghilang" 15 tahun lalu adalah korban pertama eksperimen Ragil. **Lana Wardhana** = cucu haram Hendarto, sepupu Niko yang tidak diakui. **Dimas** = anak jalanan tanpa nama, diadopsi Ragil usia 8 tahun, di-program 15 tahun menjadi operator paling efisien. Dead man's switch di mansion siap self-destruct jika terekspos.
 
 **#2 — Detektif Sejati (S)**
 - **Kondisi:** Semua killer mati + semua clue (8/8) ditemukan
-- **Cerita:** Semua clue ditemukan. Semua operator terungkap. Dewan Penenun dilacak. Ragil diadili hidup-hidup. Proses pengadilan 3 tahun menghasilkan keadilan. Arya menerima penghargaan jurnalisme tertinggi.
+- **Cerita:** Semua 8 petunjuk pelarian membentuk gambaran utuh. File Ragil mengungkap **"Proyek Tenun"** — 47 siklus selama 50 tahun. Pengadilan 3 tahun menghasilkan keadilan penuh. Arya menerima penghargaan jurnalisme — tapi yang lebih penting: menemukan kebenaran tentang ibunya Ratna yang pernah menjadi operator Dewan. Sera menemukan bahwa kemampuan profilingnya bukan bakat alami tapi warisan gelap dari ibunya Dr. Lestari. Vira akhirnya mendapat closure tentang kakaknya Mira. Juno menemukan bahwa ayahnya tidak meninggalkan keluarga — tapi dieliminasi sebagai korban eksperimen pertama. DNA test mengungkap Lana, Dimas, dan Niko adalah **tiga cucu Hendarto** yang tidak pernah tahu mereka saudara.
 
 **#26 — Pelarian dari Mansion (S)**
 - **Kondisi:** ≥5 clue / master key + escape via mansion_escape
-- **Cerita:** Semua petunjuk membentuk gambaran utuh — jalan keluar ada di terowongan bawah basement yang dibangun 50 tahun lalu. Mansion mengaktifkan lockdown, tapi killer terjebak di dalam sementara protagonis berlari ke kebebasan. Cahaya fajar menyambut di ujung terowongan.
+- **Cerita:** Terowongan pelarian di bawah basement dibangun 50 tahun lalu oleh Hendarto. Saat berlari menuju cahaya, di dinding terowongan ada puluhan **tulisan tangan** dari tahun-tahun berbeda — korban-korban sebelumnya yang pernah menemukan jalan keluar: "Aku keluar — M.H. 1998." "Aku selamat — D.K. 2003." Dan satu yang membuat Arya berhenti: **"Aku keluar. Tapi mereka tidak membiarkan aku pergi. — R.P. 2009."** R.P. = Ratna Prasetya, ibu Arya. Ibunya pernah keluar lewat terowongan ini — tapi Dewan menemukannya kembali. Juno menemukan inisial ayahnya di dinding. Vira mengenali tulisan kakaknya Mira. Setiap nama di dinding dilacak oleh polisi — dan untuk pertama kalinya dalam 50 tahun, siklus benar-benar berakhir.
 
 **#27 — Pembantai Pembunuh (S)**
 - **Kondisi:** Semua killer dieliminasi lewat combat + ≥3 survivor
-- **Cerita:** Killer dieliminasi satu per satu melalui pertempuran langsung. Survivor bersatu, melawan balik, dan menang melalui kekuatan kolektif. Mansion menjadi kuburan bagi para pembunuh.
+- **Cerita:** Killer dieliminasi satu per satu. Pemeriksaan forensik setelah malam itu mengungkap kebenaran mengejutkan: ketiga operator — **Lana, Dimas, Niko** — ternyata semua **darah Wardhana**. Lana Kusuma adalah Lana Wardhana, cucu perempuan Hendarto dari putra kedua. Dimas Pratama bukan nama aslinya — anak jalanan yang diadopsi dan diberikan identitas cucu ketiga. **Tiga cucu Hendarto, tiga operator, satu arena.** Ragil membangun mesin pembunuhan dari keluarganya sendiri.
 
 ---
 
@@ -599,23 +599,23 @@ Ending otomatis terpicu berdasarkan kondisi game saat ini — bukan terkunci di 
 
 **#3 — Fajar yang Cukup (A)**
 - **Kondisi:** Semua killer mati + 2-4 clue + ≥2 survivor
-- **Cerita:** Bukti cukup untuk memulai investigasi tapi tidak untuk menghancurkan seluruh jaringan. Ragil meninggal karena kanker. 3 dari 6 Dewan Penenun diadili, sisanya menghilang. Siklus Wardhana berakhir — tapi mesin di tempat lain masih berjalan.
+- **Cerita:** Bukti cukup untuk memulai investigasi tapi tidak untuk menghancurkan seluruh jaringan. Ragil meninggal karena kanker — tapi meninggalkan **satu file terakhir** di server mansion: daftar lengkap 47 korban selama 50 tahun, termasuk nama Ratna Prasetya (ibu Arya) dan Dr. Lestari Amalina (ibu Sera). 3 dari 6 anggota Dewan diadili, sisanya menghilang. Siklus Wardhana berakhir — tapi arsip yang tidak lengkap menyisakan pertanyaan yang menghantui setiap survivor.
 
 **#4 — Pengorbanan (A)**
 - **Kondisi:** Player mati + ≥3 survivor selamat + ≥3 clue
-- **Cerita:** Player turun ke B-3 terakhir kali untuk memastikan bukti terkirim. Upload 100%. Tapi tangga kembali sudah tertutup puing. Terjebak. Teman-teman selamat di luar. Sera menjerit namamu. Podcast terakhir direkam dari ruangan yang dipenuhi asap.
+- **Cerita:** Player turun ke B-3 terakhir kali. Upload 100%. Terjebak. Di ruangan yang sama, layar komputer Ragil menampilkan **"Indeks Kerentanan"** — profil setiap tamu. Dan di profil player: referensi ke anggota keluarga yang pernah menjadi korban/operator Dewan. Podcast terakhir direkam dari ruangan yang dipenuhi asap — bukan hanya pengakuan cinta ke Sera, tapi pengungkapan bahwa semua orang di mansion terhubung ke korban-korban sebelumnya. Rekaman 8 menit yang mengubah segalanya.
 
 **#5 — Kesaksian Terakhir (A)**
 - **Kondisi:** Vira hidup + ≥4 survivor + escape/eliminasi berhasil
-- **Cerita:** Vira membawa grup ke pintu darurat yang hanya dia ketahui — warisan dari malam pertamanya 6 bulan lalu. Bersama-sama memberikan kesaksian ke media, polisi, dan komisi HAM. Bukan satu suara — tapi paduan suara yang tidak bisa dibungkam.
+- **Cerita:** Vira membawa grup ke pintu darurat — warisan dari malam pertamanya 6 bulan lalu. Tapi kali ini, Vira menceritakan kebenaran yang tidak pernah dia ungkap: kakaknya **Mira** tidak "menghilang" — Mira adalah agen undercover yang menyusup ke Dewan selama 2 tahun dan mati di mansion ini. Pintu darurat ini ditemukan Mira. Kesaksian mereka ke media, polisi, dan komisi HAM bukan hanya tentang malam ini — tapi tentang 50 tahun pembunuhan sistematis.
 
 **#28 — Pengkhianatan Sempurna (A)**
 - **Kondisi:** Semua killer mati + ≥2 killer + killer saling bunuh (betrayal)
-- **Cerita:** Killer saling mengkhianati demi survival sendiri. Trust-kill antar killer memecah tim antagonis dari dalam. Protagonis menang berkat perpecahan musuh.
+- **Cerita:** Pengkhianatan antar killer bukan sekadar survival instinct. Investigasi mengungkap: ketiga operator **tidak pernah tahu mereka saudara**. Lana tidak tahu Niko sepupunya. Dimas tidak tahu dua orang lain adalah cucu kakek angkatnya. Saat masker jatuh dan wajah asli terlihat — mereka mengenali **mata Hendarto Wardhana** — mata yang mereka lihat di cermin setiap pagi. Dalam detik itu, mereka memilih menghancurkan warisan keluarga dari dalam. Lana mengorbankan diri agar Niko terekspos. Dimas membiarkan diri dikalahkan setelah menyadari "ayah" angkatnya adalah kakek yang sama dengan kakek Niko. **Pengkhianatan terbesar seorang Wardhana: memilih untuk berhenti menjadi Wardhana.**
 
 **#30 — Yang Terakhir Berdiri (A)**
 - **Kondisi:** Semua killer mati + hanya 1 survivor tersisa
-- **Cerita:** Semua killer tereliminasi — tapi dengan harga yang sangat besar. Hanya satu orang yang selamat. Kemenangan yang terasa seperti kekalahan. Survivor terakhir berdiri sendirian di fajar.
+- **Cerita:** Sendirian di mansion, survivor terakhir menemukan **Bunker B-3** dan semua yang tersimpan di dalamnya. Komputer Ragil. Arsip 50 tahun. 47 nama korban. Profil psikologis setiap tamu. Dan kebenaran tentang koneksi yang menghubungkan semua orang: ibu Arya mantan operator, ibu Sera psikolog Dewan, kakak Vira mati di mansion ini, ayah Juno korban eksperimen pertama, Lana-Dimas-Niko semua cucu Hendarto. **Beban terberat dari menjadi yang terakhir berdiri: menjadi satu-satunya orang di dunia yang tahu seluruh kebenaran — kebenaran yang terlalu besar untuk satu orang.**
 
 ---
 
@@ -623,23 +623,23 @@ Ending otomatis terpicu berdasarkan kondisi game saat ini — bukan terkunci di 
 
 **#6 — Abu dan Fajar (B)**
 - **Kondisi:** Semua killer mati + ≥3 clue hancur + <5 clue ditemukan
-- **Cerita:** Mansion terbakar. Bukti terbakar. Ragil terbakar. Tanpa bukti fisik, kasus menjadi "cerita" bukan fakta. Podcast Arya viral tapi kontroversial — separuh percaya, separuh menganggap fiksi.
+- **Cerita:** Mansion terbakar — termasuk **dead man's switch** Ragil yang mengaktifkan self-destruct. Bukti terbakar. Ragil terbakar. Tapi dalam abu, Arya menemukan satu hal yang tidak terbakar: **medali Ratna Prasetya** — medali jurnalisme ibunya, yang seharusnya tidak ada di mansion ini. Kebenaran tentang ibunya sebagai mantan operator Dewan terungkap lewat benda kecil yang selamat dari api. Podcast Arya viral — tapi tanpa bukti fisik, "Dewan Penenun" tetap menjadi teori konspirasi.
 
 **#7 — Kemenangan yang Pecah (B)**
 - **Kondisi:** Semua killer mati + ≤3 survivor + ≥3 kematian
-- **Cerita:** Menang. Ragil diadili. Bukti tersebar. Siklus berakhir. Tapi kemenangan terasa seperti kaca pecah di mulut. PTSD. Insomnia. Teman-teman yang mati masih muncul di mimpi. 10 tahun kemudian, Arya berdiri di reruntuhan mansion — menaruh bunga dan pergi.
+- **Cerita:** Menang. Ragil diadili. Siklus berakhir. Tapi kemenangan terasa seperti kaca pecah di mulut. PTSD. Insomnia. Arya menemukan file **"Indeks Kerentanan"** — profil psikologis yang menunjukkan setiap tamu dipilih karena "terlalu rusak untuk dipercaya." Teman-teman yang mati malam itu ternyata anak, cucu, atau keponakan korban Dewan sebelumnya. Kemenangan ini mengungkap bahwa bahkan kematian mereka sudah di-design — dan hidup dengan pengetahuan itu lebih berat dari kematian itu sendiri.
 
 **#8 — Penebusan Penulis (B)**
 - **Kondisi:** Lana (killer) mati + moral ≥0
-- **Cerita:** Lana Kusuma memilih redemption arc. Menghadapi Ragil sendirian, mengalihkan perhatian sementara yang lain kabur. Mansion terbakar — Lana tidak keluar. Novel terakhirnya ditemukan di tas: tentang kakaknya, trauma, dan sistem yang menghancurkan manusia biasa. Best-seller posthumous.
+- **Cerita:** Lana memilih redemption. Tapi kebenaran di balik pengorbanannya lebih kompleks: Lana bukan Lana Kusuma — dia **Lana Wardhana**, cucu perempuan Hendarto dari putra kedua yang tidak diakui. Sepupu Niko. Novel terakhirnya bukan hanya tentang kakaknya Arum — tapi tentang dua cucu Hendarto yang bermain di arena yang sama tanpa pernah tahu mereka saudara. Lana mati bukan hanya untuk menebus dosa — tapi untuk memutus rantai darah Wardhana yang sudah terlalu banyak memakan anaknya sendiri. Terbit posthumous sebagai "buku paling menghancurkan yang pernah ditulis di Indonesia."
 
 **#9 — Lingkaran Vira (B)**
 - **Kondisi:** Vira hidup + ≥3 survivor + player bukan Vira
-- **Cerita:** Vira membawa grup ke pintu yang hanya dia tahu. Tapi sebelum keluar, dia berhenti: "Aku harus kembali." Terakhir kali dia keluar dan meninggalkan orang di dalam. Vira kembali — membawa 3 orang lagi sebelum pintu terkunci permanen. Saksi Selamat yang menjadi Penyelamat.
+- **Cerita:** Vira membawa grup ke pintu rahasia. Tapi sebelum keluar, dia mengaku: pintu ini ditemukan oleh **kakaknya Mira** — agen undercover yang menyusup ke Dewan selama 2 tahun. Mira mati di mansion ini. Vira kembali ke dalam — bukan karena keberanian, tapi karena kakaknya pernah keluar dan meninggalkan orang lain di dalam, dan Mira tidak pernah memaafkan dirinya untuk itu. Vira menolak mengulangi kesalahan Mira. **Saksi Selamat yang menjadi Penyelamat — untuk menebus dosa kakaknya.**
 
 **#21 — Pahlawan yang Jatuh (B)**
 - **Kondisi:** Player (Arin) mati + ≥2 survivor selamat
-- **Cerita:** Arya turun ke B-3 sendirian, memaksa Ragil membuka semua kunci. Ragil mati — dead man's switch mengisi basement dengan gas. Arya tidak sempat naik, tapi semua pintu terbuka. Podcast terakhir 6 menit dari ruangan yang dipenuhi gas — termasuk pengakuan cinta ke Sera yang tidak pernah terucapkan.
+- **Cerita:** Arya turun ke B-3 sendirian. Dead man's switch — gas mengisi basement. Tapi di detik terakhir, layar komputer Ragil menampilkan **"ARSIP OPERATOR"** — dan di nomor 31: **Ratna Prasetya, Operator R-03, Dieliminasi 2009.** Ibunya pernah menjadi operator Dewan. Podcast terakhir 8 menit — bukan hanya pengakuan cinta ke Sera, tapi: "Ibu... aku baca namamu di daftar. Tapi aku tidak marah. Karena kau mencoba keluar — dan itu yang aku lakukan sekarang." Di menit terakhir: "Sera... aku tahu tentang ibumu juga. File-nya ada di komputer Ragil. Kau bukan ibumu. Seperti aku bukan ibuku." Sera mendengarkan rekaman itu sekali — 8 menit yang mengubah hidupnya dua kali.
 
 ---
 
@@ -647,31 +647,31 @@ Ending otomatis terpicu berdasarkan kondisi game saat ini — bukan terkunci di 
 
 **#10 — Kemenangan Pyrrhic (C)**
 - **Kondisi:** Semua killer mati + <3 clue
-- **Cerita:** Selamat, tapi Dewan Penenun tidak teridentifikasi. Bukti tidak cukup. Setahun kemudian — undangan hitam muncul lagi. Kota berbeda. Mansion berbeda. Siklus berlanjut dengan nama dan wajah baru.
+- **Cerita:** Selamat, tapi bukti tidak cukup untuk mengungkap Dewan. Setahun kemudian — undangan hitam muncul lagi. Dan kali ini, Arya menemukan bahwa undangan itu dikirim ke alamat ibunya dulu — Ratna Prasetya. Ibu yang dia kira korban biasa ternyata pernah menerima undangan yang sama. **Siklus berlanjut — dan sekarang Arya tahu bahwa dia bukan pemain baru. Dia pemain generasi kedua.**
 
 **#11 — Perjanjian dengan Iblis (C)**
 - **Kondisi:** ≥8 karakter hidup + moral <-5
-- **Cerita:** Ragil menawarkan deal: lepaskan dia, semua orang selamat. Deal diterima. Semua keluar. Ragil menghilang bersama systemnya. Sebulan kemudian Ragil mati — tapi mewariskan sistem kepada seseorang. Nyawa diselamatkan, keadilan dikorbankan.
+- **Cerita:** Ragil menawarkan deal. Semua keluar. Tapi deal itu punya harga tersembunyi: Ragil memberikan **file "Indeks Kerentanan"** — profil psikologis setiap tamu yang menunjukkan koneksi mereka ke korban-korban sebelumnya. Arya menemukan ibunya di daftar operator. Sera menemukan ibunya masih aktif di Dewan. Semua kebenaran terungkap — tapi tidak ada yang bisa bertindak karena deal sudah ditandatangani. **Perjanjian dengan iblis bukan hanya mengorbankan keadilan — tapi memberikan pengetahuan yang meracuni setiap hubungan selamanya.**
 
 **#12 — Perpecahan Fatal (C)**
 - **Kondisi:** 2-4 survivor + fajar tercapai (dawn_reached)
-- **Cerita:** Kelompok terpecah, tidak pernah bersatu kembali. Sebagian keluar melalui jendela, sebagian terjebak sampai fajar. Saat polisi tiba, mansion sudah bersih — self-destruct menghapus semua bukti. Tidak ada yang diadili.
+- **Cerita:** Kelompok terpecah. Self-destruct menghapus bukti. Tapi masing-masing survivor membawa pulang **fragment kebenaran** yang berbeda — Arya tahu tentang ibunya, Sera curiga tentang ibunya, Vira ingat nama kakaknya di dinding, Juno mengenali foto ayahnya. **Tidak ada yang punya gambaran utuh. Dan tanpa satu sama lain, potongan-potongan itu tidak akan pernah membentuk kebenaran yang lengkap.**
 
 **#13 — Warisan Wardhana (C)**
 - **Kondisi:** Niko hidup (bukan killer)
-- **Cerita:** Niko membawa grup ke exit rahasia — lorong di balik perpustakaan yang dibangun 50 tahun lalu. "Kakekku membangun jalan keluar. Mungkin di akhir, dia juga ingin lari." Niko menyerahkan diri sebagai saksi dan tersangka. Dibebaskan — insufficient evidence. Tapi hidup dengan beban selamanya.
+- **Cerita:** Niko membawa grup ke lorong rahasia. Tapi di lorong itu, Niko menemukan **ruang arsip pribadi kakeknya Hendarto** — dan di dalamnya, surat terakhir Hendarto yang mengungkap bahwa dia membangun lorong ini sebagai "jalan keluar untuk cucu-cucuku, kalau suatu hari mereka terjebak di arena yang kubuat." Hendarto tahu bahwa anak-anaknya akan melanjutkan siklus — dan menyiapkan jalan keluar untuk generasi yang tidak bisa dia selamatkan langsung. **Niko keluar dengan warisan ganda: dosa kakek yang memulai semuanya, dan kasih kakek yang menyiapkan jalan keluarnya.**
 
 **#19 — Pelarian Tanpa Akhir (C)**
 - **Kondisi:** Trigger via story node (chapter 5) — keluar tanpa bukti
-- **Cerita:** Keluar melalui jendela pecah, hutan, pagar kawat dengan tangan berdarah. Polisi datang ke mansion — kosong. Bersih. Tidak ada bukti. Podcast Arya viral tapi "creepypasta terbaik tahun ini." Siklus berlanjut. Mengetahui tanpa bisa bertindak — hukuman lebih buruk dari kematian.
+- **Cerita:** Keluar melalui jendela pecah, hutan, pagar kawat. Polisi datang — mansion kosong. Podcast Arya viral tapi dianggap "creepypasta." Tapi setahun kemudian, seorang pendengar podcast menghubungi Arya: **"Ibumu Ratna pernah menulis surat ke redaksi kami tahun 2008. Tentang organisasi bernama Dewan Penenun. Kami tidak mempublikasikannya. Saya menyesal."** Arya menyadari ibunya pernah mencoba mengungkap kebenaran — lewat jurnalisme, bukan senjata — dan gagal. Dan sekarang Arya mengulangi siklus yang sama.
 
 **#23 — Plot Twist Penulis (C)**
 - **Kondisi:** Lana (killer) hidup + identitas tersembunyi + bukan menang
-- **Cerita:** Lana bukan hanya operator double agent — tapi calon PEWARIS Sang Penenun. Cerita kakaknya nyata, tapi motivasi bukan balas dendam — mengambil alih. Menjadi Penenun baru. Siklus bukan berakhir — justru ter-upgrade.
+- **Cerita:** Lana bermain triple — bukan hanya operator double agent, tapi calon **PEWARIS Sang Penenun**. Plot twist tergelap: **Lana Kusuma bukan nama aslinya. Nama aslinya Lana Wardhana** — cucu perempuan Hendarto dari putra kedua yang tidak diakui. Lana dan Niko sepupu. Lana tumbuh di panti asuhan sementara Niko tumbuh di mansion. Malam ini, **dua cucu Hendarto bermain di arena kakek mereka tanpa pernah tahu mereka berbagi darah**. Siklus bukan berakhir — justru ter-upgrade oleh Penenun baru yang punya empati cukup untuk memahami manusia, dan menggunakan pemahaman itu sebagai senjata.
 
 **#24 — Profiler dan Subjek (C)**
 - **Kondisi:** Sera hidup + fajar tercapai (dawn_reached)
-- **Cerita:** Sera berhasil memprofilkan Sang Penenun dengan akurasi menakutkan. Tapi profil itu sendiri menjadi senjata — Ragil gunakan prediksi Sera untuk selalu selangkah di depan. Kelompok keluar selamat tapi Ragil sudah menghapus semua bukti.
+- **Cerita:** Sera memprofilkan Sang Penenun dengan akurasi menakutkan. Tapi Ragil mengungkap alasannya: **"Ibumu yang mengajarkanmu. Dr. Lestari Amalina — psikolog residen saya selama 18 tahun. Pelatihan subliminal sejak usia 4 tahun. Kau pikir kau belajar membaca microexpression di universitas?"** Sera membeku. Semua yang dia banggakan — kemampuannya, karirnya, thesis-nya — berasal dari sumber paling gelap. Ibunya bukan psikolog biasa. **Ibunya adalah arsitek profil korban Dewan.** Dan Sera, tanpa mengetahuinya, adalah produk terbaik dari program ibunya.
 
 ---
 
@@ -679,31 +679,31 @@ Ending otomatis terpicu berdasarkan kondisi game saat ini — bukan terkunci di 
 
 **#14 — Paranoia Menang (D)**
 - **Kondisi:** Trust rata-rata <25 + ≥2 kematian
-- **Cerita:** Kepercayaan hancur total. Semua mencurigai semua. Kelompok pecah menjadi individu yang mengunci diri di kamar masing-masing. Sang Penenun tidak perlu membunuh siapapun — paranoia melakukannya. Arya tidak membuka pintu saat Sera meminta tolong — dan kehilangan sesuatu lebih penting dari keselamatan.
+- **Cerita:** Kepercayaan hancur total. Paranoia menggantikan akal sehat. Arya tidak membuka pintu saat Sera meminta tolong. Tapi kebenaran di baliknya lebih mengerikan: paranoia itu **di-design**. Ragil menggunakan **"Protokol Fragmentasi"** — memanipulasi sistem ventilasi untuk menyebarkan stimulan kimia yang meningkatkan cortisol dan menurunkan kemampuan berpikir rasional. Paranoia bukan kelemahan manusia — itu **senjata buatan** yang ditanamkan Ragil ke udara mansion. Dan setiap orang yang saling curiga malam itu... sebenarnya sedang bereaksi terhadap kimia, bukan realita.
 
 **#15 — Tuduhan Salah (D)**
 - **Kondisi:** Killer menang + Sera hidup (killer_victory)
-- **Cerita:** Menuduh orang yang salah. Sera — sekutu terbesar — dikunci oleh kelompok. Operator sebenarnya bergerak bebas. Dua kematian lagi sebelum fajar. "Kau memilih ketakutan daripada kepercayaan. Kau memilih ego daripada aku."
+- **Cerita:** Menuduh orang yang salah. Tapi tuduhan itu **di-design oleh Lana** berminggu-minggu sebelumnya — di laptopnya ditemukan draft berjudul **"Kambing Hitam — Versi 7."** Versi 7 artinya skenario ini sudah dipraktikkan di 6 siklus sebelumnya. Semua "bukti" yang mengarah ke orang yang dituduh di-plant. Sera tahu — dia membaca "kebingungan murni, bukan rasa bersalah" di mikro-ekspresi korban tuduhan. Tapi tidak ada yang mendengarkannya. **Kegagalan terberat profiler: diabaikan oleh orang yang paling dia cintai.**
 
 **#16 — Sang Penenun Menang (D)**
 - **Kondisi:** Killer menang secara umum (killer_victory)
-- **Cerita:** Tiga simpul terputus. Mansion kembali normal saat fajar. Polisi tidak menemukan apa-apa. Kasus ditutup. Sang Penenun mengirim email: "Terima kasih atas partisipasinya. Sampai siklus berikutnya."
+- **Cerita:** Tiga simpul terputus. Tiga bulan kemudian, email terakhir Sang Penenun tiba — berisi **profil psikologis lengkap setiap tamu**. Profil Arya: "Subjek A-01. Indeks kerentanan: 87. Catatan: sangat menyerupai profil ibu (**Ratna Prasetya, Operator R-03, dieliminasi 2009**). Potensi rekrutmen: TINGGI." Ibunya bukan korban Dewan — ibunya pernah menjadi operator. Profil Sera: "Anak **Dr. Lestari Amalina** (Psikolog Residen, masih aktif). Kemampuan profiling: hasil pelatihan subliminal fase 2." Ibunya yang masih menelepon setiap Minggu — masih aktif bekerja untuk Dewan. **Sang Penenun sudah menang sejak sebelum mereka lahir.**
 
 **#17 — Pengkhianatan Dokter (D)**
 - **Kondisi:** Dimas (killer) hidup + killer menang/player kalah
-- **Cerita:** Mempercayai Dimas untuk merawat yang terluka — kesalahan fatal. Dimas menggunakan akses medis untuk sabotase: obat tidur sebagai pengganti obat nyeri, dosage sedikit terlalu tinggi. Profesional sampai akhir. Menghilang ke malam, tugas selesai.
+- **Cerita:** Dimas menggunakan akses medis untuk sabotase. Tapi di balik presisi klinis itu: **Dimas Pratama asli meninggal di Semarang 2001.** Orang ini — **Operator D-07** — adalah anak jalanan tanpa nama yang ditemukan Ragil di kolong jembatan Manggarai usia 8 tahun. Ragil melihat potensi: anak yang sudah tidak merasakan empati. Diadopsi, diberi identitas curian, dibiayai sekolah kedokteran — bukan sebagai investasi pada anak, tapi investasi pada **senjata**. 15 tahun pelatihan. Tapi saat Sera menatapnya tanpa kebencian di detik terakhir — melihat anak kecil 8 tahun di balik operator — tangan Dimas gemetar untuk pertama kalinya dalam 15 tahun.
 
 **#20 — Pengecut yang Hidup (D)**
 - **Kondisi:** Trigger via story node (chapter 4) — kabur sendirian
-- **Cerita:** Berlari ke malam sendirian. Meninggalkan semua orang di dalam. Polisi datang — sudah terlambat, 2 orang lagi meninggal. Mansion dibersihkan. Podcast mati — tidak ada yang mau mendengar cerita dari orang yang meninggalkan teman-temannya untuk mati.
+- **Cerita:** Berlari ke malam sendirian. Meninggalkan semua orang. Polisi datang — terlambat. Tapi yang paling menghancurkan: setahun kemudian, Arya menemukan bahwa ibunya **Ratna** pernah melakukan hal yang sama — kabur dari mansion 2009 dan meninggalkan orang lain di dalam. Dan Ratna dieliminasi bukan karena bersaksi — tapi karena rasa bersalah membuatnya kembali. **Arya mengulangi dosa ibunya. Dan bertanya-tanya apakah rasa bersalah juga akan membuatnya kembali.**
 
 **#22 — Siklus Berlanjut (D)**
 - **Kondisi:** Escape awal (≤chapter 3) + ≤1 clue
-- **Cerita:** Kabur di chapter awal lewat pagar yang belum terpasang. Polisi datang — mansion sudah bersih. Setahun kemudian, amplop hitam lagi. Undangan yang sama, mansion berbeda. Dan kali ini — ada nama seseorang yang kau cintai.
+- **Cerita:** Kabur di chapter awal lewat pagar. Setahun kemudian, amplop hitam lagi — dan di dalamnya, foto ibunya **Ratna Prasetya** berdiri di depan mansion lain tahun 2008, satu tahun sebelum "meninggal." Di balik foto: **"Ibumu datang. Ibumu bermain. Ibumu kalah. Sekarang giliranmu — untuk kedua kalinya."** Dan di undangan itu, nama lain: **Sera Amalina**. Sera juga diundang. Lari dari mansion pertama tidak menyelamatkan siapapun — hanya menunda. Dan sekarang orang yang paling dicintai sudah masuk permainan.
 
 **#29 — Jejak yang Terhapus (D)**
 - **Kondisi:** Clue dihancurkan killer → tidak cukup bukti (killer_clues_destroyed)
-- **Cerita:** Killer berhasil menghancurkan cukup banyak petunjuk sehingga protagonis tidak bisa mengumpulkan 5 yang dibutuhkan. Tanpa bukti, tidak ada jalan keluar. Tidak ada yang bisa mengungkap identitas killer.
+- **Cerita:** Petunjuk dihancurkan — tapi tidak semua oleh operator. Beberapa dihancurkan oleh **Ragil sendiri** dari Bunker B-3 melalui sistem remote. Ragil mengontrol arena — setiap petunjuk yang "ditemukan" diletakkan dengan sengaja, dan yang "dihancurkan" juga dihancurkan dengan sengaja. **Permainan ini tidak pernah bisa dimenangkan lewat pelarian.** Yang paling menakutkan: di antara petunjuk yang dihancurkan, ada satu yang berisi **daftar nama korban 50 tahun** — termasuk nama ibu Arya, kakak Vira, ayah Juno. Kebenaran yang terbakar sebelum sempat dibaca.
 
 ---
 
@@ -711,11 +711,11 @@ Ending otomatis terpicu berdasarkan kondisi game saat ini — bukan terkunci di 
 
 **#18 — Simpul Terputus Total (F)**
 - **Kondisi:** Player sendirian + ≥5 kematian
-- **Cerita:** Semua simpul terputus. Setiap orang yang seharusnya dilindungi — hilang. Satu per satu. Player selamat sendirian — saksi sempurna yang cukup pintar untuk menggali, cukup naif untuk gagal. Siklus berlanjut, dan harganya adalah sepi. Epilog berbeda per karakter yang dimainkan.
+- **Cerita:** Semua simpul terputus. Player selamat sendirian. Enam bulan kemudian, paket tanpa pengirim tiba — berisi folder **"PROFIL WARISAN"**: silsilah keluarga setiap tamu dan koneksi mereka ke korban-korban sebelumnya. Setiap orang yang mati malam itu ternyata adalah anak, cucu, atau keponakan dari korban Dewan sebelumnya. Ragil tidak hanya membunuh — dia **mengumpulkan generasi kedua** dari keluarga korbannya dan menempatkan mereka di tempat yang sama. Di halaman terakhir: foto **Ratna Prasetya** di koridor mansion, 2009 — "Operator R-03. Dieliminasi." Epilog berbeda per karakter yang dimainkan.
 
 **#25 — Mayoritas yang Diam (F)**
 - **Kondisi:** ≥7 karakter hidup + moral <-10
-- **Cerita:** Semua selamat secara fisik. Tapi tidak ada yang bicara. Tidak ada yang melapor. Egoisme menang atas keberanian. Masing-masing pulang, masing-masing diam. Sang Penenun menang bukan dengan kekerasan, tapi dengan keheningan. Tahun depan, 10 amplop hitam dikirim ke 10 alamat baru. Setiap hubungan yang tumbuh malam itu — mati dalam keheningan yang dipilih.
+- **Cerita:** Semua selamat secara fisik. Tidak ada yang bicara. Dua tahun kemudian, arsip Dewan bocor — termasuk dokumen **"Protokol Omega — Skenario Optimal"**: "Skenario terbaik bukan membunuh semua tamu. Skenario terbaik adalah membiarkan mereka semua hidup — dan memastikan mereka memilih diam. Mayoritas yang diam adalah **aset terbaik Dewan**." Ragil merencanakan keheningan ini. Dan semua kebenaran — tentang ibu Arya, ibu Sera, kakak Vira, ayah Juno, identitas Dimas, hubungan Lana-Niko — **terkubur bersama keheningan yang mereka pilih**. Keheningan yang membuktikan thesis Ragil: manusia lebih memilih kenyamanan daripada keadilan. Selalu.
 
 ---
 
