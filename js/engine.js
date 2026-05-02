@@ -4223,7 +4223,10 @@ const Engine = (() => {
       const initial = CHAR_INITIALS[c] || display.charAt(0);
       const card = document.createElement('div');
       card.className = 'tc-card';
-      card.innerHTML = `<div class="tc-avatar" style="background:${color}">${initial}</div><div class="tc-name">${display}</div><div class="tc-tag">${tagline.split('—')[0].trim()}</div>`;
+      const avatarContent = CHAR_PORTRAITS[c]
+        ? `<img class="tc-avatar-img" src="${CHAR_PORTRAITS[c]}" alt="${display}">`
+        : `<div class="tc-avatar" style="background:${color}">${initial}</div>`;
+      card.innerHTML = `${avatarContent}<div class="tc-name">${display}</div><div class="tc-tag">${tagline.split('—')[0].trim()}</div>`;
       grid.appendChild(card);
     });
   }
