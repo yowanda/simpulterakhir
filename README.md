@@ -23,12 +23,15 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 ## Fitur
 
 ### Gameplay & Cerita
-- **6 chapter** dengan percabangan kompleks (Prolog + Bab 1-5)
-- **Escalation System (Bab 4-5)** — endgame lebih intens dengan pacing cepat
+- **6 chapter** dengan percabangan kompleks (Prolog + Bab 1-5) — auto-advance setiap 6 ronde
+- **Anti-Loop System** — NPC dipaksa pindah jika terlalu lama di satu lokasi, game auto-escalate setiap ronde
+- **Hard cap 25 ronde** — game pasti selesai, tidak ada infinite loop
+- **Escalation System** — tension NPC naik setiap ronde, chapter auto-advance, killer lebih agresif
 - **30 ending naratif** — trigger otomatis berdasarkan kondisi game (S/A/B/C/D/F rating)
 - **Condition-based ending system** — ending dipilih berdasarkan state: killer hidup/mati, survivor yang selamat, clue ditemukan, moral score, trust level, dan lainnya
 - **Ringkasan game otomatis** — tampilkan siapa yang tereliminasi, siapa yang menang, dan statistik permainan + cerita ending naratif
 - **Auto-simulasi** — jika player mati, NPC melanjutkan permainan sampai ada pemenang
+- **Force relocate** — setelah clue ditemukan/dihancurkan, semua NPC di lokasi itu pindah otomatis
 - **3 tingkat kesulitan** yang mengubah jumlah killer:
   - **Mudah**: 1 killer (Lana)
   - **Normal**: 2 killers (Lana + Dimas)
