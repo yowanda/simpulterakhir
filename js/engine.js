@@ -3666,18 +3666,47 @@ const Engine = (() => {
 
     if (available.length === 0 && choices.length === 0) return;
 
-    // Limit player options — prioritize BRAIN interactive choices, then story
+    // Limit player options — priority-based smart selection (compact mode)
     let displayed = available;
     const maxOpts = isPlayerKiller() ? MAX_PLAYER_OPTIONS_KILLER : MAX_PLAYER_OPTIONS;
     if (displayed.length > maxOpts) {
       const brain = displayed.filter(c => c.type === 'brain' || c.type === 'brain-killer');
       const story = displayed.filter(c => !c.type || c.type === 'story' || (!c.type?.startsWith('brain')));
-      // Shuffle brain choices for variety each game
-      for (let i = brain.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [brain[i], brain[j]] = [brain[j], brain[i]];
-      }
-      // Show 1 story choice max + fill rest with brain choices
+
+      // Priority tiers — critical actions always surface first
+      const CHOICE_PRIORITY = {
+        escape: 100,    // WIN: kabur dari mansion
+        confront: 90,   // attack revealed killer
+        accuse: 85,     // tuduh / vote eliminasi
+        killer: 95,     // killer strike target
+        investigate: 70, // cari petunjuk
+        alliance: 55,   // ajak aliansi
+        social: 50,     // bicara
+        observe: 45,    // amati
+        stealth: 75,    // frame / sabotage / destroy clue
+        hide: 30,       // sembunyi
+        move: 35,       // pindah lokasi
+        story: 40       // lanjutkan cerita
+      };
+
+      // Sort brain choices by priority (highest first)
+      brain.sort((a, b) => {
+        const catA = a.category || detectCategory(a);
+        const catB = b.category || detectCategory(b);
+        let priA = CHOICE_PRIORITY[catA] || 40;
+        let priB = CHOICE_PRIORITY[catB] || 40;
+        // Tool pickup always top priority
+        if (a.successChance === 100 && a.reward >= 80) priA = 99;
+        if (b.successChance === 100 && b.reward >= 80) priB = 99;
+        // Danger badge = high urgency
+        if (a.danger) priA += 5;
+        if (b.danger) priB += 5;
+        if (priA !== priB) return priB - priA;
+        // Same priority tier: shuffle for variety
+        return Math.random() - 0.5;
+      });
+
+      // Show 1 story choice max + fill rest with priority brain choices
       const storySlot = story.length > 0 ? 1 : 0;
       displayed = story.slice(0, storySlot).concat(brain.slice(0, maxOpts - storySlot));
       displayed = displayed.slice(0, maxOpts);
