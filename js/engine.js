@@ -3905,8 +3905,10 @@ const Engine = (() => {
         applyStartClues(state, startClueCount);
       }
       currentNodeId = null;
-      showScreen('screen-characters');
-      renderCharacterIntro();
+      showScreen('screen-game');
+      updateChapterIndicator();
+      initParticles();
+      renderNode('prologue_start');
     });
     container.appendChild(survCard);
 
@@ -3930,8 +3932,10 @@ const Engine = (() => {
       state = defaultState(selectedDifficulty, randomKiller, true);
       resetChatTimestamp();
       currentNodeId = null;
-      showScreen('screen-characters');
-      renderCharacterIntro();
+      showScreen('screen-game');
+      updateChapterIndicator();
+      initParticles();
+      renderNode('prologue_start');
     });
     container.appendChild(killCard);
   }
