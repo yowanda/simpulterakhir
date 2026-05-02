@@ -873,20 +873,25 @@ const Engine = (() => {
     };
   }
 
-  // ---- Difficulty multipliers ----
-  // Positive effects (trust gain, danger reduction) scale UP on Easy
-  // Negative effects (trust loss, danger increase) scale DOWN on Easy
+  // ---- Difficulty multipliers (role-aware: favor PLAYER's chosen role) ----
+  // Target win rates: Easy 52%, Normal 50%, Hard 48%
+  // Multipliers are tighter to create subtle 2% edges, not huge swings
   function diffMultPositive() {
     if (!state.difficulty) return 1;
-    return [1.4, 1, 0.7][state.difficulty - 1] || 1;
+    return [1.08, 1, 0.92][state.difficulty - 1] || 1;
   }
   function diffMultNegative() {
     if (!state.difficulty) return 1;
-    return [0.6, 1, 1.4][state.difficulty - 1] || 1;
+    return [0.92, 1, 1.08][state.difficulty - 1] || 1;
   }
   function diffMult() {
     if (!state.difficulty) return 1;
-    return [0.8, 1, 1.2][state.difficulty - 1] || 1;
+    return [0.96, 1, 1.04][state.difficulty - 1] || 1;
+  }
+  // Player role advantage: returns positive bonus for Easy, 0 for Normal, negative for Hard
+  function playerRoleAdvantage() {
+    const diff = state.difficulty || 2;
+    return diff === 1 ? 0.04 : diff === 3 ? -0.04 : 0; // ±4% chance modifier
   }
 
   // ---- Trust helpers ----
@@ -904,9 +909,15 @@ const Engine = (() => {
     if (Math.abs(adjusted) >= 4) showRelChange(a, b, adjusted);
   }
 
-  // ---- Awareness helper ----
+  // ---- Awareness helper (role-aware) ----
   function modAwareness(char, delta) {
-    const mult = state.difficulty === 3 ? 0.5 : state.difficulty === 1 ? 1.5 : 1;
+    const isPlayer = char === playerChar();
+    let mult = 1;
+    if (isPlayer) {
+      mult = state.difficulty === 1 ? 1.08 : state.difficulty === 3 ? 0.92 : 1;
+    } else {
+      mult = state.difficulty === 3 ? 0.85 : state.difficulty === 1 ? 1.15 : 1;
+    }
     const adjusted = Math.round(delta * mult);
     state.awareness[char] = Math.max(0, Math.min(100, (state.awareness[char] || 0) + adjusted));
   }
@@ -980,9 +991,9 @@ const Engine = (() => {
     const pemburu = state.pemburu;
     const charName = typeof CharBrain !== 'undefined' ? CharBrain.charName : (n) => n;
 
-    // Threshold scales with difficulty: Easy 85%, Normal 80%, Hard 75%
+    // Threshold scales with difficulty: Easy 82%, Normal 80%, Hard 78% (tighter spread)
     const diff = state.difficulty || 2;
-    const pemburuThreshold = diff === 1 ? 85 : diff === 3 ? 75 : 80;
+    const pemburuThreshold = diff === 1 ? 82 : diff === 3 ? 78 : 80;
 
     let highestTarget = null;
     let highestSusp = pemburuThreshold;
@@ -1088,10 +1099,10 @@ const Engine = (() => {
     deathFlash();
   }
 
-  // ---- Check if can die (difficulty gating) ----
+  // ---- Check if can die (difficulty gating — tighter for balanced 52/50/48 win rates) ----
   function canDie() {
-    if (state.difficulty === 1 && state.deathCount >= 2 && state.chapter < 2) return false;
-    if (state.difficulty === 2 && state.deathCount >= 4 && state.chapter < 2) return false;
+    if (state.difficulty === 1 && state.deathCount >= 3 && state.chapter < 2) return false;
+    if (state.difficulty === 2 && state.deathCount >= 3 && state.chapter < 2) return false;
     return true;
   }
 
@@ -1163,9 +1174,9 @@ const Engine = (() => {
   // Jika ditemukan, langsung selesai misi petunjuk pelarian
   function rollMasterKey() {
     if (state.masterKeyFound) return false;
-    // Easy 6%, Normal 4%, Hard 3%
+    // Easy 5%, Normal 4%, Hard 3.5% (tighter spread for balanced win rates)
     const diff = state.difficulty || 2;
-    const masterKeyChance = diff === 1 ? 0.06 : diff === 3 ? 0.03 : 0.04;
+    const masterKeyChance = diff === 1 ? 0.05 : diff === 3 ? 0.035 : 0.04;
     if (Math.random() < masterKeyChance) {
       state.masterKeyFound = true;
       return true;
@@ -1231,12 +1242,17 @@ const Engine = (() => {
     const toolBonus = getToolBonus(charName, bonusType);
     let diffBonus = 0;
     const isKiller = state.killers && state.killers.includes(charName);
-    if (!isKiller && (bonusType === 'intel' || bonusType === 'defense')) {
-      const diff = state.difficulty || 2;
-      diffBonus = diff === 1 ? 15 : diff === 2 ? 10 : 5;
+    const isPlayer = charName === playerChar();
+    const diff = state.difficulty || 2;
+    if (isPlayer) {
+      // Player always gets difficulty advantage regardless of role
+      diffBonus = diff === 1 ? 6 : diff === 3 ? -4 : 0;
+    } else if (!isKiller && (bonusType === 'intel' || bonusType === 'defense')) {
+      // NPC protagonists: mild baseline bonus (reduced from old values)
+      diffBonus = diff === 1 ? 4 : diff === 2 ? 3 : 2;
     } else if (isKiller && bonusType === 'offense') {
-      const diff = state.difficulty || 2;
-      diffBonus = diff === 1 ? -15 : diff === 2 ? -10 : -5;
+      // NPC killers: mild penalty
+      diffBonus = diff === 1 ? -4 : diff === 2 ? -3 : -2;
     }
     let abilityBonus = 0;
     if (charName === playerChar()) {
@@ -4180,11 +4196,11 @@ const Engine = (() => {
   function showGallery() {
     showScreen('screen-gallery');
     const unlockedCount = Object.keys(endingsUnlocked).length;
-    $('gallery-title').textContent = `Galeri Ending (${unlockedCount}/30)`;
+    $('gallery-title').textContent = `Galeri Ending (${unlockedCount}/28)`;
     const grid = $('gallery-grid');
     grid.innerHTML = '';
     const hasAnyUnlocked = unlockedCount > 0;
-    for (let i = 1; i <= 30; i++) {
+    for (let i = 1; i <= 28; i++) {
       const item = document.createElement('div');
       item.className = 'gallery-item';
       if (endingsUnlocked[i]) {

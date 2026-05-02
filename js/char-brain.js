@@ -519,9 +519,85 @@ const CharBrain = (() => {
       }
     }
 
+    // === COMPACT-MECHANIC BRANCHES: More NPC decision variety for fast-paced games ===
+
+    // INTEL SHARING: Share suspicion data with allies when together
+    if (candidates.length === 0 && !isAlone && mind.allies.length > 0 && canDo('share_intel') && deathCount >= 1) {
+      const allyNearby = nearby.find(n => mind.allies.includes(n.name));
+      if (allyNearby) {
+        const highSuspect = Object.entries(mind.suspicions).find(([name, susp]) => susp > 35 && gameState.alive[name]);
+        if (highSuspect) {
+          candidates.push({ type: 'share_intel', desc: `${charName(mind.name)} berbisik ke ${charName(allyNearby.name)}: "Aku curiga pada ${charName(highSuspect[0])}..."`, target: allyNearby.name, priority: 68 });
+        }
+      }
+    }
+
+    // STRATEGIC REPOSITION: Move toward escape clue locations when danger is moderate
+    if (candidates.length === 0 && isAlone && canDo('strategic_move') && deathCount >= 1 && mind.tension >= 20 && mind.tension < 60) {
+      if (typeof Engine !== 'undefined' && Engine.ESCAPE_CLUE_LOCATIONS) {
+        const clueLocations = Object.keys(Engine.ESCAPE_CLUE_LOCATIONS || {});
+        const unvisited = clueLocations.filter(loc => {
+          const connections = LOCATION_CONNECTIONS[mind.location] || [];
+          return connections.includes(loc) && !mind.actionHistory.includes('search_escape_clue_' + loc);
+        });
+        if (unvisited.length > 0) {
+          const targetLoc = unvisited[Math.floor(Math.random() * unvisited.length)];
+          candidates.push({ type: 'move', desc: `${charName(mind.name)} menuju ${locName(targetLoc)} — mencari petunjuk pelarian.`, moveTo: targetLoc, priority: 65 });
+        }
+      }
+    }
+
+    // WARN OTHERS: When NPC has witnessed a kill and there are nearby non-allies
+    if (candidates.length === 0 && !isAlone && canDo('warn') && mind.memory.some(m => m.type === 'witnessed_death')) {
+      const nonAlly = nearby.find(n => !mind.allies.includes(n.name) && !mind.enemies.includes(n.name) && !gameState.killers.includes(n.name));
+      if (nonAlly) {
+        candidates.push({ type: 'warn', desc: `${charName(mind.name)} memperingatkan ${charName(nonAlly.name)} tentang apa yang dia lihat.`, target: nonAlly.name, priority: 73 });
+      }
+    }
+
+    // DISTRACT: Create diversion when allies are in danger (tension 50+)
+    if (candidates.length === 0 && !isAlone && canDo('distract') && mind.tension >= 50 && mind.allies.length > 0) {
+      const allyInDanger = nearby.find(n => mind.allies.includes(n.name) && allMinds[n.name] && allMinds[n.name].tension > 60);
+      if (allyInDanger) {
+        candidates.push({ type: 'distract', desc: `${charName(mind.name)} menciptakan pengalihan untuk melindungi ${charName(allyInDanger.name)}.`, priority: 71 });
+      }
+    }
+
+    // CONFRONT SUSPICIOUS: Directly confront highly suspicious NPC when brave enough
+    if (candidates.length === 0 && !isAlone && canDo('confront') && mind.tension >= 40 && mind.tension < 70 && deathCount >= 2) {
+      const db = typeof CharDB !== 'undefined' ? CharDB.getProfile(mind.name) : null;
+      const courage = db && db.personality ? db.personality.courage : 50;
+      if (courage >= 55) {
+        const suspect = nearby.find(n => (mind.suspicions[n.name] || 0) > 45 && !mind.allies.includes(n.name));
+        if (suspect) {
+          candidates.push({ type: 'confront', desc: `${charName(mind.name)} mengonfrontasi ${charName(suspect.name)}: "Jelaskan kegiatanmu!"`, target: suspect.name, priority: 74 });
+        }
+      }
+    }
+
+    // PATROL: Brave NPCs patrol between locations to gather intel
+    if (candidates.length === 0 && isAlone && canDo('patrol') && deathCount >= 1) {
+      const db = typeof CharDB !== 'undefined' ? CharDB.getProfile(mind.name) : null;
+      const courage = db && db.personality ? db.personality.courage : 50;
+      if (courage >= 60 && mind.tension < 50) {
+        const connections = LOCATION_CONNECTIONS[mind.location] || [];
+        if (connections.length > 0) {
+          const patrolLoc = connections[Math.floor(Math.random() * connections.length)];
+          candidates.push({ type: 'move', desc: `${charName(mind.name)} berpatroli ke ${locName(patrolLoc)} — menjaga keamanan.`, moveTo: patrolLoc, priority: 58 });
+        }
+      }
+    }
+
+    // PLEAD: Desperate plea when alone, high tension, low allies
+    if (candidates.length === 0 && !isAlone && canDo('plead') && mind.tension >= 65 && mind.allies.length === 0) {
+      const targetPlead = nearby.find(n => !gameState.killers.includes(n.name) && !mind.enemies.includes(n.name));
+      if (targetPlead) {
+        candidates.push({ type: 'plead', desc: `${charName(mind.name)} memohon perlindungan kepada ${charName(targetPlead.name)}.`, target: targetPlead.name, priority: 63 });
+      }
+    }
+
     // Low tension → prioritize movement over passive actions
     if (candidates.length === 0) {
-      // Movement first — prevent NPCs from camping (higher probability than before)
       const stationaryCount = mind.actionHistory.filter(a => a === 'observe' || a === 'socialize' || a === 'plan').length;
       const shouldMove = stationaryCount >= 1 || Math.random() < 0.7;
       if (shouldMove) {
@@ -693,6 +769,52 @@ const CharBrain = (() => {
       }
     }
 
+    // === COMPACT-MECHANIC KILLER BRANCHES: More strategic variety ===
+
+    // LURE: Attract isolated survivor to killer's location
+    if (candidates.length === 0 && isAlone && canDo('lure') && !isRevealed && mind.emotion !== 'executing') {
+      const isolatedSurvivor = Object.values(allMinds).find(m =>
+        gameState.alive[m.name] && !gameState.killers.includes(m.name) &&
+        Object.values(allMinds).filter(o => o.location === m.location && o !== m && gameState.alive[o.name]).length === 0 &&
+        (LOCATION_CONNECTIONS[m.location] || []).includes(mind.location)
+      );
+      if (isolatedSurvivor) {
+        candidates.push({ type: 'lure', desc: `${charName(mind.name)} memancing ${charName(isolatedSurvivor.name)} ke ${locName(mind.location)}...`, target: isolatedSurvivor.name, priority: 78 });
+      }
+    }
+
+    // ALIBI BUILDING: Socialize to lower suspicion when suspicion is rising
+    if (candidates.length === 0 && !isAlone && canDo('maintain_cover') && mySusp > 20 && mySusp < 55 && !isRevealed) {
+      const trustTarget = nonKillerNearby.find(n => !mind.enemies.includes(n.name));
+      if (trustTarget) {
+        candidates.push({ type: 'maintain_cover', desc: `${charName(mind.name)} bersikap ramah ke ${charName(trustTarget.name)} — membangun alibi.`, target: trustTarget.name, priority: 68 });
+      }
+    }
+
+    // COVERUP: Clean evidence after a kill
+    if (candidates.length === 0 && isAlone && canDo('coverup') && mind.killCount > 0 && !isRevealed) {
+      candidates.push({ type: 'coverup', desc: `${charName(mind.name)} membersihkan jejak pembunuhan di ${locName(mind.location)}.`, priority: 72 });
+    }
+
+    // COORDINATE KILLERS: When multiple killers alive, coordinate strategy
+    if (candidates.length === 0 && canDo('coordinate_killers')) {
+      const otherKiller = nearby.find(n => gameState.killers.includes(n.name) && n.name !== mind.name);
+      if (otherKiller) {
+        candidates.push({ type: 'coordinate_killers', desc: `${charName(mind.name)} berkoordinasi dengan ${charName(otherKiller.name)} dalam diam.`, target: otherKiller.name, priority: 70 });
+      }
+    }
+
+    // BAIT: Create false clue trail to misdirect survivors
+    if (candidates.length === 0 && isAlone && canDo('bait') && !isRevealed && gameState.chapter >= 2) {
+      candidates.push({ type: 'bait', desc: `${charName(mind.name)} meninggalkan petunjuk palsu di ${locName(mind.location)}.`, priority: 62 });
+    }
+
+    // EXPLOIT CHAOS: When multiple deaths, killer uses chaos to attack more boldly
+    if (candidates.length === 0 && deathCount >= 3 && !isRevealed && nonKillerNearby.length === 1 && canDo('strike')) {
+      const target = nonKillerNearby[0];
+      candidates.push({ type: 'strike', desc: `${charName(mind.name)} menyerang ${charName(target.name)} di tengah kekacauan!`, target: target.name, priority: 88 });
+    }
+
     // Default: reposition first, maintain cover only if movement on cooldown
     if (candidates.length === 0) {
       const stationaryCount = mind.actionHistory.filter(a => a === 'maintain_cover' || a === 'plan').length;
@@ -777,21 +899,35 @@ const CharBrain = (() => {
       // Update emotional state
       updateEmotion(mind, gameState);
 
-      // Killer pacing: hesitation chance scales with difficulty
-      // Easy 30%, Normal 20%, Hard 10% — killers act faster for shorter games
+      // Killer pacing: hesitation scales with difficulty AND player role
       const isNpcKiller = gameState.killers && gameState.killers.includes(name);
       const diff = gameState.difficulty || 2;
-      const hesitationChance = diff === 1 ? 0.30 : diff === 3 ? 0.10 : 0.20;
+      const pc = gameState.playerCharacter || 'arin';
+      const playerIsKiller = gameState.killers && gameState.killers.includes(pc);
+      // If player IS killer → NPC killers (teammates) hesitate MORE on Easy (favor player)
+      // If player is protagonist → NPC killers hesitate MORE on Easy (favor player survival)
+      let hesitationChance;
+      if (playerIsKiller) {
+        hesitationChance = diff === 1 ? 0.22 : diff === 3 ? 0.15 : 0.18;
+      } else {
+        hesitationChance = diff === 1 ? 0.24 : diff === 3 ? 0.12 : 0.18;
+      }
       if (isNpcKiller && mind.emotion !== 'executing' && Math.random() < hesitationChance) {
         return;
       }
 
-      // Killer tracking: Easy 20%, Normal 30%, Hard 40%
-      // Boost tracking when player is camping (staleCampingRounds from engine)
-      const isPlayerProtagonist = !(gameState.killers && gameState.killers.includes(pc));
-      const campBoost = Math.min(0.30, (gameState.staleCampingRounds || 0) * 0.10);
-      const baseTrackChance = diff === 1 ? 0.20 : diff === 3 ? 0.40 : 0.30;
-      const trackChance = Math.min(0.80, baseTrackChance + campBoost);
+      // Killer tracking: role-aware (tighter spread for 52/50/48 balance)
+      const isPlayerProtagonist = !playerIsKiller;
+      const campBoost = Math.min(0.20, (gameState.staleCampingRounds || 0) * 0.08);
+      let baseTrackChance;
+      if (playerIsKiller) {
+        // Player is killer → NPC killers track player's ENEMIES less on Easy
+        baseTrackChance = diff === 1 ? 0.22 : diff === 3 ? 0.35 : 0.28;
+      } else {
+        // Player is protagonist → NPC killers track player less on Easy
+        baseTrackChance = diff === 1 ? 0.24 : diff === 3 ? 0.34 : 0.28;
+      }
+      const trackChance = Math.min(0.65, baseTrackChance + campBoost);
       if (isNpcKiller && isPlayerProtagonist && Math.random() < trackChance) {
         const playerLoc = gameState.playerLocation || 'aula_utama';
         const killerLoc = mind.location;
@@ -888,11 +1024,12 @@ const CharBrain = (() => {
     });
 
     // === PROTAGONIST ALLIANCE CAMPING: When player is killer, NPC survivors band together ===
-    // Alliance formation chance scales with difficulty
+    // Alliance camping: role-aware (tighter spread for 52/50/48)
     const isPlayerKiller = gameState.killers && gameState.killers.includes(pc);
     if (isPlayerKiller) {
       const diff = gameState.difficulty || 2;
-      const campChance = diff >= 3 ? 0.45 : diff >= 2 ? 0.40 : 0.35;
+      // Player is killer → NPC survivors ally LESS on Easy (favor player-killer)
+      const campChance = diff >= 3 ? 0.42 : diff >= 2 ? 0.38 : 0.32;
       const aliveProtagonists = Object.keys(minds).filter(n =>
         n !== pc && gameState.alive[n] && !gameState.killers.includes(n)
       );
@@ -1569,7 +1706,7 @@ const CharBrain = (() => {
       }
 
       case 'frame': {
-        // Redirect suspicion to someone else — chance-based, scaled by difficulty
+        // Redirect suspicion to someone else — chance-based, role-aware scaling
         const aliveNonKillers = Object.keys(allMinds).filter(n =>
           gameState.alive[n] && !gameState.killers.includes(n) && n !== mind.name
         );
@@ -1577,18 +1714,21 @@ const CharBrain = (() => {
           const framed = aliveNonKillers[Math.floor(Math.random() * aliveNonKillers.length)];
           const frameChance = 0.45 - getKillerPenalty(gameState);
           if (Math.random() < frameChance) {
-            // Suspicion increase capped to prevent Pemburu cascade on Easy/Normal
+            // Frame suspicion: role-aware (tighter spread for balanced win rates)
             const diff = gameState.difficulty || 2;
-            const suspBase = diff === 1 ? 12 : diff === 3 ? 20 : 15;
-            const suspRange = diff === 1 ? 6 : diff === 3 ? 12 : 8;
+            const pc = gameState.playerCharacter || 'arin';
+            const pIsK = gameState.killers && gameState.killers.includes(pc);
+            // Player-killer Easy: framing MORE effective; Player-protagonist Easy: framing LESS effective
+            const suspBase = pIsK ? (diff === 1 ? 18 : diff === 3 ? 13 : 15) : (diff === 1 ? 13 : diff === 3 ? 18 : 15);
+            const suspRange = pIsK ? (diff === 1 ? 10 : diff === 3 ? 6 : 8) : (diff === 1 ? 6 : diff === 3 ? 10 : 8);
             const suspIncrease = suspBase + Math.floor(Math.random() * suspRange);
             gameState.suspicion[framed] = Math.min(100, (gameState.suspicion[framed] || 0) + suspIncrease);
-            const selfReduction = diff === 1 ? 6 : diff === 3 ? 12 : 8;
+            const selfReduction = pIsK ? (diff === 1 ? 10 : diff === 3 ? 5 : 8) : (diff === 1 ? 5 : diff === 3 ? 10 : 8);
             gameState.suspicion[mind.name] = Math.max(0, (gameState.suspicion[mind.name] || 0) - selfReduction);
-            // Nearby NPCs: suspicion + trust drop (scaled by difficulty)
+            // Nearby NPCs: suspicion + trust drop (role-aware)
             const affectedNpcs = [];
-            const npcSuspGain = diff === 1 ? 10 : diff === 3 ? 20 : 14;
-            const trustDrop = diff === 1 ? 12 : diff === 3 ? 22 : 16;
+            const npcSuspGain = pIsK ? (diff === 1 ? 16 : diff === 3 ? 11 : 14) : (diff === 1 ? 11 : diff === 3 ? 16 : 14);
+            const trustDrop = pIsK ? (diff === 1 ? 18 : diff === 3 ? 13 : 16) : (diff === 1 ? 13 : diff === 3 ? 18 : 16);
             Object.values(allMinds).forEach(m => {
               if (m.name !== mind.name && m.name !== framed && m.location === mind.location && gameState.alive[m.name]) {
                 m.suspicions[framed] = Math.min(100, (m.suspicions[framed] || 0) + npcSuspGain);
@@ -1983,23 +2123,31 @@ const CharBrain = (() => {
     return 0;
   }
 
-  // ---- Difficulty-Based Protagonist Advantage ----
-  // Easy: +15% protagonist advantage, Normal: +10%, Hard: +5%
-  // This gives protagonists a fair edge since many situations favor killers
+  // ---- Difficulty-Based Role Advantage (role-aware: favor PLAYER's chosen role) ----
+  // Target win rates: Easy 52%, Normal 50%, Hard 48%
+  // Old system always buffed protagonists — new system buffs PLAYER regardless of role
   function getProtagonistBonus(gameState) {
     const diff = gameState.difficulty || 2;
-    if (diff === 1) return 0.15;  // Easy: +15%
-    if (diff === 2) return 0.10;  // Normal: +10%
-    if (diff === 3) return 0.05;  // Hard: +5%
-    return 0.10;
+    const pc = gameState.playerCharacter || 'arin';
+    const playerIsKiller = gameState.killers && gameState.killers.includes(pc);
+    if (playerIsKiller) {
+      // Player is killer → protagonists get LESS bonus (favor player-killer)
+      return diff === 1 ? 0.02 : diff === 2 ? 0.05 : 0.08;
+    }
+    // Player is protagonist → protagonists get slight bonus on Easy
+    return diff === 1 ? 0.08 : diff === 2 ? 0.05 : 0.02;
   }
 
   function getKillerPenalty(gameState) {
     const diff = gameState.difficulty || 2;
-    if (diff === 1) return 0.15;
-    if (diff === 2) return 0.10;
-    if (diff === 3) return 0.05;
-    return 0.10;
+    const pc = gameState.playerCharacter || 'arin';
+    const playerIsKiller = gameState.killers && gameState.killers.includes(pc);
+    if (playerIsKiller) {
+      // Player is killer → NPC killers get LESS penalty (shared killer team benefit)
+      return diff === 1 ? 0.02 : diff === 2 ? 0.05 : 0.08;
+    }
+    // Player is protagonist → NPC killers get more penalty on Easy
+    return diff === 1 ? 0.08 : diff === 2 ? 0.05 : 0.02;
   }
 
   // ---- Defense Calculation ----
