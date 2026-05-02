@@ -150,6 +150,18 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - Berlaku untuk NPC killer maupun player-as-killer
 - **Strategis**: Killer harus hati-hati agar suspicion tidak >80% dan menghindari lokasi Pemburu. Survivor bisa memanfaatkan framing untuk memicu pemburu ke target yang salah
 
+### Voting System
+- **Pemain bisa memulai voting** untuk mengeliminasi suspect killer yang ada di lokasi yang sama
+- **Syarat voting**: suspicion target ≥50%, minimal 2 NPC di lokasi, sudah ada kematian
+- **Player vote weight 50%** — vote pemain punya bobot 50% dalam menentukan hasil
+- **NPC voting berdasarkan AI** — setiap NPC mempertimbangkan: suspicion pribadi, trust, musuh/teman, bukti yang dimiliki, saksi pembunuhan
+- **Hasil voting**:
+  - **Benar (target = killer)**: Killer tereliminasi di depan semua NPC! Tension turun, identitas terkonfirmasi
+  - **Salah (target ≠ killer)**: Orang tak bersalah tereliminasi! Trust turun drastis (-15), danger naik +15%
+  - **Gagal (tidak mayoritas)**: Voting ditolak, suspicion target +10%
+- **NPC juga bisa initiate voting** — NPC survivor akan memulai voting sendiri jika suspicion target ≥60% dan ada cukup orang di lokasi
+- **Cooldown 3 ronde** — tidak bisa spam voting berturut-turut
+
 ### Anti-Looping & Plot Progression System
 - **Player Action Tracking** — setiap brain action hanya bisa dilakukan **1x per target per node**
 - **Max Brain Actions** per node — Survivor: 5 aksi, Killer: 3 aksi (pacing lebih lambat untuk killer)

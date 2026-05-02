@@ -198,7 +198,7 @@ const CharBrain = (() => {
       coordinate_defense: 3, scout: 2, rally: 3, ambush: 3,
       secure_exit: 3, betray: 3, distract: 3, divide: 4,
       isolate: 4, eliminate: 3, strike: 3, share_clue: 2,
-      trust_kill: 4,
+      trust_kill: 4, initiate_vote: 3,
       destroy_clue: 3, search_escape_clue: 2, attack_killer: 2
     };
     let cd = cooldownMap[type] || 1;
@@ -465,6 +465,19 @@ const CharBrain = (() => {
       const suspect = nearby.find(n => mind.suspicions[n.name] > 40);
       if (suspect && canDo('question')) {
         candidates.push({ type: 'question', desc: `${charName(mind.name)} mengonfrontasi ${charName(suspect.name)}.`, target: suspect.name, priority: 75 });
+      }
+      // NPC initiates voting when high suspicion and enough people nearby
+      const voteSuspect = nearby.find(n =>
+        (gameState.suspicion[n.name] || 0) >= 60 &&
+        nearby.length >= 2
+      );
+      if (voteSuspect && canDo('initiate_vote') && deathCount >= 1) {
+        candidates.push({
+          type: 'initiate_vote',
+          desc: `${charName(mind.name)} memulai voting untuk eliminasi ${charName(voteSuspect.name)}!`,
+          target: voteSuspect.name,
+          priority: 85
+        });
       }
       if (candidates.length === 0) {
         const moveTo = pickNewLocation(mind);
@@ -1170,6 +1183,45 @@ const CharBrain = (() => {
           gameState.suspicion[action.target] = Math.min(100, (gameState.suspicion[action.target] || 0) + 8);
           return { type: 'accusation', accuser: mind.name, accused: action.target, correct: false,
             desc: `${charName(mind.name)} salah menuduh ${charName(action.target)}.` };
+        }
+      }
+
+      case 'initiate_vote': {
+        if (!action.target || !gameState.alive[action.target]) return null;
+        const voteResult = conductVoting(action.target, gameState, mind.name);
+        const voteLog = Object.entries(voteResult.votes).map(([n, v]) =>
+          `${charName(n)}: ${v.vote === 'yes' ? 'SETUJU' : 'TOLAK'}`
+        ).join(', ');
+
+        if (voteResult.success) {
+          if (voteResult.isActualKiller) {
+            gameState.alive[action.target] = false;
+            gameState.deathCount++;
+            if (!gameState.killersDead) gameState.killersDead = [];
+            if (!gameState.killersDead.includes(action.target)) gameState.killersDead.push(action.target);
+            if (!gameState.killerRevealed.includes(action.target)) gameState.killerRevealed.push(action.target);
+            Object.values(allMinds).forEach(m => {
+              if (gameState.alive[m.name] && m.name !== action.target) {
+                m.memory.push({ type: 'vote_elimination', target: action.target, round: mind.roundsSurvived });
+                m.tension = Math.max(0, m.tension - 10);
+              }
+            });
+            return { type: 'vote_elimination', initiator: mind.name, target: action.target,
+              desc: `🗳️ ${charName(mind.name)} memulai voting! ${voteLog}. Hasil: ${voteResult.voteYes}-${voteResult.voteNo}. ${charName(action.target)} TERELIMINASI — terbukti sebagai killer!` };
+          } else {
+            gameState.alive[action.target] = false;
+            gameState.deathCount++;
+            gameState.dangerLevel = Math.min(100, (gameState.dangerLevel || 0) + 15);
+            Object.values(allMinds).forEach(m => {
+              if (gameState.alive[m.name]) m.tension += 20;
+            });
+            return { type: 'vote_innocent', initiator: mind.name, target: action.target,
+              desc: `🗳️ ${charName(mind.name)} memulai voting! ${voteLog}. ${charName(action.target)} dieliminasi tapi... BUKAN killer! Semua orang panik!` };
+          }
+        } else {
+          gameState.suspicion[action.target] = Math.min(100, (gameState.suspicion[action.target] || 0) + 10);
+          return { type: 'vote_failed', initiator: mind.name, target: action.target,
+            desc: `🗳️ ${charName(mind.name)} memulai voting terhadap ${charName(action.target)}! ${voteLog}. Voting gagal: ${voteResult.voteYes}-${voteResult.voteNo}.` };
         }
       }
 
@@ -1889,6 +1941,22 @@ const CharBrain = (() => {
         }
         break;
       }
+      case 'vote_eliminate': {
+        // Player initiated a vote — all NPCs at location react
+        const targetMindV = gameState.npcMinds[targetName];
+        if (targetMindV) {
+          targetMindV.tension += 30;
+          targetMindV.enemies.push(pc);
+        }
+        // All nearby NPCs remember this voting event
+        Object.keys(gameState.npcMinds).forEach(name => {
+          const m = gameState.npcMinds[name];
+          if (m && gameState.alive[name] && m.location === (gameState.playerLocation || 'aula_utama')) {
+            m.memory.push({ type: 'vote_initiated', initiator: pc, target: targetName, round: m.roundsSurvived });
+          }
+        });
+        break;
+      }
       case 'investigate_location': {
         // Player finds clue
         const clueChance = 0.35;
@@ -1930,6 +1998,87 @@ const CharBrain = (() => {
     return null;
   }
 
+  // ---- Voting System: NPC vote logic ----
+  function conductVoting(targetName, gameState, initiator) {
+    if (!gameState.npcMinds) return { success: false, votes: {} };
+    const pc = gameState.playerCharacter || 'arin';
+    const playerLoc = gameState.playerLocation || 'aula_utama';
+
+    // Find all alive non-killer NPCs at player location (voters)
+    const voters = Object.keys(gameState.npcMinds).filter(name =>
+      name !== targetName &&
+      name !== pc &&
+      gameState.alive[name] &&
+      gameState.npcMinds[name] &&
+      gameState.npcMinds[name].location === playerLoc
+    );
+
+    const votes = {};
+    let voteYes = 0;
+    let voteNo = 0;
+
+    // Each NPC votes based on suspicion, trust, enemy status, and memory
+    voters.forEach(name => {
+      const mind = gameState.npcMinds[name];
+      if (!mind) return;
+
+      const suspOnTarget = mind.suspicions[targetName] || 0;
+      const tk = trustKeyFor(name, targetName);
+      const trustLevel = gameState.trust[tk] !== undefined ? gameState.trust[tk] : 50;
+      const isEnemy = mind.enemies.includes(targetName);
+      const hasClue = mind.hasClue.length > 0;
+      const globalSusp = gameState.suspicion[targetName] || 0;
+      const witnessedKiller = (gameState.witnessedKillers || []).includes(targetName);
+      const revealedKiller = (gameState.killerRevealed || []).includes(targetName);
+
+      // Calculate vote probability
+      let voteChance = 25; // Base chance to vote yes
+      voteChance += Math.floor(suspOnTarget / 2);  // NPC's personal suspicion
+      voteChance += Math.floor(globalSusp / 4);    // Global suspicion
+      if (isEnemy) voteChance += 25;
+      if (witnessedKiller) voteChance += 40;
+      if (revealedKiller) voteChance += 50;
+      if (trustLevel < 30) voteChance += 15;
+      if (trustLevel > 60) voteChance -= 15;
+      if (hasClue) voteChance += 10;
+      // Allies of target are less likely to vote yes
+      if (mind.allies.includes(targetName)) voteChance -= 30;
+
+      voteChance = Math.max(5, Math.min(95, voteChance));
+
+      const votedYes = Math.random() * 100 < voteChance;
+      votes[name] = { vote: votedYes ? 'yes' : 'no', confidence: voteChance };
+      if (votedYes) voteYes++;
+      else voteNo++;
+    });
+
+    // Player vote counts with 50% weight
+    // Player always votes yes (they initiated the vote)
+    const playerWeight = Math.max(1, Math.ceil((voteYes + voteNo + 1) * 0.5));
+    const totalYes = voteYes + playerWeight;
+    const totalNo = voteNo;
+    const totalVotes = totalYes + totalNo;
+    const majority = totalYes > totalNo;
+
+    // Apply 50% chance mechanic: even with majority, there's player influence factor
+    let finalResult = majority;
+    if (majority) {
+      // Player's vote has 50% chance to be decisive
+      finalResult = Math.random() < 0.5 ? true : (totalYes > totalNo);
+    }
+
+    return {
+      success: finalResult,
+      votes,
+      voteYes: totalYes,
+      voteNo: totalNo,
+      totalVotes,
+      voterCount: voters.length,
+      playerWeight,
+      isActualKiller: gameState.killers && gameState.killers.includes(targetName)
+    };
+  }
+
   // ---- Helpers ----
   function charName(name) {
     const display = { arin: 'Arya', niko: 'Niko', sera: 'Sera', juno: 'Juno', vira: 'Vira',
@@ -1954,6 +2103,7 @@ const CharBrain = (() => {
     generateNarrative,
     getActionLog,
     playerAction,
+    conductVoting,
     updateEmotion,
     makeDecision,
     createMind,

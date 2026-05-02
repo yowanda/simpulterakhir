@@ -2471,6 +2471,76 @@ const Engine = (() => {
       }
     }
 
+    // --- VOTE to eliminate suspect (survivor only, requires 2+ NPCs at location, suspicion >= 50%) ---
+    if (!isK && nearbyNpcs.length >= 2 && gameState.deathCount >= 1) {
+      const voteTarget = nearbyNpcs.find(n =>
+        (gameState.suspicion[n] || 0) >= 50 &&
+        !brainActionTaken('vote_' + n)
+      );
+      if (voteTarget) {
+        const suspLvl = gameState.suspicion[voteTarget] || 0;
+        const isRevealed = (gameState.killerRevealed || []).includes(voteTarget);
+        const isWitnessed = (gameState.witnessedKillers || []).includes(voteTarget);
+        const voterCount = nearbyNpcs.filter(n => n !== voteTarget && !gameState.killers.includes(n)).length;
+        const evidenceStr = isRevealed ? 'TERUNGKAP' : isWitnessed ? 'SAKSI PEMBUNUHAN' : suspLvl > 75 ? 'Bukti sangat kuat' : 'Bukti kuat';
+        const voteRisk = isRevealed || isWitnessed ? 10 : Math.max(25, 60 - suspLvl);
+        const voteReward = 95;
+        choices.push({
+          text: `🗳️ Voting: Eliminasi ${CharBrain.charName(voteTarget)} — "${CharBrain.charName(voteTarget)} adalah pembunuh!"`,
+          type: 'brain', category: 'accuse',
+          hint: `${evidenceStr} — ${suspLvl}% suspicion | ${voterCount} NPC akan ikut voting | Vote kamu 50% weight`,
+          risk: voteRisk,
+          reward: voteReward,
+          successChance: 50,
+          effect: (s) => {
+            recordBrainAction('vote_' + voteTarget);
+            CharBrain.playerAction('vote_eliminate', voteTarget, s);
+            const result = CharBrain.conductVoting(voteTarget, s, pc);
+            const voteDetails = Object.entries(result.votes).map(([name, v]) =>
+              `${CharBrain.charName(name)}: ${v.vote === 'yes' ? '✋ SETUJU' : '✗ TOLAK'}`
+            ).join(', ');
+
+            if (result.success) {
+              if (result.isActualKiller) {
+                // Correct vote: killer eliminated!
+                Engine.killChar(voteTarget);
+                if (!s.killerRevealed.includes(voteTarget)) s.killerRevealed.push(voteTarget);
+                // All NPCs at location see the elimination
+                nearbyNpcs.forEach(n => {
+                  if (s.npcMinds[n] && s.alive[n]) {
+                    s.npcMinds[n].memory.push({ type: 'vote_elimination', target: voteTarget, round: s.roundCount });
+                    s.npcMinds[n].tension = Math.max(0, s.npcMinds[n].tension - 10);
+                  }
+                });
+                Engine.notify(`🗳️ VOTING BERHASIL! Hasil: ${result.voteYes} setuju vs ${result.voteNo} tolak. ${voteDetails}. ${CharBrain.charName(voteTarget)} TERELIMINASI di depan semua orang! Identitas killer terkonfirmasi!`);
+                if (allKillersDead()) {
+                  Engine.notify('🎉 SEMUA KILLER TELAH DIELIMINASI! Protagonis menang!');
+                }
+              } else {
+                // Wrong vote: innocent eliminated — consequences
+                Engine.killChar(voteTarget);
+                s.dangerLevel = Math.min(100, (s.dangerLevel || 0) + 15);
+                // Trust drops for all voters
+                nearbyNpcs.forEach(n => {
+                  if (s.npcMinds[n] && s.alive[n]) {
+                    const tk = CharBrain.trustKeyFor(pc, n);
+                    if (s.trust[tk] !== undefined) s.trust[tk] = Math.max(0, s.trust[tk] - 15);
+                    s.npcMinds[n].tension += 20;
+                  }
+                });
+                Engine.notify(`🗳️ VOTING BERHASIL tapi... ${CharBrain.charName(voteTarget)} BUKAN killer! ${voteDetails}. Orang tak bersalah tereliminasi! Trust semua orang turun drastis. Bahaya +15%.`);
+              }
+            } else {
+              // Vote failed — not enough support
+              Engine.modSuspicion(voteTarget, 10);
+              Engine.notify(`🗳️ Voting GAGAL. Hasil: ${result.voteYes} setuju vs ${result.voteNo} tolak. ${voteDetails}. Tidak cukup dukungan untuk eliminasi. Suspicion +10%.`);
+            }
+          },
+          next: (s) => currentNodeId
+        });
+      }
+    }
+
     // --- INVESTIGATE location (one-time per location per node) ---
     if (!brainActionTaken('investigate_' + playerLoc)) {
       const baseInvChance = 45 + (gameState.chapter * 8);
