@@ -149,8 +149,8 @@ const Engine = (() => {
   const BRAIN_MAX_PER_NODE_KILLER = 2; // Killer gets even fewer — fast pacing
   const STALE_THRESHOLD = 2;    // Force movement after 2 stationary actions (was 3)
   const STALE_DANGER_PER_ROUND = 8; // Danger increase per stale round (was 5)
-  const MAX_PLAYER_OPTIONS = 6; // Max choices shown to player per node — brain interactive first
-  const MAX_PLAYER_OPTIONS_KILLER = 4; // Killer gets fewer choices — less overwhelming
+  const MAX_PLAYER_OPTIONS = 3; // Max choices shown to player per node — compact & focused
+  const MAX_PLAYER_OPTIONS_KILLER = 2; // Killer gets fewer choices — fast-paced decisions
   let typingTimeout = null;
 
   // ---- 7 Unique Tools System ----
