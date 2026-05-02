@@ -246,15 +246,15 @@ const Engine = (() => {
       icon: 'lencana'
     },
     lana: {
-      role: 'Dalang',
-      perk: '+20% framing & -15% terdeteksi',
-      desc: 'Novelis horor. Manipulasi dan framing lebih efektif, dan lebih sulit dideteksi sebagai killer.',
+      role: 'Penulis',
+      perk: '+20% persuasi & narasi',
+      desc: 'Novelis horor. Ahli merangkai kata dan situasi — mempengaruhi persepsi orang lain dengan cerita.',
       icon: 'pena'
     },
     dimas: {
-      role: 'Operator',
-      perk: '+15% kill & silent elimination',
-      desc: 'Mahasiswa forensik. Presisi klinis dalam eliminasi — lebih tinggi chance kill dan lebih sedikit bukti.',
+      role: 'Medis',
+      perk: '+15% pertolongan & analisis',
+      desc: 'Mahasiswa forensik. Keahlian medis dan analitis — bisa membaca situasi dengan presisi klinis.',
       icon: 'pisau'
     },
     kira: {
@@ -3868,9 +3868,9 @@ const Engine = (() => {
       <div class="role-info">
         <div class="role-name" style="color:#4a7c59">Survivor</div>
         <div class="role-title">Karakter Acak</div>
-        <div class="role-perk">Kau akan mendapat salah satu dari ${survivorPool.length} karakter survivor secara acak</div>
+        <div class="role-perk">Kau akan mendapat salah satu karakter secara acak</div>
         <div class="role-desc">Bertahan hidup, kumpulkan petunjuk, ungkap identitas killer. Siapa pembunuhnya? Kau harus mencari tahu sendiri!</div>
-        <div class="role-survivor-list">${survivorPool.map(n => {
+        <div class="role-survivor-list">${CHARACTERS.map(n => {
           const r = ROLE_DESCRIPTIONS[n];
           return `<span class="role-survivor-chip" style="border-color:${CHAR_COLORS[n]}">${CHAR_DISPLAY[n]} — ${r ? r.perk : ''}</span>`;
         }).join('')}</div>
