@@ -4212,28 +4212,18 @@ const Engine = (() => {
     el.innerHTML = `<div class="mystery-label">${prefix}</div><div class="mystery-hook">${req.hook}</div>`;
   }
 
-  function renderCharProfiles() {
-    const grid = $('char-profiles-grid');
+  function renderTitleChars() {
+    const grid = $('title-chars-grid');
     if (!grid) return;
     grid.innerHTML = '';
     CHARACTERS.forEach(c => {
       const display = CHAR_DISPLAY[c];
       const color = CHAR_COLORS[c];
       const tagline = CHAR_TAGLINES[c] || '';
-      const role = ROLE_DESCRIPTIONS[c];
       const initial = CHAR_INITIALS[c] || display.charAt(0);
       const card = document.createElement('div');
-      card.className = 'char-profile-card';
-      card.innerHTML = `
-        <div class="cp-avatar" style="background:${color}">${initial}</div>
-        <div class="cp-info">
-          <div class="cp-name" style="color:${color}">${display}</div>
-          <div class="cp-role">${role ? role.role : ''}</div>
-          <div class="cp-tagline">${tagline}</div>
-          <div class="cp-desc">${role ? role.desc : ''}</div>
-          <div class="cp-perk">${role ? role.perk : ''}</div>
-        </div>
-      `;
+      card.className = 'tc-card';
+      card.innerHTML = `<div class="tc-avatar" style="background:${color}">${initial}</div><div class="tc-name">${display}</div><div class="tc-tag">${tagline.split('—')[0].trim()}</div>`;
       grid.appendChild(card);
     });
   }
@@ -4325,13 +4315,7 @@ const Engine = (() => {
     $('btn-how-to-play').addEventListener('click', () => showScreen('screen-how-to-play'));
     $('btn-rules-back').addEventListener('click', () => showScreen('screen-title'));
 
-    $('btn-char-profiles').addEventListener('click', () => {
-      renderCharProfiles();
-      $('screen-char-profiles').style.display = 'flex';
-    });
-    $('btn-close-profiles').addEventListener('click', () => {
-      $('screen-char-profiles').style.display = 'none';
-    });
+    renderTitleChars();
 
     $('btn-menu').addEventListener('click', () => togglePanel('panel-menu'));
     $('btn-status').addEventListener('click', () => togglePanel('panel-status'));

@@ -870,83 +870,51 @@ body {
   font-style: italic;
 }
 
-/* ========== CHARACTER PROFILES ========== */
-#screen-char-profiles {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 200;
-  background: #0a0908;
+/* ========== TITLE CHARS (Kenali Mereka) ========== */
+.title-chars {
+  margin: 1rem auto 0.5rem;
+  max-width: 420px;
+  text-align: center;
+}
+.title-chars-label {
+  font-size: 0.7rem;
+  color: #6a5a4a;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.title-chars-grid {
   display: flex;
-  flex-direction: column;
-  overflow-y: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
 }
-.char-profiles-container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  width: 100%;
+.tc-card {
+  width: 70px;
+  text-align: center;
+  padding: 0.3rem 0.2rem;
 }
-.char-profiles-intro {
-  font-size: 0.8rem;
-  color: #8b7355;
-  font-style: italic;
-  margin-bottom: 1.2rem;
-  line-height: 1.5;
-}
-.char-profiles-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-.char-profile-card {
-  display: flex;
-  gap: 0.8rem;
-  padding: 0.8rem;
-  background: #12100e;
-  border: 1px solid #1e1b18;
-  border-radius: 8px;
-}
-.cp-avatar {
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
+.tc-avatar {
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
+  margin: 0 auto 0.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.65rem;
   color: #0a0908;
 }
-.cp-info { flex: 1; }
-.cp-name {
-  font-weight: bold;
-  font-size: 0.9rem;
-  margin-bottom: 0.1rem;
-}
-.cp-role {
-  font-size: 0.7rem;
-  color: #6a5a4a;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 0.3rem;
-}
-.cp-tagline {
-  font-size: 0.75rem;
-  color: #9a8e7b;
-  margin-bottom: 0.3rem;
-  line-height: 1.4;
-}
-.cp-desc {
-  font-size: 0.7rem;
-  color: #6a5a4a;
-  line-height: 1.4;
-  margin-bottom: 0.2rem;
-}
-.cp-perk {
+.tc-name {
   font-size: 0.65rem;
+  font-weight: 600;
   color: #c8a96e;
-  font-style: italic;
+}
+.tc-tag {
+  font-size: 0.5rem;
+  color: #6a5a4a;
+  line-height: 1.3;
 }
 
 /* ========== ENDING READER ========== */
