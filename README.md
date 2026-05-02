@@ -25,8 +25,9 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 ### Gameplay & Cerita
 - **6 chapter** dengan percabangan kompleks (Prolog + Bab 1-5)
 - **Escalation System (Bab 4-5)** — endgame lebih intens dengan pacing cepat
-- **Hasil akhir dinamis** — bukan ending pre-scripted, tapi berdasarkan hasil permainan sebenarnya
-- **Ringkasan game otomatis** — tampilkan siapa yang tereliminasi, siapa yang menang, dan statistik permainan
+- **30 ending naratif** — trigger otomatis berdasarkan kondisi game (S/A/B/C/D/F rating)
+- **Condition-based ending system** — ending dipilih berdasarkan state: killer hidup/mati, survivor yang selamat, clue ditemukan, moral score, trust level, dan lainnya
+- **Ringkasan game otomatis** — tampilkan siapa yang tereliminasi, siapa yang menang, dan statistik permainan + cerita ending naratif
 - **Auto-simulasi** — jika player mati, NPC melanjutkan permainan sampai ada pemenang
 - **3 tingkat kesulitan** yang mengubah jumlah killer:
   - **Mudah**: 1 killer (Lana)
@@ -541,8 +542,43 @@ simpul-terakhir/
     ├── story-ch8.js        # Bab 4 lanjutan: Titik Balik
     ├── story-ch9.js        # Bab 5: Terakhir Berdiri (chapter 5)
     ├── story-ch10.js       # Bab 5 lanjutan: Fajar Berdarah
-    └── story-endings.js    # Story endings + dynamic game result system
+    └── story-endings.js    # 30 story endings + condition-based ending selector
 ```
+
+### Sistem Ending (30 Ending — Condition-Based)
+
+Ending tidak lagi terkunci di chapter tertentu. Setiap ending otomatis terpicu berdasarkan kondisi game saat ini:
+
+| # | Judul | Rating | Kondisi Trigger |
+|---|-------|--------|-----------------|
+| 1 | Sang Penenun Terakhir | S | Semua killer mati + ≥5 clue + ≥4 survivor hidup + moral ≥0 |
+| 2 | Detektif Sejati | S | Semua killer mati + semua clue (8/8) ditemukan |
+| 26 | Pelarian dari Mansion | S | ≥5 clue / master key + escape berhasil |
+| 27 | Pembantai Pembunuh | S | Semua killer dieliminasi lewat combat + ≥3 survivor |
+| 30 | Yang Terakhir Berdiri | A | Semua killer mati + hanya 1 survivor tersisa |
+| 3 | Fajar yang Cukup | A | Semua killer mati + 2-4 clue + ≥2 survivor |
+| 28 | Pengkhianatan Sempurna | A | Semua killer mati + ≥2 killer + killer saling bunuh |
+| 4 | Pengorbanan | A | Player mati + ≥3 survivor selamat + ≥3 clue |
+| 5 | Kesaksian Terakhir | A | Vira hidup + ≥4 survivor + escape/eliminasi berhasil |
+| 8 | Penebusan Penulis | B | Lana (killer) mati + moral ≥0 |
+| 21 | Pahlawan yang Jatuh | B | Player (Arin) mati + ≥2 survivor selamat |
+| 9 | Lingkaran Vira | B | Vira hidup + ≥3 survivor + player bukan Vira |
+| 7 | Kemenangan yang Pecah | B | Semua killer mati + ≤3 survivor + ≥3 kematian |
+| 6 | Abu dan Fajar | B | Semua killer mati + ≥3 clue hancur + <5 clue |
+| 13 | Warisan Wardhana | C | Niko hidup (bukan killer) |
+| 23 | Plot Twist Penulis | C | Lana (killer) hidup + identitas tersembunyi |
+| 24 | Profiler dan Subjek | C | Sera hidup + fajar tercapai |
+| 10 | Kemenangan Pyrrhic | C | Semua killer mati + <3 clue |
+| 11 | Perjanjian dengan Iblis | C | ≥8 karakter hidup + moral <-5 |
+| 12 | Perpecahan Fatal | C | 2-4 survivor + fajar tercapai |
+| 29 | Jejak yang Terhapus | D | Clue dihancurkan killer → tidak cukup bukti |
+| 14 | Paranoia Menang | D | Trust rata-rata <25 + ≥2 kematian |
+| 15 | Tuduhan Salah | D | Killer menang + Sera hidup (salah tuduh) |
+| 17 | Pengkhianatan Dokter | D | Dimas (killer) hidup + killer menang |
+| 16 | Sang Penenun Menang | D | Killer menang secara umum |
+| 22 | Siklus Berlanjut | D | Escape awal (≤ch3) + ≤1 clue |
+| 25 | Mayoritas yang Diam | F | ≥7 karakter hidup + moral <-10 |
+| 18 | Simpul Terputus Total | F | Player sendirian + ≥5 kematian |
 
 ---
 

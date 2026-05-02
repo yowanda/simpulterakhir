@@ -2052,6 +2052,29 @@ body {
   margin-top: 0.5rem;
 }
 
+/* ---- Narrative Ending with Summary ---- */
+.game-result-summary {
+  margin-top: 1.5rem;
+  padding: 1.2rem;
+  background: rgba(15,15,25,0.7);
+  border: 1px solid rgba(200,169,110,0.25);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+}
+.game-result-summary .fates-title {
+  font-family: 'Crimson Text', serif;
+  color: #c8a96e;
+  font-size: 1.05rem;
+  margin-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(200,169,110,0.25);
+  padding-bottom: 0.4rem;
+  text-align: center;
+}
+.game-result-summary .result-headline {
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+}
+
 /* ========== CHATBOX-STYLE STORY TEXT ========== */
 .story-text {
   display: flex;
