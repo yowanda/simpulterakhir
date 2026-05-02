@@ -486,12 +486,21 @@ const CharBrain = (() => {
       }
     }
 
-    // Low tension → observe, socialize, move
+    // Low tension → prioritize movement over passive actions
     if (candidates.length === 0) {
-      if (nearby.length > 0 && deathCount === 0 && canDo('socialize')) {
-        candidates.push({ type: 'socialize', desc: `${charName(mind.name)} berbicara dengan ${charName(nearby[0].name)}.`, target: nearby[0].name, priority: 40 });
+      // Movement first — prevent NPCs from camping
+      const stationaryCount = mind.actionHistory.filter(a => a === 'observe' || a === 'socialize' || a === 'plan').length;
+      const shouldMove = stationaryCount >= 2 || Math.random() < 0.5;
+      if (shouldMove) {
+        const moveTo = pickNewLocation(mind);
+        if (moveTo) {
+          candidates.push({ type: 'move', desc: `${charName(mind.name)} bergerak ke ${locName(moveTo)}.`, moveTo, priority: 40 });
+        }
       }
-      if (canDo('observe')) {
+      if (candidates.length === 0 && nearby.length > 0 && deathCount === 0 && canDo('socialize')) {
+        candidates.push({ type: 'socialize', desc: `${charName(mind.name)} berbicara dengan ${charName(nearby[0].name)}.`, target: nearby[0].name, priority: 35 });
+      }
+      if (candidates.length === 0 && canDo('observe')) {
         candidates.push({ type: 'observe', desc: `${charName(mind.name)} mengamati sekitar.`, priority: 30 });
       }
       if (candidates.length === 0) {
@@ -502,7 +511,7 @@ const CharBrain = (() => {
       }
     }
 
-    return candidates.length > 0 ? candidates[0] : { type: 'observe', desc: `${charName(mind.name)} berdiri diam, berpikir.`, priority: 10 };
+    return candidates.length > 0 ? candidates[0] : { type: 'move', desc: `${charName(mind.name)} memutuskan bergerak.`, moveTo: pickNewLocation(mind), priority: 10 };
   }
 
   function killerFallback(mind, gameState, allMinds, nearby, isAlone) {
@@ -651,19 +660,21 @@ const CharBrain = (() => {
       }
     }
 
-    // Default: maintain cover or reposition (NEVER do protagonist tasks)
+    // Default: reposition first, maintain cover only if movement on cooldown
     if (candidates.length === 0) {
-      if (canDo('maintain_cover')) {
-        candidates.push({ type: 'maintain_cover', desc: `${charName(mind.name)} menunggu momen yang tepat.`, priority: 45 });
-      } else {
+      const stationaryCount = mind.actionHistory.filter(a => a === 'maintain_cover' || a === 'plan').length;
+      if (stationaryCount >= 2 || Math.random() < 0.6) {
         const moveTo = pickNewLocation(mind);
         if (moveTo) {
-          candidates.push({ type: 'move', desc: `${charName(mind.name)} berpindah posisi.`, moveTo, priority: 40 });
+          candidates.push({ type: 'move', desc: `${charName(mind.name)} berpindah posisi.`, moveTo, priority: 45 });
         }
+      }
+      if (candidates.length === 0 && canDo('maintain_cover')) {
+        candidates.push({ type: 'maintain_cover', desc: `${charName(mind.name)} menunggu momen yang tepat.`, priority: 40 });
       }
     }
 
-    return candidates.length > 0 ? candidates[0] : { type: 'maintain_cover', desc: `${charName(mind.name)} menunggu dengan sabar.`, priority: 30 };
+    return candidates.length > 0 ? candidates[0] : { type: 'move', desc: `${charName(mind.name)} berpindah mencari posisi baru.`, moveTo: pickNewLocation(mind), priority: 30 };
   }
 
   // ---- Pick a new location to move to (anti-loop: avoid current location) ----
@@ -689,8 +700,18 @@ const CharBrain = (() => {
   function pickNewLocation(mind) {
     const connections = LOCATION_CONNECTIONS[mind.location] || [];
     if (connections.length === 0) return null;
-    const shuffled = connections.slice().sort(() => Math.random() - 0.5);
-    return shuffled[0];
+    // Avoid locations recently visited (from action history)
+    const recentMoves = mind.actionHistory.filter(a => a === 'move').length;
+    const lastLoc = mind.location;
+    // Prefer locations the mind hasn't been to recently
+    const scored = connections.map(loc => {
+      let score = Math.random() * 10;
+      // Avoid going back to where we just came from
+      if (mind.lastAction && mind.lastAction.moveTo === lastLoc) score -= 5;
+      return { loc, score };
+    });
+    scored.sort((a, b) => b.score - a.score);
+    return scored[0].loc;
   }
 
   function fleeTo(mind) {
@@ -733,8 +754,11 @@ const CharBrain = (() => {
       }
 
       // Killer tracking: Easy 20%, Normal 30%, Hard 40%
+      // Boost tracking when player is camping (staleCampingRounds from engine)
       const isPlayerProtagonist = !(gameState.killers && gameState.killers.includes(pc));
-      const trackChance = diff === 1 ? 0.20 : diff === 3 ? 0.40 : 0.30;
+      const campBoost = Math.min(0.30, (gameState.staleCampingRounds || 0) * 0.10);
+      const baseTrackChance = diff === 1 ? 0.20 : diff === 3 ? 0.40 : 0.30;
+      const trackChance = Math.min(0.80, baseTrackChance + campBoost);
       if (isNpcKiller && isPlayerProtagonist && Math.random() < trackChance) {
         const playerLoc = gameState.playerLocation || 'aula_utama';
         const killerLoc = mind.location;

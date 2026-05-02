@@ -150,15 +150,18 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - Berlaku untuk NPC killer maupun player-as-killer
 - **Strategis**: Killer harus hati-hati agar suspicion tidak >80% dan menghindari lokasi Pemburu. Survivor bisa memanfaatkan framing untuk memicu pemburu ke target yang salah
 
-### Anti-Looping System
+### Anti-Looping & Plot Progression System
 - **Player Action Tracking** — setiap brain action hanya bisa dilakukan **1x per target per node**
 - **Max Brain Actions** per node — Survivor: 5 aksi, Killer: 3 aksi (pacing lebih lambat untuk killer)
 - **NPC Cooldown System** — setiap tipe aksi NPC punya cooldown 1-4 ronde (killer cooldown lebih tinggi: eliminate/strike 3 ronde, divide/isolate 4 ronde)
 - **NPC Killer Hesitation** — 35% chance killer NPC skip round (ragu-ragu), memperlambat momentum killer
-- **Escalation Mechanism** — jika semua aksi on cooldown, NPC otomatis pindah lokasi
-- **Location-Based Reset** — pindah ke lokasi baru me-reset aksi spesifik lokasi
+- **Location Staleness System** — diam terlalu lama di satu lokasi meningkatkan danger level (+5% per aksi stasioner) dan memicu warning narrative. Setelah 5 aksi tanpa bergerak, hanya pilihan pindah lokasi yang tersedia
+- **Killer Tracking Boost** — killer NPC semakin agresif melacak pemain yang diam di satu tempat (tracking chance +10% per ronde stasioner, max +30%)
+- **1 Pilihan Lokasi** — pemain hanya ditawarkan 1 lokasi terbaik untuk pindah berdasarkan strategi (escape clue, tool, keamanan), bukan 2-3 pilihan acak. Membuat setiap keputusan pindah lebih bermakna
+- **NPC Movement Priority** — NPC survivor dan killer dipaksa bergerak jika sudah melakukan 2+ aksi pasif berturut-turut, mencegah NPC camping
+- **Global Action Memory** — sistem melacak jenis aksi yang dilakukan lintas reset untuk mencegah loop sejenis (observe→observe→observe)
+- **Location-Based Reset** — pindah ke lokasi baru me-reset aksi spesifik lokasi dan mereset staleness counter
 - **Max Opsi** — Survivor: 6 pilihan, Killer: 4 pilihan per node (brain interactive prioritas, 1 story max), shuffled setiap game
-- **Killer Movement Restriction** — Killer hanya bisa pilih 2 lokasi pindah (vs 3 untuk survivor)
 
 ### 7 Alat Unik
 Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat event terpicu di lokasi tertentu.

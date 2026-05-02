@@ -141,8 +141,13 @@ const Engine = (() => {
   let brainActionCount = 0;
   let isBrainRevisit = false;
   let brainActionHistory = [];  // Track executed brain actions per node to prevent looping
+  let globalActionMemory = [];  // Track action TYPES globally to prevent cross-reset loops
+  let locationStaleRounds = 0;  // How many consecutive brain actions without moving
+  let lastPlayerLocation = null; // Track player location changes
   const BRAIN_MAX_PER_NODE = 5; // Max brain actions per node for survivor
   const BRAIN_MAX_PER_NODE_KILLER = 3; // Max brain actions per node for killer — slower pacing
+  const STALE_THRESHOLD = 3;    // After this many stationary actions, force movement
+  const STALE_DANGER_PER_ROUND = 5; // Danger increase per stale round
   const MAX_PLAYER_OPTIONS = 6; // Max choices shown to player per node — brain interactive first
   const MAX_PLAYER_OPTIONS_KILLER = 4; // Killer gets fewer choices — less overwhelming
   let typingTimeout = null;
@@ -1793,10 +1798,35 @@ const Engine = (() => {
   function runNpcRound() {
     if (!state.npcMinds || typeof CharBrain === 'undefined') return null;
     state.roundCount++;
+
+    // Staleness boost: increase killer tracking when player camps
+    if (locationStaleRounds >= STALE_THRESHOLD) {
+      state.staleCampingRounds = (state.staleCampingRounds || 0) + 1;
+    } else {
+      state.staleCampingRounds = 0;
+    }
+
     const result = CharBrain.executeRound(state);
     if (result && result.events && result.events.length > 0) {
       state.npcActionLog.push({ round: state.roundCount, events: result.events });
     }
+
+    // Staleness warning narrative
+    if (locationStaleRounds === STALE_THRESHOLD && result) {
+      if (!result.events) result.events = [];
+      result.events.push({
+        type: 'staleness_warning',
+        desc: 'Suara-suara di koridor semakin dekat... terlalu lama di sini tidak aman.'
+      });
+    }
+    if (locationStaleRounds >= STALE_THRESHOLD + 2 && result) {
+      if (!result.events) result.events = [];
+      result.events.push({
+        type: 'staleness_critical',
+        desc: 'BAHAYA! Posisimu sudah diketahui — kau HARUS bergerak sekarang!'
+      });
+    }
+
     // Natural suspicion decay each round
     decaySuspicion();
     // Pemburu mechanic: auto-execute anyone with suspicion >80%
@@ -2013,6 +2043,13 @@ const Engine = (() => {
       state.nodeHistory.push(nodeId);
       brainActionCount = 0;
       brainActionHistory = [];  // Reset action history on new node
+      // Track location staleness: reset if player actually moved
+      const currentLoc = state.playerLocation || 'aula_utama';
+      if (lastPlayerLocation && lastPlayerLocation !== currentLoc) {
+        locationStaleRounds = 0;
+        globalActionMemory = []; // Reset global memory on genuine movement
+      }
+      lastPlayerLocation = currentLoc;
     }
 
     // Initialize NPC minds on first story node
@@ -2058,12 +2095,21 @@ const Engine = (() => {
           });
         }
       }
-      // Last-resort anti-stuck: reset brain action count so player can keep acting
+      // Last-resort anti-stuck: prefer movement options over full reset
       if (allChoices.length === 0 && state.npcMinds) {
         brainActionCount = 0;
-        brainActionHistory = [];
-        const dynamicChoices = generateDynamicChoices(state);
-        dynamicChoices.forEach(c => allChoices.push(c));
+        brainActionHistory = brainActionHistory.filter(a =>
+          !a.startsWith('move_') && !a.startsWith('investigate_') && !a.startsWith('hide_')
+        );
+        const moveOnlyChoices = generateMoveChoices(state);
+        moveOnlyChoices.forEach(c => allChoices.push(c));
+        if (allChoices.length === 0) {
+          brainActionHistory = [];
+          globalActionMemory = [];
+          locationStaleRounds = 0;
+          const dynamicChoices = generateDynamicChoices(state);
+          dynamicChoices.forEach(c => allChoices.push(c));
+        }
       }
       renderChoices(allChoices);
       updateNpcLogPanel();
@@ -2152,12 +2198,23 @@ const Engine = (() => {
           });
         }
       }
-      // Last-resort anti-stuck: reset brain actions so player always has options
+      // Last-resort anti-stuck: only offer movement options to force progression
       if (allChoices.length === 0 && state.npcMinds) {
         brainActionCount = 0;
-        brainActionHistory = [];
-        const dynamicChoices = generateDynamicChoices(state);
-        dynamicChoices.forEach(c => allChoices.push(c));
+        // Only reset location-specific actions, keep global memory to prevent true loops
+        brainActionHistory = brainActionHistory.filter(a =>
+          !a.startsWith('move_') && !a.startsWith('investigate_') && !a.startsWith('hide_')
+        );
+        const moveOnlyChoices = generateMoveChoices(state);
+        moveOnlyChoices.forEach(c => allChoices.push(c));
+        // If still stuck (no moves), full reset as last resort
+        if (allChoices.length === 0) {
+          brainActionHistory = [];
+          globalActionMemory = [];
+          locationStaleRounds = 0;
+          const dynamicChoices = generateDynamicChoices(state);
+          dynamicChoices.forEach(c => allChoices.push(c));
+        }
       }
       renderChoices(allChoices);
 
@@ -2203,6 +2260,12 @@ const Engine = (() => {
   }
   function recordBrainAction(actionKey) {
     brainActionHistory.push(actionKey);
+    // Track action category globally to detect cross-reset loops
+    const category = actionKey.split('_')[0]; // observe, investigate, hide, talk, etc.
+    if (category !== 'move') {
+      globalActionMemory.push(category);
+      if (globalActionMemory.length > 8) globalActionMemory.shift();
+    }
   }
 
   // ---- Tool Pickup Events ----
@@ -2235,6 +2298,89 @@ const Engine = (() => {
     return null;
   }
 
+  // ---- Generate movement-only choices (for anti-stuck fallback) ----
+  function generateMoveChoices(gameState) {
+    const choices = [];
+    if (!gameState.npcMinds || typeof CharBrain === 'undefined') return choices;
+    const pc = gameState.playerCharacter || 'arin';
+    const isK = gameState.killers && gameState.killers.includes(pc);
+    const playerLoc = gameState.playerLocation || 'aula_utama';
+    const connections = CharBrain.LOCATION_CONNECTIONS[playerLoc] || [];
+    if (connections.length === 0) return choices;
+    // Pick best single destination based on strategic value
+    const loc = pickBestMoveDestination(gameState, connections, pc, isK);
+    if (loc && !brainActionTaken('move_' + loc)) {
+      const npcsAtLoc = Object.keys(gameState.npcMinds || {}).filter(n =>
+        gameState.alive[n] && gameState.npcMinds[n] && gameState.npcMinds[n].location === loc
+      );
+      const locNpcNames = npcsAtLoc.map(n => CharBrain.charName(n));
+      const locInfo = npcsAtLoc.length > 0
+        ? `${npcsAtLoc.length} orang di sana: ${locNpcNames.join(', ')}`
+        : 'Kosong — aman untuk eksplorasi';
+      choices.push({
+        text: `Pindah ke ${CharBrain.locName(loc)} — situasi memaksa!`,
+        type: 'brain', category: 'move',
+        hint: `Terlalu lama di sini — harus bergerak! ${locInfo}`,
+        risk: 10, reward: 50,
+        effect: (s) => {
+          recordBrainAction('move_' + loc);
+          s.playerLocation = loc;
+          locationStaleRounds = 0;
+          globalActionMemory = [];
+          brainActionHistory = brainActionHistory.filter(a => !a.startsWith('investigate_') && !a.startsWith('hide_'));
+          Engine.notify(`Kau berpindah ke ${CharBrain.locName(loc)}.${npcsAtLoc.length > 0 ? ' Kau melihat ' + locNpcNames.join(', ') + ' di sini.' : ''}`);
+        },
+        next: (s) => currentNodeId
+      });
+    }
+    // Also add story progression if available
+    const nextId = findNextStoryNode(currentNodeId);
+    if (nextId) {
+      choices.push({
+        text: 'Lanjutkan cerita — saatnya bergerak',
+        type: 'brain', category: 'story',
+        hint: 'Situasi memaksa — plot harus maju',
+        risk: 5, reward: 50,
+        next: nextId
+      });
+    }
+    return choices;
+  }
+
+  // ---- Pick best single move destination ----
+  function pickBestMoveDestination(gameState, connections, pc, isK) {
+    const scored = connections.map(loc => {
+      let score = 10 + Math.random() * 5; // base + small randomness
+      const npcsAtLoc = Object.keys(gameState.npcMinds || {}).filter(n =>
+        gameState.alive[n] && gameState.npcMinds[n] && gameState.npcMinds[n].location === loc
+      );
+      const hasEscClue = !isK && typeof getEscapeClueAtLocation === 'function' && getEscapeClueAtLocation(loc);
+      const hasToolAtLoc = !getCharTool(pc) && Object.values(GAME_TOOLS).some(t => t.triggerLoc === loc && isToolAvailable(Object.keys(GAME_TOOLS).find(k => GAME_TOOLS[k] === t)));
+      if (hasEscClue) score += 30;
+      if (hasToolAtLoc) score += 20;
+      if (isK) {
+        // Killer wants isolated targets
+        const nonKillerNpcs = npcsAtLoc.filter(n => !gameState.killers.includes(n));
+        if (nonKillerNpcs.length === 1) score += 25;
+        if (npcsAtLoc.length === 0) score += 10;
+      } else {
+        // Survivor wants allies
+        if (npcsAtLoc.length > 0 && npcsAtLoc.length <= 2) score += 15;
+        const killersAtLoc = npcsAtLoc.filter(n => gameState.killers.includes(n));
+        if (killersAtLoc.length > 0) score -= 20;
+      }
+      return { loc, score };
+    });
+    scored.sort((a, b) => b.score - a.score);
+    return scored.length > 0 ? scored[0].loc : null;
+  }
+
+  // ---- Check if action type was already done globally (cross-reset tracking) ----
+  function isGloballyRepeated(actionCategory) {
+    const count = globalActionMemory.filter(a => a === actionCategory).length;
+    return count >= 2; // Same category done 2+ times = repeated
+  }
+
   // ---- Dynamic Choices based on NPC brain state ----
   function generateDynamicChoices(gameState) {
     const choices = [];
@@ -2244,6 +2390,20 @@ const Engine = (() => {
     const isK = gameState.killers && gameState.killers.includes(pc);
     const playerLoc = gameState.playerLocation || 'aula_utama';
     const flavor = CHARACTER_ACTION_FLAVOR[pc] || CHARACTER_ACTION_FLAVOR.arin;
+
+    // ---- Staleness: track consecutive non-movement actions ----
+    locationStaleRounds++;
+    const isStale = locationStaleRounds >= STALE_THRESHOLD;
+    // Increase danger when staying too long in one place
+    if (isStale) {
+      gameState.dangerLevel = Math.min(100, (gameState.dangerLevel || 0) + STALE_DANGER_PER_ROUND);
+    }
+
+    // If player has been stationary too long, only show movement + critical actions
+    if (locationStaleRounds >= STALE_THRESHOLD + 2) {
+      const moveChoices = generateMoveChoices(gameState);
+      if (moveChoices.length > 0) return moveChoices;
+    }
 
     // Find NPCs at player's location
     const nearbyNpcs = Object.keys(gameState.npcMinds).filter(name =>
@@ -2951,50 +3111,43 @@ const Engine = (() => {
       });
     }
 
-    // --- MOVE to adjacent location (always available, resets brain actions at new loc) ---
+    // --- MOVE to adjacent location (1 best destination only — forces strategic choice) ---
     const connections = CharBrain.LOCATION_CONNECTIONS[playerLoc] || [];
     if (connections.length > 0) {
-      const shuffled = connections.slice().sort(() => Math.random() - 0.5);
-      // Niko's ability: +1 extra movement option (knows secret passages)
-      // Killer players get fewer movement options (slower pacing)
-      const baseMove = isPlayerKiller() ? 2 : 3;
-      const moveLimit = hasCharAbility(pc, 'extraMovement') ? baseMove + 1 : baseMove;
-      const moveDests = shuffled.slice(0, Math.min(moveLimit, shuffled.length));
-      moveDests.forEach(loc => {
-        if (brainActionTaken('move_' + loc)) return; // Don't show move to same loc twice
+      const bestLoc = pickBestMoveDestination(gameState, connections, pc, isK);
+      if (bestLoc && !brainActionTaken('move_' + bestLoc)) {
         const npcsAtLoc = Object.keys(gameState.npcMinds || {}).filter(n =>
-          gameState.alive[n] && gameState.npcMinds[n] && gameState.npcMinds[n].location === loc
+          gameState.alive[n] && gameState.npcMinds[n] && gameState.npcMinds[n].location === bestLoc
         );
         const locNpcNames = npcsAtLoc.map(n => typeof CharBrain !== 'undefined' ? CharBrain.charName(n) : n);
-        // Check for killer threat at destination
         const killerAtLoc = npcsAtLoc.some(n => gameState.killers.includes(n));
-        const hasEscClue = !isK && typeof getEscapeClueAtLocation === 'function' && getEscapeClueAtLocation(loc);
-        const hasToolAtLoc = !getCharTool(pc) && Object.values(GAME_TOOLS).some(t => t.triggerLoc === loc && isToolAvailable(Object.keys(GAME_TOOLS).find(k => GAME_TOOLS[k] === t)));
+        const hasEscClue = !isK && typeof getEscapeClueAtLocation === 'function' && getEscapeClueAtLocation(bestLoc);
+        const hasToolAtLoc = !getCharTool(pc) && Object.values(GAME_TOOLS).some(t => t.triggerLoc === bestLoc && isToolAvailable(Object.keys(GAME_TOOLS).find(k => GAME_TOOLS[k] === t)));
         let locInfo = npcsAtLoc.length > 0
           ? `${npcsAtLoc.length} orang di sana: ${locNpcNames.join(', ')}`
           : 'Kosong — aman untuk eksplorasi';
         if (hasEscClue) locInfo += ' | Petunjuk pelarian tersedia';
         if (hasToolAtLoc) locInfo += ' | Ada alat tersedia';
-        // Risk: higher if killer is there, lower if empty
+        if (isStale) locInfo += ' | ⚠️ Terlalu lama di sini!';
         const moveRisk = killerAtLoc ? Math.min(50, 30 + Math.floor((gameState.dangerLevel || 0) / 10)) : (npcsAtLoc.length > 0 ? 15 : 5);
-        // Reward: higher if useful resources there, or if escaping danger
-        const moveReward = Math.min(60, 15 + (hasEscClue ? 25 : 0) + (hasToolAtLoc ? 20 : 0) + (npcsAtLoc.length === 0 && (gameState.dangerLevel || 0) > 40 ? 15 : 0));
+        const moveReward = Math.min(60, 15 + (hasEscClue ? 25 : 0) + (hasToolAtLoc ? 20 : 0) + (isStale ? 20 : 0));
         choices.push({
-          text: `Pindah ke ${CharBrain.locName(loc)}`,
+          text: `Pindah ke ${CharBrain.locName(bestLoc)}`,
           type: 'brain', category: 'move',
           hint: locInfo,
           risk: moveRisk,
           reward: moveReward,
           effect: (s) => {
-            recordBrainAction('move_' + loc);
-            s.playerLocation = loc;
-            // Moving to a new location partially resets brain actions (location-specific ones)
+            recordBrainAction('move_' + bestLoc);
+            s.playerLocation = bestLoc;
+            locationStaleRounds = 0;
+            globalActionMemory = [];
             brainActionHistory = brainActionHistory.filter(a => !a.startsWith('investigate_') && !a.startsWith('hide_'));
-            Engine.notify(`Kau berpindah ke ${CharBrain.locName(loc)}.${npcsAtLoc.length > 0 ? ' Kau melihat ' + npcsAtLoc.map(n => CharBrain.charName(n)).join(', ') + ' di sini.' : ''}`);
+            Engine.notify(`Kau berpindah ke ${CharBrain.locName(bestLoc)}.${npcsAtLoc.length > 0 ? ' Kau melihat ' + npcsAtLoc.map(n => CharBrain.charName(n)).join(', ') + ' di sini.' : ''}`);
           },
           next: (s) => currentNodeId
         });
-      });
+      }
     }
 
     // If all brain actions have been used, add forced progression
