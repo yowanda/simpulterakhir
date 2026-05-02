@@ -146,11 +146,11 @@ const Engine = (() => {
   let locationStaleRounds = 0;  // How many consecutive brain actions without moving
   let lastPlayerLocation = null; // Track player location changes
   const BRAIN_MAX_PER_NODE = 3; // Max brain actions per node — force story progression faster
-  const BRAIN_MAX_PER_NODE_KILLER = 2; // Killer gets even fewer — fast pacing
+  const BRAIN_MAX_PER_NODE_KILLER = 3; // Killer gets same actions as survivor for strategic play
   const STALE_THRESHOLD = 2;    // Force movement after 2 stationary actions (was 3)
   const STALE_DANGER_PER_ROUND = 8; // Danger increase per stale round (was 5)
   const MAX_PLAYER_OPTIONS = 3; // Max choices shown to player per node — compact & focused
-  const MAX_PLAYER_OPTIONS_KILLER = 2; // Killer gets fewer choices — fast-paced decisions
+  const MAX_PLAYER_OPTIONS_KILLER = 3; // Killer gets same choices as survivor for strategic depth
   let typingTimeout = null;
 
   // ---- 7 Unique Tools System ----
@@ -675,6 +675,7 @@ const Engine = (() => {
       escape_clue: (loc) => `Cari — lalu hancurkan — petunjuk pelarian di ${CharBrain.locName(loc)}`,
       strike: (target) => `Eksekusi ${CharBrain.charName(target)} — presisi novelis yang menulis akhir ceritanya sendiri`,
       frame: (target) => `"Ya Tuhan, lihat ini!" Arahkan bukti palsu ke ${CharBrain.charName(target)}`,
+      lure: (target) => `"Aku menemukan sesuatu..." Pikat ${CharBrain.charName(target)} ke tempat sepi`,
       unique: [
         {
           id: 'lana_seductive_manipulation',
@@ -719,6 +720,7 @@ const Engine = (() => {
       escape_clue: (loc) => `Cari — lalu sabotase — petunjuk pelarian di ${CharBrain.locName(loc)}`,
       strike: (target) => `Eliminasi diam-diam — ${CharBrain.charName(target)} tidak akan sempat berteriak`,
       frame: (target) => `Tanam bukti secara teknis ke ${CharBrain.charName(target)} — operasi bersih`,
+      lure: (target) => `Isyarat diam ke ${CharBrain.charName(target)} — "Ikut aku, ada yang harus kau lihat"`,
       unique: [
         {
           id: 'dimas_silent_approach',
@@ -2993,14 +2995,19 @@ const Engine = (() => {
             const susp = s.suspicion[observeTarget] || 0;
             const isTarget = s.killers.includes(observeTarget);
             const detectChance = 0.4 + (detBonus / 100) + (canReadEmotion ? 0.15 : 0);
+            // Pemburu detection hint for killers
+            const isPemburu = s.pemburu && observeTarget === s.pemburu;
+            const pemburuHint = isK && isPemburu && Math.random() < 0.6
+              ? ` ⚠️ ${CharBrain.charName(observeTarget)} tampak sangat waspada — postur defensif, tangan selalu di dekat saku. BERBAHAYA untuk diserang.`
+              : '';
             if (isTarget && Math.random() < detectChance) {
               const suspGain = 8 + Math.floor(detBonus / 3) + (canReadEmotion ? 4 : 0);
               Engine.modSuspicion(observeTarget, suspGain);
-              Engine.notify(`Kau menangkap gelagat mencurigakan dari ${CharBrain.charName(observeTarget)}! Kecurigaan +${suspGain}%.`);
+              Engine.notify(`Kau menangkap gelagat mencurigakan dari ${CharBrain.charName(observeTarget)}! Kecurigaan +${suspGain}%.${pemburuHint}`);
             } else if (canReadEmotion && mind) {
-              Engine.notify(`${CharBrain.charName(observeTarget)}: Emosi ${mind.emotion}, Tension ${mind.tension}%.${isTarget ? ' Ada yang tidak beres...' : ''}`);
+              Engine.notify(`${CharBrain.charName(observeTarget)}: Emosi ${mind.emotion}, Tension ${mind.tension}%.${isTarget ? ' Ada yang tidak beres...' : ''}${pemburuHint}`);
             } else {
-              Engine.notify(`${CharBrain.charName(observeTarget)} tampak ${isTarget ? 'terlalu tenang...' : 'normal.'}`);
+              Engine.notify(`${CharBrain.charName(observeTarget)} tampak ${isTarget ? 'terlalu tenang...' : 'normal.'}${pemburuHint}`);
             }
           },
           next: (s) => currentNodeId
@@ -3205,10 +3212,10 @@ const Engine = (() => {
       // === NORMAL KILLER ACTIONS (not revealed) ===
       // Strike target
       const soloTarget = !isRevealed ? nearbyNpcs.find(n => !gameState.killers.includes(n) && !brainActionTaken('strike_' + n)) : null;
-      if (soloTarget && nearbyNpcs.filter(n => !gameState.killers.includes(n)).length <= 2) {
+      if (soloTarget && nearbyNpcs.filter(n => !gameState.killers.includes(n)).length <= 3) {
         const witnesses = nearbyNpcs.filter(n => n !== soloTarget && !gameState.killers.includes(n)).length;
         const isSilent = hasCharAbility(pc, 'silentKill');
-        let strikeChance = witnesses === 0 ? 50 : 25;
+        let strikeChance = witnesses === 0 ? 55 : witnesses === 1 ? 35 : 20;
         // High suspicion reduces strike effectiveness
         if (mySusp > 40) strikeChance = Math.max(10, strikeChance - Math.floor(mySusp / 10));
         const silentLabel = isSilent ? ' (silent kill)' : '';
@@ -3216,8 +3223,8 @@ const Engine = (() => {
           text: flavor.strike ? flavor.strike(soloTarget) : `Serang ${CharBrain.charName(soloTarget)}${witnesses === 0 ? ' — tidak ada saksi...' + silentLabel : ' — ada risiko saksi!'}`,
           type: 'brain-killer', category: 'killer',
           danger: witnesses > 0,
-          hint: witnesses === 0 ? (isSilent ? 'Sendirian + silent kill — eliminasi tanpa bukti' : 'Sendirian — kesempatan emas') : `${witnesses} saksi potensial — sangat berisiko!`,
-          risk: witnesses === 0 ? 45 : 85,
+          hint: witnesses === 0 ? (isSilent ? 'Sendirian + silent kill — eliminasi tanpa bukti' : 'Sendirian — kesempatan emas') : `${witnesses} saksi potensial — ${witnesses >= 2 ? 'SANGAT berisiko!' : 'berisiko!'}`,
+          risk: witnesses === 0 ? 40 : witnesses === 1 ? 70 : 90,
           reward: 90,
           successChance: strikeChance,
           effect: (s) => {
@@ -3302,6 +3309,48 @@ const Engine = (() => {
           },
           next: (s) => currentNodeId
         });
+      }
+
+      // LURE TARGET — pikat survivor ke lokasi sepi untuk isolasi
+      if (!isRevealed && nonKillerNearby.length > 0) {
+        const lureTarget = nonKillerNearby.find(n => !brainActionTaken('lure_' + n));
+        if (lureTarget) {
+          const connections = CharBrain.LOCATION_CONNECTIONS[playerLoc] || [];
+          const emptyLoc = connections.find(loc => {
+            const npcsAtLoc = Object.keys(gameState.npcMinds || {}).filter(n =>
+              gameState.alive[n] && gameState.npcMinds[n] && gameState.npcMinds[n].location === loc
+            );
+            return npcsAtLoc.length === 0;
+          });
+          if (emptyLoc) {
+            const trustVal = gameState.trust[trustKey(pc, lureTarget)] || 50;
+            const lureTrustBonus = Math.floor(trustVal / 10);
+            const baseLureChance = 35 + lureTrustBonus + Math.floor(getCharAbility(pc, 'framingBonus') / 3);
+            const lureChance = previewChance(baseLureChance, pc, 'offense');
+            const lureRisk = Math.max(15, 45 - lureTrustBonus);
+            choices.push({
+              text: flavor.lure ? flavor.lure(lureTarget) : `Pikat ${CharBrain.charName(lureTarget)} ke ${CharBrain.locName(emptyLoc)} — isolasi target`,
+              type: 'brain-killer', category: 'stealth',
+              hint: `Trust: ${trustVal}% — pikat ke ${CharBrain.locName(emptyLoc)} (kosong). Sukses = target sendirian di sana.`,
+              risk: lureRisk, reward: 80,
+              successChance: lureChance,
+              effect: (s) => {
+                recordBrainAction('lure_' + lureTarget);
+                const result = rollChance(baseLureChance, pc, 'offense');
+                if (result.success) {
+                  if (s.npcMinds[lureTarget]) {
+                    s.npcMinds[lureTarget].location = emptyLoc;
+                  }
+                  Engine.notify(`${CharBrain.charName(lureTarget)} mengikutimu ke ${CharBrain.locName(emptyLoc)}. Target terisolasi. (${result.chance}%, roll: ${result.roll})`);
+                } else {
+                  Engine.modSuspicion(pc, 8);
+                  Engine.notify(`${CharBrain.charName(lureTarget)} menolak ajakanmu. Kecurigaan naik. (${result.chance}%, roll: ${result.roll})`);
+                }
+              },
+              next: (s) => currentNodeId
+            });
+          }
+        }
       }
 
       // DESTROY ESCAPE CLUE (killer only, one-time per location)
