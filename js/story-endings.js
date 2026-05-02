@@ -1,7 +1,8 @@
 /* ============================================================
    SIMPUL TERAKHIR — ENDINGS
-   28 endings total — dapat trigger di chapter manapun.
+   30 endings total — trigger otomatis berdasarkan kondisi game.
    Rating: S (terbaik), A, B, C, D, F (terburuk)
+   Sistem: condition-based, bukan chapter-locked.
    ============================================================ */
 
 const STORY_ENDINGS = {
@@ -702,3 +703,421 @@ const STORY_ENDINGS = {
 }
 
 };
+
+/* ============================================================
+   ENDING CONDITION RULES — Condition-based ending selector
+   Setiap rule punya: endingKey, priority (higher = checked first),
+   dan condition(s, wl) yang return true jika ending layak trigger.
+   s = game state, wl = win/loss result dari CharBrain.checkWinLoss
+   ============================================================ */
+
+const ENDING_CONDITIONS = [
+
+  // ── S-RANK ──────────────────────────────────────────────────
+
+  // #1 Sang Penenun Terakhir — semua killer mati + clue >= 5 + banyak survivor hidup + moral baik
+  {
+    endingKey: 'ending_masterpiece',
+    priority: 100,
+    condition: (s, wl) => {
+      const allKDead = (s.killers || []).every(k => !s.alive[k]);
+      const clues = (s.escapeClues || []).length;
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k] && !(s.killers || []).includes(k));
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      return allKDead && clues >= 5 && survivors.length >= 4 && playerAlive && (s.moralScore || 0) >= 0;
+    }
+  },
+
+  // #2 Detektif Sejati — semua killer mati + semua clue ditemukan (8/8)
+  {
+    endingKey: 'ending_true_detective',
+    priority: 98,
+    condition: (s, wl) => {
+      const allKDead = (s.killers || []).every(k => !s.alive[k]);
+      const clues = (s.escapeClues || []).length;
+      const total = s.totalEscapeClues || 8;
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      return allKDead && clues >= total && playerAlive;
+    }
+  },
+
+  // #26 Pelarian dari Mansion — 5+ clue ditemukan → escape route terbuka
+  {
+    endingKey: 'ending_mansion_escape',
+    priority: 95,
+    condition: (s, wl) => {
+      const clues = (s.escapeClues || []).length;
+      const needed = s.cluesNeededToWin || 5;
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      return (clues >= needed || s.masterKeyFound) && playerAlive && wl && wl.reason === 'mansion_escape';
+    }
+  },
+
+  // #27 Pembantai Pembunuh — semua killer dieliminasi lewat combat
+  {
+    endingKey: 'ending_all_killers_dead',
+    priority: 93,
+    condition: (s, wl) => {
+      const allKDead = (s.killers || []).every(k => !s.alive[k]);
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k] && !(s.killers || []).includes(k));
+      return allKDead && playerAlive && survivors.length >= 3 && wl && wl.reason === 'all_killers_eliminated';
+    }
+  },
+
+  // ── A-RANK ──────────────────────────────────────────────────
+
+  // #30 Yang Terakhir Berdiri — semua killer mati TAPI hanya 1 survivor tersisa
+  {
+    endingKey: 'ending_last_standing',
+    priority: 90,
+    condition: (s, wl) => {
+      const allKDead = (s.killers || []).every(k => !s.alive[k]);
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k] && !(s.killers || []).includes(k));
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      return allKDead && playerAlive && survivors.length === 1;
+    }
+  },
+
+  // #3 Fajar yang Cukup — protagonis menang tapi bukti tidak lengkap
+  {
+    endingKey: 'ending_good',
+    priority: 88,
+    condition: (s, wl) => {
+      const allKDead = (s.killers || []).every(k => !s.alive[k]);
+      const clues = (s.escapeClues || []).length;
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k] && !(s.killers || []).includes(k));
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      return allKDead && playerAlive && clues >= 2 && clues < 5 && survivors.length >= 2;
+    }
+  },
+
+  // #28 Pengkhianatan Sempurna — killer saling bunuh, protagonis menang
+  {
+    endingKey: 'ending_killer_betrayal_victory',
+    priority: 86,
+    condition: (s, wl) => {
+      const allKDead = (s.killers || []).every(k => !s.alive[k]);
+      const killersDead = (s.killersDead || []);
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      // Ada ≥2 killer dan ada yang mati karena trust-kill (betrayal)
+      return allKDead && playerAlive && (s.killers || []).length >= 2 && killersDead.length >= 2;
+    }
+  },
+
+  // #4 Pengorbanan — player mati tapi bukti terkirim + teman selamat
+  {
+    endingKey: 'ending_sacrifice_hero',
+    priority: 85,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k] && !(s.killers || []).includes(k));
+      const clues = (s.escapeClues || []).length;
+      return !playerAlive && survivors.length >= 3 && clues >= 3;
+    }
+  },
+
+  // #5 Kesaksian Terakhir — Vira hidup + grup escape bersama
+  {
+    endingKey: 'ending_survivor_testimony',
+    priority: 83,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k] && !(s.killers || []).includes(k));
+      return playerAlive && s.alive.vira && survivors.length >= 4 && wl && (wl.reason === 'mansion_escape' || wl.reason === 'all_killers_eliminated');
+    }
+  },
+
+  // ── B-RANK ──────────────────────────────────────────────────
+
+  // #8 Penebusan Penulis — Lana (killer) mati, tapi berkorban/redeem diri
+  {
+    endingKey: 'ending_lana_redemption',
+    priority: 80,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const lanaIsKiller = (s.killers || []).includes('lana');
+      return playerAlive && lanaIsKiller && !s.alive.lana && (s.moralScore || 0) >= 0;
+    }
+  },
+
+  // #21 Pahlawan yang Jatuh — player (Arin) mati sebagai hero
+  {
+    endingKey: 'ending_arin_death_hero',
+    priority: 78,
+    condition: (s, wl) => {
+      const pc = s.playerCharacter || 'arin';
+      const playerAlive = s.alive[pc];
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k] && !(s.killers || []).includes(k));
+      return !playerAlive && pc === 'arin' && survivors.length >= 2;
+    }
+  },
+
+  // #9 Lingkaran Vira — Vira hidup + dia menyelamatkan orang lain
+  {
+    endingKey: 'ending_vira_closure',
+    priority: 76,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k] && !(s.killers || []).includes(k));
+      return playerAlive && s.alive.vira && survivors.length >= 3 && (s.playerCharacter || 'arin') !== 'vira';
+    }
+  },
+
+  // #7 Kemenangan yang Pecah — protagonis menang tapi banyak yang mati
+  {
+    endingKey: 'ending_broken_victory',
+    priority: 74,
+    condition: (s, wl) => {
+      const allKDead = (s.killers || []).every(k => !s.alive[k]);
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k] && !(s.killers || []).includes(k));
+      return allKDead && playerAlive && survivors.length <= 3 && (s.deathCount || 0) >= 3;
+    }
+  },
+
+  // #6 Abu dan Fajar — protagonis menang tapi bukti terbakar (destroyed clues)
+  {
+    endingKey: 'ending_bittersweet',
+    priority: 72,
+    condition: (s, wl) => {
+      const allKDead = (s.killers || []).every(k => !s.alive[k]);
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const destroyed = (s.destroyedClues || []).length;
+      const clues = (s.escapeClues || []).length;
+      return allKDead && playerAlive && destroyed >= 3 && clues < 5;
+    }
+  },
+
+  // ── C-RANK ──────────────────────────────────────────────────
+
+  // #13 Warisan Wardhana — Niko hidup + menyelamatkan grup
+  {
+    endingKey: 'ending_niko_truth',
+    priority: 65,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const nikoIsKiller = (s.killers || []).includes('niko');
+      return playerAlive && s.alive.niko && !nikoIsKiller;
+    }
+  },
+
+  // #23 Plot Twist Penulis — Lana selamat sebagai killer, identitas tersembunyi
+  {
+    endingKey: 'ending_lana_double',
+    priority: 63,
+    condition: (s, wl) => {
+      const lanaIsKiller = (s.killers || []).includes('lana');
+      const lanaRevealed = (s.killerRevealed || []).includes('lana');
+      return lanaIsKiller && s.alive.lana && !lanaRevealed && wl && wl.type !== 'win';
+    }
+  },
+
+  // #24 Profiler dan Subjek — Sera hidup, tapi profiling digunakan melawan mereka
+  {
+    endingKey: 'ending_sera_profile',
+    priority: 61,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      return playerAlive && s.alive.sera && wl && wl.reason === 'dawn_reached';
+    }
+  },
+
+  // #10 Kemenangan Pyrrhic — menang tapi Penenun lolos
+  {
+    endingKey: 'ending_pyrrhic',
+    priority: 60,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const allKDead = (s.killers || []).every(k => !s.alive[k]);
+      const clues = (s.escapeClues || []).length;
+      return playerAlive && allKDead && clues < 3;
+    }
+  },
+
+  // #11 Perjanjian dengan Iblis — semua hidup tapi keadilan gagal
+  {
+    endingKey: 'ending_deal_with_devil',
+    priority: 58,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k]);
+      return playerAlive && survivors.length >= 8 && (s.moralScore || 0) < -5;
+    }
+  },
+
+  // #12 Perpecahan Fatal — grup pecah, sebagian selamat
+  {
+    endingKey: 'ending_split_group',
+    priority: 55,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k] && !(s.killers || []).includes(k));
+      return playerAlive && survivors.length >= 2 && survivors.length <= 4 && wl && wl.reason === 'dawn_reached';
+    }
+  },
+
+  // ── D-RANK ──────────────────────────────────────────────────
+
+  // #29 Jejak yang Terhapus — clue dihancurkan killer, tidak cukup bukti
+  {
+    endingKey: 'ending_clues_destroyed',
+    priority: 50,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      return playerAlive && wl && wl.reason === 'killer_clues_destroyed';
+    }
+  },
+
+  // #14 Paranoia Menang — semua curiga semua, trust collapse
+  {
+    endingKey: 'ending_everyone_suspects',
+    priority: 48,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const avgTrust = calcAvgTrust(s);
+      return playerAlive && avgTrust < 25 && (s.deathCount || 0) >= 2;
+    }
+  },
+
+  // #15 Tuduhan Salah — killer menang karena salah tuduh
+  {
+    endingKey: 'ending_wrong_accusation',
+    priority: 46,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const killerAlive = (s.killers || []).some(k => s.alive[k]);
+      return playerAlive && killerAlive && s.alive.sera && wl && wl.reason === 'killer_victory';
+    }
+  },
+
+  // #17 Pengkhianatan Dokter — Dimas (killer) menang lewat pengkhianatan
+  {
+    endingKey: 'ending_dimas_betrayal',
+    priority: 44,
+    condition: (s, wl) => {
+      const dimasIsKiller = (s.killers || []).includes('dimas');
+      return dimasIsKiller && s.alive.dimas && wl && (wl.reason === 'killer_victory' || wl.type === 'loss');
+    }
+  },
+
+  // #16 Sang Penenun Menang — killer menang, siklus berlanjut
+  {
+    endingKey: 'ending_penenun_wins',
+    priority: 42,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      return playerAlive && wl && wl.reason === 'killer_victory';
+    }
+  },
+
+  // #22 Siklus Berlanjut — escape awal tanpa menyelesaikan
+  {
+    endingKey: 'ending_cycle_continues',
+    priority: 40,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const clues = (s.escapeClues || []).length;
+      return playerAlive && clues <= 1 && (s.chapter || 1) <= 3;
+    }
+  },
+
+  // ── F-RANK ──────────────────────────────────────────────────
+
+  // #25 Mayoritas yang Diam — semua selamat tapi tidak ada yang bersaksi
+  {
+    endingKey: 'ending_silent_majority',
+    priority: 35,
+    condition: (s, wl) => {
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k]);
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      return playerAlive && survivors.length >= 7 && (s.moralScore || 0) < -10;
+    }
+  },
+
+  // #18 Simpul Terputus Total — player sendirian, semua mati
+  {
+    endingKey: 'ending_total_failure',
+    priority: 30,
+    condition: (s, wl) => {
+      const playerAlive = s.alive[s.playerCharacter || 'arin'];
+      const survivors = Object.keys(s.alive).filter(k => s.alive[k] && !(s.killers || []).includes(k));
+      return playerAlive && survivors.length <= 1 && (s.deathCount || 0) >= 5;
+    }
+  },
+
+];
+
+// Helper: hitung rata-rata trust antar karakter hidup
+function calcAvgTrust(s) {
+  if (!s.trust) return 50;
+  const keys = Object.keys(s.trust);
+  if (keys.length === 0) return 50;
+  let sum = 0, count = 0;
+  keys.forEach(k => {
+    const parts = k.split('_');
+    if (parts.length === 2 && s.alive[parts[0]] && s.alive[parts[1]]) {
+      sum += s.trust[k];
+      count++;
+    }
+  });
+  return count > 0 ? sum / count : 50;
+}
+
+/* ============================================================
+   selectEndingFromState(state, winLossResult)
+   Evaluasi kondisi game → pilih ending terbaik yang match.
+   Return: { endingKey, endingData } atau null jika tidak ada match.
+   ============================================================ */
+function selectEndingFromState(gameState, winLossResult) {
+  // Sort by priority (descending) — highest priority checked first
+  const sorted = ENDING_CONDITIONS.slice().sort((a, b) => b.priority - a.priority);
+
+  for (const rule of sorted) {
+    try {
+      if (rule.condition(gameState, winLossResult)) {
+        const endingData = STORY_ENDINGS[rule.endingKey];
+        if (endingData) {
+          return { endingKey: rule.endingKey, endingData: endingData };
+        }
+      }
+    } catch (e) {
+      // skip broken conditions
+    }
+  }
+
+  // Fallback: pick ending based on general outcome
+  return selectFallbackEnding(gameState, winLossResult);
+}
+
+function selectFallbackEnding(s, wl) {
+  const playerAlive = s.alive[s.playerCharacter || 'arin'];
+  const allKDead = (s.killers || []).every(k => !s.alive[k]);
+  const survivors = Object.keys(s.alive).filter(k => s.alive[k] && !(s.killers || []).includes(k));
+
+  // Player dead + others survive
+  if (!playerAlive && survivors.length >= 2) {
+    return { endingKey: 'ending_sacrifice_hero', endingData: STORY_ENDINGS['ending_sacrifice_hero'] };
+  }
+  // Player dead + most dead
+  if (!playerAlive) {
+    return { endingKey: 'ending_total_failure', endingData: STORY_ENDINGS['ending_total_failure'] };
+  }
+  // All killers dead
+  if (allKDead && survivors.length >= 3) {
+    return { endingKey: 'ending_all_killers_dead', endingData: STORY_ENDINGS['ending_all_killers_dead'] };
+  }
+  if (allKDead) {
+    return { endingKey: 'ending_broken_victory', endingData: STORY_ENDINGS['ending_broken_victory'] };
+  }
+  // Killer wins
+  if (wl && (wl.reason === 'killer_victory' || wl.reason === 'killer_clues_destroyed')) {
+    return { endingKey: 'ending_penenun_wins', endingData: STORY_ENDINGS['ending_penenun_wins'] };
+  }
+  // Dawn reached — partial
+  if (wl && wl.reason === 'dawn_reached') {
+    return { endingKey: 'ending_pyrrhic', endingData: STORY_ENDINGS['ending_pyrrhic'] };
+  }
+  // Default
+  return { endingKey: 'ending_pyrrhic', endingData: STORY_ENDINGS['ending_pyrrhic'] };
+}

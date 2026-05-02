@@ -1864,9 +1864,21 @@ const Engine = (() => {
       autoSimulateGame();
     }
 
-    // Build dynamic result summary
-    const summaryData = buildGameSummary(result);
-    showGameResultScreen(summaryData);
+    // Select narrative ending based on game conditions
+    const selectedEnding = (typeof selectEndingFromState === 'function')
+      ? selectEndingFromState(state, result)
+      : null;
+
+    if (selectedEnding && selectedEnding.endingData) {
+      // Show full narrative ending with game summary appended
+      const endingInfo = selectedEnding.endingData;
+      const summaryData = buildGameSummary(result);
+      showNarrativeEndingWithSummary(endingInfo, summaryData);
+    } else {
+      // Fallback: show generic game result screen
+      const summaryData = buildGameSummary(result);
+      showGameResultScreen(summaryData);
+    }
   }
 
   // Auto-simulate game after player death — NPC brain runs until conclusion
@@ -2028,6 +2040,94 @@ const Engine = (() => {
 
     // Fates already shown in the main content
     $('ending-fates').innerHTML = '';
+
+    updateEndingsCount();
+  }
+
+  // Show narrative ending (from STORY_ENDINGS) combined with game summary stats
+  function showNarrativeEndingWithSummary(endingInfo, summaryData) {
+    showScreen('screen-ending');
+    const endingNum = endingInfo.endingNumber || 0;
+    const endingTitle = endingInfo.title ? t(endingInfo.title) : `Ending #${endingNum}`;
+    const rating = endingInfo.rating || 'C';
+
+    $('ending-number').textContent = endingNum ? `#${endingNum}` : '';
+    $('ending-title').textContent = endingTitle;
+    const ratingEl = $('ending-rating');
+    ratingEl.textContent = rating;
+    ratingEl.className = 'ending-rating rating-' + rating;
+
+    // Narrative text from the ending
+    let narrativeText = '';
+    if (endingInfo.endingText) {
+      narrativeText = typeof endingInfo.endingText === 'function'
+        ? endingInfo.endingText(state)
+        : t(endingInfo.endingText);
+    }
+
+    // Game summary stats
+    let html = narrativeText;
+    html += `<div class="game-result-summary">`;
+    html += `<h3 class="fates-title">Ringkasan Permainan</h3>`;
+    html += `<p class="result-headline">${summaryData.winDesc}</p>`;
+
+    if (!summaryData.playerAlive) {
+      html += `<p class="result-player-dead">Kau tereliminasi. Permainan dilanjutkan oleh NPC...</p>`;
+    }
+
+    html += `<div class="result-stats">`;
+    html += `<div class="stat-item"><span class="stat-label">Ronde</span><span class="stat-value">${summaryData.roundCount}</span></div>`;
+    html += `<div class="stat-item"><span class="stat-label">Tereliminasi</span><span class="stat-value">${summaryData.deathCount}</span></div>`;
+    html += `<div class="stat-item"><span class="stat-label">Petunjuk</span><span class="stat-value">${summaryData.escapeClues}/${summaryData.cluesNeeded}</span></div>`;
+    html += `<div class="stat-item"><span class="stat-label">Petunjuk Hancur</span><span class="stat-value">${summaryData.destroyedClues}</span></div>`;
+    html += `</div>`;
+
+    // Auto-simulation log (if player died)
+    if (summaryData.autoSimLog && summaryData.autoSimLog.length > 0) {
+      html += `<div class="result-autosim">`;
+      html += `<h3 class="fates-title">Setelah Kau Tereliminasi...</h3>`;
+      const maxShow = Math.min(summaryData.autoSimLog.length, 15);
+      for (let i = 0; i < maxShow; i++) {
+        html += `<p class="autosim-entry">${summaryData.autoSimLog[i]}</p>`;
+      }
+      if (summaryData.autoSimLog.length > maxShow) {
+        html += `<p class="autosim-more">...dan ${summaryData.autoSimLog.length - maxShow} aksi lainnya</p>`;
+      }
+      html += `</div>`;
+    }
+
+    html += `</div>`;
+    $('ending-text').innerHTML = html;
+
+    // Character fates — combine narrative fates with game data
+    const fatesEl = $('ending-fates');
+    fatesEl.innerHTML = '';
+    const fatesHtml = CHARACTERS.map(name => {
+      const displayName = CHAR_DISPLAY[name];
+      const alive = state.alive[name];
+      const wasKiller = isKiller(name);
+      let fateText = '';
+      if (endingInfo.fates && endingInfo.fates[name]) {
+        fateText = t(endingInfo.fates[name]);
+      } else if (!alive) {
+        fateText = wasKiller ? 'Tewas (Pembunuh)' : 'Tidak selamat';
+      } else if (wasKiller && state.killerRevealed.includes(name)) {
+        fateText = 'Terungkap sebagai pembunuh';
+      } else if (wasKiller) {
+        fateText = 'Selamat (identitas tersembunyi)';
+      } else {
+        fateText = 'Selamat';
+      }
+      const cls = !alive ? 'fate-dead' : wasKiller ? 'fate-corrupted' : 'fate-alive';
+      const roleTag = wasKiller ? ' <span class="role-tag killer-tag">KILLER</span>' : '';
+      const playerTag = name === playerChar() ? ' <span class="role-tag player-tag">KAMU</span>' : '';
+      return `<div class="fate-item"><span class="fate-name ${cls}">${displayName}${roleTag}${playerTag}</span>: ${fateText}</div>`;
+    }).join('');
+    fatesEl.innerHTML = fatesHtml;
+
+    // Save ending to gallery
+    endingsUnlocked[endingNum] = { title: endingTitle, rating };
+    SecGuard.safeSetItem('simpul_endings', JSON.stringify(endingsUnlocked));
 
     updateEndingsCount();
   }
@@ -3919,7 +4019,7 @@ const Engine = (() => {
     $('gallery-title').textContent = 'Galeri Ending';
     const grid = $('gallery-grid');
     grid.innerHTML = '';
-    for (let i = 1; i <= 25; i++) {
+    for (let i = 1; i <= 30; i++) {
       const item = document.createElement('div');
       item.className = 'gallery-item';
       if (endingsUnlocked[i]) {
