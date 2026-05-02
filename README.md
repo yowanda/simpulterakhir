@@ -6,6 +6,11 @@
 
 [▶ Mainkan Sekarang](https://yowanda.github.io/simpulterakhir/)
 
+### Compact Edition
+- **3 pilihan fokus** per ronde (survivor) / **2 pilihan** (killer) — setiap keputusan lebih bermakna
+- **30 ending ringkas** — narrative core tetap intact, tanpa eksposisi berlebihan
+- UI optimized untuk pilihan yang lebih sedikit tapi lebih impactful
+
 ---
 
 ## Sinopsis
@@ -310,7 +315,8 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
 - Pertahanan terkoordinasi di lokasi yang sama
 - Survivor NPC bisa menyerang killer yang terekspos
 
-### Interactive Choice System (Baru!)
+### Interactive Choice System (Compact Edition)
+- **3 pilihan fokus** (survivor) / **2 pilihan** (killer) per ronde — compact & decisive, tidak overwhelming
 - **15 kategori aksi** — setiap pilihan dikategorikan dengan ikon dan warna unik:
   - 🔍 Investigasi, ⚔️ Konfrontasi, 🤝 Sosial, 🚶 Pindah, 👁️ Siluman, 🛡️ Lindungi
   - 🗡️ Serang (killer), 🏃 Kabur, ⭐ Aliansi, ☝️ Tuduh, 💻 Hack, 💬 Negosiasi
