@@ -2239,6 +2239,25 @@ const Engine = (() => {
     endingsUnlocked[endingNum] = { title: endingTitle, rating, narrative: narrativeText, fates: fatesHtml };
     SecGuard.safeSetItem('simpul_endings', JSON.stringify(endingsUnlocked));
 
+    // Post-game teaser — hint at other endings with mysterious hooks
+    if (typeof ENDING_REQUIREMENTS !== 'undefined') {
+      const lockedEndings = Object.keys(ENDING_REQUIREMENTS).filter(k => !endingsUnlocked[k]);
+      if (lockedEndings.length > 0) {
+        const teaserCount = Math.min(3, lockedEndings.length);
+        const shuffled = lockedEndings.sort(() => Math.random() - 0.5).slice(0, teaserCount);
+        let teaserHtml = `<div class="postgame-teaser">`;
+        teaserHtml += `<div class="teaser-header">Cerita belum selesai... (${lockedEndings.length} ending tersisa)</div>`;
+        shuffled.forEach(k => {
+          const req = ENDING_REQUIREMENTS[k];
+          if (req.hook) {
+            teaserHtml += `<div class="teaser-item"><span class="teaser-rating rating-${req.rating}">${req.rating}</span> <span class="teaser-title">${req.title}</span><div class="teaser-hook">${req.hook}</div></div>`;
+          }
+        });
+        teaserHtml += `</div>`;
+        $('ending-text').innerHTML += teaserHtml;
+      }
+    }
+
     updateEndingsCount();
   }
 
@@ -4142,10 +4161,15 @@ const Engine = (() => {
         item.addEventListener('click', (function(num) { return function() { showEndingReader(num); }; })(i));
       } else {
         let lockedHtml = `<div class="gi-number">#${i}</div><div class="gi-locked">\uD83D\uDD12</div>`;
-        if (hasAnyUnlocked && typeof ENDING_REQUIREMENTS !== 'undefined' && ENDING_REQUIREMENTS[i]) {
+        if (typeof ENDING_REQUIREMENTS !== 'undefined' && ENDING_REQUIREMENTS[i]) {
           const req = ENDING_REQUIREMENTS[i];
-          const ratingBadge = req.rating ? `<span class="gi-req-rating rating-${req.rating}">${req.rating}</span>` : '';
-          lockedHtml += `<div class="gi-requirements">${ratingBadge} ${req.hint}</div>`;
+          if (req.hook) {
+            lockedHtml += `<div class="gi-hook">${req.hook}</div>`;
+          }
+          if (hasAnyUnlocked) {
+            const ratingBadge = req.rating ? `<span class="gi-req-rating rating-${req.rating}">${req.rating}</span>` : '';
+            lockedHtml += `<div class="gi-requirements">${ratingBadge} ${req.hint}</div>`;
+          }
         }
         item.innerHTML = lockedHtml;
       }
@@ -4167,6 +4191,51 @@ const Engine = (() => {
   function updateEndingsCount() {
     const el = $('endings-count');
     if (el) el.textContent = Object.keys(endingsUnlocked).length;
+    updateTitleMystery();
+  }
+
+  function updateTitleMystery() {
+    const el = $('title-mystery');
+    if (!el || typeof ENDING_REQUIREMENTS === 'undefined') return;
+    const lockedKeys = Object.keys(ENDING_REQUIREMENTS).filter(k => !endingsUnlocked[k]);
+    const unlockedCount = Object.keys(endingsUnlocked).length;
+    if (lockedKeys.length === 0) {
+      el.innerHTML = '<span class="mystery-complete">Semua simpul telah terurai. Kau tahu seluruh kebenaran.</span>';
+      return;
+    }
+    const pick = lockedKeys[Math.floor(Math.random() * lockedKeys.length)];
+    const req = ENDING_REQUIREMENTS[pick];
+    if (!req || !req.hook) { el.innerHTML = ''; return; }
+    const prefix = unlockedCount === 0
+      ? 'Setiap ending menyimpan rahasia...'
+      : `${lockedKeys.length} cerita belum terungkap...`;
+    el.innerHTML = `<div class="mystery-label">${prefix}</div><div class="mystery-hook">${req.hook}</div>`;
+  }
+
+  function renderCharProfiles() {
+    const grid = $('char-profiles-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    CHARACTERS.forEach(c => {
+      const display = CHAR_DISPLAY[c];
+      const color = CHAR_COLORS[c];
+      const tagline = CHAR_TAGLINES[c] || '';
+      const role = ROLE_DESCRIPTIONS[c];
+      const initial = CHAR_INITIALS[c] || display.charAt(0);
+      const card = document.createElement('div');
+      card.className = 'char-profile-card';
+      card.innerHTML = `
+        <div class="cp-avatar" style="background:${color}">${initial}</div>
+        <div class="cp-info">
+          <div class="cp-name" style="color:${color}">${display}</div>
+          <div class="cp-role">${role ? role.role : ''}</div>
+          <div class="cp-tagline">${tagline}</div>
+          <div class="cp-desc">${role ? role.desc : ''}</div>
+          <div class="cp-perk">${role ? role.perk : ''}</div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
   }
 
   // ---- Save / Load ----
@@ -4255,6 +4324,14 @@ const Engine = (() => {
 
     $('btn-how-to-play').addEventListener('click', () => showScreen('screen-how-to-play'));
     $('btn-rules-back').addEventListener('click', () => showScreen('screen-title'));
+
+    $('btn-char-profiles').addEventListener('click', () => {
+      renderCharProfiles();
+      $('screen-char-profiles').style.display = 'flex';
+    });
+    $('btn-close-profiles').addEventListener('click', () => {
+      $('screen-char-profiles').style.display = 'none';
+    });
 
     $('btn-menu').addEventListener('click', () => togglePanel('panel-menu'));
     $('btn-status').addEventListener('click', () => togglePanel('panel-status'));
