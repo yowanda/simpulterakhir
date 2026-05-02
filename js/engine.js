@@ -4212,8 +4212,8 @@ const Engine = (() => {
     el.innerHTML = `<div class="mystery-label">${prefix}</div><div class="mystery-hook">${req.hook}</div>`;
   }
 
-  function renderTitleChars() {
-    const grid = $('title-chars-grid');
+  function renderCharProfiles() {
+    const grid = $('char-profiles-grid');
     if (!grid) return;
     grid.innerHTML = '';
     const hasProfiles = typeof CHARACTER_PROFILES !== 'undefined';
@@ -4224,48 +4224,48 @@ const Engine = (() => {
       const initial = CHAR_INITIALS[c] || display.charAt(0);
       const profile = hasProfiles ? CHARACTER_PROFILES[c] : null;
       const card = document.createElement('div');
-      card.className = 'tc-card' + (MAIN_CHARACTERS.includes(c) ? '' : ' tc-side');
+      card.className = 'cp-card' + (MAIN_CHARACTERS.includes(c) ? '' : ' cp-side');
       card.style.borderColor = color;
       card.style.animationDelay = (idx * 0.08) + 's';
       const portraitContent = CHAR_PORTRAITS[c]
-        ? `<img class="tc-avatar-img" src="${CHAR_PORTRAITS[c]}" alt="${display}">`
-        : `<div class="tc-avatar" style="background:${color}">${initial}</div>`;
+        ? `<img class="cp-avatar-img" src="${CHAR_PORTRAITS[c]}" alt="${display}">`
+        : `<div class="cp-avatar" style="background:${color}">${initial}</div>`;
       if (profile) {
-        const traitsHtml = (profile.traits || []).map(t => `<span class="tc-trait">${t}</span>`).join('');
+        const traitsHtml = (profile.traits || []).map(t => `<span class="cp-trait">${t}</span>`).join('');
         let relHtml = '';
         if (profile.relationships) {
           Object.entries(profile.relationships).forEach(([key, desc]) => {
             const rp = CHARACTER_PROFILES[key];
             const rName = rp ? rp.name : key;
-            relHtml += `<div class="tc-rel"><strong>${rName}:</strong> ${desc}</div>`;
+            relHtml += `<div class="cp-rel"><strong>${rName}:</strong> ${desc}</div>`;
           });
         }
         card.innerHTML = `
-          <div class="tc-header">
-            <div class="tc-portrait-wrap">${portraitContent}<div class="tc-glow" style="background:${color}"></div></div>
-            <div class="tc-header-info">
-              <div class="tc-name" style="color:${color}">${profile.fullName || display}</div>
-              <div class="tc-age">Usia: ${profile.age} tahun</div>
-              <div class="tc-role">${profile.role}</div>
+          <div class="cp-header">
+            <div class="cp-portrait-wrap">${portraitContent}<div class="cp-glow" style="background:${color}"></div></div>
+            <div class="cp-header-info">
+              <div class="cp-name" style="color:${color}">${profile.fullName || display}</div>
+              <div class="cp-age">Usia: ${profile.age} tahun</div>
+              <div class="cp-role">${profile.role}</div>
             </div>
           </div>
-          <div class="tc-quote">${profile.quote}</div>
-          <div class="tc-section"><h4>Penampilan</h4><p>${profile.appearance}</p></div>
-          <div class="tc-section"><h4>Kepribadian</h4><p>${profile.personality}</p></div>
-          <div class="tc-section"><h4>Latar Belakang</h4><p>${profile.backstory}</p></div>
-          <div class="tc-section"><h4>Rahasia</h4><p>${profile.secret}</p></div>
-          <div class="tc-section"><h4>Sifat</h4><div class="tc-traits">${traitsHtml}</div></div>
-          <div class="tc-section"><h4>Kelemahan</h4><p>${profile.weakness}</p></div>
-          <div class="tc-section"><h4>Peran Emosional</h4><p>${profile.emotionalRole}</p></div>
-          <div class="tc-section"><h4>Hubungan</h4><div class="tc-rels">${relHtml}</div></div>
+          <div class="cp-quote">${profile.quote}</div>
+          <div class="cp-section"><h4>Penampilan</h4><p>${profile.appearance}</p></div>
+          <div class="cp-section"><h4>Kepribadian</h4><p>${profile.personality}</p></div>
+          <div class="cp-section"><h4>Latar Belakang</h4><p>${profile.backstory}</p></div>
+          <div class="cp-section"><h4>Rahasia</h4><p>${profile.secret}</p></div>
+          <div class="cp-section"><h4>Sifat</h4><div class="cp-traits">${traitsHtml}</div></div>
+          <div class="cp-section"><h4>Kelemahan</h4><p>${profile.weakness}</p></div>
+          <div class="cp-section"><h4>Peran Emosional</h4><p>${profile.emotionalRole}</p></div>
+          <div class="cp-section"><h4>Hubungan</h4><div class="cp-rels">${relHtml}</div></div>
         `;
       } else {
         card.innerHTML = `
-          <div class="tc-header">
-            <div class="tc-portrait-wrap">${portraitContent}<div class="tc-glow" style="background:${color}"></div></div>
-            <div class="tc-header-info">
-              <div class="tc-name" style="color:${color}">${display}</div>
-              <div class="tc-role">${tagline}</div>
+          <div class="cp-header">
+            <div class="cp-portrait-wrap">${portraitContent}<div class="cp-glow" style="background:${color}"></div></div>
+            <div class="cp-header-info">
+              <div class="cp-name" style="color:${color}">${display}</div>
+              <div class="cp-role">${tagline}</div>
             </div>
           </div>
         `;
@@ -4361,7 +4361,13 @@ const Engine = (() => {
     $('btn-how-to-play').addEventListener('click', () => showScreen('screen-how-to-play'));
     $('btn-rules-back').addEventListener('click', () => showScreen('screen-title'));
 
-    renderTitleChars();
+    $('btn-char-profiles').addEventListener('click', () => {
+      renderCharProfiles();
+      $('screen-char-profiles').style.display = 'flex';
+    });
+    $('btn-close-profiles').addEventListener('click', () => {
+      $('screen-char-profiles').style.display = 'none';
+    });
 
     $('btn-menu').addEventListener('click', () => togglePanel('panel-menu'));
     $('btn-status').addEventListener('click', () => togglePanel('panel-status'));
