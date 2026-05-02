@@ -1342,22 +1342,43 @@ const Engine = (() => {
     }
     html += `<div class="ps-location"><span class="loc-icon">\uD83D\uDCCD</span>${locDisplayName}${nearbyInfo}</div>`;
 
-    // Team roster — show killers & survivors in sidebar for ALL modes
+    // Team roster — show killers & survivors in sidebar
     if (state.killers && state.killers.length > 0) {
       const cn = (n) => typeof CharBrain !== 'undefined' ? CharBrain.charName(n) : n;
-      const killerNames = state.killers.map(k => {
-        const alive = state.alive[k];
-        return `<span class="${alive ? 'team-alive' : 'team-dead'}">${cn(k)}${alive ? '' : ' ✝'}</span>`;
-      });
       const allChars = CHARACTERS || [];
-      const survivorNames = allChars.filter(c => !state.killers.includes(c)).map(c => {
-        const alive = state.alive[c];
-        return `<span class="${alive ? 'team-alive' : 'team-dead'}">${cn(c)}${alive ? '' : ' ✝'}</span>`;
-      });
-      html += `<div class="ps-team">`;
-      html += `<div class="ps-team-row"><span class="team-label">🔪 Killer:</span> ${killerNames.join(', ')}</div>`;
-      html += `<div class="ps-team-row"><span class="team-label">🛡️ Survivor:</span> ${survivorNames.join(', ')}</div>`;
-      html += `</div>`;
+
+      if (isPlayerKiller()) {
+        // Player is killer: show full team roster
+        const killerNames = state.killers.map(k => {
+          const alive = state.alive[k];
+          return `<span class="${alive ? 'team-alive' : 'team-dead'}">${cn(k)}${alive ? '' : ' ✝'}</span>`;
+        });
+        const survivorNames = allChars.filter(c => !state.killers.includes(c)).map(c => {
+          const alive = state.alive[c];
+          return `<span class="${alive ? 'team-alive' : 'team-dead'}">${cn(c)}${alive ? '' : ' ✝'}</span>`;
+        });
+        html += `<div class="ps-team">`;
+        html += `<div class="ps-team-row"><span class="team-label">🔪 Killer:</span> ${killerNames.join(', ')}</div>`;
+        html += `<div class="ps-team-row"><span class="team-label">🛡️ Survivor:</span> ${survivorNames.join(', ')}</div>`;
+        html += `</div>`;
+      } else {
+        // Player is survivor: hide killer identities, only show revealed killers
+        const revealed = state.killerRevealed || [];
+        const revealedKillerNames = revealed.filter(k => state.killers.includes(k)).map(k => {
+          const alive = state.alive[k];
+          return `<span class="${alive ? 'team-alive' : 'team-dead'}">${cn(k)}${alive ? '' : ' ✝'}</span>`;
+        });
+        const charNames = allChars.map(c => {
+          const alive = state.alive[c];
+          return `<span class="${alive ? 'team-alive' : 'team-dead'}">${cn(c)}${alive ? '' : ' ✝'}</span>`;
+        });
+        html += `<div class="ps-team">`;
+        if (revealedKillerNames.length > 0) {
+          html += `<div class="ps-team-row"><span class="team-label">🔪 Killer Terungkap:</span> ${revealedKillerNames.join(', ')}</div>`;
+        }
+        html += `<div class="ps-team-row"><span class="team-label">👥 Karakter:</span> ${charNames.join(', ')}</div>`;
+        html += `</div>`;
+      }
     }
 
     bar.innerHTML = html;
@@ -1662,7 +1683,7 @@ const Engine = (() => {
       if (item.type === 'bubble') {
         const side = item.isPlayer ? 'right' : 'left';
         let bubbleClass = `chat-item chat-bubble chat-bubble-${side}`;
-        if (item.isKiller) bubbleClass += ' chat-bubble-killer';
+        if (item.isKiller && isPlayerKiller()) bubbleClass += ' chat-bubble-killer';
         if (item.isEntity) bubbleClass += ' chat-bubble-entity';
         const avatar = item.charKey ? getChatAvatarHTML(item.charKey) : '';
         const ts = getChatTimestamp();
