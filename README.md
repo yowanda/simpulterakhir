@@ -88,7 +88,7 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - Aliansi dan musuh
 - **700+ Decision Entries** — 45-65 keputusan per karakter survivor + 39-41 per killer (termasuk player-reactive branches, chapters 4-5 endgame) dengan weighted random selection + catch-all fallbacks
 - **Sistem Win/Loss Dinamis** — hasil ditentukan oleh aksi NPC, bukan ending pre-scripted:
-  - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan **5 dari 8 petunjuk** → semua killer terungkap & dieksekusi ATAU temukan **Kunci Master** (5% chance muncul di lokasi acak) → misi petunjuk langsung selesai
+  - **Protagonis Menang**: Eliminasi semua killer ATAU kumpulkan **5 dari 8 petunjuk** → semua killer terungkap & dieksekusi ATAU temukan **Kunci Master** (2-3% chance muncul di lokasi acak) → misi petunjuk langsung selesai
   - **Killer Menang**: Eliminasi protagonis hingga tersisa 1 ATAU hancurkan cukup petunjuk agar protagonist tak bisa capai 5
   - **Killer Kalah**: Semua killer tereliminasi
     - **Saksi + Buru + Eksekusi**: Jika killer ketahuan membunuh (ada saksi), killer langsung DIBURU oleh SEMUA survivor. Jika ditemukan di ruangan dengan 2+ survivor → DIEKSEKUSI. Killer hanya selamat jika berhasil kabur dan sembunyi SENDIRIAN.
@@ -285,7 +285,7 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
 ### Sistem Petunjuk Pelarian
 - **8 Petunjuk Pelarian** tersebar di 8 ruangan mansion — kumpulkan **5 petunjuk** untuk mengungkap identitas semua killer
 - **Jika 5 petunjuk terkumpul** → semua killer langsung terungkap dan dieksekusi oleh tim protagonis!
-- **Kunci Master** — 5% chance muncul di lokasi acak saat investigasi. Jika ditemukan → misi petunjuk pelarian langsung selesai!
+- **Kunci Master** — 2-3% chance muncul di lokasi acak saat investigasi. Jika ditemukan → misi petunjuk pelarian langsung selesai!
 - **Killer bisa MENGHANCURKAN petunjuk** — jika sisa petunjuk < 5, killer menang karena protagonist tak bisa mengungkap identitas mereka
 - **Petunjuk pertama → Pemburu aktif** — menemukan petunjuk pertama mengaktifkan mechanic Pemburu (random survivor ditunjuk)
 - **8 Lokasi Petunjuk**:
@@ -507,7 +507,7 @@ Antagonis utama: **Ragil Pramudya** alias **Sang Penenun** — pria tua yang hid
 5. Buat keputusan — setiap pilihan menentukan alur cerita DAN memicu aksi NPC
 6. Pantau NPC Brain Log (tombol gear di kanan atas) untuk melihat apa yang dilakukan NPC
 7. Sebagai **survivor**:
-   - Kumpulkan **5 dari 8 petunjuk** untuk mengungkap identitas semua killer — atau temukan Kunci Master (5% chance)!
+   - Kumpulkan **5 dari 8 petunjuk** untuk mengungkap identitas semua killer — atau temukan Kunci Master (2-3% chance)!
    - ATAU habisi semua killer yang menyamar
    - Bangun aliansi, investigasi, dan bertahan hidup
    - Jika kamu menyaksikan pembunuhan, killer akan DIBURU oleh tim protagonis

@@ -199,7 +199,7 @@ const CharBrain = (() => {
       secure_exit: 3, betray: 3, distract: 3, divide: 4,
       isolate: 4, eliminate: 3, strike: 3, share_clue: 2,
       trust_kill: 4, initiate_vote: 3,
-      destroy_clue: 3, search_escape_clue: 2, attack_killer: 2
+      destroy_clue: 2, search_escape_clue: 4, attack_killer: 2
     };
     let cd = cooldownMap[type] || 1;
     // Killer offensive actions get +1 cooldown on Easy, -1 on Hard
@@ -417,12 +417,12 @@ const CharBrain = (() => {
       }
     }
 
-    // Search for escape clues (survivor priority action — scales up with chapter and deaths)
+    // Search for escape clues (survivor priority action — balanced: lower priority, scales with chapter)
     if (typeof Engine !== 'undefined' && Engine.getEscapeClueAtLocation && canDo('search_escape_clue')) {
       const escClue = Engine.getEscapeClueAtLocation(mind.location);
       if (escClue) {
-        const clueBoost = Math.min(10, deathCount * 3 + (gameState.chapter || 0) * 2);
-        candidates.push({ type: 'search_escape_clue', desc: `${charName(mind.name)} mencari petunjuk pelarian di ${locName(mind.location)}.`, clueId: escClue.id, priority: 85 + clueBoost });
+        const clueBoost = Math.min(8, deathCount * 2 + (gameState.chapter || 0) * 1);
+        candidates.push({ type: 'search_escape_clue', desc: `${charName(mind.name)} mencari petunjuk pelarian di ${locName(mind.location)}.`, clueId: escClue.id, priority: 70 + clueBoost });
       }
     }
 
@@ -2014,7 +2014,7 @@ const CharBrain = (() => {
 
       case 'search_escape_clue': {
         if (!action.clueId || typeof Engine === 'undefined') return null;
-        const searchChance = 0.45 + (gameState.chapter * 0.05) + getEscalationBonus(gameState) + getProtagonistBonus(gameState);
+        const searchChance = 0.25 + (gameState.chapter * 0.03) + getEscalationBonus(gameState) + getProtagonistBonus(gameState);
         if (Math.random() < searchChance) {
           Engine.findEscapeClue(action.clueId);
           gameState.cluesFound = (gameState.cluesFound || 0) + 1;
