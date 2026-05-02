@@ -144,10 +144,10 @@ const Engine = (() => {
   let globalActionMemory = [];  // Track action TYPES globally to prevent cross-reset loops
   let locationStaleRounds = 0;  // How many consecutive brain actions without moving
   let lastPlayerLocation = null; // Track player location changes
-  const BRAIN_MAX_PER_NODE = 5; // Max brain actions per node for survivor
-  const BRAIN_MAX_PER_NODE_KILLER = 3; // Max brain actions per node for killer — slower pacing
-  const STALE_THRESHOLD = 3;    // After this many stationary actions, force movement
-  const STALE_DANGER_PER_ROUND = 5; // Danger increase per stale round
+  const BRAIN_MAX_PER_NODE = 3; // Max brain actions per node — force story progression faster
+  const BRAIN_MAX_PER_NODE_KILLER = 2; // Killer gets even fewer — fast pacing
+  const STALE_THRESHOLD = 2;    // Force movement after 2 stationary actions (was 3)
+  const STALE_DANGER_PER_ROUND = 8; // Danger increase per stale round (was 5)
   const MAX_PLAYER_OPTIONS = 6; // Max choices shown to player per node — brain interactive first
   const MAX_PLAYER_OPTIONS_KILLER = 4; // Killer gets fewer choices — less overwhelming
   let typingTimeout = null;
@@ -1126,6 +1126,8 @@ const Engine = (() => {
     if (wasEmpty && state.escapeClues.length === 1 && !state.pemburu) {
       assignPemburu();
     }
+    // Force all NPCs at this location to relocate (clue sudah diambil, tidak ada alasan tinggal)
+    forceNpcRelocateFromLocation(state.playerLocation || 'aula_utama');
     // Realtime UI update
     updatePlayerStatus(state);
   }
@@ -1146,6 +1148,8 @@ const Engine = (() => {
     if (!state.destroyedClues.includes(clueId)) {
       state.destroyedClues.push(clueId);
     }
+    // Force all NPCs at this location to relocate (clue hancur, pindah cari yang lain)
+    forceNpcRelocateFromLocation(state.playerLocation || 'aula_utama');
     // Realtime UI update
     updatePlayerStatus(state);
   }
@@ -1788,6 +1792,109 @@ const Engine = (() => {
     }
   }
 
+  // ---- Force NPC Relocation ----
+  // When clue found/destroyed at a location, all NPCs there must move elsewhere
+  function forceNpcRelocateFromLocation(loc) {
+    if (!state.npcMinds || typeof CharBrain === 'undefined') return;
+    const pc = state.playerCharacter || 'arin';
+    Object.keys(state.npcMinds).forEach(name => {
+      if (name === pc || !state.alive[name]) return;
+      const mind = state.npcMinds[name];
+      if (mind.location === loc) {
+        const newLoc = CharBrain.pickNewLocation(mind);
+        if (newLoc && newLoc !== loc) {
+          mind.location = newLoc;
+        }
+      }
+    });
+  }
+
+  // ---- Round-Based Escalation ----
+  // Force game progression when too many rounds pass without advancement
+  const ESCALATION_THRESHOLDS = {
+    chapterAdvanceRounds: 6,  // After 6 rounds in same chapter → force advance
+    maxTotalRounds: 25,       // Hard cap: game ends at 25 rounds — no infinite games
+    tensionBoostPerRound: 4,  // Tension increase per round for all NPCs (was 3)
+    forceStoryRound: 4        // Every 4 rounds, force a story node advancement
+  };
+
+  function checkEscalation() {
+    if (!state.npcMinds) return;
+    const round = state.roundCount || 0;
+    const chapter = state.chapter || 0;
+    if (!state.chapterStartRound) state.chapterStartRound = {};
+    if (state.chapterStartRound[chapter] === undefined) {
+      state.chapterStartRound[chapter] = round;
+    }
+    const roundsInChapter = round - state.chapterStartRound[chapter];
+
+    // Escalate all NPC tension every round to prevent passive camping
+    Object.values(state.npcMinds).forEach(mind => {
+      if (state.alive[mind.name]) {
+        mind.tension = Math.min(100, mind.tension + ESCALATION_THRESHOLDS.tensionBoostPerRound);
+      }
+    });
+
+    // Force chapter advance if stuck too long
+    if (roundsInChapter >= ESCALATION_THRESHOLDS.chapterAdvanceRounds && chapter < 5) {
+      forceChapterAdvance();
+    }
+
+    // Hard cap: end game at max rounds
+    if (round >= ESCALATION_THRESHOLDS.maxTotalRounds && !state.winLossResult) {
+      state.winLossResult = {
+        ended: true,
+        type: 'partial_win',
+        reason: 'dawn_reached',
+        title: 'Fajar Tiba',
+        desc: 'Malam terlalu panjang. Fajar akhirnya menyingsing — permainan berakhir dengan kondisi saat ini.'
+      };
+    }
+
+    // Boost danger level progressively
+    state.dangerLevel = Math.min(100, (state.dangerLevel || 0) + 2);
+  }
+
+  function forceChapterAdvance() {
+    const current = state.chapter || 0;
+    if (current >= 5) return;
+    state.chapter = current + 1;
+    state.chapterStartRound[state.chapter] = state.roundCount;
+    updateChapterIndicator();
+    const chTitle = (CHAPTERS[lang] || CHAPTERS.id)[state.chapter];
+    if (chTitle) showChapterTitle(chTitle);
+
+    // Boost all NPC emotions on chapter advance
+    if (state.npcMinds) {
+      Object.values(state.npcMinds).forEach(mind => {
+        if (!state.alive[mind.name]) return;
+        const isK = (state.killers || []).includes(mind.name);
+        if (isK) {
+          if (mind.emotion === 'stalking') mind.emotion = 'hunting';
+          else if (mind.emotion === 'hunting') mind.emotion = 'executing';
+        } else {
+          mind.tension = Math.min(100, mind.tension + 15);
+        }
+      });
+    }
+
+    // Force scatter: all NPCs relocate on chapter advance to mix up encounters
+    forceNpcScatter();
+  }
+
+  // Scatter all NPCs to different locations to create new encounters
+  function forceNpcScatter() {
+    if (!state.npcMinds || typeof CharBrain === 'undefined') return;
+    const pc = state.playerCharacter || 'arin';
+    const locations = ['aula_utama', 'perpustakaan', 'dapur', 'basement', 'menara', 'taman_dalam', 'galeri_timur', 'bunker_b3'];
+    let locIdx = 0;
+    Object.keys(state.npcMinds).forEach(name => {
+      if (name === pc || !state.alive[name]) return;
+      state.npcMinds[name].location = locations[locIdx % locations.length];
+      locIdx++;
+    });
+  }
+
   // ---- NPC Brain Integration ----
   function initNpcMinds() {
     if (typeof CharBrain !== 'undefined') {
@@ -1798,6 +1905,9 @@ const Engine = (() => {
   function runNpcRound() {
     if (!state.npcMinds || typeof CharBrain === 'undefined') return null;
     state.roundCount++;
+
+    // Escalation check: force chapter advance, tension boost, hard cap
+    checkEscalation();
 
     // Staleness boost: increase killer tracking when player camps
     if (locationStaleRounds >= STALE_THRESHOLD) {
@@ -1819,7 +1929,7 @@ const Engine = (() => {
         desc: 'Suara-suara di koridor semakin dekat... terlalu lama di sini tidak aman.'
       });
     }
-    if (locationStaleRounds >= STALE_THRESHOLD + 2 && result) {
+    if (locationStaleRounds >= STALE_THRESHOLD + 1 && result) {
       if (!result.events) result.events = [];
       result.events.push({
         type: 'staleness_critical',
@@ -2504,7 +2614,7 @@ const Engine = (() => {
     }
 
     // If player has been stationary too long, only show movement + critical actions
-    if (locationStaleRounds >= STALE_THRESHOLD + 2) {
+    if (locationStaleRounds >= STALE_THRESHOLD + 1) {
       const moveChoices = generateMoveChoices(gameState);
       if (moveChoices.length > 0) return moveChoices;
     }
