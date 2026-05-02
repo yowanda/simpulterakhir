@@ -35,16 +35,16 @@
     <div class="title-container">
       <div class="title-flicker">
         <h1 class="game-title">SIMPUL TERAKHIR</h1>
-        <p class="game-subtitle" id="title-subtitle">Sepuluh Tamu. Satu Mansion. Tiga Simpul yang Harus Terputus.</p>
+        <p class="game-subtitle" id="title-subtitle">Sepuluh Tamu. Satu Mansion. Siapa Sang Penenun?</p>
       </div>
-      <p class="tagline" id="title-tagline">Siapa Sang Penenun? Setiap keputusan mendekatkanmu pada jawaban — atau kematian.</p>
+      <p class="tagline" id="title-tagline">30 ending • 25 ronde • setiap keputusan menentukan siapa yang selamat</p>
       <div class="title-menu">
         <button class="btn-main" id="btn-new-game">Permainan Baru</button>
         <button class="btn-main" id="btn-continue" style="display:none">Lanjutkan</button>
         <button class="btn-secondary" id="btn-how-to-play">&#9881; Cara Bermain</button>
         <button class="btn-secondary" id="btn-endings-gallery">Ending: <span id="endings-count">0</span>/30</button>
       </div>
-      <p class="credits">Post-modern psychological horror thriller &bull; 7 chapter &bull; 30 ending dinamis</p>
+      <p class="credits">Psychological horror thriller &bull; 6 chapter &bull; 30 ending &bull; max 25 ronde</p>
     </div>
   </div>
 
@@ -65,115 +65,61 @@
       </div>
 
       <div class="rules-section">
-        <h3>&#128172; Membaca Chat</h3>
-        <ul>
-          <li><strong>Bubble hijau (kanan)</strong> = pesan kamu</li>
-          <li><strong>Bubble gelap (kiri)</strong> = pesan karakter lain</li>
-          <li><em>Teks miring di tengah</em> = aksi/kejadian singkat</li>
-          <li><strong>Notifikasi tengah</strong> = event penting (kematian, aliansi, penemuan)</li>
-        </ul>
-      </div>
-
-      <div class="rules-section">
-        <h3>&#127918; Aksi yang Bisa Dilakukan</h3>
+        <h3>&#127918; Aksi</h3>
         <div class="rules-actions">
-          <div class="rules-action-item"><span class="ra-icon" style="color:#dfe6e9">&#128214;</span> <strong>Cerita</strong> — lanjutkan alur utama</div>
-          <div class="rules-action-item"><span class="ra-icon" style="color:#c8a96e">&#128269;</span> <strong>Investigasi</strong> — periksa ruangan, cari petunjuk</div>
-          <div class="rules-action-item"><span class="ra-icon" style="color:#4ecdc4">&#129309;</span> <strong>Sosial</strong> — bicara, bangun hubungan</div>
-          <div class="rules-action-item"><span class="ra-icon" style="color:#7f8c8d">&#128694;</span> <strong>Pindah</strong> — pindah ke ruangan lain</div>
-          <div class="rules-action-item"><span class="ra-icon" style="color:#e63946">&#9876;&#65039;</span> <strong>Konfrontasi</strong> — hadapi orang yang mencurigakan</div>
-          <div class="rules-action-item"><span class="ra-icon" style="color:#e74c3c">&#9757;&#65039;</span> <strong>Tuduh</strong> — tuduh seseorang sebagai killer</div>
-          <div class="rules-action-item"><span class="ra-icon" style="color:#3498db">&#11088;</span> <strong>Aliansi</strong> — ajak kerja sama</div>
-          <div class="rules-action-item"><span class="ra-icon" style="color:#2ecc71">&#128737;&#65039;</span> <strong>Lindungi</strong> — lindungi orang lain</div>
-          <div class="rules-action-item"><span class="ra-icon" style="color:#bdc3c7">&#128064;</span> <strong>Amati</strong> — amati gerak-gerik orang</div>
-          <div class="rules-action-item"><span class="ra-icon" style="color:#9b59b6">&#128065;&#65039;</span> <strong>Siluman</strong> — menyelinap diam-diam</div>
-          <div class="rules-action-item"><span class="ra-icon" style="color:#636e72">&#129296;</span> <strong>Sembunyi</strong> — bersembunyi dari bahaya</div>
-          <div class="rules-action-item"><span class="ra-icon" style="color:#f39c12">&#127939;</span> <strong>Kabur</strong> — lari dari situasi berbahaya</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#c8a96e">&#128269;</span> <strong>Investigasi</strong> — cari petunjuk</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#7f8c8d">&#128694;</span> <strong>Pindah</strong> — pindah ruangan</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#4ecdc4">&#129309;</span> <strong>Sosial</strong> — bicara, aliansi</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#e63946">&#9876;&#65039;</span> <strong>Konfrontasi</strong> — hadapi suspect</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#e74c3c">&#9757;&#65039;</span> <strong>Tuduh</strong> — voting eliminasi</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#2ecc71">&#128737;&#65039;</span> <strong>Lindungi</strong> — jaga seseorang</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#bdc3c7">&#128064;</span> <strong>Amati</strong> — intai sekitar</div>
+          <div class="rules-action-item"><span class="ra-icon" style="color:#f39c12">&#127939;</span> <strong>Kabur</strong> — lari dari bahaya</div>
         </div>
       </div>
 
       <div class="rules-section">
-        <h3>&#128299; Sang Pemburu</h3>
-        <p class="rules-hunter-intro">Di antara para survivor, ada satu yang menjadi <strong>Pemburu</strong> — pelindung terakhir yang membawa pistol.</p>
+        <h3>&#9878;&#65039; Menang & Kalah</h3>
         <ul>
-          <li><strong>Kapan muncul?</strong> — jika killer <em>gagal membunuh</em> target dan masih ada <strong>lebih dari 1 protagonis</strong> hidup</li>
-          <li><strong>Apa yang terjadi?</strong> — seorang protagonis acak muncul sebagai Pemburu, langsung <strong>menembak mati</strong> killer yang gagal</li>
-          <li><strong>Berlaku di semua mode</strong> — Mudah, Normal, dan Sulit</li>
-          <li><strong>Tidak bisa dihindari</strong> — jika syarat terpenuhi, Pemburu pasti muncul</li>
-          <li><strong>Hati-hati jika bermain sebagai Killer</strong> — gagal membunuh bisa berarti kematianmu sendiri!</li>
+          <li><strong>Protagonis Menang:</strong> Eliminasi semua killer / kumpulkan 5/8 petunjuk / temukan Kunci Master</li>
+          <li><strong>Killer Menang:</strong> Eliminasi protagonis sampai tersisa 1 / hancurkan cukup petunjuk</li>
+          <li><strong>Fajar / Max 25 ronde:</strong> Game berakhir dengan kondisi saat itu</li>
+          <li><strong>Auto-Simulasi:</strong> Jika kamu mati, NPC lanjutkan permainan sampai ada pemenang</li>
         </ul>
       </div>
 
       <div class="rules-section">
-        <h3>&#129309; Aliansi Protagonis</h3>
+        <h3>&#128128; Aturan Pertarungan</h3>
         <ul>
-          <li><strong>Jika kamu bermain sebagai Killer</strong>, NPC protagonis akan lebih sering membentuk aliansi</li>
-          <li><strong>Mode Normal</strong>: 40% chance per ronde NPC protagonis berkumpul dan saling menjaga</li>
-          <li><strong>Mode Sulit</strong>: 45% chance — protagonis semakin agresif membentuk kelompok</li>
-          <li>Protagonis yang ber-aliansi akan <strong>pindah ke lokasi yang sama</strong> dan sulit diserang</li>
+          <li><strong>Killer hanya bisa bunuh target SENDIRIAN</strong> — ada 2+ orang = target aman</li>
+          <li><strong>2+ survivor vs killer</strong> — killer yang menyerang MATI</li>
+          <li><strong>Saksi pembunuhan</strong> — killer terungkap DIBURU & DIEKSEKUSI jika ditemukan 2+ survivor</li>
+          <li><strong>Pemburu</strong> — jika killer gagal membunuh, seorang survivor jadi Pemburu dan menembak killer</li>
+          <li><strong>Trust-Kill</strong> — trust sangat rendah + musuh = bisa saling menyerang</li>
         </ul>
       </div>
 
       <div class="rules-section">
-        <h3>&#9888;&#65039; Tips Penting</h3>
+        <h3>&#127942; 30 Ending Dinamis</h3>
         <ul>
-          <li><strong>Jangan sendirian</strong> — killer hanya bisa membunuh jika kamu sendirian di ruangan</li>
-          <li><strong>Perhatikan bar Risiko/Hasil</strong> — setiap aksi punya tingkat risiko dan reward</li>
-          <li><strong>NPC bertindak mandiri</strong> — karakter lain bergerak dan mengambil keputusan sendiri</li>
-          <li><strong>Setiap pilihan punya konsekuensi</strong> — karakter bisa mati secara permanen</li>
-          <li><strong>Game auto-save</strong> — progress tersimpan otomatis</li>
-          <li><strong>Killer dilacak (Survivor)</strong> — 30% chance per ronde killer NPC bergerak menuju lokasimu</li>
-          <li><strong>Jangan diam terlalu lama</strong> — 2 ronde tanpa pindah = bahaya meningkat drastis, kamu dipaksa bergerak</li>
-          <li><strong>Petunjuk = pindah otomatis</strong> — setelah clue ditemukan/dihancurkan, semua NPC di lokasi itu pindah ke tempat lain</li>
-          <li><strong>Max 25 ronde</strong> — game pasti berakhir, chapter auto-advance setiap 6 ronde</li>
+          <li><strong>Semua killer mati + banyak selamat</strong> = ending S/A-rank</li>
+          <li><strong>Killer menang</strong> = ending D/F-rank</li>
+          <li><strong>Player mati tapi teman selamat</strong> = ending pengorbanan (A/B-rank)</li>
+          <li><strong>Trust runtuh / petunjuk hancur</strong> = ending paranoia / tanpa jalan keluar</li>
+          <li><strong>Karakter spesifik hidup/mati</strong> = ending unik per karakter</li>
         </ul>
+        <p style="color:#c8a96e; font-style:italic; margin-top:0.3rem; font-size:0.85rem;">Rating S → F. Semakin banyak survivor selamat + petunjuk lengkap + moral baik = rating lebih tinggi.</p>
       </div>
 
       <div class="rules-section">
-        <h3>&#127942; Sistem Ending (30 Ending Dinamis)</h3>
-        <p class="rules-hunter-intro">Ending <strong>otomatis terpicu</strong> berdasarkan kondisi permainan — bukan terkunci di chapter tertentu. Setiap ending punya rating: <strong>S</strong> (terbaik) sampai <strong>F</strong> (terburuk).</p>
+        <h3>&#9888;&#65039; Tips</h3>
         <ul>
-          <li><strong>Semua killer mati?</strong> — ending S/A/B-rank terpicu tergantung berapa survivor selamat dan petunjuk terkumpul</li>
-          <li><strong>Killer menang?</strong> — ending D/F-rank terpicu, cerita tentang kekalahan dan siklus berlanjut</li>
-          <li><strong>Player mati tapi teman selamat?</strong> — ending pengorbanan heroik (A/B-rank)</li>
-          <li><strong>Trust antar karakter runtuh?</strong> — ending paranoia dan perpecahan</li>
-          <li><strong>Petunjuk dihancurkan killer?</strong> — ending tanpa jalan keluar</li>
-          <li><strong>Fajar tiba sebelum resolusi?</strong> — ending bittersweet tergantung kondisi akhir</li>
-          <li><strong>Karakter spesifik hidup/mati?</strong> — ending unik untuk Vira, Lana, Niko, Sera, dll</li>
-        </ul>
-        <p style="color:#c8a96e; font-style:italic; margin-top:0.5rem;">Semakin baik performamu (banyak survivor selamat, petunjuk lengkap, moral baik), semakin tinggi rating ending.</p>
-      </div>
-
-      <div class="rules-section">
-        <h3>&#9878;&#65039; Kondisi Menang & Kalah</h3>
-        <ul>
-          <li><strong>Protagonis Menang:</strong> Eliminasi semua killer ATAU kumpulkan 5/8 petunjuk (killer terungkap & dieksekusi) ATAU temukan Kunci Master (5% chance)</li>
-          <li><strong>Killer Menang:</strong> Eliminasi protagonis sampai tersisa 1 ATAU hancurkan cukup petunjuk sehingga tidak bisa capai 5</li>
-          <li><strong>Fajar Tiba (Ch.5+):</strong> Game berakhir dengan kondisi saat itu — bisa menang atau seri</li>
-          <li><strong>Auto-Simulasi:</strong> Jika kamu mati, NPC melanjutkan permainan sampai ada pemenang</li>
-        </ul>
-      </div>
-
-      <div class="rules-section">
-        <h3>&#128128; Aturan Kematian & Pertarungan</h3>
-        <ul>
-          <li><strong>Killer hanya bisa membunuh target SENDIRIAN</strong> — jika ada 2+ orang di ruangan, target aman</li>
-          <li><strong>2+ killer vs 1 survivor</strong> — survivor 100% mati, tidak ada kesempatan</li>
-          <li><strong>Survivor melawan</strong> — jika killer menyerang di ruangan dengan 2+ survivor, killer MATI</li>
-          <li><strong>Saksi pembunuhan</strong> — killer yang ketahuan langsung DIBURU oleh semua survivor. Jika ditemukan dengan 2+ survivor, DIEKSEKUSI</li>
-          <li><strong>Trust-Kill</strong> — jika trust antar NPC sangat rendah (&le;15) dan sudah jadi musuh, NPC bisa saling menyerang</li>
-          <li><strong>Pemburu muncul</strong> — jika killer gagal membunuh + masih ada &gt;1 protagonis, seorang survivor menjadi Pemburu dan menembak killer</li>
-        </ul>
-      </div>
-
-      <div class="rules-section">
-        <h3>&#128161; Sistem Tersembunyi</h3>
-        <ul>
-          <li><strong>Moral Score</strong> — pilihan etis mempengaruhi ending yang tersedia. Pilihan jahat menurunkan rating ending</li>
-          <li><strong>Trust System</strong> — kepercayaan antar karakter berubah berdasarkan aksi. Trust collapse bisa memicu ending paranoia</li>
-          <li><strong>NPC Background Activity</strong> — NPC berbagi kecurigaan (gossip), pasif mendeteksi killer, membangun alibi, dan konfrontasi spontan setiap ronde</li>
-          <li><strong>Suspicion Decay</strong> — kecurigaan ke non-killer turun perlahan, tapi kecurigaan yang dibuktikan (saksi) bersifat permanen</li>
-          <li><strong>7 Tool Unik</strong> — senjata & alat tersebar di mansion. Setiap tool hanya bisa dimiliki 1 karakter (pisau, suntikan, radio, dll)</li>
+          <li><strong>Jangan sendirian</strong> — killer hanya bisa bunuh jika kamu sendiri di ruangan</li>
+          <li><strong>Jangan diam terlalu lama</strong> — 2 ronde diam = bahaya naik drastis, dipaksa pindah</li>
+          <li><strong>Setelah clue ditemukan/hancur</strong> — semua NPC di lokasi pindah otomatis</li>
+          <li><strong>Chapter auto-advance</strong> — setiap 6 ronde, chapter naik. Game max 25 ronde</li>
+          <li><strong>NPC mandiri</strong> — bergerak, aliansi, serang, kabur sendiri setiap ronde</li>
+          <li><strong>Moral & Trust</strong> — pilihan etis + trust antar karakter menentukan ending</li>
         </ul>
       </div>
 
