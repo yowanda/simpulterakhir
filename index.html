@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="description" content="Simpul Terakhir — Post-modern psychological horror thriller. 10 karakter, 7 chapter, 28 ending, dan keputusan yang menentukan siapa pembunuhnya.">
+  <meta name="description" content="Simpul Terakhir — Post-modern psychological horror thriller. 10 karakter, 7 chapter, 30 ending kondisi-dinamis, dan keputusan yang menentukan siapa pembunuhnya.">
   <meta name="theme-color" content="#0a0a0a">
 
   <!-- Security Hardening -->
@@ -42,9 +42,9 @@
         <button class="btn-main" id="btn-new-game">Permainan Baru</button>
         <button class="btn-main" id="btn-continue" style="display:none">Lanjutkan</button>
         <button class="btn-secondary" id="btn-how-to-play">&#9881; Cara Bermain</button>
-        <button class="btn-secondary" id="btn-endings-gallery">Ending: <span id="endings-count">0</span>/28</button>
+        <button class="btn-secondary" id="btn-endings-gallery">Ending: <span id="endings-count">0</span>/30</button>
       </div>
-      <p class="credits">Post-modern psychological horror thriller &bull; 7 chapter &bull; 28 ending</p>
+      <p class="credits">Post-modern psychological horror thriller &bull; 7 chapter &bull; 30 ending dinamis</p>
     </div>
   </div>
 
@@ -123,6 +123,54 @@
           <li><strong>Setiap pilihan punya konsekuensi</strong> — karakter bisa mati secara permanen</li>
           <li><strong>Game auto-save</strong> — progress tersimpan otomatis</li>
           <li><strong>Killer dilacak (Survivor)</strong> — 30% chance per ronde killer NPC bergerak menuju lokasimu</li>
+        </ul>
+      </div>
+
+      <div class="rules-section">
+        <h3>&#127942; Sistem Ending (30 Ending Dinamis)</h3>
+        <p class="rules-hunter-intro">Ending <strong>otomatis terpicu</strong> berdasarkan kondisi permainan — bukan terkunci di chapter tertentu. Setiap ending punya rating: <strong>S</strong> (terbaik) sampai <strong>F</strong> (terburuk).</p>
+        <ul>
+          <li><strong>Semua killer mati?</strong> — ending S/A/B-rank terpicu tergantung berapa survivor selamat dan petunjuk terkumpul</li>
+          <li><strong>Killer menang?</strong> — ending D/F-rank terpicu, cerita tentang kekalahan dan siklus berlanjut</li>
+          <li><strong>Player mati tapi teman selamat?</strong> — ending pengorbanan heroik (A/B-rank)</li>
+          <li><strong>Trust antar karakter runtuh?</strong> — ending paranoia dan perpecahan</li>
+          <li><strong>Petunjuk dihancurkan killer?</strong> — ending tanpa jalan keluar</li>
+          <li><strong>Fajar tiba sebelum resolusi?</strong> — ending bittersweet tergantung kondisi akhir</li>
+          <li><strong>Karakter spesifik hidup/mati?</strong> — ending unik untuk Vira, Lana, Niko, Sera, dll</li>
+        </ul>
+        <p style="color:#c8a96e; font-style:italic; margin-top:0.5rem;">Semakin baik performamu (banyak survivor selamat, petunjuk lengkap, moral baik), semakin tinggi rating ending.</p>
+      </div>
+
+      <div class="rules-section">
+        <h3>&#9878;&#65039; Kondisi Menang & Kalah</h3>
+        <ul>
+          <li><strong>Protagonis Menang:</strong> Eliminasi semua killer ATAU kumpulkan 5/8 petunjuk (killer terungkap & dieksekusi) ATAU temukan Kunci Master (5% chance)</li>
+          <li><strong>Killer Menang:</strong> Eliminasi protagonis sampai tersisa 1 ATAU hancurkan cukup petunjuk sehingga tidak bisa capai 5</li>
+          <li><strong>Fajar Tiba (Ch.5+):</strong> Game berakhir dengan kondisi saat itu — bisa menang atau seri</li>
+          <li><strong>Auto-Simulasi:</strong> Jika kamu mati, NPC melanjutkan permainan sampai ada pemenang</li>
+        </ul>
+      </div>
+
+      <div class="rules-section">
+        <h3>&#128128; Aturan Kematian & Pertarungan</h3>
+        <ul>
+          <li><strong>Killer hanya bisa membunuh target SENDIRIAN</strong> — jika ada 2+ orang di ruangan, target aman</li>
+          <li><strong>2+ killer vs 1 survivor</strong> — survivor 100% mati, tidak ada kesempatan</li>
+          <li><strong>Survivor melawan</strong> — jika killer menyerang di ruangan dengan 2+ survivor, killer MATI</li>
+          <li><strong>Saksi pembunuhan</strong> — killer yang ketahuan langsung DIBURU oleh semua survivor. Jika ditemukan dengan 2+ survivor, DIEKSEKUSI</li>
+          <li><strong>Trust-Kill</strong> — jika trust antar NPC sangat rendah (&le;15) dan sudah jadi musuh, NPC bisa saling menyerang</li>
+          <li><strong>Pemburu muncul</strong> — jika killer gagal membunuh + masih ada &gt;1 protagonis, seorang survivor menjadi Pemburu dan menembak killer</li>
+        </ul>
+      </div>
+
+      <div class="rules-section">
+        <h3>&#128161; Sistem Tersembunyi</h3>
+        <ul>
+          <li><strong>Moral Score</strong> — pilihan etis mempengaruhi ending yang tersedia. Pilihan jahat menurunkan rating ending</li>
+          <li><strong>Trust System</strong> — kepercayaan antar karakter berubah berdasarkan aksi. Trust collapse bisa memicu ending paranoia</li>
+          <li><strong>NPC Background Activity</strong> — NPC berbagi kecurigaan (gossip), pasif mendeteksi killer, membangun alibi, dan konfrontasi spontan setiap ronde</li>
+          <li><strong>Suspicion Decay</strong> — kecurigaan ke non-killer turun perlahan, tapi kecurigaan yang dibuktikan (saksi) bersifat permanen</li>
+          <li><strong>7 Tool Unik</strong> — senjata & alat tersebar di mansion. Setiap tool hanya bisa dimiliki 1 karakter (pisau, suntikan, radio, dll)</li>
         </ul>
       </div>
 
