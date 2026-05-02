@@ -7,7 +7,7 @@
 [▶ Mainkan Sekarang](https://yowanda.github.io/simpulterakhir/)
 
 ### Compact Edition
-- **3 pilihan fokus** per ronde (survivor) / **2 pilihan** (killer) — setiap keputusan lebih bermakna
+- **3 pilihan fokus** per ronde — survivor & killer mendapat opsi strategis yang seimbang
 - **28 ending ringkas** — narrative core tetap intact, tanpa eksposisi berlebihan
 - UI optimized untuk pilihan yang lebih sedikit tapi lebih impactful
 
@@ -236,7 +236,7 @@ NPC bukan hanya bereaksi secara generik — mereka **bereaksi spesifik terhadap 
 - **NPC Movement Priority** — NPC survivor dan killer dipaksa bergerak jika sudah melakukan 2+ aksi pasif berturut-turut, mencegah NPC camping
 - **Global Action Memory** — sistem melacak jenis aksi yang dilakukan lintas reset untuk mencegah loop sejenis (observe→observe→observe)
 - **Location-Based Reset** — pindah ke lokasi baru me-reset aksi spesifik lokasi dan mereset staleness counter
-- **Max Opsi** — Survivor: 3 pilihan, Killer: 2 pilihan per node (compact & focused, brain interactive prioritas, 1 story max), shuffled setiap game
+- **Max Opsi** — Survivor & Killer: 3 pilihan per node (compact & focused, brain interactive prioritas, 1 story max), shuffled setiap game
 
 ### 7 Alat Unik
 Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat event terpicu di lokasi tertentu.
@@ -316,7 +316,7 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
 - Survivor NPC bisa menyerang killer yang terekspos
 
 ### Interactive Choice System (Compact Edition)
-- **3 pilihan fokus** (survivor) / **2 pilihan** (killer) per ronde — compact & decisive, tidak overwhelming
+- **3 pilihan fokus** per ronde (survivor & killer) — compact & decisive, tidak overwhelming
 - **15 kategori aksi** — setiap pilihan dikategorikan dengan ikon dan warna unik:
   - 🔍 Investigasi, ⚔️ Konfrontasi, 🤝 Sosial, 🚶 Pindah, 👁️ Siluman, 🛡️ Lindungi
   - 🗡️ Serang (killer), 🏃 Kabur, ⭐ Aliansi, ☝️ Tuduh, 💻 Hack, 💬 Negosiasi
