@@ -2266,6 +2266,10 @@ const Engine = (() => {
       globalActionMemory.push(category);
       if (globalActionMemory.length > 8) globalActionMemory.shift();
     }
+    // Track player action history for NPC brain awareness
+    if (!state.playerActionHistory) state.playerActionHistory = [];
+    state.playerActionHistory.push(category);
+    if (state.playerActionHistory.length > 10) state.playerActionHistory.shift();
   }
 
   // ---- Tool Pickup Events ----
