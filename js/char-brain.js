@@ -902,7 +902,6 @@ const CharBrain = (() => {
       // Killer pacing: hesitation scales with difficulty AND player role
       const isNpcKiller = gameState.killers && gameState.killers.includes(name);
       const diff = gameState.difficulty || 2;
-      const pc = gameState.playerCharacter || 'arin';
       const playerIsKiller = gameState.killers && gameState.killers.includes(pc);
       // If player IS killer → NPC killers (teammates) hesitate MORE on Easy (favor player)
       // If player is protagonist → NPC killers hesitate MORE on Easy (favor player survival)
