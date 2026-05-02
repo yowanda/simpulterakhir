@@ -521,9 +521,9 @@ const CharBrain = (() => {
 
     // Low tension → prioritize movement over passive actions
     if (candidates.length === 0) {
-      // Movement first — prevent NPCs from camping
+      // Movement first — prevent NPCs from camping (higher probability than before)
       const stationaryCount = mind.actionHistory.filter(a => a === 'observe' || a === 'socialize' || a === 'plan').length;
-      const shouldMove = stationaryCount >= 2 || Math.random() < 0.5;
+      const shouldMove = stationaryCount >= 1 || Math.random() < 0.7;
       if (shouldMove) {
         const moveTo = pickNewLocation(mind);
         if (moveTo) {
@@ -696,7 +696,7 @@ const CharBrain = (() => {
     // Default: reposition first, maintain cover only if movement on cooldown
     if (candidates.length === 0) {
       const stationaryCount = mind.actionHistory.filter(a => a === 'maintain_cover' || a === 'plan').length;
-      if (stationaryCount >= 2 || Math.random() < 0.6) {
+      if (stationaryCount >= 1 || Math.random() < 0.75) {
         const moveTo = pickNewLocation(mind);
         if (moveTo) {
           candidates.push({ type: 'move', desc: `${charName(mind.name)} berpindah posisi.`, moveTo, priority: 45 });
@@ -778,10 +778,10 @@ const CharBrain = (() => {
       updateEmotion(mind, gameState);
 
       // Killer pacing: hesitation chance scales with difficulty
-      // Easy 45%, Normal 35%, Hard 25% — killers are slower on easier modes
+      // Easy 30%, Normal 20%, Hard 10% — killers act faster for shorter games
       const isNpcKiller = gameState.killers && gameState.killers.includes(name);
       const diff = gameState.difficulty || 2;
-      const hesitationChance = diff === 1 ? 0.45 : diff === 3 ? 0.25 : 0.35;
+      const hesitationChance = diff === 1 ? 0.30 : diff === 3 ? 0.10 : 0.20;
       if (isNpcKiller && mind.emotion !== 'executing' && Math.random() < hesitationChance) {
         return;
       }
@@ -838,9 +838,28 @@ const CharBrain = (() => {
         }
       }
 
+      // Track rounds at same location — force move if camping too long
+      if (!mind.roundsAtLocation) mind.roundsAtLocation = 0;
+      mind.roundsAtLocation++;
+      const npcStaleLimit = isNpcKiller ? 2 : 3;
+      if (mind.roundsAtLocation >= npcStaleLimit && !mind.lastAction?.moveTo) {
+        const moveTo = pickNewLocation(mind);
+        if (moveTo) {
+          mind.roundsAtLocation = 0;
+          const moveDecision = { type: 'move', desc: `${charName(name)} tidak bisa tinggal lebih lama — bergerak ke ${locName(moveTo)}.`, moveTo, priority: 60 };
+          recordAction(mind, moveDecision);
+          mind.lastAction = moveDecision;
+          actions.push({ character: name, action: moveDecision });
+          return;
+        }
+      }
+
       // Make decision
       const decision = makeDecision(mind, gameState, minds);
       if (!decision) return;
+
+      // Reset location counter on movement
+      if (decision.moveTo) mind.roundsAtLocation = 0;
 
       // Record action for anti-looping
       recordAction(mind, decision);
@@ -2230,8 +2249,8 @@ const CharBrain = (() => {
       return result;
     }
 
-    // Only 1 protagonist remains → killer wins
-    if (aliveNonKillers.length <= 1 && gameState.chapter >= 2) {
+    // Only 1 protagonist remains → killer wins (chapter >= 1 to allow faster resolution)
+    if (aliveNonKillers.length <= 1 && gameState.chapter >= 1) {
       result.ended = true;
       result.type = isPlayerK ? 'win' : 'loss';
       result.reason = 'killer_victory';
@@ -2248,7 +2267,7 @@ const CharBrain = (() => {
     const found = (gameState.escapeClues || []).length;
     const cluesNeeded = gameState.cluesNeededToWin || 5;
     const available = totalClues - destroyed;
-    if (available < cluesNeeded && found < cluesNeeded && gameState.chapter >= 2) {
+    if (available < cluesNeeded && found < cluesNeeded && gameState.chapter >= 1) {
       result.ended = true;
       result.type = isPlayerK ? 'win' : 'loss';
       result.reason = 'killer_clues_destroyed';
@@ -2584,6 +2603,7 @@ const CharBrain = (() => {
     GOAL_TYPES,
     charName,
     locName,
-    trustKeyFor
+    trustKeyFor,
+    pickNewLocation
   };
 })();
