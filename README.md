@@ -34,8 +34,8 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
   - **Sulit**: 3 killers (Lana + Dimas + Niko)
 - **10 karakter** (5 main + 5 side) dengan profil mendalam dan hubungan kompleks
 - **Sistem pemilihan peran** — pilih Killer (karakter spesifik) atau Survivor (karakter acak):
-  - **Killer**: Pilih Lana, Dimas, atau Niko (tergantung difficulty) — pengalaman antagonist
-  - **Survivor**: Dapat salah satu dari 7-9 protagonist secara acak
+  - **Killer**: Pilih Lana, Dimas, atau Niko (tergantung difficulty) — pengalaman antagonist. Identitas semua killer dan survivor terlihat jelas di status bar.
+  - **Survivor**: Dapat salah satu dari 7-9 protagonist secara acak. Identitas killer **tersembunyi** — nama killer tidak ditampilkan di status bar dan chat bubble killer tidak dibedakan warnanya. Killer hanya terungkap melalui mekanik in-game (investigasi, tuduhan, dll).
   - Setiap karakter punya **kemampuan pasif unik** yang seimbang:
 
 | Karakter | Role | Kemampuan Pasif |
@@ -199,7 +199,7 @@ Setiap alat hanya bisa dipegang 1 karakter. Tidak ada duplikat. Muncul saat even
   - **ANCAMAN** — killer sedang memburu pemain
 - Tool yang dipegang ditampilkan di status bar
 - **Lokasi Karakter** — detail lokasi + siapa yang ada di sekitar (bersama/sendirian) ditampilkan seperti WhatsApp subtitle
-- **Info Tim** — daftar lengkap tim Killer dan Survivor ditampilkan di sidebar (semua mode), dengan tanda hidup/mati
+- **Info Tim** — daftar tim ditampilkan di sidebar dengan tanda hidup/mati. Jika bermain sebagai **Killer**, roster lengkap Killer & Survivor terlihat. Jika bermain sebagai **Survivor**, identitas killer disembunyikan — hanya killer yang sudah terungkap dalam game yang ditampilkan
 - **Petunjuk Pelarian** — progress petunjuk ditemukan vs total
 - **Killer Dieliminasi** — jumlah killer yang sudah dikalahkan
 - **Diburu** — jumlah killer yang sedang diburu (disaksikan membunuh)
