@@ -4225,15 +4225,50 @@ const Engine = (() => {
       const profile = hasProfiles ? CHARACTER_PROFILES[c] : null;
       const card = document.createElement('div');
       card.className = 'tc-card' + (MAIN_CHARACTERS.includes(c) ? '' : ' tc-side');
+      card.style.borderColor = color;
       card.style.animationDelay = (idx * 0.08) + 's';
       const portraitContent = CHAR_PORTRAITS[c]
         ? `<img class="tc-avatar-img" src="${CHAR_PORTRAITS[c]}" alt="${display}">`
         : `<div class="tc-avatar" style="background:${color}">${initial}</div>`;
-      const role = profile ? profile.role : tagline.split('—')[0].trim();
-      card.innerHTML = `<div class="tc-portrait-wrap">${portraitContent}<div class="tc-glow" style="background:${color}"></div></div><div class="tc-name">${display}</div><div class="tc-role">${role}</div>`;
       if (profile) {
-        card.addEventListener('click', () => showCharDetail(profile));
-        card.style.cursor = 'pointer';
+        const traitsHtml = (profile.traits || []).map(t => `<span class="tc-trait">${t}</span>`).join('');
+        let relHtml = '';
+        if (profile.relationships) {
+          Object.entries(profile.relationships).forEach(([key, desc]) => {
+            const rp = CHARACTER_PROFILES[key];
+            const rName = rp ? rp.name : key;
+            relHtml += `<div class="tc-rel"><strong>${rName}:</strong> ${desc}</div>`;
+          });
+        }
+        card.innerHTML = `
+          <div class="tc-header">
+            <div class="tc-portrait-wrap">${portraitContent}<div class="tc-glow" style="background:${color}"></div></div>
+            <div class="tc-header-info">
+              <div class="tc-name" style="color:${color}">${profile.fullName || display}</div>
+              <div class="tc-age">Usia: ${profile.age} tahun</div>
+              <div class="tc-role">${profile.role}</div>
+            </div>
+          </div>
+          <div class="tc-quote">${profile.quote}</div>
+          <div class="tc-section"><h4>Penampilan</h4><p>${profile.appearance}</p></div>
+          <div class="tc-section"><h4>Kepribadian</h4><p>${profile.personality}</p></div>
+          <div class="tc-section"><h4>Latar Belakang</h4><p>${profile.backstory}</p></div>
+          <div class="tc-section"><h4>Rahasia</h4><p>${profile.secret}</p></div>
+          <div class="tc-section"><h4>Sifat</h4><div class="tc-traits">${traitsHtml}</div></div>
+          <div class="tc-section"><h4>Kelemahan</h4><p>${profile.weakness}</p></div>
+          <div class="tc-section"><h4>Peran Emosional</h4><p>${profile.emotionalRole}</p></div>
+          <div class="tc-section"><h4>Hubungan</h4><div class="tc-rels">${relHtml}</div></div>
+        `;
+      } else {
+        card.innerHTML = `
+          <div class="tc-header">
+            <div class="tc-portrait-wrap">${portraitContent}<div class="tc-glow" style="background:${color}"></div></div>
+            <div class="tc-header-info">
+              <div class="tc-name" style="color:${color}">${display}</div>
+              <div class="tc-role">${tagline}</div>
+            </div>
+          </div>
+        `;
       }
       grid.appendChild(card);
     });
