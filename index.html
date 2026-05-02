@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="description" content="Simpul Terakhir — Post-modern psychological horror thriller. 10 karakter, 7 chapter, 30 ending kondisi-dinamis, dan keputusan yang menentukan siapa pembunuhnya.">
+  <meta name="description" content="Simpul Terakhir — Post-modern psychological horror thriller. 10 karakter, 6 chapter, 30 ending compact, 3 pilihan fokus per ronde, dan keputusan yang menentukan siapa pembunuhnya.">
   <meta name="theme-color" content="#0a0a0a">
 
   <!-- Security Hardening -->
@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=67">
+  <link rel="stylesheet" href="css/style.css?v=68">
 </head>
 <body>
   <!-- TITLE SCREEN -->
@@ -37,7 +37,7 @@
         <h1 class="game-title">SIMPUL TERAKHIR</h1>
         <p class="game-subtitle" id="title-subtitle">Sepuluh Tamu. Satu Mansion. Siapa Sang Penenun?</p>
       </div>
-      <p class="tagline" id="title-tagline">30 ending • 25 ronde • setiap keputusan menentukan siapa yang selamat</p>
+      <p class="tagline" id="title-tagline">30 ending compact • 3 pilihan fokus • 25 ronde • setiap keputusan menentukan</p>
       <div class="title-mystery" id="title-mystery"></div>
       <div class="title-menu">
         <button class="btn-main" id="btn-new-game">Permainan Baru</button>
@@ -46,7 +46,7 @@
         <button class="btn-secondary" id="btn-endings-gallery">Ending: <span id="endings-count">0</span>/30</button>
         <button class="btn-secondary" id="btn-char-profiles">&#128101; Karakter</button>
       </div>
-      <p class="credits">Psychological horror thriller &bull; 6 chapter &bull; 30 ending &bull; max 25 ronde</p>
+      <p class="credits">Psychological horror thriller &bull; 6 chapter &bull; 30 ending compact &bull; 3 pilihan fokus &bull; max 25 ronde</p>
       <p class="credits" style="margin-top:0.3rem; font-size:0.75rem; opacity:0.6;">by cacapaspas</p>
     </div>
   </div>
@@ -55,7 +55,7 @@
   <div id="screen-how-to-play" class="screen">
     <div class="rules-container">
       <h2 class="rules-title">&#128214; Cara Bermain</h2>
-      <p class="rules-intro">Kamu terjebak di mansion bersama 9 orang lainnya. Salah satu (atau lebih) adalah pembunuh. Selamatkan dirimu sebelum fajar. Game dibatasi <strong>25 ronde</strong> — setiap aksi mendekatkanmu pada penyelesaian.</p>
+      <p class="rules-intro">Kamu terjebak di mansion bersama 9 orang lainnya. Salah satu (atau lebih) adalah pembunuh. Selamatkan dirimu sebelum fajar. Game dibatasi <strong>25 ronde</strong> — setiap ronde kamu dapat <strong>3 pilihan fokus</strong> (killer: 2) yang langsung menentukan nasibmu.</p>
 
       <div class="rules-section">
         <h3>&#127917; Tujuan Permainan</h3>
@@ -277,22 +277,22 @@
   <!-- Notification -->
   <div class="notification" id="notification"></div>
 
-  <script src="js/characters.js?v=67"></script>
-  <script src="js/char-db.js?v=67"></script>
-  <script src="js/char-brain.js?v=67"></script>
-  <script src="js/engine.js?v=67"></script>
-  <script src="js/story-prolog.js?v=67"></script>
-  <script src="js/story-ch1.js?v=67"></script>
-  <script src="js/story-ch2.js?v=67"></script>
-  <script src="js/story-ch3.js?v=67"></script>
-  <script src="js/story-ch4.js?v=67"></script>
-  <script src="js/story-ch5.js?v=67"></script>
-  <script src="js/story-ch6.js?v=67"></script>
-  <script src="js/story-ch7.js?v=67"></script>
-  <script src="js/story-ch8.js?v=67"></script>
-  <script src="js/story-ch9.js?v=67"></script>
-  <script src="js/story-ch10.js?v=67"></script>
-  <script src="js/story-endings.js?v=67"></script>
+  <script src="js/characters.js?v=68"></script>
+  <script src="js/char-db.js?v=68"></script>
+  <script src="js/char-brain.js?v=68"></script>
+  <script src="js/engine.js?v=68"></script>
+  <script src="js/story-prolog.js?v=68"></script>
+  <script src="js/story-ch1.js?v=68"></script>
+  <script src="js/story-ch2.js?v=68"></script>
+  <script src="js/story-ch3.js?v=68"></script>
+  <script src="js/story-ch4.js?v=68"></script>
+  <script src="js/story-ch5.js?v=68"></script>
+  <script src="js/story-ch6.js?v=68"></script>
+  <script src="js/story-ch7.js?v=68"></script>
+  <script src="js/story-ch8.js?v=68"></script>
+  <script src="js/story-ch9.js?v=68"></script>
+  <script src="js/story-ch10.js?v=68"></script>
+  <script src="js/story-endings.js?v=68"></script>
   <script>
     const STORY = Object.assign({},
       typeof STORY_PROLOG !== 'undefined' ? STORY_PROLOG : {},
