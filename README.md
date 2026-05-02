@@ -102,6 +102,18 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 - **Dynamic Choices** — pilihan baru muncul berdasarkan aksi NPC (tuduh, aliansi, serang, investigasi)
 - **Tidak pakai AI live** — semua diatur oleh branching database, bukan generative AI
 
+### NPC Background Activity System (Autonomous Intelligence)
+NPC tidak hanya bereaksi — mereka **aktif berpikir dan bertindak di background** setiap ronde, menciptakan drama dan tensi tanpa input pemain:
+- **Suspicion Gossip** — NPC di lokasi yang sama saling berbagi kecurigaan. Jika NPC A curiga ke X (>30%), NPC B di sebelahnya juga jadi curiga (+15% influence). Informasi menyebar seperti jaringan gosip
+- **Passive Investigation** — Survivor NPC secara pasif mendeteksi killer yang ada di lokasi sama (12-25% chance tergantung difficulty). Pemegang clue lebih jeli (+10% bonus). Suspicion naik otomatis tanpa aksi eksplisit
+- **Killer Alibi Building** — Killer NPC aktif membangun alibi saat dekat NPC non-enemy: suspicion turun -3~7% dan NPC di sekitar jadi kurang curiga
+- **Killer Counter-Play** — Saat suspicion killer tinggi (>30%), mereka secara halus mengalihkan kecurigaan ke scapegoat (+5~10% suspicion ke target lain)
+- **Witness Memory Spread** — NPC yang menyaksikan pembunuhan akan menceritakan ke semua NPC di lokasi yang sama: suspicion target +15%, otomatis jadi enemy
+- **Trust Decay** — Setelah ada kematian, trust antar NPC yang bukan ally perlahan turun. Semakin banyak kematian, semakin cepat decay
+- **Spontaneous Confrontation** — NPC dengan suspicion >55% terhadap NPC lain bisa mengonfrontasi secara spontan (20% chance). Jika benar → suspicion +8%, jika salah → trust turun
+- **Tense Encounters** — Ketika NPC bertemu orang yang sangat dicurigai (>60%), terjadi encounter dramatik dengan narasi ketegangan
+- **Max 3 background events per ronde** — mencegah spam narasi, hanya event paling impactful yang ditampilkan
+
 ### WhatsApp-Style Chat UI (Dialog-Only Mode)
 - **100% Dialog-Focused** — cerita dibangun SEPENUHNYA lewat percakapan antar karakter. Narasi panjang dihilangkan total. Plot berkembang lewat dialog, bukan novel
 - **Group Chat Header** — header ala WhatsApp group chat: nama chapter sebagai nama grup, daftar member yang masih hidup di bawahnya

@@ -920,7 +920,260 @@ const CharBrain = (() => {
       }
     });
 
+    // === BACKGROUND ACTIVITY: NPCs think, share info, build suspicion autonomously ===
+    const bgEvents = simulateBackgroundActivity(gameState, minds, events);
+    bgEvents.forEach(e => events.push(e));
+
     return { actions, events };
+  }
+
+  // ---- Background Activity Simulation ----
+  // NPCs autonomously share suspicion, gossip, investigate, and build tension
+  function simulateBackgroundActivity(gameState, minds, existingEvents) {
+    const bgEvents = [];
+    const pc = gameState.playerCharacter || 'arin';
+    const diff = gameState.difficulty || 2;
+
+    // Group alive NPCs by location
+    const locGroups = {};
+    Object.keys(minds).forEach(name => {
+      if (!gameState.alive[name] || name === pc) return;
+      const loc = minds[name].location;
+      if (!locGroups[loc]) locGroups[loc] = [];
+      locGroups[loc].push(name);
+    });
+
+    // 1. SUSPICION GOSSIP: NPCs at same location share their suspicions
+    Object.entries(locGroups).forEach(([loc, chars]) => {
+      if (chars.length < 2) return;
+      for (let i = 0; i < chars.length; i++) {
+        for (let j = i + 1; j < chars.length; j++) {
+          const a = minds[chars[i]], b = minds[chars[j]];
+          if (!a || !b) continue;
+          // Both are survivors? Share info
+          const aIsK = gameState.killers.includes(a.name);
+          const bIsK = gameState.killers.includes(b.name);
+          if (aIsK && bIsK) continue; // Killers don't gossip with each other about suspects
+
+          // Share suspicions: each NPC influences the other's suspicion map
+          Object.keys(a.suspicions).forEach(suspect => {
+            if (a.suspicions[suspect] > 30 && suspect !== b.name) {
+              const influence = Math.floor(a.suspicions[suspect] * 0.15);
+              b.suspicions[suspect] = Math.min(100, (b.suspicions[suspect] || 0) + influence);
+            }
+          });
+          Object.keys(b.suspicions).forEach(suspect => {
+            if (b.suspicions[suspect] > 30 && suspect !== a.name) {
+              const influence = Math.floor(b.suspicions[suspect] * 0.15);
+              a.suspicions[suspect] = Math.min(100, (a.suspicions[suspect] || 0) + influence);
+            }
+          });
+
+          // 35% chance of producing a gossip event narrative
+          if (Math.random() < 0.35) {
+            const topSuspectA = Object.entries(a.suspicions).sort((x, y) => y[1] - x[1])[0];
+            const topSuspectB = Object.entries(b.suspicions).sort((x, y) => y[1] - x[1])[0];
+            if (topSuspectA && topSuspectA[1] > 40) {
+              bgEvents.push({
+                type: 'gossip',
+                character: a.name,
+                desc: `${charName(a.name)} berbisik kepada ${charName(b.name)}: "Aku curiga dengan ${charName(topSuspectA[0])}..."`
+              });
+            } else if (topSuspectB && topSuspectB[1] > 40) {
+              bgEvents.push({
+                type: 'gossip',
+                character: b.name,
+                desc: `${charName(b.name)} berbisik kepada ${charName(a.name)}: "Perhatikan ${charName(topSuspectB[0])}, ada yang aneh..."`
+              });
+            }
+          }
+        }
+      }
+    });
+
+    // 2. PASSIVE INVESTIGATION: NPC survivors passively build suspicion on killers nearby
+    Object.entries(locGroups).forEach(([loc, chars]) => {
+      chars.forEach(name => {
+        const mind = minds[name];
+        if (!mind || gameState.killers.includes(name)) return;
+
+        // Check if a killer is at the same location
+        const killersHere = chars.filter(c => gameState.killers.includes(c));
+        killersHere.forEach(killerName => {
+          const baseDetect = diff === 1 ? 0.12 : diff === 3 ? 0.25 : 0.18;
+          // Clue holders are better at detecting
+          const clueBonus = mind.hasClue.length > 0 ? 0.10 : 0;
+          if (Math.random() < baseDetect + clueBonus) {
+            const suspGain = 8 + Math.floor(Math.random() * 8);
+            mind.suspicions[killerName] = Math.min(100, (mind.suspicions[killerName] || 0) + suspGain);
+            // Also update global suspicion slightly
+            gameState.suspicion[killerName] = Math.min(100, (gameState.suspicion[killerName] || 0) + Math.floor(suspGain * 0.4));
+
+            if (mind.suspicions[killerName] > 50 && Math.random() < 0.4) {
+              bgEvents.push({
+                type: 'passive_detect',
+                character: name,
+                desc: `${charName(name)} memperhatikan gerak-gerik ${charName(killerName)} yang mencurigakan...`
+              });
+            }
+          }
+        });
+      });
+    });
+
+    // 3. KILLER ALIBI BUILDING: Killers passively reduce suspicion when near non-enemies
+    Object.keys(minds).forEach(name => {
+      if (!gameState.alive[name] || !gameState.killers.includes(name)) return;
+      const mind = minds[name];
+      if (mind.killerExposed) return; // Exposed killers can't build alibis
+
+      const nearbyNonEnemies = Object.values(minds).filter(m =>
+        m.name !== name && m.location === mind.location &&
+        gameState.alive[m.name] && !m.enemies.includes(name)
+      );
+
+      if (nearbyNonEnemies.length > 0 && Math.random() < 0.25) {
+        const reduction = 3 + Math.floor(Math.random() * 4);
+        gameState.suspicion[name] = Math.max(0, (gameState.suspicion[name] || 0) - reduction);
+        // Also reduce personal suspicion for nearby NPCs
+        nearbyNonEnemies.forEach(m => {
+          m.suspicions[name] = Math.max(0, (m.suspicions[name] || 0) - Math.floor(reduction * 0.5));
+        });
+
+        if (Math.random() < 0.3) {
+          const target = nearbyNonEnemies[Math.floor(Math.random() * nearbyNonEnemies.length)];
+          bgEvents.push({
+            type: 'alibi_building',
+            character: name,
+            desc: `${charName(name)} bercakap ramah dengan ${charName(target.name)}, membangun alibi.`
+          });
+        }
+      }
+    });
+
+    // 4. MEMORY-BASED SUSPICION BOOST: NPCs who witnessed death spread info over rounds
+    Object.keys(minds).forEach(name => {
+      if (!gameState.alive[name] || name === pc) return;
+      const mind = minds[name];
+      const deathWitness = mind.memory.filter(m => m.type === 'witnessed_death');
+      if (deathWitness.length === 0) return;
+
+      deathWitness.forEach(witness => {
+        if (!gameState.alive[witness.killer]) return;
+        // Spread suspicion to all NPCs at same location
+        const atSameLoc = Object.values(minds).filter(m =>
+          m.name !== name && m.name !== witness.killer &&
+          m.location === mind.location && gameState.alive[m.name]
+        );
+        atSameLoc.forEach(m => {
+          if ((m.suspicions[witness.killer] || 0) < 80) {
+            m.suspicions[witness.killer] = Math.min(100, (m.suspicions[witness.killer] || 0) + 15);
+            if (!m.enemies.includes(witness.killer)) m.enemies.push(witness.killer);
+          }
+        });
+        if (atSameLoc.length > 0 && Math.random() < 0.4) {
+          bgEvents.push({
+            type: 'witness_spread',
+            character: name,
+            desc: `${charName(name)} menceritakan apa yang dilihatnya: "${charName(witness.killer)} membunuh ${charName(witness.victim)}!" — semua yang mendengar jadi waspada.`
+          });
+        }
+      });
+    });
+
+    // 5. TRUST DECAY: Trust between NPCs decays over time based on deaths and danger
+    if ((gameState.deathCount || 0) >= 1) {
+      const decayChance = Math.min(0.5, 0.1 + (gameState.deathCount || 0) * 0.05);
+      Object.keys(minds).forEach(name => {
+        if (!gameState.alive[name]) return;
+        const mind = minds[name];
+        if (Math.random() < decayChance) {
+          // Random trust decay with someone at same location
+          const nearby = Object.values(minds).filter(m =>
+            m.name !== name && m.location === mind.location && gameState.alive[m.name] && !mind.allies.includes(m.name)
+          );
+          if (nearby.length > 0) {
+            const target = nearby[Math.floor(Math.random() * nearby.length)];
+            const tk = trustKeyFor(name, target.name);
+            if (gameState.trust[tk] !== undefined && gameState.trust[tk] > 20) {
+              gameState.trust[tk] = Math.max(0, gameState.trust[tk] - 3);
+            }
+          }
+        }
+      });
+    }
+
+    // 6. SPONTANEOUS CONFRONTATION: High-suspicion NPC pairs may confront each other
+    Object.entries(locGroups).forEach(([loc, chars]) => {
+      if (chars.length < 2) return;
+      chars.forEach(name => {
+        const mind = minds[name];
+        if (!mind || gameState.killers.includes(name)) return;
+
+        const suspect = chars.find(c => c !== name && (mind.suspicions[c] || 0) > 55);
+        if (suspect && Math.random() < 0.20) {
+          const suspLvl = mind.suspicions[suspect] || 0;
+          const isCorrect = gameState.killers.includes(suspect);
+          if (isCorrect) {
+            gameState.suspicion[suspect] = Math.min(100, (gameState.suspicion[suspect] || 0) + 8);
+            bgEvents.push({
+              type: 'spontaneous_confrontation',
+              character: name,
+              desc: `${charName(name)} mengonfrontasi ${charName(suspect)}: "Aku lihat gelagatmu — kau tidak bisa bersembunyi!" Suspicion +8%.`
+            });
+          } else {
+            // False confrontation — reduces trust
+            const tk = trustKeyFor(name, suspect);
+            if (gameState.trust[tk] !== undefined) {
+              gameState.trust[tk] = Math.max(0, gameState.trust[tk] - 8);
+            }
+            bgEvents.push({
+              type: 'false_confrontation',
+              character: name,
+              desc: `${charName(name)} salah curiga ke ${charName(suspect)}. Hubungan mereka memburuk.`
+            });
+          }
+        }
+      });
+    });
+
+    // 7. KILLER COUNTER-PLAY: Killer NPCs actively try to redirect suspicion
+    Object.keys(minds).forEach(name => {
+      if (!gameState.alive[name] || !gameState.killers.includes(name)) return;
+      const mind = minds[name];
+      const mySusp = gameState.suspicion[name] || 0;
+      if (mySusp < 30) return; // Only counter-play when they feel heat
+
+      const nearbyNonKillers = Object.values(minds).filter(m =>
+        m.name !== name && m.location === mind.location &&
+        gameState.alive[m.name] && !gameState.killers.includes(m.name)
+      );
+
+      if (nearbyNonKillers.length > 0 && Math.random() < 0.20) {
+        const scapegoat = nearbyNonKillers[Math.floor(Math.random() * nearbyNonKillers.length)];
+        const redirectAmount = 5 + Math.floor(Math.random() * 5);
+        // Subtle redirect — not as strong as a full frame
+        gameState.suspicion[scapegoat.name] = Math.min(100, (gameState.suspicion[scapegoat.name] || 0) + redirectAmount);
+        gameState.suspicion[name] = Math.max(0, gameState.suspicion[name] - Math.floor(redirectAmount * 0.5));
+        // NPCs at same location slightly adjust their suspicions
+        nearbyNonKillers.forEach(m => {
+          if (m.name !== scapegoat.name) {
+            m.suspicions[scapegoat.name] = Math.min(100, (m.suspicions[scapegoat.name] || 0) + Math.floor(redirectAmount * 0.3));
+          }
+        });
+
+        if (Math.random() < 0.35) {
+          bgEvents.push({
+            type: 'subtle_redirect',
+            character: name,
+            desc: `${charName(name)} secara halus mengalihkan perhatian ke ${charName(scapegoat.name)}...`
+          });
+        }
+      }
+    });
+
+    // Limit background events to prevent spam (max 3 per round)
+    return bgEvents.slice(0, 3);
   }
 
   // ---- Apply Action Consequences ----
@@ -1712,6 +1965,32 @@ const CharBrain = (() => {
         }
         return { type: 'alliance', members: [a.name, b.name],
           desc: `${charName(a.name)} dan ${charName(b.name)} sepakat bekerja sama di ${locName(location)}.` };
+      }
+    }
+
+    // Suspicion-based encounter: when NPC meets someone they highly suspect
+    if (survivors.length >= 1 && charNames.length >= 2 && gameState.deathCount >= 1) {
+      for (const surv of survivors) {
+        const survMind = allMinds[surv];
+        if (!survMind) continue;
+        for (const other of charNames) {
+          if (other === surv) continue;
+          const suspLevel = survMind.suspicions[other] || 0;
+          if (suspLevel > 60 && Math.random() < 0.3) {
+            const isActualKiller = gameState.killers.includes(other);
+            if (isActualKiller) {
+              // Correct suspicion — tension encounter
+              gameState.suspicion[other] = Math.min(100, (gameState.suspicion[other] || 0) + 5);
+              survMind.tension += 10;
+              return { type: 'tense_encounter', character: surv, suspect: other,
+                location, desc: `${charName(surv)} dan ${charName(other)} bertatapan di ${locName(location)}. Ketegangan terasa di udara — ${charName(surv)} tidak mempercayai ${charName(other)}.` };
+            } else {
+              // False suspicion — awkward encounter
+              return { type: 'awkward_encounter', character: surv, suspect: other,
+                location, desc: `${charName(surv)} menatap ${charName(other)} dengan curiga di ${locName(location)}, tapi ${charName(other)} tampak kebingungan.` };
+            }
+          }
+        }
       }
     }
 
