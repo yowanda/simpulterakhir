@@ -8,7 +8,7 @@
 
 ### Compact Edition
 - **3 pilihan fokus** per ronde (survivor) / **2 pilihan** (killer) — setiap keputusan lebih bermakna
-- **30 ending ringkas** — narrative core tetap intact, tanpa eksposisi berlebihan
+- **28 ending ringkas** — narrative core tetap intact, tanpa eksposisi berlebihan
 - UI optimized untuk pilihan yang lebih sedikit tapi lebih impactful
 
 ---
@@ -32,7 +32,7 @@ Di balik semua ini berdiri **Sang Penenun** — dalang anonim yang menenun jarin
 - **Anti-Loop System** — NPC dipaksa pindah jika terlalu lama di satu lokasi, game auto-escalate setiap ronde
 - **Hard cap 25 ronde** — game pasti selesai, tidak ada infinite loop
 - **Escalation System** — tension NPC naik setiap ronde, chapter auto-advance, killer lebih agresif
-- **30 ending naratif** — trigger otomatis berdasarkan kondisi game (S/A/B/C/D/F rating)
+- **28 ending naratif** — trigger otomatis berdasarkan kondisi game (S/A/B/C/D/F rating)
 - **Condition-based ending system** — ending dipilih berdasarkan state: killer hidup/mati, survivor yang selamat, clue ditemukan, moral score, trust level, dan lainnya
 - **Ringkasan game otomatis** — tampilkan siapa yang tereliminasi, siapa yang menang, dan statistik permainan + cerita ending naratif
 - **Auto-simulasi** — jika player mati, NPC melanjutkan permainan sampai ada pemenang
@@ -554,7 +554,7 @@ simpul-terakhir/
     └── story-endings.js    # 30 story endings + condition-based ending selector
 ```
 
-### Sistem Ending (30 Ending — Condition-Based)
+### Sistem Ending (28 Ending — Condition-Based)
 
 Ending otomatis terpicu berdasarkan kondisi game saat ini — bukan terkunci di chapter. Rating S (terbaik) → F (terburuk).
 

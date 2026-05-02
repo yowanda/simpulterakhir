@@ -1,6 +1,6 @@
 /* ============================================================
    SIMPUL TERAKHIR — ENDINGS (Compact Edition)
-   30 endings total — trigger otomatis berdasarkan kondisi game.
+   28 endings total — trigger otomatis berdasarkan kondisi game.
    Rating: S (terbaik), A, B, C, D, F (terburuk)
    Sistem: condition-based, bukan chapter-locked.
    ============================================================ */

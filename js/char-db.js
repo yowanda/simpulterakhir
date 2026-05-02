@@ -263,6 +263,13 @@ const CharDB = (() => {
       { condition: { minDanger: 30, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Kita perlu strategi. Jangan pergi sendirian — buddy system mulai sekarang." Arya mengorganisir kelompok.' }, weight: 12 },
       { condition: { minDanger: 50, isAlone: true }, action: { type: 'hide', desc: 'Tingkat bahaya tinggi. Arya menemukan celah gelap dan menunggu sampai situasi lebih aman.' }, weight: 12 },
       { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Arya mengajak bicara orang terdekat. Setiap percakapan bisa jadi petunjuk — atau perangkap.' }, weight: 8 },
+      // --- COMPACT-MECHANIC: Fast-paced investigation branches ---
+      { condition: { chapter: 1, minDeaths: 1, isAlone: false }, action: { type: 'share_intel', desc: '"Aku sudah catat semua alibi. Ada yang tidak konsisten." Arya membagikan catatannya ke kelompok.' }, weight: 20 },
+      { condition: { minDeaths: 2, isAlone: false, emotion: 'wary' }, action: { type: 'initiate_vote', desc: 'Arya mengusulkan voting eliminasi. "Cukup spekulasi. Kita VOTE sekarang — siapa yang paling mencurigakan?"' }, weight: 22 },
+      { condition: { chapter: 2, minDeaths: 1, nearbyIncludes: 'sera' }, action: { type: 'coordinate_defense', desc: 'Arya dan Sera membentuk tim investigasi darurat. "Kita sistematis — kau profil emosi, aku cari bukti fisik."' }, weight: 24 },
+      { condition: { chapter: 3, isAlone: true, minDanger: 30 }, action: { type: 'search_escape_clue', desc: 'Tempo meningkat. Arya mencari petunjuk pelarian dengan intensitas ganda — setiap detik berharga.' }, weight: 22 },
+      { condition: { minDeaths: 3, isAlone: false }, action: { type: 'warn', desc: '"JANGAN ADA YANG PERGI SENDIRIAN! Aku serius — pembunuh mengincar yang terisolasi." Arya memperingatkan semua.' }, weight: 20 },
+      { condition: { emotion: 'suspicious', nearbyIncludes: 'reza', minDeaths: 2 }, action: { type: 'coordinate_defense', desc: '"Reza, kau dan aku — kita buat rencana penyergapan. Aku tahu siapa targetnya." Arya dan Reza berkoordinasi.' }, weight: 22 },
       { condition: {}, action: { type: 'observe', desc: 'Arya mengamati sekitarnya. Setiap detail bisa jadi penting — atau jadi perbedaan antara hidup dan mati.' }, weight: 6 }
     ],
 
@@ -354,6 +361,13 @@ const CharDB = (() => {
       { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Niko masuk ke ruang rahasia kakeknya. Tempat aman yang tidak ada di blueprints resmi.' }, weight: 12 },
       { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Untuk pertama kalinya, topeng Niko runtuh sepenuhnya. Dia berlari tanpa melihat ke belakang.' }, weight: 10 },
       { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Niko mengajak ngobrol dengan senyum diplomatisnya. Setiap kata diukur, setiap reaksi dicatat.' }, weight: 8 },
+      // --- COMPACT-MECHANIC: Niko's strategic compact branches ---
+      { condition: { chapter: 1, minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Ini rumahku. Aku tahu setiap sudut, setiap jalan keluar." Niko mengambil kontrol strategis kelompok.' }, weight: 22 },
+      { condition: { chapter: 2, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Niko membuka panel dinding rahasia. Kakeknya menyimpan lebih dari sekedar lukisan di sini.' }, weight: 20 },
+      { condition: { minDeaths: 2, isAlone: false, emotion: 'suspicious' }, action: { type: 'initiate_vote', desc: '"Mansion ini punya aturan. Dan aturannya: kita VOTE siapa yang keluar." Niko memimpin eliminasi.' }, weight: 24 },
+      { condition: { chapter: 3, minDeaths: 2, isAlone: false }, action: { type: 'rally', desc: '"Dengarkan — kalian TAMU di rumahku. Dan aku TIDAK akan membiarkan tamu-ku mati." Niko mengumpulkan semua.' }, weight: 22 },
+      { condition: { nearbyIncludes: 'vira', minDeaths: 1 }, action: { type: 'guard', desc: 'Niko berdiri di dekat Vira. Masa lalu mereka rumit, tapi dia tidak akan membiarkan dia mati.' }, weight: 20 },
+      { condition: { emotion: 'wary', isAlone: false, minDeaths: 2 }, action: { type: 'share_intel', desc: '"Ada jalan rahasia di mansion ini." Niko akhirnya membagi informasi orang dalam — terpaksa.' }, weight: 22 },
       { condition: {}, action: { type: 'plan', desc: 'Niko berpikir. Menimbang opsi. Menghitung langkah — selalu tiga langkah di depan yang lain.' }, weight: 6 }
     ],
 
@@ -444,6 +458,13 @@ const CharDB = (() => {
       { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'guard', desc: 'Sera berdiri di dekat orang yang paling rentan. Insting melindungi mengalahkan ketakutan.' }, weight: 10 },
       { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Sera menghilang ke sudut tergelap. Jantungnya berdebar, tapi otaknya masih bekerja.' }, weight: 12 },
       { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Sera mengajak bicara seseorang — bukan basa-basi, tapi probing pertanyaan yang terukur.' }, weight: 8 },
+      // --- COMPACT-MECHANIC: Sera's profiling branches ---
+      { condition: { chapter: 1, minDeaths: 1, isAlone: false }, action: { type: 'share_intel', desc: 'Sera membagikan profil emosional semua orang. "Satu dari kita berbohong — micro-expression-nya tidak konsisten."' }, weight: 22 },
+      { condition: { minDeaths: 2, isAlone: false }, action: { type: 'initiate_vote', desc: '"Berdasarkan analisis perilaku, aku rekomendasikan voting untuk eliminasi." Sera mempresentasikan datanya.' }, weight: 20 },
+      { condition: { chapter: 2, nearbyIncludes: 'arin', minDanger: 30 }, action: { type: 'coordinate_defense', desc: 'Sera dan Arya berkoordinasi. "Aku analisis orangnya, kau kumpulkan buktinya. Team work."' }, weight: 24 },
+      { condition: { chapter: 3, isAlone: false, minDeaths: 2 }, action: { type: 'warn', desc: '"PERHATIKAN BAHASA TUBUHNYA! Orang itu menunjukkan stress markers killer." Sera memperingatkan.' }, weight: 22 },
+      { condition: { emotion: 'wary', nearbyIncludes: 'juno' }, action: { type: 'guard', desc: 'Sera menarik Juno. "Jangan gegabah. Aku lihat pola — kau target berikutnya."' }, weight: 20 },
+      { condition: { chapter: 4, isAlone: false }, action: { type: 'rally', desc: '"Final profil selesai. Aku tahu siapa killernya." Sera mengumpulkan kelompok untuk pengungkapan terakhir.' }, weight: 26 },
       { condition: {}, action: { type: 'observe', desc: 'Sera mengamati. Setiap gerakan, setiap ekspresi — data untuk profil yang akan menentukan segalanya.' }, weight: 6 }
     ],
 
@@ -535,6 +556,13 @@ const CharDB = (() => {
       { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: '"LARI! SEKARANG!" Juno menarik siapapun yang terdekat dan berlari.' }, weight: 10 },
       { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Juno menyembunyikan diri di balik lemari berat. Napasnya berat, tinju terkepal.' }, weight: 12 },
       { condition: { isAlone: false }, action: { type: 'socialize', desc: '"Lo oke?" Juno bertanya dengan kasar, tapi perhatiannya tulus. Street kid yang peduli.' }, weight: 8 },
+      // --- COMPACT-MECHANIC: Juno's aggressive compact branches ---
+      { condition: { minDeaths: 1, isAlone: false, emotion: 'wary' }, action: { type: 'confront', desc: '"GUE GAK MAU TUNGGU JADI KORBAN BERIKUTNYA!" Juno mengonfrontasi orang yang paling mencurigakan.' }, weight: 24 },
+      { condition: { chapter: 2, minDeaths: 2, isAlone: false }, action: { type: 'initiate_vote', desc: '"VOTE! SEKARANG! Gue muak main tebak-tebakan!" Juno memaksa voting darurat.' }, weight: 22 },
+      { condition: { nearbyIncludes: 'sera', minDanger: 40 }, action: { type: 'guard', desc: 'Juno berdiri di depan Sera. "Gue yang tangani ini. Lo analisis aja siapa dalangnya."' }, weight: 22 },
+      { condition: { chapter: 3, isAlone: true, minDanger: 50 }, action: { type: 'search_escape_clue', desc: 'Juno mendobrak panel dinding. Subtil bukan gayanya — tapi hasilnya yang penting.' }, weight: 20 },
+      { condition: { minDeaths: 3, isAlone: false }, action: { type: 'rally', desc: '"DENGAR SEMUA! Kita BERSATU atau kita MATI sendiri-sendiri. Pilih!" Juno memimpin perlawanan.' }, weight: 24 },
+      { condition: { emotion: 'hostile', isAlone: false, minDeaths: 2 }, action: { type: 'coordinate_defense', desc: '"Gue punya rencana. Lo jaga pintu, lo jaga jendela. TIDAK ADA yang masuk tanpa kita tahu." Juno mengorganisir.' }, weight: 22 },
       { condition: {}, action: { type: 'observe', desc: 'Juno gelisah. Matanya menyapu ruangan, mencari ancaman — atau jalan keluar.' }, weight: 6 }
     ],
 
@@ -621,6 +649,13 @@ const CharDB = (() => {
       { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'PTSD menguasai Vira. Dia berlari tanpa arah, dikejar bayangan dari enam bulan lalu.' }, weight: 12 },
       { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Vira meringkuk di celah sempit yang gelap. Tempat yang sama di mana dia bersembunyi terakhir kali.' }, weight: 14 },
       { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Vira berbisik ke orang terdekat. "Jangan tinggalkan aku sendirian. Tolong."' }, weight: 8 },
+      // --- COMPACT-MECHANIC: Vira's survival-knowledge compact branches ---
+      { condition: { chapter: 1, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Vira tahu di mana mansion menyimpan rahasianya. Pengalaman enam bulan lalu memberinya keunggulan.' }, weight: 24 },
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'share_intel', desc: '"Aku pernah di sini. Ada ruangan tersembunyi di bawah — dan pintu keluar darurat." Vira membagi pengetahuannya.' }, weight: 22 },
+      { condition: { chapter: 2, nearbyIncludes: 'niko', minDanger: 30 }, action: { type: 'confront', desc: '"Niko, kau tahu lebih dari yang kau katakan. MANSION INI membunuh orang — dan kau TAHU!" Vira menghadapi Niko.' }, weight: 24 },
+      { condition: { minDeaths: 2, isAlone: false, emotion: 'wary' }, action: { type: 'warn', desc: '"Terakhir kali pola kematiannya sama. Mereka mengincar yang sendirian. JANGAN PISAH!" Vira memperingatkan.' }, weight: 22 },
+      { condition: { chapter: 3, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Aku tahu semua jalan keluar mansion ini. Ikuti aku — aku pernah selamat dari sini." Vira memimpin.' }, weight: 24 },
+      { condition: { emotion: 'panicked', minDeaths: 3, isAlone: false }, action: { type: 'rally', desc: '"AKU SELAMAT TERAKHIR KALI DAN AKU AKAN SELAMAT LAGI!" Vira memimpin meskipun PTSD menghantui.' }, weight: 20 },
       { condition: {}, action: { type: 'hide', desc: 'Vira mencari tempat tersembunyi. Bertahan hidup berarti tidak terlihat.' }, weight: 6 }
     ],
 
@@ -711,6 +746,13 @@ const CharDB = (() => {
       { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'guard', desc: 'Reza menarik senjata improvisasi. "Di belakangku. SEKARANG." Insting protektif polisi.' }, weight: 12 },
       { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Reza menemukan posisi defensif — punggung ke dinding, mata ke pintu. Training yang tidak pernah hilang.' }, weight: 10 },
       { condition: { isAlone: false }, action: { type: 'socialize', desc: '"Ceritakan padaku apa yang kau lihat." Reza menginterogasi dengan halus — seperti ngobrol biasa, tapi setiap jawaban dicatat.' }, weight: 8 },
+      // --- COMPACT-MECHANIC: Reza's detective compact branches ---
+      { condition: { chapter: 1, minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Dengarkan — aku mantan polisi. Protokol lockdown: buddy system, jaga pintu, dokumentasi." Reza mengambil komando.' }, weight: 24 },
+      { condition: { minDeaths: 2, isAlone: false, emotion: 'suspicious' }, action: { type: 'initiate_vote', desc: '"Berdasarkan bukti fisik dan kesaksian, aku rekomendasikan voting eliminasi." Reza memimpin pengadilan.' }, weight: 22 },
+      { condition: { chapter: 2, hasClue: true, isAlone: false }, action: { type: 'share_intel', desc: '"Bukti forensik menunjukkan satu tersangka utama." Reza membagi analisis profesionalnya.' }, weight: 22 },
+      { condition: { chapter: 3, isAlone: true, minDanger: 40 }, action: { type: 'search_escape_clue', desc: 'Reza menerapkan teknik pencarian forensik. Setiap cm diperiksa secara metodis.' }, weight: 20 },
+      { condition: { minDeaths: 3, isAlone: false }, action: { type: 'rally', desc: '"PERHATIAN SEMUA. Ini situasi darurat. Aku ambil alih operasi." Reza menggunakan otoritas polisi lamanya.' }, weight: 24 },
+      { condition: { nearbyIncludes: 'arin', minDeaths: 1 }, action: { type: 'coordinate_defense', desc: '"Arya, kau punya catatan. Aku punya pengalaman. Gabungkan — kita bisa selesaikan ini." Reza dan Arya berkolaborasi.' }, weight: 22 },
       { condition: {}, action: { type: 'investigate', desc: 'Reza memeriksa sekitar. Insting detektif tidak pernah istirahat.' }, weight: 6 }
     ],
 
@@ -783,6 +825,12 @@ const CharDB = (() => {
       { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Untuk pertama kalinya, Lana kehilangan kontrol naratif. Dia berlari tanpa rencana.' }, weight: 10 },
       { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Lana bersembunyi di kegelapan. Penulis horor yang akhirnya hidup di dalam novelnya sendiri.' }, weight: 12 },
       { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Lana mengobrol dengan charm yang dipelajari. Setiap pertanyaan punya motif tersembunyi.' }, weight: 8 },
+      // --- COMPACT-MECHANIC: Lana's manipulation compact branches ---
+      { condition: { chapter: 1, isAlone: false, minDeaths: 1 }, action: { type: 'share_intel', desc: '"Aku punya teori..." Lana membagikan informasi yang mungkin benar — atau mungkin hanya untuk melihat reaksi.' }, weight: 22 },
+      { condition: { minDeaths: 2, isAlone: false }, action: { type: 'initiate_vote', desc: '"Cukup dramanya. Saatnya denouement — kita VOTE dan selesaikan." Lana memimpin voting dengan flair teater.' }, weight: 20 },
+      { condition: { chapter: 2, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Lana mencari petunjuk sambil menulis di buku catatannya. "Ini akan jadi chapter terbaik..."' }, weight: 18 },
+      { condition: { chapter: 3, isAlone: false, minDeaths: 2 }, action: { type: 'coordinate_defense', desc: '"Setiap cerita butuh final act. Dan aku yang menulis script-nya." Lana mengorganisir pertahanan grup.' }, weight: 22 },
+      { condition: { emotion: 'wary', nearbyIncludes: 'niko' }, action: { type: 'confront', desc: '"Niko, aku tahu tentang kakekmu. Tentang simpul. Tentang SEMUANYA." Lana membongkar rahasia Niko.' }, weight: 24 },
       { condition: {}, action: { type: 'observe', desc: 'Lana mengamati. Menyerap. Merencanakan. Seperti penulis mengamati karakternya.' }, weight: 6 }
     ],
 
@@ -857,6 +905,13 @@ const CharDB = (() => {
       { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'hide', desc: 'Bahkan dalam panik, Dimas bergerak dengan efisiensi. Menemukan tempat aman. Mengamankan perimeter.' }, weight: 10 },
       { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Dimas menemukan posisi defensif yang optimal secara taktis. Selalu kalkutatif, bahkan dalam ketakutan.' }, weight: 12 },
       { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Dimas berbicara dengan nada datar. "Status lukamu?" Perhatian yang terasa seperti autopsi — tapi tulus.' }, weight: 8 },
+      // --- COMPACT-MECHANIC: Dimas' forensic compact branches ---
+      { condition: { chapter: 1, minDeaths: 1, isAlone: false }, action: { type: 'share_intel', desc: '"Analisis forensik: luka post-mortem menunjukkan senjata tajam, serangan dari belakang." Dimas membagi temuan.' }, weight: 22 },
+      { condition: { minDeaths: 2, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Protokol keamanan: patroli berpasangan, checkpoint setiap 10 menit." Dimas mengorganisir dengan presisi.' }, weight: 22 },
+      { condition: { chapter: 2, isAlone: true, minDanger: 30 }, action: { type: 'search_escape_clue', desc: 'Dimas memeriksa ruangan secara forensik — setiap permukaan, setiap celah. Metodis sampai ke tulang.' }, weight: 20 },
+      { condition: { chapter: 3, isAlone: false, minDeaths: 2 }, action: { type: 'initiate_vote', desc: '"Data tidak bohong. Bukti forensik menunjuk satu orang." Dimas merekomendasikan eliminasi.' }, weight: 22 },
+      { condition: { emotion: 'wary', nearbyIncludes: 'sera' }, action: { type: 'coordinate_defense', desc: '"Sera, profil emosi. Aku, profil forensik. Gabungkan data." Dimas dan Sera berkolaborasi.' }, weight: 22 },
+      { condition: { chapter: 4, isAlone: false }, action: { type: 'rally', desc: '"Analisis final: probabilitas survival meningkat 40% jika kita bergerak bersama SEKARANG." Dimas mengambil keputusan.' }, weight: 24 },
       { condition: {}, action: { type: 'observe', desc: 'Dimas berdiri diam. Mengamati. Menganalisis. Ketenangan yang membuat orang lain tidak nyaman.' }, weight: 6 }
     ],
 
@@ -938,6 +993,13 @@ const CharDB = (() => {
       { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Kai menutup laptop dan lari. "SERVER DOWN. SISTEM OFFLINE. KITA HARUS PERGI!"' }, weight: 10 },
       { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Kai bersembunyi dengan laptop masih terbuka. Bahkan dalam panik, dia tetap monitoring.' }, weight: 12 },
       { condition: { isAlone: false }, action: { type: 'socialize', desc: '"Bro, phone lo bisa dipake hotspot? Aku perlu koneksi ke luar." Kai selalu mikirin tech solution.' }, weight: 8 },
+      // --- COMPACT-MECHANIC: Kira's tech-based compact branches ---
+      { condition: { chapter: 1, minDeaths: 1, isAlone: false }, action: { type: 'share_intel', desc: '"Gue recover deleted log — timestamp pembunuhan cocok sama 3 orang yang nggak punya alibi." Kai share data.' }, weight: 24 },
+      { condition: { minDeaths: 2, isAlone: false }, action: { type: 'initiate_vote', desc: '"Digital evidence clear. Aku punya proof. VOTING SEKARANG." Kai menunjukkan bukti di layar.' }, weight: 22 },
+      { condition: { chapter: 2, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Kai hack security system mansion. "Ada override code di file kakek Niko..." Dia mencari petunjuk digital.' }, weight: 22 },
+      { condition: { chapter: 3, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Aku bisa monitor CCTV. Lo semua, set up perimeter. Aku jadi mata digital kalian." Kai mengorganisir dari laptop.' }, weight: 22 },
+      { condition: { nearbyIncludes: 'arin', minDeaths: 1 }, action: { type: 'coordinate_defense', desc: '"Arya, recorder lo bisa sync sama CCTV log-ku. Kita bikin timeline yang nggak bisa dibantah." Kai-Arya collab.' }, weight: 24 },
+      { condition: { chapter: 4, isAlone: true, minDanger: 40 }, action: { type: 'search_escape_clue', desc: 'Kai brute-force password terakhir. "COME ON... satu password lagi dan pintu utama terbuka..."' }, weight: 24 },
       { condition: {}, action: { type: 'investigate', desc: 'Kai nge-type di laptop. Mencari backdoor, exploit, apa saja yang bisa kasih keuntungan digital.' }, weight: 6 }
     ],
 
@@ -1022,6 +1084,13 @@ const CharDB = (() => {
       { condition: { emotion: 'panicked', isAlone: false }, action: { type: 'flee', desc: 'Farah meraih tangan siapapun. "BAYAR BERAPAPUN — BAWA AKU KELUAR!"' }, weight: 10 },
       { condition: { emotion: 'panicked', isAlone: true }, action: { type: 'hide', desc: 'Farah menangis di sudut. Semua uang di dunia tidak bisa membeli keselamatan di sini.' }, weight: 14 },
       { condition: { isAlone: false }, action: { type: 'socialize', desc: 'Farah menawarkan "kontrak" — perlindungan sebagai imbalan informasi. Bisnis bahkan di ambang kematian.' }, weight: 8 },
+      // --- COMPACT-MECHANIC: Farah's resource-based compact branches ---
+      { condition: { chapter: 1, minDeaths: 1, isAlone: false }, action: { type: 'coordinate_defense', desc: '"Keluargaku membangun safe room di basement. SEMUA ikut aku — sekarang." Farah membuka akses eksklusif.' }, weight: 24 },
+      { condition: { minDeaths: 2, isAlone: false, emotion: 'wary' }, action: { type: 'share_intel', desc: '"Dokumen keluarga menunjukkan blueprint mansion — ada ruangan yang TIDAK ADA di peta resmi." Farah membagi intel.' }, weight: 22 },
+      { condition: { chapter: 2, isAlone: true }, action: { type: 'search_escape_clue', desc: 'Farah membuka brankas Wardhana. "Kakek pasti meninggalkan sesuatu... peta, kunci, APAPUN."' }, weight: 22 },
+      { condition: { chapter: 3, isAlone: false, minDeaths: 2 }, action: { type: 'rally', desc: '"DENGARKAN! Aku pewaris Wardhana. Mansion ini MILIKKU. Dan aku perintahkan semua untuk ikuti rencana ini." Farah mengambil komando.' }, weight: 24 },
+      { condition: { nearbyIncludes: 'reza', minDeaths: 1 }, action: { type: 'coordinate_defense', desc: '"Reza, aku punya akses ke semua pintu. Kau punya pengalaman polisi. Gabungkan." Farah berkoordinasi.' }, weight: 22 },
+      { condition: { emotion: 'panicked', minDeaths: 3 }, action: { type: 'warn', desc: '"AKU TAHU SIAPA PEMBUNUHNYA! Dokumen keluarga ini — LIHAT! Ada nama yang sama!" Farah teriak histeris tapi punya bukti.' }, weight: 22 },
       { condition: {}, action: { type: 'hide', desc: 'Farah mencari tempat teraman yang bisa ditemukan. Bertahan hidup dengan privilege terakhirnya.' }, weight: 6 }
     ]
   };
@@ -1092,6 +1161,12 @@ const CharDB = (() => {
       { condition: { playerNearby: true, minPlayerSusp: 40 }, action: { type: 'frame', desc: 'Lana diam-diam menyebarkan rumor tentang pemain ke survivor lain. Redirect perhatian.' }, weight: 22 },
       { condition: { playerNearby: false, emotion: 'hunting' }, action: { type: 'move', desc: 'Lana mencari pemain. Target utama harus diawasi — atau disingkirkan.' }, weight: 20 },
 
+      // --- COMPACT-MECHANIC KILLER: Lana's enhanced tactical branches ---
+      { condition: { chapter: 1, isAlone: false, emotion: 'stalking' }, action: { type: 'manipulate', desc: '"Kalian tahu apa yang lucu? Novelku persis tentang ini..." Lana menanam paranoia ke kelompok.' }, weight: 24 },
+      { condition: { chapter: 2, isAlone: true, emotion: 'hunting' }, action: { type: 'destroy_clue', desc: 'Lana menemukan petunjuk pelarian dan menghancurkannya. "Plot hole harus dieliminasi..."' }, weight: 26 },
+      { condition: { minDeaths: 1, isAlone: false, emotion: 'stalking' }, action: { type: 'frame', desc: 'Lana menemukan barang milik korban di tas orang lain. Tentu saja dia yang menaruhnya. "LIHAT APA YANG AKU TEMUKAN!"' }, weight: 26 },
+      { condition: { chapter: 3, isAlone: false }, action: { type: 'divide', desc: '"Aku dengar sesuatu di lorong timur!" Lana menciptakan kepanikan taktis untuk memecah kelompok.' }, weight: 24 },
+      { condition: { emotion: 'hunting', isAlone: false, minDeaths: 2 }, action: { type: 'isolate', desc: 'Lana mengajak target ke "tempat aman" yang hanya dia tahu. Jebakan sempurna.' }, weight: 26 },
       // --- Broad catch-all killer ---
       { condition: { emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Lana tersenyum dan bersosialisasi. Serigala di antara domba.' }, weight: 8 },
       { condition: { emotion: 'hunting' }, action: { type: 'move', desc: 'Lana mencari posisi strategis — dekat target, jauh dari saksi.' }, weight: 8 },
@@ -1162,6 +1237,12 @@ const CharDB = (() => {
       { condition: { playerNearby: true, minPlayerSusp: 30 }, action: { type: 'frame', desc: 'Dimas menanam "bukti forensik" yang mengarah ke pemain. Sidik jari yang ditempatkan dengan hati-hati.' }, weight: 24 },
       { condition: { playerNearby: false, emotion: 'hunting' }, action: { type: 'move', desc: 'Dimas mencari pemain. Target yang paling berbahaya harus diawasi — atau dinetralkan.' }, weight: 20 },
 
+      // --- COMPACT-MECHANIC KILLER: Dimas' enhanced clinical branches ---
+      { condition: { chapter: 1, isAlone: false, emotion: 'stalking' }, action: { type: 'maintain_cover', desc: '"Biar aku periksa lukanya." Dimas menawarkan bantuan medis — sambil menghitung target berikutnya.' }, weight: 24 },
+      { condition: { chapter: 2, isAlone: true, emotion: 'hunting' }, action: { type: 'trap', desc: 'Dimas menyiapkan sedatif di botol air minum. Farmakologi yang mematikan — tanpa jejak.' }, weight: 26 },
+      { condition: { minDeaths: 1, isAlone: false }, action: { type: 'frame', desc: '"Berdasarkan analisis forensik, luka ini konsisten dengan—" Dimas mengarahkan kecurigaan ke survivor lain.' }, weight: 24 },
+      { condition: { chapter: 3, isAlone: false, emotion: 'stalking' }, action: { type: 'isolate', desc: '"Aku perlu sampel forensik dari ruangan sebelah. Siapa yang mau bantu?" Dimas menggunakan alibi ilmiah.' }, weight: 24 },
+      { condition: { emotion: 'hunting', isAlone: false, minDeaths: 2 }, action: { type: 'sabotage', desc: 'Dimas merusak kotak P3K secara diam-diam. Jika korban berikutnya terluka, tidak ada pertolongan.' }, weight: 24 },
       // --- Broad catch-all killer ---
       { condition: { emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Dimas berdiri diam, mengamati. Ketenangan klinis yang menyembunyikan predator.' }, weight: 8 },
       { condition: { emotion: 'hunting' }, action: { type: 'move', desc: 'Dimas bergerak tanpa suara. Mencari target yang terpisah dari kelompok.' }, weight: 8 },
@@ -1227,6 +1308,12 @@ const CharDB = (() => {
       { condition: { playerNearby: true, minPlayerSusp: 30 }, action: { type: 'frame', desc: 'Niko "menemukan" bukti di dekat pemain. "Hmm, ini menarik..." Tuan rumah yang menyiapkan perangkap.' }, weight: 24 },
       { condition: { playerNearby: false, emotion: 'hunting' }, action: { type: 'sabotage', desc: 'Niko mengunci koridor menuju pemain. Mansion ini senjatanya — dan pemain adalah target utama.' }, weight: 22 },
 
+      // --- COMPACT-MECHANIC KILLER: Niko's mansion-control branches ---
+      { condition: { chapter: 1, isAlone: true, emotion: 'stalking' }, action: { type: 'sabotage', desc: 'Niko mengakses panel kontrol. Lampu lorong timur mati — kegelapan adalah senjatanya.' }, weight: 26 },
+      { condition: { chapter: 2, isAlone: false }, action: { type: 'divide', desc: '"Ada suara aneh di basement. Siapa yang berani cek?" Niko memancing survivor ke jebakan.' }, weight: 24 },
+      { condition: { minDeaths: 1, isAlone: false, emotion: 'stalking' }, action: { type: 'maintain_cover', desc: '"Sebagai tuan rumah, aku bertanggung jawab." Niko berpura-pura peduli — manipulator ulung.' }, weight: 24 },
+      { condition: { chapter: 3, isAlone: true }, action: { type: 'trap', desc: 'Niko mengaktifkan jebakan tersembunyi kakeknya. Mansion ini dibangun untuk membunuh.' }, weight: 26 },
+      { condition: { emotion: 'hunting', isAlone: false, minDeaths: 2 }, action: { type: 'isolate', desc: '"Ikut aku. Ada safe room yang tidak diketahui siapapun." Niko membawa target ke jebakan.' }, weight: 26 },
       // --- Broad catch-all killer ---
       { condition: { emotion: 'stalking' }, action: { type: 'maintain_cover', desc: 'Niko tersenyum. Tuan rumah yang sempurna. Tidak ada yang curiga.' }, weight: 8 },
       { condition: { emotion: 'hunting' }, action: { type: 'sabotage', desc: 'Niko memanipulasi infrastruktur mansion — lampu, pintu, alarm. Rumahnya, senjatanya.' }, weight: 8 },
