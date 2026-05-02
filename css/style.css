@@ -884,45 +884,87 @@ body {
   margin-bottom: 0.5rem;
 }
 .title-chars-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.4rem;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.6rem;
+  max-width: 520px;
+  margin: 0 auto;
 }
 .tc-card {
-  width: 70px;
   text-align: center;
-  padding: 0.3rem 0.2rem;
+  padding: 0.5rem 0.3rem;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(200,169,110,0.1);
+  transition: transform 0.2s, border-color 0.3s, box-shadow 0.3s;
+  animation: tc-fadein 0.5s ease both;
+}
+.tc-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(200,169,110,0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.tc-card.tc-side {
+  opacity: 0.75;
+}
+.tc-card.tc-side:hover {
+  opacity: 1;
+}
+@keyframes tc-fadein {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.tc-portrait-wrap {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 0.3rem;
 }
 .tc-avatar {
-  width: 30px;
-  height: 30px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  margin: 0 auto 0.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   color: #0a0908;
 }
 .tc-avatar-img {
-  width: 30px;
-  height: 30px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  margin: 0 auto 0.2rem;
   object-fit: cover;
   display: block;
 }
+.tc-glow {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 6px;
+  border-radius: 50%;
+  opacity: 0.4;
+  filter: blur(4px);
+}
 .tc-name {
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: #c8a96e;
+  margin-bottom: 0.15rem;
 }
-.tc-tag {
+.tc-role {
   font-size: 0.5rem;
   color: #6a5a4a;
   line-height: 1.3;
+}
+@media (max-width: 480px) {
+  .title-chars-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+}
+@media (max-width: 680px) and (min-width: 481px) {
+  .title-chars-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* ========== ENDING READER ========== */

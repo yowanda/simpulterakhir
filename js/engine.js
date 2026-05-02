@@ -4216,17 +4216,25 @@ const Engine = (() => {
     const grid = $('title-chars-grid');
     if (!grid) return;
     grid.innerHTML = '';
-    CHARACTERS.forEach(c => {
+    const hasProfiles = typeof CHARACTER_PROFILES !== 'undefined';
+    CHARACTERS.forEach((c, idx) => {
       const display = CHAR_DISPLAY[c];
       const color = CHAR_COLORS[c];
       const tagline = CHAR_TAGLINES[c] || '';
       const initial = CHAR_INITIALS[c] || display.charAt(0);
+      const profile = hasProfiles ? CHARACTER_PROFILES[c] : null;
       const card = document.createElement('div');
-      card.className = 'tc-card';
-      const avatarContent = CHAR_PORTRAITS[c]
+      card.className = 'tc-card' + (MAIN_CHARACTERS.includes(c) ? '' : ' tc-side');
+      card.style.animationDelay = (idx * 0.08) + 's';
+      const portraitContent = CHAR_PORTRAITS[c]
         ? `<img class="tc-avatar-img" src="${CHAR_PORTRAITS[c]}" alt="${display}">`
         : `<div class="tc-avatar" style="background:${color}">${initial}</div>`;
-      card.innerHTML = `${avatarContent}<div class="tc-name">${display}</div><div class="tc-tag">${tagline.split('—')[0].trim()}</div>`;
+      const role = profile ? profile.role : tagline.split('—')[0].trim();
+      card.innerHTML = `<div class="tc-portrait-wrap">${portraitContent}<div class="tc-glow" style="background:${color}"></div></div><div class="tc-name">${display}</div><div class="tc-role">${role}</div>`;
+      if (profile) {
+        card.addEventListener('click', () => showCharDetail(profile));
+        card.style.cursor = 'pointer';
+      }
       grid.appendChild(card);
     });
   }
