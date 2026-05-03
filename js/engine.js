@@ -1433,9 +1433,14 @@ const Engine = (() => {
   function notify(msg) {
     const el = $('notification');
     if (!el) return;
-    el.textContent = msg;
+    let display = msg;
+    if (typeof I18N !== 'undefined' && I18N.isEnabled()) {
+      const en = I18N.t(msg);
+      if (en) display = msg + '\n' + en;
+    }
+    el.textContent = display;
     el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 2500);
+    setTimeout(() => el.classList.remove('show'), 3500);
   }
 
   function showRelChange(a, b, delta) {
@@ -1720,18 +1725,22 @@ const Engine = (() => {
         chatHtml += avatar;
         chatHtml += `<div class="chat-content">`;
         chatHtml += `<div class="chat-name ${item.charKey}">${item.charDisplayName}</div>`;
-        chatHtml += `<div class="chat-msg">${item.msgContent}<span class="chat-time">${ts}${readReceipt}</span></div>`;
+        const _sub = (typeof I18N !== 'undefined') ? I18N.getSubtitle(item.msgContent) : '';
+        chatHtml += `<div class="chat-msg">${item.msgContent}<span class="chat-time">${ts}${readReceipt}</span></div>${_sub}`;
         chatHtml += `</div></div>`;
       } else if (item.type === 'action') {
         // WhatsApp-style action message: "~Niko berdiri di tangga~"
-        chatHtml += `<div class="chat-item chat-action"><span class="chat-action-text">${item.charDisplayName} ${item.text}</span></div>`;
+        const _asub = (typeof I18N !== 'undefined') ? I18N.getSubtitle(item.text) : '';
+        chatHtml += `<div class="chat-item chat-action"><span class="chat-action-text">${item.charDisplayName} ${item.text}</span>${_asub}</div>`;
       } else if (item.type === 'system') {
         // System/event message — centered like WhatsApp group notifications
-        chatHtml += `<div class="chat-item chat-system-msg"><span class="chat-system-text">${item.html}</span></div>`;
+        const _ssub = (typeof I18N !== 'undefined') ? I18N.getSubtitle(item.html) : '';
+        chatHtml += `<div class="chat-item chat-system-msg"><span class="chat-system-text">${item.html}</span>${_ssub}</div>`;
       } else if (item.type === 'sound') {
         chatHtml += `<div class="chat-item chat-sound">${item.html}</div>`;
       } else if (item.type === 'journal') {
-        chatHtml += `<div class="chat-item">${item.html}</div>`;
+        const _jsub = (typeof I18N !== 'undefined') ? I18N.getSubtitle(item.html) : '';
+        chatHtml += `<div class="chat-item">${item.html}${_jsub}</div>`;
       } else {
         chatHtml += `<div class="chat-item">${item.html}</div>`;
       }
@@ -3800,6 +3809,10 @@ const Engine = (() => {
       html += `<div class="choice-content">`;
       html += `<div class="choice-label">${catInfo.label}</div>`;
       html += `<div class="choice-text-main">${cleanText}</div>`;
+      if (typeof I18N !== 'undefined') {
+        const _csub = I18N.translateChoice(cleanText);
+        if (_csub) html += `<div class="en-subtitle-choice">${_csub}</div>`;
+      }
 
       if (choice.hint && state.difficulty <= 2) {
         const hintText = typeof choice.hint === 'function' ? choice.hint(state) : t(choice.hint);
@@ -3807,7 +3820,7 @@ const Engine = (() => {
       }
       if (choice.successChance !== undefined) {
         const chClass = choice.successChance >= 60 ? 'chance-high' : choice.successChance >= 35 ? 'chance-mid' : 'chance-low';
-        html += `<span class="choice-chance ${chClass}">Peluang: ${choice.successChance}%</span>`;
+        html += `<span class="choice-chance ${chClass}">${(typeof I18N !== 'undefined' && I18N.isEnabled()) ? 'Chance' : 'Peluang'}: ${choice.successChance}%</span>`;
       }
       html += `</div>`;
 
@@ -3816,13 +3829,13 @@ const Engine = (() => {
         html += `<div class="choice-meters">`;
         const riskClass = risk > 65 ? 'meter-high' : risk > 35 ? 'meter-mid' : 'meter-low';
         const rewardClass = reward > 65 ? 'meter-high' : reward > 35 ? 'meter-mid' : 'meter-low';
-        html += `<div class="choice-meter"><span class="meter-label">Risiko</span><div class="meter-bar"><div class="meter-fill ${riskClass}" style="width:${risk}%"></div></div></div>`;
-        html += `<div class="choice-meter"><span class="meter-label">Hasil</span><div class="meter-bar"><div class="meter-fill reward-fill ${rewardClass}" style="width:${reward}%"></div></div></div>`;
+        html += `<div class="choice-meter"><span class="meter-label">${(typeof I18N !== 'undefined' && I18N.isEnabled()) ? 'Risk' : 'Risiko'}</span><div class="meter-bar"><div class="meter-fill ${riskClass}" style="width:${risk}%"></div></div></div>`;
+        html += `<div class="choice-meter"><span class="meter-label">${(typeof I18N !== 'undefined' && I18N.isEnabled()) ? 'Reward' : 'Hasil'}</span><div class="meter-bar"><div class="meter-fill reward-fill ${rewardClass}" style="width:${reward}%"></div></div></div>`;
         html += `</div>`;
       }
 
       if (choice.danger) {
-        html += `<div class="choice-danger-badge">\u26A0 BAHAYA</div>`;
+        html += `<div class="choice-danger-badge">\u26A0 ${(typeof I18N !== 'undefined' && I18N.isEnabled()) ? 'DANGER' : 'BAHAYA'}</div>`;
       }
 
       html += `</div>`;
