@@ -12,6 +12,7 @@ const I18N = (() => {
     const btn = document.getElementById('btn-lang-toggle');
     if (btn) btn.textContent = subtitlesEnabled ? '🇬🇧 EN ON' : '🇬🇧 EN';
     document.body.classList.toggle('subs-on', subtitlesEnabled);
+    injectStaticSubtitles();
     return subtitlesEnabled;
   }
   function setEnabled(v) {
@@ -19,6 +20,58 @@ const I18N = (() => {
     const btn = document.getElementById('btn-lang-toggle');
     if (btn) btn.textContent = subtitlesEnabled ? '🇬🇧 EN ON' : '🇬🇧 EN';
     document.body.classList.toggle('subs-on', subtitlesEnabled);
+    injectStaticSubtitles();
+  }
+
+  // Inject English subtitle divs into static screen elements
+  function injectStaticSubtitles() {
+    // Remove any previously injected subtitles
+    document.querySelectorAll('.en-subtitle-static').forEach(el => el.remove());
+    if (!subtitlesEnabled) return;
+
+    // Selectors for static text elements that should get subtitles
+    const targets = [
+      // Title screen
+      '#title-subtitle', '#title-tagline',
+      '.btn-main', '.btn-secondary',
+      '.credits',
+      // Difficulty screen
+      '.diff-heading', '.diff-subheading',
+      '.diff-label', '.diff-desc',
+      // Role selection
+      '.role-select-heading', '.role-select-subheading',
+      // Character intro
+      '.char-intro-heading', '.char-intro-subheading',
+      '#btn-skip-chars',
+      // How to play
+      '.rules-title', '.rules-intro',
+      '.rules-section h3',
+      // Encrypted notice
+      '.wa-encrypted-notice',
+      // Menu items
+      '#btn-how-to-play', '#btn-char-profiles',
+    ];
+
+    targets.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => {
+        const text = el.textContent.trim();
+        // Strip leading emoji/symbol for lookup
+        const stripped = text.replace(/^[\u2600-\u27BF\u{1F300}-\u{1F9FF}\u{2702}-\u{27B0}⚙️👥📖🎮⚖️💀🏆⚠️🔒📍]\s*/u, '').trim();
+        const en = UI[text] || UI[stripped] || DICT[text] || DICT[stripped];
+        if (en) {
+          const sub = document.createElement('div');
+          sub.className = 'en-subtitle en-subtitle-static';
+          sub.style.display = 'block';
+          sub.textContent = en;
+          // For buttons, append inside; for others, insert after
+          if (el.tagName === 'BUTTON') {
+            el.appendChild(sub);
+          } else {
+            el.parentNode.insertBefore(sub, el.nextSibling);
+          }
+        }
+      });
+    });
   }
 
   // ---- UI Text Translations ----
@@ -825,7 +878,7 @@ const I18N = (() => {
   }
 
   return {
-    isEnabled, toggle, setEnabled,
+    isEnabled, toggle, setEnabled, injectStaticSubtitles,
     t, translateUI, getSubtitle, translateChoice,
     UI, DICT, ENDING_TITLES, CHAR_PROFILES
   };
