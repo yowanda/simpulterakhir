@@ -2603,33 +2603,7 @@ body {
   .chat-system-text { font-size: 0.62rem; }
 }
 
-/* ========== ENGLISH SUBTITLE SYSTEM ========== */
-.en-subtitle {
-  display: none;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.72rem;
-  color: #8ab4f8;
-  opacity: 0.85;
-  margin-top: 0.15rem;
-  padding: 0.15rem 0.4rem;
-  font-style: italic;
-  line-height: 1.3;
-  border-left: 2px solid rgba(138,180,248,0.3);
-}
-body.subs-on .en-subtitle { display: block; }
-
-.en-subtitle-choice {
-  display: none;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.7rem;
-  color: #8ab4f8;
-  opacity: 0.8;
-  margin-top: 0.15rem;
-  font-style: italic;
-  line-height: 1.2;
-}
-body.subs-on .en-subtitle-choice { display: block; }
-
+/* ========== LANGUAGE TOGGLE ========== */
 /* Language toggle button */
 #btn-lang-toggle {
   position: fixed;

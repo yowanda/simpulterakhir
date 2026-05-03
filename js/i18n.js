@@ -1,6 +1,6 @@
 /* ============================================================
    SIMPUL TERAKHIR — Internationalization (i18n) System
-   English subtitle support for all game text.
+   Full language swap: ID ↔ EN
    ============================================================ */
 
 const I18N = (() => {
@@ -10,68 +10,76 @@ const I18N = (() => {
   function toggle() {
     subtitlesEnabled = !subtitlesEnabled;
     const btn = document.getElementById('btn-lang-toggle');
-    if (btn) btn.textContent = subtitlesEnabled ? '🇬🇧 EN ON' : '🇬🇧 EN';
+    if (btn) btn.textContent = subtitlesEnabled ? '🇮🇩 ID' : '🇬🇧 EN';
     document.body.classList.toggle('subs-on', subtitlesEnabled);
-    injectStaticSubtitles();
+    swapStaticText();
     return subtitlesEnabled;
   }
   function setEnabled(v) {
     subtitlesEnabled = !!v;
     const btn = document.getElementById('btn-lang-toggle');
-    if (btn) btn.textContent = subtitlesEnabled ? '🇬🇧 EN ON' : '🇬🇧 EN';
+    if (btn) btn.textContent = subtitlesEnabled ? '🇮🇩 ID' : '🇬🇧 EN';
     document.body.classList.toggle('subs-on', subtitlesEnabled);
-    injectStaticSubtitles();
+    swapStaticText();
   }
 
-  // Inject English subtitle divs into static screen elements
-  function injectStaticSubtitles() {
-    // Remove any previously injected subtitles
-    document.querySelectorAll('.en-subtitle-static').forEach(el => el.remove());
-    if (!subtitlesEnabled) return;
-
-    // Selectors for static text elements that should get subtitles
+  // Swap all static text between ID and EN
+  function swapStaticText() {
     const targets = [
-      // Title screen
       '#title-subtitle', '#title-tagline',
-      '.btn-main', '.btn-secondary',
+      '#btn-new-game', '#btn-continue',
+      '#btn-how-to-play', '#btn-char-profiles',
+      '#btn-skip-chars', '#btn-rules-back',
       '.credits',
-      // Difficulty screen
       '.diff-heading', '.diff-subheading',
       '.diff-label', '.diff-desc',
-      // Role selection
       '.role-select-heading', '.role-select-subheading',
-      // Character intro
       '.char-intro-heading', '.char-intro-subheading',
-      '#btn-skip-chars',
-      // How to play
       '.rules-title', '.rules-intro',
       '.rules-section h3',
-      // Encrypted notice
+      '.rules-section li',
+      '.rules-action-item',
       '.wa-encrypted-notice',
-      // Menu items
-      '#btn-how-to-play', '#btn-char-profiles',
+      '#panel-status-title',
+      '#btn-play-again', '#btn-title-screen', '#btn-endings-back',
+      '#btn-save', '#btn-load', '#btn-back-to-title',
     ];
 
     targets.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
-        const text = el.textContent.trim();
-        // Strip leading emoji/symbol for lookup
-        const stripped = text.replace(/^[\u2600-\u27BF\u{1F300}-\u{1F9FF}\u{2702}-\u{27B0}⚙️👥📖🎮⚖️💀🏆⚠️🔒📍]\s*/u, '').trim();
-        const en = UI[text] || UI[stripped] || DICT[text] || DICT[stripped];
-        if (en) {
-          const sub = document.createElement('div');
-          sub.className = 'en-subtitle en-subtitle-static';
-          sub.style.display = 'block';
-          sub.textContent = en;
-          // For buttons, append inside; for others, insert after
-          if (el.tagName === 'BUTTON') {
-            el.appendChild(sub);
-          } else {
-            el.parentNode.insertBefore(sub, el.nextSibling);
-          }
+        // Save original HTML on first encounter
+        if (!el.dataset.origHtml) el.dataset.origHtml = el.innerHTML;
+
+        if (subtitlesEnabled) {
+          // Replace with English
+          const replaced = replaceHtmlContent(el.dataset.origHtml);
+          if (replaced !== el.dataset.origHtml) el.innerHTML = replaced;
+        } else {
+          // Restore original Indonesian
+          el.innerHTML = el.dataset.origHtml;
         }
       });
     });
+  }
+
+  // Replace text content in HTML string, preserving tags
+  function replaceHtmlContent(html) {
+    // Try full innerHTML match first (for elements with HTML content like <strong>)
+    const plainFull = html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    if (UI[plainFull]) return UI[plainFull];
+    if (UI[html.trim()]) return UI[html.trim()];
+
+    // Replace individual text segments
+    let result = html;
+    const allTranslations = Object.assign({}, UI, DICT, ENDING_TITLES, CHAR_PROFILES);
+    // Sort by key length desc to match longer phrases first
+    const sorted = Object.entries(allTranslations).sort((a, b) => b[0].length - a[0].length);
+    for (const [id, en] of sorted) {
+      if (result.includes(id)) {
+        result = result.split(id).join(en);
+      }
+    }
+    return result;
   }
 
   // ---- UI Text Translations ----
@@ -878,8 +886,8 @@ const I18N = (() => {
   }
 
   return {
-    isEnabled, toggle, setEnabled, injectStaticSubtitles,
-    t, translateUI, getSubtitle, translateChoice,
+    isEnabled, toggle, setEnabled, swapStaticText,
+    t, translateUI,
     UI, DICT, ENDING_TITLES, CHAR_PROFILES
   };
 })();

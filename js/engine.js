@@ -1428,7 +1428,7 @@ const Engine = (() => {
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     $(id).classList.add('active');
-    if (typeof I18N !== 'undefined' && I18N.isEnabled()) I18N.injectStaticSubtitles();
+    if (typeof I18N !== 'undefined' && I18N.isEnabled()) I18N.swapStaticText();
   }
 
   function notify(msg) {
@@ -1437,7 +1437,7 @@ const Engine = (() => {
     let display = msg;
     if (typeof I18N !== 'undefined' && I18N.isEnabled()) {
       const en = I18N.t(msg);
-      if (en) display = msg + '\n' + en;
+      if (en) display = en;
     }
     el.textContent = display;
     el.classList.add('show');
@@ -1726,22 +1726,22 @@ const Engine = (() => {
         chatHtml += avatar;
         chatHtml += `<div class="chat-content">`;
         chatHtml += `<div class="chat-name ${item.charKey}">${item.charDisplayName}</div>`;
-        const _sub = (typeof I18N !== 'undefined') ? I18N.getSubtitle(item.msgContent) : '';
-        chatHtml += `<div class="chat-msg">${item.msgContent}<span class="chat-time">${ts}${readReceipt}</span></div>${_sub}`;
+        const _msg = (typeof I18N !== 'undefined' && I18N.isEnabled()) ? (I18N.t(item.msgContent) || item.msgContent) : item.msgContent;
+        chatHtml += `<div class="chat-msg">${_msg}<span class="chat-time">${ts}${readReceipt}</span></div>`;
         chatHtml += `</div></div>`;
       } else if (item.type === 'action') {
         // WhatsApp-style action message: "~Niko berdiri di tangga~"
-        const _asub = (typeof I18N !== 'undefined') ? I18N.getSubtitle(item.text) : '';
-        chatHtml += `<div class="chat-item chat-action"><span class="chat-action-text">${item.charDisplayName} ${item.text}</span>${_asub}</div>`;
+        const _atxt = (typeof I18N !== 'undefined' && I18N.isEnabled()) ? (I18N.t(item.text) || item.text) : item.text;
+        chatHtml += `<div class="chat-item chat-action"><span class="chat-action-text">${item.charDisplayName} ${_atxt}</span></div>`;
       } else if (item.type === 'system') {
         // System/event message — centered like WhatsApp group notifications
-        const _ssub = (typeof I18N !== 'undefined') ? I18N.getSubtitle(item.html) : '';
-        chatHtml += `<div class="chat-item chat-system-msg"><span class="chat-system-text">${item.html}</span>${_ssub}</div>`;
+        const _stxt = (typeof I18N !== 'undefined' && I18N.isEnabled()) ? (I18N.t(item.html) || item.html) : item.html;
+        chatHtml += `<div class="chat-item chat-system-msg"><span class="chat-system-text">${_stxt}</span></div>`;
       } else if (item.type === 'sound') {
         chatHtml += `<div class="chat-item chat-sound">${item.html}</div>`;
       } else if (item.type === 'journal') {
-        const _jsub = (typeof I18N !== 'undefined') ? I18N.getSubtitle(item.html) : '';
-        chatHtml += `<div class="chat-item">${item.html}${_jsub}</div>`;
+        const _jtxt = (typeof I18N !== 'undefined' && I18N.isEnabled()) ? (I18N.t(item.html) || item.html) : item.html;
+        chatHtml += `<div class="chat-item">${_jtxt}</div>`;
       } else {
         chatHtml += `<div class="chat-item">${item.html}</div>`;
       }
@@ -3808,12 +3808,10 @@ const Engine = (() => {
       html += `<span class="choice-icon">${catInfo.icon}</span>`;
       html += `</div>`;
       html += `<div class="choice-content">`;
-      html += `<div class="choice-label">${catInfo.label}</div>`;
-      html += `<div class="choice-text-main">${cleanText}</div>`;
-      if (typeof I18N !== 'undefined') {
-        const _csub = I18N.translateChoice(cleanText);
-        if (_csub) html += `<div class="en-subtitle-choice">${_csub}</div>`;
-      }
+      const _clabel = (typeof I18N !== 'undefined' && I18N.isEnabled()) ? (I18N.t(catInfo.label) || catInfo.label) : catInfo.label;
+      const _ctext = (typeof I18N !== 'undefined' && I18N.isEnabled()) ? (I18N.t(cleanText) || cleanText) : cleanText;
+      html += `<div class="choice-label">${_clabel}</div>`;
+      html += `<div class="choice-text-main">${_ctext}</div>`;
 
       if (choice.hint && state.difficulty <= 2) {
         const hintText = typeof choice.hint === 'function' ? choice.hint(state) : t(choice.hint);
