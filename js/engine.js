@@ -1428,6 +1428,7 @@ const Engine = (() => {
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     $(id).classList.add('active');
+    if (typeof I18N !== 'undefined' && I18N.isEnabled()) I18N.injectStaticSubtitles();
   }
 
   function notify(msg) {
